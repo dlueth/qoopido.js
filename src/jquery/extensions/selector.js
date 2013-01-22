@@ -13,15 +13,21 @@
 	'use strict';
 
 	var namespace = 'qoopido',
-		name      = 'jquery/extensions/selector';
+		name      = 'jquery/extensions/selector',
+		initialize = function initialize() {
+			[].push.apply(arguments, [ window, document, undefined ]);
+
+			window[namespace] = window[namespace] || { };
+
+			return (window[namespace][name] = definition.apply(null, arguments));
+		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery' ], definition);
+		define([ 'jquery' ], initialize);
 	} else {
-		window[namespace]       = window[namespace] || {  };
-		window[namespace][name] = definition(window.jQuery, namespace + '/' + name, window, document);
+		initialize(window.jQuery);
 	}
-}(function(mJquery, pModule, window, document, undefined) {
+}(function(mJquery, window, document, undefined) {
 	'use strict';
 	
 	var $window   = mJquery(window),
@@ -117,5 +123,5 @@
 		}
 	});
 
-	return { name: pModule };
+	return mJquery;
 }, window, document));

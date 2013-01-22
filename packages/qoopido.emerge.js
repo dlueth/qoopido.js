@@ -2,7 +2,7 @@
 * Qoopido jQuery Plugin "emerge"
 *
 * Source:  Qoopido JS
-* Version: 1.0.5
+* Version: 1.0.6
 * Date:    2013-01-22
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
@@ -149,166 +149,167 @@
 		}
 	});
 }, window, document));
-;(function(window, undefined) {
+;(function(definition, window, document, undefined) {
 	'use strict';
 
-	var $namespace = 'qoopido',
-		$name      = 'emerge',
-		$defaults  = { interval: 20, threshold: 'auto', recur: true, auto: 0.5, visibility: true },
-		getModule;
+	var namespace  = 'qoopido',
+		name       = 'jquery/plugins/emerge',
+		initialize = function initialize() {
+			[].push.apply(arguments, [ window, document, undefined ]);
 
-	getModule = function getModule($, base, uuid) {
-		if(document.compatMode !== 'CSS1Compat') {
-			throw('This plugin will not work correctly in quirks mode, please ensure your Browser is in standards mode.');
-		}
+			window[namespace] = window[namespace] || { };
 
-		var // properties
-			$window = $(window),
-
-			// methods / classes
-			tick,
-			resize,
-			emerge,
-
-			// events
-			EVENT_EMERGED  = 'emerged.' + $name,
-			EVENT_DEMERGED = 'demerged.' + $name,
-
-			// listener
-			LISTENER_RESIZE = 'resize orientationchange';
-
-		$.fn[$name] = function(settings) {
-			return this.each(function() {
-				emerge.create(this, settings);
-			});
+			return (window[namespace][name] = definition.apply(null, arguments));
 		};
-
-		tick = function tick(interval) {
-			var i;
-
-			for(i in emerge._elements[interval]) {
-				emerge._elements[interval][i]._checkState();
-			}
-
-			if(emerge._elements[interval].length === 0) {
-				window.clearInterval(emerge._intervals[interval]);
-
-				delete emerge._intervals[interval];
-			}
-		};
-
-		resize = function() {
-			emerge._viewport.left   = 0;
-			emerge._viewport.top    = 0;
-			emerge._viewport.right  = $window.width();
-			emerge._viewport.bottom = $window.height();
-		};
-
-		emerge = base.extend({
-			_viewport:  { left: 0, top: 0, right: $window.width(), bottom: $window.height() },
-			_intervals: {},
-			_elements:  {},
-			_constructor: function(element, settings) {
-				var self = this;
-
-				settings = $.extend(true, {}, $defaults, settings || {});
-
-				if(settings.threshold === 'auto') {
-					delete settings.threshold;
-				}
-
-				if(emerge._intervals[settings.interval] === undefined) {
-					emerge._elements[settings.interval]  = emerge._elements[settings.interval] || {};
-					emerge._intervals[settings.interval] = window.setInterval(function() { tick(settings.interval); }, settings.interval);
-				}
-
-				self._element  = element;
-				self._object   = $(element);
-				self._settings = settings;
-				self._viewport = { left: 0, top: 0, right: 0, bottom: 0 };
-				self._state    = false;
-				self._priority = 2;
-				self._uuid     = uuid.generate();
-
-				emerge._elements[self._settings.interval][self._uuid] = self;
-
-				$window.on(LISTENER_RESIZE, function() { self._onResize.call(self); });
-				self._onResize();
-			},
-			_checkState: function() {
-				var self     = this,
-					state    = false,
-					priority = 2,
-					boundaries;
-
-				if(self._object.is(':visible') && (self._element.style.visibility !== 'hidden' || self._settings.visibility === false)) {
-					boundaries = self._element.getBoundingClientRect();
-
-					if((boundaries.left >= self._viewport.left && boundaries.top >= self._viewport.top && boundaries.left <= self._viewport.right && boundaries.top <= self._viewport.bottom) || (boundaries.right >= self._viewport.left && boundaries.bottom >= self._viewport.top && boundaries.right <= self._viewport.right && boundaries.bottom <= self._viewport.bottom)) {
-						if((boundaries.left >= emerge._viewport.left && boundaries.top >= emerge._viewport.top && boundaries.left <= emerge._viewport.right && boundaries.top <= emerge._viewport.bottom) || (boundaries.right >= emerge._viewport.left && boundaries.bottom >= emerge._viewport.top && boundaries.right <= emerge._viewport.right && boundaries.bottom <= emerge._viewport.bottom)) {
-							priority = 1;
-						}
-
-						state = true;
-					}
-				}
-
-				if(state !== self._state || priority !== self._priority) {
-					self._state    = state;
-					self._priority = priority;
-
-					self._changeState();
-				}
-			},
-			_changeState: function() {
-				var self = this,
-					event;
-
-				if(self._settings.recur !== true) {
-					self._remove();
-				}
-
-				if(self._state === true) {
-					event = $.Event(EVENT_EMERGED);
-
-					event.priority = self._priority;
-				} else {
-					event = $.Event(EVENT_DEMERGED);
-				}
-
-				self._object.trigger(event);
-			},
-			_remove: function() {
-				var self = this;
-
-				delete emerge._elements[self._settings.interval][self._uuid];
-			},
-			_onResize: function() {
-				var self = this,
-					x    = self._settings.threshold || $window.width() * self._settings.auto,
-					y    = self._settings.threshold || $window.height() * self._settings.auto;
-
-				self._viewport.left   = emerge._viewport.left - x;
-				self._viewport.top    = emerge._viewport.top - y;
-				self._viewport.right  = emerge._viewport.right + x;
-				self._viewport.bottom = emerge._viewport.bottom + y;
-			}
-		});
-
-		$window.on(LISTENER_RESIZE, resize);
-
-		return emerge;
-	};
 
 	if(typeof define === 'function' && define.amd) {
-		define(
-			[ 'jquery', 'qoopido/base', 'qoopido/uuid' ],
-			function(jquery, base, uuid) {
-				return getModule(jquery, base, uuid);
-			}
-		);
+		define([ 'jquery', 'qoopido/base', 'qoopido/uuid' ], initialize);
 	} else {
-		window[$namespace]        = window[$namespace] || {};
-		window[$namespace][$name] = getModule(jQuery, window[$namespace].base, window[$namespace].uuid);
+		initialize(window.jQuery, window[namespace].base, window[namespace].uuid);
 	}
-}(window));
+}(function(mJquery, mBase, mUuid, window, document, undefined) {
+	'use strict';
+
+	var // properties
+		name     = 'emerge',
+		defaults = { interval: 20, threshold: 'auto', recur: true, auto: 0.5, visibility: true },
+		$window  = mJquery(window),
+
+		// methods / classes
+		tick, resize, emerge,
+
+		// events
+		EVENT_EMERGED  = 'emerged.' + name,
+		EVENT_DEMERGED = 'demerged.' + name,
+
+		// listener
+		LISTENER_RESIZE = 'resize orientationchange';
+
+	if(document.compatMode !== 'CSS1Compat') {
+		throw('This plugin will not work correctly in quirks mode, please ensure your Browser is in standards mode.');
+	}
+
+	mJquery.fn[name] = function(settings) {
+		return this.each(function() {
+			emerge.create(this, settings);
+		});
+	};
+
+	tick = function tick(interval) {
+		var i;
+
+		for(i in emerge._elements[interval]) {
+			if(emerge._elements[interval][i]._checkState !== undefined) {
+				emerge._elements[interval][i]._checkState();
+			}
+		}
+
+		if(emerge._elements[interval].length === 0) {
+			window.clearInterval(emerge._intervals[interval]);
+
+			delete emerge._intervals[interval];
+		}
+	};
+
+	resize = function() {
+		emerge._viewport.left   = 0;
+		emerge._viewport.top    = 0;
+		emerge._viewport.right  = $window.width();
+		emerge._viewport.bottom = $window.height();
+	};
+
+	emerge = mBase.extend({
+		_viewport:  { left: 0, top: 0, right: $window.width(), bottom: $window.height() },
+		_intervals: {},
+		_elements:  {},
+		_constructor: function(element, settings) {
+			var self = this;
+
+			settings = mJquery.extend(true, {}, defaults, settings || {});
+
+			if(settings.threshold === 'auto') {
+				delete settings.threshold;
+			}
+
+			if(emerge._intervals[settings.interval] === undefined) {
+				emerge._elements[settings.interval]  = emerge._elements[settings.interval] || {};
+				emerge._intervals[settings.interval] = window.setInterval(function() { tick(settings.interval); }, settings.interval);
+			}
+
+			self._element  = element;
+			self._object   = mJquery(element);
+			self._settings = settings;
+			self._viewport = { left: 0, top: 0, right: 0, bottom: 0 };
+			self._state    = false;
+			self._priority = 2;
+			self._uuid     = mUuid.generate();
+
+			emerge._elements[self._settings.interval][self._uuid] = self;
+
+			$window.on(LISTENER_RESIZE, function() { self._onResize.call(self); });
+			self._onResize();
+		},
+		_checkState: function() {
+			var self     = this,
+				state    = false,
+				priority = 2,
+				boundaries;
+
+			if(self._object.is(':visible') && (self._element.style.visibility !== 'hidden' || self._settings.visibility === false)) {
+				boundaries = self._element.getBoundingClientRect();
+
+				if((boundaries.left >= self._viewport.left && boundaries.top >= self._viewport.top && boundaries.left <= self._viewport.right && boundaries.top <= self._viewport.bottom) || (boundaries.right >= self._viewport.left && boundaries.bottom >= self._viewport.top && boundaries.right <= self._viewport.right && boundaries.bottom <= self._viewport.bottom)) {
+					if((boundaries.left >= emerge._viewport.left && boundaries.top >= emerge._viewport.top && boundaries.left <= emerge._viewport.right && boundaries.top <= emerge._viewport.bottom) || (boundaries.right >= emerge._viewport.left && boundaries.bottom >= emerge._viewport.top && boundaries.right <= emerge._viewport.right && boundaries.bottom <= emerge._viewport.bottom)) {
+						priority = 1;
+					}
+
+					state = true;
+				}
+			}
+
+			if(state !== self._state || priority !== self._priority) {
+				self._state    = state;
+				self._priority = priority;
+
+				self._changeState();
+			}
+		},
+		_changeState: function() {
+			var self = this,
+				event;
+
+			if(self._settings.recur !== true) {
+				self._remove();
+			}
+
+			if(self._state === true) {
+				event = mJquery.Event(EVENT_EMERGED);
+
+				event.priority = self._priority;
+			} else {
+				event = mJquery.Event(EVENT_DEMERGED);
+			}
+
+			self._object.trigger(event);
+		},
+		_remove: function() {
+			var self = this;
+
+			delete emerge._elements[self._settings.interval][self._uuid];
+		},
+		_onResize: function() {
+			var self = this,
+				x    = self._settings.threshold || $window.width() * self._settings.auto,
+				y    = self._settings.threshold || $window.height() * self._settings.auto;
+
+			self._viewport.left   = emerge._viewport.left - x;
+			self._viewport.top    = emerge._viewport.top - y;
+			self._viewport.right  = emerge._viewport.right + x;
+			self._viewport.bottom = emerge._viewport.bottom + y;
+		}
+	});
+
+	$window.on(LISTENER_RESIZE, resize);
+
+	return emerge;
+}, window, document));

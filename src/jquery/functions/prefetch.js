@@ -9,38 +9,40 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  */
-;(function(undefined) {
+;(function(definition, window, document, undefined) {
 	'use strict';
 
-	var $name = 'prefetch',
-		getModule;
+	var namespace  = 'qoopido',
+		name       = 'jquery/functions/prefetch',
+		initialize = function initialize() {
+			[].push.apply(arguments, [ window, document, undefined ]);
 
-	getModule = function getModule($) {
-		var $head   = $('head'),
-			$lookup = [];
+			window[namespace] = window[namespace] || { };
 
-		$[$name] = function() {
-			var urls = $.unique($('a[rel="prefetch"]').removeAttr('rel').map(function() { return $(this).attr('href'); }));
-
-			urls.each(function(index, url) {
-				if($.inArray(url, $lookup) === -1) {
-					$('<link />', { rel: 'prefetch', href: url }).appendTo($head);
-					$('<link />', { rel: 'prerender', href: url }).appendTo($head);
-				}
-			});
+			return (window[namespace][name] = definition.apply(null, arguments));
 		};
-	};
 
 	if(typeof define === 'function' && define.amd) {
-		define(
-			[ 'jquery' ],
-			function(jquery) {
-				getModule(jquery);
-
-				return true;
-			}
-		);
+		define([ 'jquery' ], initialize);
 	} else {
-		getModule(jQuery);
+		initialize(window.jQuery);
 	}
-}());
+}(function(mJquery, window, document, undefined) {
+	'use strict';
+
+	var $head   = mJquery('head'),
+		lookup = [];
+
+	mJquery.prefetch = function() {
+		var urls = mJquery.unique(mJquery('a[rel="prefetch"]').removeAttr('rel').map(function() { return mJquery(this).attr('href'); }));
+
+		urls.each(function(index, url) {
+			if(mJquery.inArray(url, lookup) === -1) {
+				mJquery('<link />', { rel: 'prefetch', href: url }).appendTo($head);
+				mJquery('<link />', { rel: 'prerender', href: url }).appendTo($head);
+			}
+		});
+	};
+
+	return mJquery;
+}, window, document));
