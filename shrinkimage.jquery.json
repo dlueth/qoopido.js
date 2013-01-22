@@ -1,0 +1,42 @@
+{
+	"name": "shrinkimage",
+	"title": "Qoopido Shrinkimage",
+	"description": "jQuery plugin to load and process compressed versions of alpha transparent PNG images saving approx. 60-80% in filesize. The plugin requires minor changes to .htaccess and some PHP to compress the original images.",
+	"keywords": [
+		"png",
+		"compress",
+		"alpha",
+		"shrink",
+		"canvas"
+	],
+	"version": "1.0.4",
+	"author": {
+		"name": "Dirk Lüth",
+		"url": "http://www.qoopido.com"
+	},
+	"maintainers": [
+		{
+			"name": "Dirk Lüth",
+			"email": "info@qoopido.com",
+			"url": "http://www.qoopido.com"
+		}
+	],
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		},
+		{
+			"type": "GPL",
+			"url": "http://www.gnu.org/copyleft/gpl.html"
+		}
+	],
+	"bugs": "https://github.com/dlueth/Qoopido-JS/issues",
+	"homepage": "https://github.com/dlueth/Qoopido-JS",
+	"docs": "https://github.com/dlueth/Qoopido-JS",
+	"demo": "http://codepen.io/dlueth/pen/eGulH",
+	"download": "https://github.com/dlueth/Qoopido-JS/tree/master/packages",
+	"dependencies": {
+		"jquery": ">=1.7"
+	}
+}
