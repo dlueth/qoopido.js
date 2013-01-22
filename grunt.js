@@ -120,7 +120,6 @@ module.exports = function (grunt) {
 		qmin: {
 			all:{
 				src:    ['src/**/*.js'],
-				//banner: '<banner:meta.minified>',
 				root:   'src/',
 				dest:   'min/'
 			}
@@ -130,6 +129,19 @@ module.exports = function (grunt) {
 				'grunt.js',
 				'src/**/*.js'
 			]
+		},
+		compress:{
+			shrinkimage:{
+				options:{
+					mode:'zip',
+					basePath:'',
+					level:1,
+					flatten:true
+				},
+				files:{
+					'packages/qoopido.shrinkimage.zip': ['packages/qoopido.shrinkimage*.js', 'assets/shrinkimage/*', 'assets/shrinkimage/.htaccess']
+				}
+			}
 		},
 		clean: {
 			all: ['min/**/*', 'packages/**/*']
@@ -162,7 +174,7 @@ module.exports = function (grunt) {
 	});
 
 	// Default task.
-	grunt.registerTask('default', 'lint clean qmin concat min');
+	grunt.registerTask('default', 'lint clean qmin concat min compress');
 
 	grunt.loadNpmTasks('grunt-contrib');
 	grunt.loadNpmTasks('grunt-bump');
