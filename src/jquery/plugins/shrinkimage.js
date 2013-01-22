@@ -46,17 +46,17 @@
 		},
 		$resolver    = mJquery('<a />'),
 
-		// methods / classes
+	// methods / classes
 		getLoader,
 		shrinkimage,
 
-		// events
+	// events
 		EVENT_REQUESTED = 'requested.' + name,
 		EVENT_QUEUED    = 'queued.' + name,
 		EVENT_CACHED    = 'cached.' + name,
 		EVENT_LOADED    = 'loaded.' + name,
 
-		// listener
+	// listener
 		LISTENER_LOAD   = 'load';
 
 	mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
@@ -88,6 +88,10 @@
 				}
 			}
 		});
+	};
+
+	getLoader = function getLoader(attribute, source) {
+		return mJquery('<img />').attr(attribute, source).on(LISTENER_LOAD, function(event) { event.stopPropagation(); });
 	};
 
 	shrinkimage = mBase.extend({
@@ -139,7 +143,7 @@
 		},
 		_load: function() {
 			var self   = this,
-				remote = (hostname === expressions.hostname.exec(self._parameter.target)[1]);
+				remote = (hostname !== expressions.hostname.exec(self._parameter.target)[1]);
 
 			mJquery.ajax({
 				url:           (remote === true) ? self._parameter.target + '.jsonp' : self._parameter.target,

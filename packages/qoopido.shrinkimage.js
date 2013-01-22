@@ -2,7 +2,7 @@
 * Qoopido jQuery Plugin "shrinkimage"
 *
 * Source:  Qoopido JS
-* Version: 1.0.6
+* Version: 1.0.7
 * Date:    2013-01-22
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
@@ -570,17 +570,17 @@ else return a};var X=L()});
 		},
 		$resolver    = mJquery('<a />'),
 
-		// methods / classes
+	// methods / classes
 		getLoader,
 		shrinkimage,
 
-		// events
+	// events
 		EVENT_REQUESTED = 'requested.' + name,
 		EVENT_QUEUED    = 'queued.' + name,
 		EVENT_CACHED    = 'cached.' + name,
 		EVENT_LOADED    = 'loaded.' + name,
 
-		// listener
+	// listener
 		LISTENER_LOAD   = 'load';
 
 	mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
@@ -612,6 +612,10 @@ else return a};var X=L()});
 				}
 			}
 		});
+	};
+
+	getLoader = function getLoader(attribute, source) {
+		return mJquery('<img />').attr(attribute, source).on(LISTENER_LOAD, function(event) { event.stopPropagation(); });
 	};
 
 	shrinkimage = mBase.extend({
@@ -663,7 +667,7 @@ else return a};var X=L()});
 		},
 		_load: function() {
 			var self   = this,
-				remote = (hostname === expressions.hostname.exec(self._parameter.target)[1]);
+				remote = (hostname !== expressions.hostname.exec(self._parameter.target)[1]);
 
 			mJquery.ajax({
 				url:           (remote === true) ? self._parameter.target + '.jsonp' : self._parameter.target,
