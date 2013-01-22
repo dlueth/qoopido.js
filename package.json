@@ -1,0 +1,32 @@
+{
+  "name": "qoopido.js",
+  "title": "Qoopido JS",
+  "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
+  "version": "1.0.0",
+  "homepage": "https://github.com/dlueth/Qoopido-JS",
+  "author": {
+    "name": "Dirk Lüth",
+    "email": "info@qoopido.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dlueth/Qoopido-JS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dlueth/Qoopido-JS/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    },
+    {
+      "type": "GPL",
+      "url": "http://www.gnu.org/copyleft/gpl.html"
+    }
+  ],
+  "dependencies": {
+    "jquery": ">= 1.7"
+  },
+  "keywords": []
+}
