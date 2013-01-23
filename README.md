@@ -1,4 +1,4 @@
-Qoopido-JS
+qoopido.js
 ==========
 
 Collection of classes, plugins, functions and extensions for Javascript and jQuery.
@@ -29,7 +29,7 @@ See source code for any options that may be passed. Any dependencies are mention
 
 Shrinkimage installation & usage
 ---------------------------
-Download and extract the ZIP file of the shrinkimage package from [here](https://github.com/dlueth/Qoopido-JS/blob/master/packages/qoopido.shrinkimage.zip?raw=true), put the enclosed shrinkimage.php into your projects root directory and add the lines from the included .htaccess to your projects .htaccess file. If you do not want to put the srinkimage.php into your projects root directory for any reason you will have to change the paths in the .htaccess (both rewrite rules) as well as in the shrinkimage.php (line 3) accordingly.
+Download and extract the ZIP file of the shrinkimage package from [here](https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.shrinkimage.zip?raw=true), put the enclosed shrinkimage.php into your projects root directory and add the lines from the included .htaccess to your projects .htaccess file. If you do not want to put the srinkimage.php into your projects root directory for any reason you will have to change the paths in the .htaccess (both rewrite rules) as well as in the shrinkimage.php (line 3) accordingly.
 
 Finally add jQuery and qoopido.shrinkimage.min.js to your script block and you are all set.
 
