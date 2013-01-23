@@ -9,7 +9,7 @@ Currently contains
 - Emitter (extendable event emitter)
 - Pager (data/animation independent pager)
 - Remux (REM based responsive website concept)
-- uuid (UUID generator)
+- Unique (random UUID and string generator)
 - worker (flexible web worker implementation)
 - support (deferred/promise based modular feature detection)
 - jQuery Extensions

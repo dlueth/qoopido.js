@@ -2,8 +2,8 @@
 * Qoopido jQuery Plugin "shrinkimage"
 *
 * Source:  Qoopido JS
-* Version: 1.0.7
-* Date:    2013-01-22
+* Version: 1.0.8
+* Date:    2013-01-23
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
@@ -134,7 +134,7 @@ else return a};var X=L()});
 	'use strict';
 
 	var namespace  = 'qoopido',
-		name       = 'uuid',
+		name       = 'unique',
 		initialize = function initialize() {
 			[].push.apply(arguments, [ window, document, undefined ]);
 
@@ -151,25 +151,48 @@ else return a};var X=L()});
 }(function(mBase, window, document, undefined) {
 	'use strict';
 
-	var generateUuid, uuid,
-		lookup = {};
+	var result, j, x, i,
+		lookup     = { uuid: { }, string: { } },
+		characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-	generateUuid = function generateUuid() {
+	function generateUuid() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 			var r = Math.random() * 16 | 0,
 				v = (c === 'x') ? r : (r & 0x3 | 0x8);
 
 			return v.toString(16);
 		});
-	};
+	}
+
+	function generateString(length) {
+		length = parseInt(length, 10) || 12;
+		result = '';
+
+		for(i = 0; i < length; i++) {
+			result += characters[parseInt(Math.random() * (characters.length - 1), 10)];
+		}
+
+		return result;
+	}
 
 	return mBase.extend({
-		generate: function generate() {
+		uuid: function uuid() {
 			do {
-				uuid = generateUuid();
-			} while(typeof lookup[uuid] !== 'undefined');
+				result = generateUuid();
+			} while(typeof lookup.uuid[result] !== 'undefined');
 
-			return uuid;
+			lookup.uuid[result] = true;
+
+			return result;
+		},
+		string: function string(length) {
+			do {
+				result = generateString(length);
+			} while(typeof lookup.string[result] !== 'undefined');
+
+			lookup.string[result] = true;
+
+			return result;
 		}
 	});
 }, window, document));

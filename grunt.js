@@ -72,7 +72,7 @@ module.exports = function (grunt) {
 				src:[
 					'<banner:meta.emerge>',
 					'<file_strip_banner:src/base.js>',
-					'<file_strip_banner:src/uuid.js>',
+					'<file_strip_banner:src/unique.js>',
 					'<file_strip_banner:src/jquery/plugins/emerge.js>'
 				],
 				dest:'packages/qoopido.emerge.js'
@@ -81,7 +81,7 @@ module.exports = function (grunt) {
 				src:[
 					'<banner:meta.lazyimage>',
 					'<file_strip_banner:src/base.js>',
-					'<file_strip_banner:src/uuid.js>',
+					'<file_strip_banner:src/unique.js>',
 					'<file_strip_banner:src/jquery/plugins/emerge.js>',
 					'<file_strip_banner:src/jquery/plugins/lazyimage.js>'
 				],
@@ -92,7 +92,7 @@ module.exports = function (grunt) {
 					'<banner:meta.shrinkimage>',
 					'<file_strip_banner:assets/q/q.min.js>',
 					'<file_strip_banner:src/base.js>',
-					'<file_strip_banner:src/uuid.js>',
+					'<file_strip_banner:src/unique.js>',
 					'<file_strip_banner:src/support.js>',
 					'<file_strip_banner:src/support/capability/datauri.js>',
 					'<file_strip_banner:src/support/element/canvas.js>',

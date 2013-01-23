@@ -2,7 +2,7 @@
   "name": "qoopido.js",
   "title": "Qoopido JS",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "homepage": "https://github.com/dlueth/Qoopido-JS",
   "author": {
     "name": "Dirk Lüth",
