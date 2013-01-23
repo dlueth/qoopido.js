@@ -9,7 +9,7 @@
 		"shrink",
 		"canvas"
 	],
-	"version": "1.0.10",
+	"version": "1.1.0",
 	"author": {
 		"name": "Dirk Lüth",
 		"url": "http://www.qoopido.com"
@@ -23,7 +23,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/dlueth/Qoopido-JS"
+		"url": "https://github.com/dlueth/qoopido.js"
 	},
 	"licenses": [
 		{
@@ -35,11 +35,11 @@
 			"url": "http://www.gnu.org/copyleft/gpl.html"
 		}
 	],
-	"bugs": "https://github.com/dlueth/Qoopido-JS/issues",
-	"homepage": "https://github.com/dlueth/Qoopido-JS",
-	"docs": "https://github.com/dlueth/Qoopido-JS",
+	"bugs": "https://github.com/dlueth/qoopido.js/issues",
+	"homepage": "https://github.com/dlueth/qoopido.js",
+	"docs": "https://github.com/dlueth/qoopido.js",
 	"demo": "http://codepen.io/dlueth/pen/eGulH",
-	"download": "https://github.com/dlueth/Qoopido-JS/blob/master/packages/qoopido.shrinkimage.zip?raw=true",
+	"download": "https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.shrinkimage.zip?raw=true",
 	"dependencies": {
 		"jquery": ">=1.7"
 	}
