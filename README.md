@@ -10,8 +10,8 @@ Currently contains
 - Pager (data/animation independent pager)
 - Remux (REM based responsive website concept)
 - Unique (random UUID and string generator)
-- worker (flexible web worker implementation)
-- support (deferred/promise based modular feature detection)
+- Worker (flexible web worker implementation)
+- Support (deferred/promise based modular feature detection)
 - jQuery Extensions
 	- Selector
 - jQuery Functions

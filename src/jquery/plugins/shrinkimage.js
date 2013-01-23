@@ -15,8 +15,8 @@
 ;(function(definition, window, document, undefined) {
 	'use strict';
 
-	var namespace = 'qoopido',
-		name      = 'jquery/plugins/shrinkimage',
+	var namespace  = 'qoopido',
+		name       = 'jquery/plugins/shrinkimage',
 		initialize = function initialize() {
 			[].push.apply(arguments, [ window, document, undefined ]);
 
