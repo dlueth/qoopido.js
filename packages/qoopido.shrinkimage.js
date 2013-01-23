@@ -2,7 +2,7 @@
 * Qoopido jQuery Plugin "shrinkimage"
 *
 * Source:  Qoopido JS
-* Version: 1.0.8
+* Version: 1.0.9
 * Date:    2013-01-23
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
@@ -573,11 +573,11 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/uuid', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
+		define([ 'jquery', 'qoopido/base', 'qoopido/unique', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
 	} else {
-		initialize(window.jQuery, window[namespace].base, window[namespace].uuid, window[namespace].support, undefined, undefined);
+		initialize(window.jQuery, window[namespace].base, window[namespace].unique, window[namespace].support, undefined, undefined);
 	}
-}(function(mJquery, mBase, mUuid, mSupport, mOptional1, mOptional2, window, document, undefined) {
+}(function(mJquery, mBase, mUnique, mSupport, mOptional1, mOptional2, window, document, undefined) {
 	'use strict';
 
 	var // properties
@@ -700,15 +700,7 @@ else return a};var X=L()});
 				cache:         true,
 				crossDomain:   remote || null,
 				dataType:      (remote === true) ? 'jsonp' : 'json',
-				jsonpCallback: (remote === true) ? function() {
-					var callback;
-
-					do {
-						callback = name + '-' + mUuid.generate();
-					} while(window[callback] !== undefined);
-
-					return callback;
-				} : null
+				jsonpCallback: (remote === true) ? name + '-' + mUnique.string() : null
 			})
 				.fail(function(response, status, error) {
 					self._fallback();

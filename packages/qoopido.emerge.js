@@ -2,7 +2,7 @@
 * Qoopido jQuery Plugin "emerge"
 *
 * Source:  Qoopido JS
-* Version: 1.0.8
+* Version: 1.0.9
 * Date:    2013-01-23
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
@@ -175,8 +175,8 @@
 ;(function(definition, window, document, undefined) {
 	'use strict';
 
-	var namespace = 'qoopido',
-		name      = 'jquery/plugins/shrinkimage',
+	var namespace  = 'qoopido',
+		name       = 'jquery/plugins/emerge',
 		initialize = function initialize() {
 			[].push.apply(arguments, [ window, document, undefined ]);
 
@@ -186,209 +186,153 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/unique', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
+		define([ 'jquery', 'qoopido/base', 'qoopido/unique' ], initialize);
 	} else {
-		initialize(window.jQuery, window[namespace].base, window[namespace].unique, window[namespace].support, undefined, undefined);
+		initialize(window.jQuery, window[namespace].base, window[namespace].unique);
 	}
-}(function(mJquery, mBase, mUnique, mSupport, mOptional1, mOptional2, window, document, undefined) {
+}(function(mJquery, mBase, mUnique, window, document, undefined) {
 	'use strict';
 
 	var // properties
-		name        = 'shrinkimage',
-		defaults    = { attribute: 'data-' + name, quality: 80, debug: false },
-		process     = false,
-		lookup      = {},
-		hostname    = window.location.hostname,
-		expressions = {
-			test:     new RegExp('^url(\\x28"{0,1}|)data:image/shrink,(.+?)("{0,1}\\x29|)$', 'i'),
-			path:     new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
-			hostname: new RegExp('^\\w+://([^/]+)', 'i')
-		},
-		$resolver    = mJquery('<a />'),
+		name     = 'emerge',
+		defaults = { interval: 20, threshold: 'auto', recur: true, auto: 0.5, visibility: true },
+		$window  = mJquery(window),
 
 	// methods / classes
-		getLoader,
-		shrinkimage,
+		tick, resize, emerge,
 
 	// events
-		EVENT_REQUESTED = 'requested.' + name,
-		EVENT_QUEUED    = 'queued.' + name,
-		EVENT_CACHED    = 'cached.' + name,
-		EVENT_LOADED    = 'loaded.' + name,
+		EVENT_EMERGED  = 'emerged.' + name,
+		EVENT_DEMERGED = 'demerged.' + name,
 
 	// listener
-		LISTENER_LOAD   = 'load';
+		LISTENER_RESIZE = 'resize orientationchange';
 
-	mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
-		.then(function() {
-			process = true;
-		});
+	if(document.compatMode !== 'CSS1Compat') {
+		throw('This plugin will not work correctly in quirks mode, please ensure your Browser is in standards mode.');
+	}
 
 	mJquery.fn[name] = function(settings) {
-		settings = mJquery.extend({}, defaults, settings || {});
-
 		return this.each(function() {
-			var self       = mJquery(this),
-				source     = self.attr(settings.attribute),
-				background = self.css('background-image');
-
-			if(this.tagName === 'IMG') {
-				if(process === true && settings.debug === false) {
-					shrinkimage.create(settings, self, source);
-				} else {
-					self.attr('src', source).removeAttr(settings.attribute);
-				}
-			}
-
-			if(background !== 'none' && expressions.test.test(background) === true) {
-				if(process === true && settings.debug === false) {
-					shrinkimage.create(settings, self, background, true);
-				} else {
-					self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
-				}
-			}
+			emerge.create(this, settings);
 		});
 	};
 
-	getLoader = function getLoader(attribute, source) {
-		return mJquery('<img />').attr(attribute, source).on(LISTENER_LOAD, function(event) { event.stopPropagation(); });
+	tick = function tick(interval) {
+		var i;
+
+		for(i in emerge._elements[interval]) {
+			if(emerge._elements[interval][i]._checkState !== undefined) {
+				emerge._elements[interval][i]._checkState();
+			}
+		}
+
+		if(emerge._elements[interval].length === 0) {
+			window.clearInterval(emerge._intervals[interval]);
+
+			delete emerge._intervals[interval];
+		}
 	};
 
-	shrinkimage = mBase.extend({
-		_constructor: function(settings, target, url, background) {
+	resize = function() {
+		emerge._viewport.left   = 0;
+		emerge._viewport.top    = 0;
+		emerge._viewport.right  = $window.width();
+		emerge._viewport.bottom = $window.height();
+	};
+
+	emerge = mBase.extend({
+		_viewport:  { left: 0, top: 0, right: $window.width(), bottom: $window.height() },
+		_intervals: {},
+		_elements:  {},
+		_constructor: function(element, settings) {
 			var self = this;
 
-			self._loader     = null;
-			self._settings   = mJquery.extend({}, defaults, settings || {});
-			self._target     = target.css({ visibility: 'hidden', opacity: 0 });
-			self._background = background || false;
-			self._result     = null;
-			self._url        = url || false;
-			self._parameter  = {
-				quality: self._getParameter('quality', self._url) || self._settings.quality,
-				source:  (self._url !== false) ? expressions.path.exec(self._resolveUrl(self._url))[1].split('?')[0] : false,
-				target:  self._getParameter('target', self._url) || false
-			};
+			settings = mJquery.extend(true, {}, defaults, settings || {});
 
-			if(self._url !== false) {
-				if(self._parameter.target === false) {
-					self._parameter.target = self._parameter.source.replace(/\.png$/i, '.q' + self._parameter.quality + '.shrunk');
-				}
-
-				self._target.removeAttr(self._settings.attribute);
-
-				switch(typeof lookup[self._parameter.target]) {
-					case 'object':
-						lookup[self._parameter.target]._target.one(EVENT_CACHED, function(event) {
-							if(event.namespace === name) {
-								self._assign(true);
-							}
-						});
-
-						self._target.trigger(EVENT_QUEUED, [ self._parameter.target]);
-
-						break;
-					case 'string':
-						self._assign(true);
-						break;
-					default:
-						self._loader = getLoader(settings.attribute, url);
-						lookup[self._parameter.target] = self;
-						self._load();
-
-						self._target.trigger(EVENT_REQUESTED, [ self._parameter.target]);
-						break;
-				}
+			if(settings.threshold === 'auto') {
+				delete settings.threshold;
 			}
+
+			if(emerge._intervals[settings.interval] === undefined) {
+				emerge._elements[settings.interval]  = emerge._elements[settings.interval] || {};
+				emerge._intervals[settings.interval] = window.setInterval(function() { tick(settings.interval); }, settings.interval);
+			}
+
+			self._element  = element;
+			self._object   = mJquery(element);
+			self._settings = settings;
+			self._viewport = { left: 0, top: 0, right: 0, bottom: 0 };
+			self._state    = false;
+			self._priority = 2;
+			self._uuid     = mUnique.uuid();
+
+			emerge._elements[self._settings.interval][self._uuid] = self;
+
+			$window.on(LISTENER_RESIZE, function() { self._onResize.call(self); });
+			self._onResize();
 		},
-		_load: function() {
-			var self   = this,
-				remote = (hostname !== expressions.hostname.exec(self._parameter.target)[1]);
+		_checkState: function() {
+			var self     = this,
+				state    = false,
+				priority = 2,
+				boundaries;
 
-			mJquery.ajax({
-				url:           (remote === true) ? self._parameter.target + '.jsonp' : self._parameter.target,
-				context:       self,
-				data:          { source: self._parameter.source, quality: self._parameter.quality },
-				global:        false,
-				cache:         true,
-				crossDomain:   remote || null,
-				dataType:      (remote === true) ? 'jsonp' : 'json',
-				jsonpCallback: (remote === true) ? name + '-' + mUnique.string() : null
-			})
-				.fail(function(response, status, error) {
-					self._fallback();
-				})
-				.done(function(data, status, response) {
-					if(typeof data !== 'object' || data.width === undefined || data.height === undefined || data.size === undefined || data.main === undefined || data.alpha === undefined) {
-						self._fallback();
-					} else {
-						self._result = {
-							original:   parseInt(data.size, 10),
-							compressed: parseInt(response.getResponseHeader('Content-Length'), 10)
-						};
+			if(self._object.is(':visible') && (self._element.style.visibility !== 'hidden' || self._settings.visibility === false)) {
+				boundaries = self._element.getBoundingClientRect();
 
-						self._process(data);
+				if((boundaries.left >= self._viewport.left && boundaries.top >= self._viewport.top && boundaries.left <= self._viewport.right && boundaries.top <= self._viewport.bottom) || (boundaries.right >= self._viewport.left && boundaries.bottom >= self._viewport.top && boundaries.right <= self._viewport.right && boundaries.bottom <= self._viewport.bottom)) {
+					if((boundaries.left >= emerge._viewport.left && boundaries.top >= emerge._viewport.top && boundaries.left <= emerge._viewport.right && boundaries.top <= emerge._viewport.bottom) || (boundaries.right >= emerge._viewport.left && boundaries.bottom >= emerge._viewport.top && boundaries.right <= emerge._viewport.right && boundaries.bottom <= emerge._viewport.bottom)) {
+						priority = 1;
 					}
-				});
+
+					state = true;
+				}
+			}
+
+			if(state !== self._state || priority !== self._priority) {
+				self._state    = state;
+				self._priority = priority;
+
+				self._changeState();
+			}
 		},
-		_fallback: function() {
-			var self = this;
+		_changeState: function() {
+			var self = this,
+				event;
 
-			lookup[self._parameter.target] = self._parameter.source;
-			self._assign(false, true);
-		},
-		_process: function(data) {
-			var self = this;
+			if(self._settings.recur !== true) {
+				self._remove();
+			}
 
-			self._loader.one(LISTENER_LOAD, function() {
-				var canvas = document.createElement('canvas'),
-					loader = self._loader.get(0),
-					context;
+			if(self._state === true) {
+				event = mJquery.Event(EVENT_EMERGED);
 
-				canvas.style.display = 'none';
-				canvas.width         = data.width;
-				canvas.height        = data.height;
-
-				context = canvas.getContext('2d');
-				context.clearRect(0, 0, data.width, data.height);
-				context.drawImage(loader, 0, 0, data.width, data.height);
-
-				self._loader.one(LISTENER_LOAD, function() {
-					self._loader.remove();
-
-					context.globalCompositeOperation = 'xor';
-					context.drawImage(loader, 0, 0, data.width, data.height);
-
-					lookup[self._parameter.target] = canvas.toDataURL('image/png');
-
-					mJquery(canvas).remove();
-
-					self._assign();
-				}).attr('src', data.alpha);
-			}).attr('src', data.main);
-		},
-		_assign: function(cached, fallback) {
-			var self = this;
-
-			if(self._background === false) {
-				self._target.one(LISTENER_LOAD, function() {
-					self._target.css({ visibility: '', opacity: '' }).trigger(EVENT_LOADED, [ self._parameter.target, cached || false, fallback || false]);
-				}).attr('src', lookup[self._parameter.target]);
+				event.priority = self._priority;
 			} else {
-				self._target.css({ 'background-image': 'url(' + lookup[self._parameter.target] + ')' }).trigger(EVENT_LOADED, [ self._parameter.target, cached || false, fallback || false]);
+				event = mJquery.Event(EVENT_DEMERGED);
 			}
 
-			if(cached !== true && self._result !== null) {
-				self._target.trigger(EVENT_CACHED, [ self._parameter.target, self._result.compressed, self._result.original ]);
-			}
+			self._object.trigger(event);
 		},
-		_resolveUrl: function(url) {
-			return $resolver.attr('href', url).prop('href');
+		_remove: function() {
+			var self = this;
+
+			delete emerge._elements[self._settings.interval][self._uuid];
 		},
-		_getParameter: function(name, url) {
-			return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(url) || ['',''])[1].replace(/\+/g, '%20')) || null;
+		_onResize: function() {
+			var self = this,
+				x    = self._settings.threshold || $window.width() * self._settings.auto,
+				y    = self._settings.threshold || $window.height() * self._settings.auto;
+
+			self._viewport.left   = emerge._viewport.left - x;
+			self._viewport.top    = emerge._viewport.top - y;
+			self._viewport.right  = emerge._viewport.right + x;
+			self._viewport.bottom = emerge._viewport.bottom + y;
 		}
 	});
 
-	return shrinkimage;
+	$window.on(LISTENER_RESIZE, resize);
+
+	return emerge;
 }, window, document));
