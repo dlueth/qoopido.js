@@ -9,7 +9,7 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require qoopido/base.js
- * @require qoopido/uuid.js
+ * @require qoopido/unique.js
  * @require qoopido/support.js
  */
 ;(function(definition, window, document, undefined) {
@@ -26,11 +26,11 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/uuid', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
+		define([ 'jquery', 'qoopido/base', 'qoopido/unique', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
 	} else {
-		initialize(window.jQuery, window[namespace].base, window[namespace].uuid, window[namespace].support, undefined, undefined);
+		initialize(window.jQuery, window[namespace].base, window[namespace].unique, window[namespace].support, undefined, undefined);
 	}
-}(function(mJquery, mBase, mUuid, mSupport, mOptional1, mOptional2, window, document, undefined) {
+}(function(mJquery, mBase, mUnique, mSupport, mOptional1, mOptional2, window, document, undefined) {
 	'use strict';
 
 	var // properties
@@ -153,15 +153,7 @@
 				cache:         true,
 				crossDomain:   remote || null,
 				dataType:      (remote === true) ? 'jsonp' : 'json',
-				jsonpCallback: (remote === true) ? function() {
-					var callback;
-
-					do {
-						callback = name + '-' + mUuid.generate();
-					} while(window[callback] !== undefined);
-
-					return callback;
-				} : null
+				jsonpCallback: (remote === true) ? name + '-' + mUnique.string() : null
 			})
 				.fail(function(response, status, error) {
 					self._fallback();
