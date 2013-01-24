@@ -39,6 +39,8 @@
 		execute: function execute(pWorker, pFunction, pArguments) {
 			var deferred  = mQ.defer();
 
+			pArguments = pArguments || [];
+
 			if(supportsWorker === true) {
 				var worker = new Worker(pWorker);
 
@@ -57,19 +59,11 @@
 					deferred.reject(event);
 				}, false);
 
-				worker.postMessage({ func: pFunction.toString(), args: pArguments || {} });
+				worker.postMessage({ func: pFunction.toString(), args: pArguments });
 			} else {
 				setTimeout(function(){
 					try {
-						var list = (pFunction.toString().match(/\(.+\)/) || [''])[0].replace(/[()\r\n ]/g, '').split(','),
-							i    = 0,
-							parameter;
-
-						for(i; (parameter = list[i]) !== undefined; i++) {
-							list[i] = pArguments[parameter] || null;
-						}
-
-						deferred.resolve(pFunction.apply(null, list));
+						deferred.resolve(pFunction.apply(null, pArguments));
 					} catch(exception) {
 						deferred.reject();
 					}
