@@ -124,6 +124,12 @@ module.exports = function (grunt) {
 				dest:   'min/'
 			}
 		},
+		dependencygraph: {
+			targetPath: './src',
+			outputPath: './dependencies',
+			format: 'amd'//,
+			//exclude: '^qoopido/'
+		},
 		lint:{
 			files:[
 				'grunt.js',
@@ -168,7 +174,8 @@ module.exports = function (grunt) {
 			},
 			globals:{
 				jQuery: true,
-				define: true
+				define: true,
+				require: true
 			}
 		}
 	});
@@ -179,4 +186,5 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib');
 	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('grunt-qmin');
+	grunt.loadNpmTasks('grunt-dependencygraph');
 };
