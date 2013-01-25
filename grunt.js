@@ -126,9 +126,8 @@ module.exports = function (grunt) {
 		},
 		dependencygraph: {
 			targetPath: './src',
-			outputPath: './dependencies',
-			format: 'amd'//,
-			//exclude: '^qoopido/'
+			outputPath: './info/dependencies',
+			format: 'amd'
 		},
 		lint:{
 			files:[
@@ -181,7 +180,7 @@ module.exports = function (grunt) {
 	});
 
 	// Default task.
-	grunt.registerTask('default', 'lint clean qmin concat min compress');
+	grunt.registerTask('default', 'lint clean qmin concat min compress dependencygraph');
 
 	grunt.loadNpmTasks('grunt-contrib');
 	grunt.loadNpmTasks('grunt-bump');
