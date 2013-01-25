@@ -8,6 +8,7 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
+ * @require jquery
  */
 ;(function(definition, window, document, undefined) {
 	'use strict';

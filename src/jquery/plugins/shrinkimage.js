@@ -8,9 +8,12 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require qoopido/base.js
- * @require qoopido/unique.js
- * @require qoopido/support.js
+ * @require jquery
+ * @require ../../base
+ * @require ../../unique
+ * @require ../../support
+ * @require ../../support/capability/datauri
+ * @require ../../support/element/canvas/todataurl/png
  */
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -26,11 +29,11 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/unique', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
+		define([ 'jquery', '../../base', '../../unique', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png' ], initialize);
 	} else {
 		initialize(window.jQuery, window[namespace].base, window[namespace].unique, window[namespace].support, undefined, undefined);
 	}
-}(function(mJquery, mBase, mUnique, mSupport, mOptional1, mOptional2, window, document, undefined) {
+}(function(mJquery, mBase, mUnique, mSupport, mIndirect1, mIndirect2, window, document, undefined) {
 	'use strict';
 
 	var // properties

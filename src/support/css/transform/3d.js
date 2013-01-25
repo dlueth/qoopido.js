@@ -12,7 +12,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support', 'qoopido/support/css/transform' ], initialize);
+		define([ '../../../support', '../transform' ], initialize);
 	} else {
 		initialize(window[namespace].support, window[namespace]['support/css/transform']);
 	}

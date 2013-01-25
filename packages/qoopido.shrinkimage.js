@@ -3,7 +3,7 @@
 *
 * Source:  Qoopido JS
 * Version: 1.1.1
-* Date:    2013-01-24
+* Date:    2013-01-25
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
@@ -144,7 +144,7 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/base' ], initialize);
+		define([ './base' ], initialize);
 	} else {
 		initialize(window[namespace].base);
 	}
@@ -210,7 +210,7 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/base', '../.' ], initialize);
+		define([ './base', 'q' ], initialize);
 	} else {
 		initialize(window[namespace].base, window.Q);
 	}
@@ -441,7 +441,7 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support' ], initialize);
+		define([ '../../support' ], initialize);
 	} else {
 		initialize(window[namespace].support);
 	}
@@ -478,7 +478,7 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support' ], initialize);
+		define([ '../../support' ], initialize);
 	} else {
 		initialize(window[namespace].support);
 	}
@@ -507,7 +507,7 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support', 'qoopido/support/element/canvas' ], initialize);
+		define([ '../../../support', '../canvas' ], initialize);
 	} else {
 		initialize(window[namespace].support, window[namespace]['support/element/canvas']);
 	}
@@ -540,7 +540,7 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support', 'qoopido/support/element/canvas/todataurl' ], initialize);
+		define([ '../../../../support', '../todataurl' ], initialize);
 	} else {
 		initialize(window[namespace].support, window[namespace]['support/element/canvas/todataurl']);
 	}
@@ -573,11 +573,11 @@ else return a};var X=L()});
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/unique', 'qoopido/support', 'qoopido/support/capability/datauri', 'qoopido/support/element/canvas/todataurl/png' ], initialize);
+		define([ 'jquery', '../../base', '../../unique', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png' ], initialize);
 	} else {
 		initialize(window.jQuery, window[namespace].base, window[namespace].unique, window[namespace].support, undefined, undefined);
 	}
-}(function(mJquery, mBase, mUnique, mSupport, mOptional1, mOptional2, window, document, undefined) {
+}(function(mJquery, mBase, mUnique, mSupport, mIndirect1, mIndirect2, window, document, undefined) {
 	'use strict';
 
 	var // properties

@@ -8,8 +8,8 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require qoopido/base.js
- * @require qoopido/emitter.js
+ * @require ./base
+ * @require ./emitter
  */
 
 ;(function(definition, window, document, undefined) {
@@ -26,7 +26,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/emitter' ], initialize);
+		define([ 'jquery', './emitter' ], initialize);
 	} else {
 		initialize(jQuery, window[namespace].emitter);
 	}

@@ -8,7 +8,7 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require qoopido/base.js
+ * @require ./base
  */
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -24,7 +24,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/base' ], initialize);
+		define([ './base' ], initialize);
 	} else {
 		initialize(window[namespace].base);
 	}

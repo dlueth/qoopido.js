@@ -3,7 +3,7 @@
 *
 * Source:  Qoopido JS
 * Version: 1.1.1
-* Date:    2013-01-24
+* Date:    2013-01-25
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
@@ -120,7 +120,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/base' ], initialize);
+		define([ './base' ], initialize);
 	} else {
 		initialize(window[namespace].base);
 	}
@@ -186,7 +186,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/unique' ], initialize);
+		define([ 'jquery', '../../base', '../../unique' ], initialize);
 	} else {
 		initialize(window.jQuery, window[namespace].base, window[namespace].unique);
 	}
@@ -350,7 +350,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/jquery/plugins/emerge' ], initialize);
+		define([ 'jquery', './emerge' ], initialize);
 	} else {
 		initialize(window.jQuery, window[namespace].emerge);
 	}

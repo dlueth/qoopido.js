@@ -8,8 +8,8 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require qoopido/base.js
- * @require qoopido/jquery/plugins/emerge.js
+ * @require jquery
+ * @require ./emerge
  */
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -25,7 +25,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/jquery/plugins/emerge' ], initialize);
+		define([ 'jquery', './emerge' ], initialize);
 	} else {
 		initialize(window.jQuery, window[namespace].emerge);
 	}

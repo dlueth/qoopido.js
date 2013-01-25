@@ -12,7 +12,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support' ], initialize);
+		define([ '../../support' ], initialize);
 	} else {
 		initialize(window[namespace].support);
 	}

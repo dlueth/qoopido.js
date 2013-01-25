@@ -8,8 +8,9 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require qoopido/base.js
- * @require qoopido/unique.js
+ * @require jquery
+ * @require ../../base
+ * @require ../../unique
  */
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -25,7 +26,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'jquery', 'qoopido/base', 'qoopido/unique' ], initialize);
+		define([ 'jquery', '../../base', '../../unique' ], initialize);
 	} else {
 		initialize(window.jQuery, window[namespace].base, window[namespace].unique);
 	}

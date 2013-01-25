@@ -12,7 +12,7 @@
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'qoopido/support', 'qoopido/support/element/canvas' ], initialize);
+		define([ '../../../support', '../canvas' ], initialize);
 	} else {
 		initialize(window[namespace].support, window[namespace]['support/element/canvas']);
 	}
