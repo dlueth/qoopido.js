@@ -18,14 +18,85 @@ Currently contains
 	- Prefetch
 	- Proximity
 - jQuery Plugins
-	- Emerge
-	- Lazyimage
+	- [Emerge](#emerge-installation--usage)
+	- [Lazyimage](#lazyimage-installation--usage)
 	- [Shrinkimage](#shrinkimage-installation--usage) <sup>[1](#footnotes)</sup>
 
 
 General Usage
 ---------------------------
 See source code for any options that may be passed. Any dependencies are mentioned in the top comment block as "@require".
+
+
+Emerge installation & usage
+---------------------------
+Download and extract the ZIP file of the emerge package from [here](https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.emerge.zip?raw=true) and put the contents somewhere onto your webspace.
+
+Finally add jQuery and qoopido.emerge.min.js to your script block and you are all set.
+
+Example Javascript:
+```javascript
+<script type="text/javascript">
+;(function($, window, document, undefined) {
+    'use strict';
+
+    $(document).ready(function() {
+        $('#footer img')
+            .on('emerged.emerge', function(event) {
+                // do something when the element emerges
+            })
+            .on('demerged.emerge', function(event) {
+				// do something when the element demerges
+			})
+        .emerge({
+        	interval:   20,     // default
+        	threshold:  'auto', // default
+        	recur:      true,   // default
+        	auto:       0.5,    // default (meaning 0.5 * screen width/height threshold)
+        	visibility: true    // default
+		});
+    });
+})(jQuery, window, document);
+</script>
+```
+
+
+Lazyimage installation & usage
+---------------------------
+Download and extract the ZIP file of the emerge package from [here](https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.lazyimage.zip?raw=true) and put the contents somewhere onto your webspace.
+
+Finally add jQuery and qoopido.lazyimage.min.js to your script block and you are all set.
+
+Example HTML:
+```html
+<img alt="" data-lazyimage="img/example.png" />
+```
+
+Corresponding Javascript:
+```javascript
+<script type="text/javascript">
+;(function($, window, document, undefined) {
+    'use strict';
+
+    $(document).ready(function() {
+        $('img[data-lazyimage],.lazyimage')
+            .on('requested.lazyimage', function(event) {
+                // do something when the image gets requested
+            })
+            .on('loaded.lazyimage', function(event) {
+				// do something when the image was loaded
+			})
+        .lazyimage({
+        	interval:   20,     // default
+        	threshold:  'auto', // default
+        	auto:       0.5,    // default (meaning 0.5 * screen width/height threshold)
+        	visibility: true    // default
+		});
+    });
+})(jQuery, window, document);
+</script>
+```
+
 
 Shrinkimage installation & usage
 ---------------------------
