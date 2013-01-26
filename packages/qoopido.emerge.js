@@ -2,8 +2,8 @@
 * Qoopido jQuery Plugin "emerge"
 *
 * Source:  Qoopido JS
-* Version: 1.1.2
-* Date:    2013-01-25
+* Version: 1.1.3
+* Date:    2013-01-26
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *

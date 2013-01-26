@@ -1,13 +1,20 @@
 {
-	"name": "shrinkimage",
-	"title": "Qoopido Shrinkimage",
-	"description": "jQuery plugin to load and process compressed versions of alpha transparent PNG images saving approx. 60-80% in filesize. The plugin requires minor changes to .htaccess and some PHP to compress the original images.",
+	"name": "emerge",
+	"title": "Qoopido Emerge",
+	"description": "jQuery plugin to react on elements entering or nearing the visible area.",
 	"keywords": [
-		"png",
-		"compress",
-		"alpha",
-		"shrink",
-		"canvas"
+		"lazy",
+		"lazyload",
+		"load",
+		"loader",
+		"delay",
+		"delayed",
+		"scroll",
+		"view",
+		"emerge",
+		"visible",
+		"viewport",
+		"area"
 	],
 	"version": "1.1.3",
 	"author": {
@@ -38,8 +45,7 @@
 	"bugs": "https://github.com/dlueth/qoopido.js/issues",
 	"homepage": "https://github.com/dlueth/qoopido.js",
 	"docs": "https://github.com/dlueth/qoopido.js",
-	"demo": "http://codepen.io/dlueth/pen/eGulH",
-	"download": "https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.shrinkimage.zip?raw=true",
+	"download": "https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.emerge.zip?raw=true",
 	"dependencies": {
 		"jquery": ">=1.7"
 	}

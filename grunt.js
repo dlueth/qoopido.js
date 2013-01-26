@@ -136,6 +136,28 @@ module.exports = function (grunt) {
 			]
 		},
 		compress:{
+			emerge:{
+				options:{
+					mode:'zip',
+					basePath:'',
+					level:1,
+					flatten:true
+				},
+				files:{
+					'packages/qoopido.emerge.zip': ['packages/qoopido.emerge*.js']
+				}
+			},
+			lazyimage:{
+				options:{
+					mode:'zip',
+					basePath:'',
+					level:1,
+					flatten:true
+				},
+				files:{
+					'packages/qoopido.lazyimage.zip': ['packages/qoopido.lazyimage*.js']
+				}
+			},
 			shrinkimage:{
 				options:{
 					mode:'zip',
