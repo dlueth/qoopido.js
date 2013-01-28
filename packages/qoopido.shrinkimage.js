@@ -2,8 +2,8 @@
 * Qoopido jQuery Plugin "shrinkimage"
 *
 * Source:  Qoopido JS
-* Version: 1.1.3
-* Date:    2013-01-26
+* Version: 1.1.4
+* Date:    2013-01-28
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
