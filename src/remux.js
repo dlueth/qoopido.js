@@ -38,6 +38,7 @@
 		events  = [],
 		state   = {
 			layout: null,
+			width:  null,
 			size: {
 				base:    null,
 				current: null,
@@ -157,10 +158,10 @@
 
 			state.ratio.device = window.devicePixelRatio || 1;
 			state.ratio.zoom   = detectZoom() || 1;
-			width              = element.offsetWidth * state.ratio.zoom;
+			state.width        = element.offsetWidth * state.ratio.zoom;
 
 			for(layout in layouts) {
-				if(layouts[layout].breakpoint && width >= layouts[layout].breakpoint) {
+				if(layouts[layout].breakpoint && state.width >= layouts[layout].breakpoint) {
 					candidate = layout;
 				}
 			}
@@ -173,7 +174,7 @@
 				events.push('layoutchange');
 			}
 
-			state.size.current = Math.max(layouts[state.layout].min, Math.min(layouts[state.layout].max, Math.floor(state.size.base * (width / layouts[state.layout].width))));
+			state.size.current = Math.max(layouts[state.layout].min, Math.min(layouts[state.layout].max, Math.floor(state.size.base * (state.width / layouts[state.layout].width))));
 			state.size.zoomed  = Math.round(state.ratio.zoom * (state.size.current / state.size.base) * state.size.base);
 
 			if(state.size.zoomed !== state.size.last) {

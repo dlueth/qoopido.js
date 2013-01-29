@@ -48,7 +48,7 @@ module.exports = function (grunt) {
 				'*  - <%= _.pluck(pkg.licenses, "url").join("\n*  - ") %>\n' +
 				'*/',
 			shrinkimage:'/*!\n' +
-				'* Qoopido jQuery Plugin "shrinkimage"\n' +
+				'* Qoopido remux, an REM-driven approach to RWD\n' +
 				'*\n' +
 				'* Source:  <%= pkg.title || pkg.name %>\n' +
 				'* Version: <%= pkg.version %>\n' +
@@ -65,6 +65,20 @@ module.exports = function (grunt) {
 				'* Includes q.js by Kris Kowal which can be found under\n' +
 				'* https://github.com/kriskowal/q\n' +
 				'* and comes its own license\n' +
+				'*/',
+			remux:'/*!\n' +
+				'* Qoopido remux, an REM-driven approach to RWD\n' +
+				'*\n' +
+				'* Source:  <%= pkg.title || pkg.name %>\n' +
+				'* Version: <%= pkg.version %>\n' +
+				'* Date:    <%= grunt.template.today("yyyy-mm-dd") %>\n' +
+				'* Author:  <%= pkg.author.name %> <<%= pkg.author.email %>>\n' +
+				'* Website: <%= pkg.homepage %>\n' +
+				'*\n' +
+				'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
+				'*\n' +
+				'* Licensed under the <%= _.pluck(pkg.licenses, "type").join(" and ") %> license.\n' +
+				'*  - <%= _.pluck(pkg.licenses, "url").join("\n*  - ") %>\n' +
 				'*/'
 		},
 		concat:{
@@ -101,6 +115,15 @@ module.exports = function (grunt) {
 					'<file_strip_banner:src/jquery/plugins/shrinkimage.js>'
 				],
 				dest:'packages/qoopido.shrinkimage.js'
+			},
+			remux:{
+				src:[
+					'<banner:meta.remux>',
+					'<file_strip_banner:src/base.js>',
+					'<file_strip_banner:src/support.js>',
+					'<file_strip_banner:src/remux.js>'
+				],
+				dest:'packages/qoopido.remux.js'
 			}
 		},
 		min:{
@@ -115,6 +138,10 @@ module.exports = function (grunt) {
 			shrinkimage:{
 				src:['<config:concat.shrinkimage.dest>'],
 				dest:'packages/qoopido.shrinkimage.min.js'
+			},
+			remux:{
+				src:['<config:concat.remux.dest>'],
+				dest:'packages/qoopido.remux.min.js'
 			}
 		},
 		qmin: {
@@ -167,6 +194,17 @@ module.exports = function (grunt) {
 				},
 				files:{
 					'packages/qoopido.shrinkimage.zip': ['packages/qoopido.shrinkimage*.js', 'assets/shrinkimage/*', 'assets/shrinkimage/.htaccess']
+				}
+			},
+			remux:{
+				options:{
+					mode:'zip',
+					basePath:'',
+					level:1,
+					flatten:true
+				},
+				files:{
+					'packages/qoopido.remux.zip': ['packages/qoopido.remux*.js']
 				}
 			}
 		},

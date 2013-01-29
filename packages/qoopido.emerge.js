@@ -3,7 +3,7 @@
 *
 * Source:  Qoopido JS
 * Version: 1.1.4
-* Date:    2013-01-28
+* Date:    2013-01-29
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
