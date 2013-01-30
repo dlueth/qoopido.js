@@ -31,7 +31,7 @@
 }(function(mBase, mSupport, window, document, undefined) {
 	'use strict';
 
-	var width, candidate, type, event, detectZoom,
+	var timeout, candidate, layout, zoomed, type, event, detectZoom,
 		html    = document.getElementsByTagName('html')[0],
 		element = document.documentElement,
 		layouts = { },
@@ -42,8 +42,7 @@
 			size: {
 				base:    null,
 				current: null,
-				zoomed:  null,
-				last:    null
+				zoomed:  null
 			},
 			ratio: {
 				device: window.devicePixelRatio || 1,
@@ -127,7 +126,16 @@
 
 	return mBase.extend({
 		_constructor: function _constructor() {
-			var self = this;
+			var self        = this,
+				timedUpdate = function _updateState() {
+					if(timeout !== null) {
+						window.clearTimeout(timeout);
+					}
+
+					timeout = window.setTimeout(function() {
+						self.updateState();
+					}, 20);
+				};
 
 			if(!isNaN(screen.logicalXDPI) && !isNaN(screen.systemXDPI)) {
 				// IE8+
@@ -146,8 +154,8 @@
 				};
 			}
 
-			window.addEventListener('resize', self.updateState, false);
-			window.addEventListener('orientationchange', self.updateState, false);
+			window.addEventListener('resize', timedUpdate, false);
+			window.addEventListener('orientationchange', timedUpdate, false);
 
 			self.updateState();
 		},
@@ -160,34 +168,38 @@
 			return state;
 		},
 		updateState: function updateState() {
-			var layout, i;
+			var i;
 
 			state.ratio.device = window.devicePixelRatio || 1;
 			state.ratio.zoom   = detectZoom() || 1;
 			state.width        = element.offsetWidth * state.ratio.zoom;
 
-			for(layout in layouts) {
-				if(layouts[layout].breakpoint && state.width >= layouts[layout].breakpoint) {
-					candidate = layout;
+			for(i in layouts) {
+				candidate = layouts[i];
+
+				if(candidate.breakpoint && state.width >= candidate.breakpoint) {
+					layout = i;
 				}
 			}
 
-			if(candidate !== state.layout) {
-				state.layout    = candidate;
-				state.size.base = layouts[candidate].base;
+			if(layout !== state.layout) {
+				state.layout    = layout;
+				state.size.base = candidate.base;
 
-				document.getElementsByTagName('html')[0].setAttribute('data-layout', candidate);
+				html.setAttribute('data-layout', layout);
 				events.push('layoutchange');
 			}
 
-			state.size.current = Math.max(layouts[state.layout].min, Math.min(layouts[state.layout].max, Math.floor(state.size.base * (state.width / layouts[state.layout].width))));
-			state.size.zoomed  = Math.round(state.ratio.zoom * (state.size.current / state.size.base) * state.size.base);
+			layout = layouts[layout];
 
-			if(state.size.zoomed !== state.size.last) {
-				html.style.fontSize = state.size.zoomed + 'px';
+			state.size.current = Math.max(layout.min, Math.min(layout.max, Math.floor(layout.base * (state.width / layout.width))));
+			zoomed             = Math.round(state.ratio.zoom * (state.size.current / layout.base) * layout.base);
 
-				state.size.last   = state.size.zoomed;
-				state.ratio.size  = state.size.current / state.size.base;
+			if(zoomed !== state.size.zoomed) {
+				html.style.fontSize = zoomed + 'px';
+
+				state.size.zoomed = zoomed;
+				state.ratio.size  = state.size.current / layout.base;
 				state.ratio.total = state.ratio.size * state.ratio.device;
 				state.ratio.image = Math.round(Math.ceil(state.ratio.total / 0.25) * 25) / 100;
 
