@@ -66,12 +66,18 @@
 		temp.element.setAttribute('style', 'font: 100px/1em sans-serif !important; -webkit-text-size-adjust: none !important; height: auto !important; width: 1em !important; padding: 0 !important; overflow: visible !important;');
 		temp.container.setAttribute('style', 'width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; position: absolute; !important');
 		temp.container.appendChild(temp.element);
-
-		document.body.appendChild(temp.container);
 	}
 
 	function _getZoomByTextsize() {
-		return Math.round((1000 / temp.element.clientHeight) * 100) / 100;
+		var zoom;
+
+		document.body.appendChild(temp.container);
+
+		zoom = Math.round((1000 / temp.element.clientHeight) * 100) / 100;
+
+		document.body.removeChild(temp.container);
+
+		return zoom;
 	}
 
 	function _setupZoomByMatchmedia() {
