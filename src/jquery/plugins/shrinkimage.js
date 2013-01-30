@@ -39,7 +39,6 @@
 	var // properties
 		name        = 'shrinkimage',
 		defaults    = { attribute: 'data-' + name, quality: 80, debug: false },
-		process     = false,
 		lookup      = {},
 		hostname    = window.location.hostname,
 		expressions = {
@@ -62,11 +61,6 @@
 	// listener
 		LISTENER_LOAD   = 'load';
 
-	mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
-		.then(function() {
-			process = true;
-		});
-
 	mJquery.fn[name] = function(settings) {
 		settings = mJquery.extend({}, defaults, settings || {});
 
@@ -76,19 +70,31 @@
 				background = self.css('background-image');
 
 			if(this.tagName === 'IMG') {
-				if(process === true && settings.debug === false) {
-					shrinkimage.create(settings, self, source);
-				} else {
-					self.attr('src', source).removeAttr(settings.attribute);
-				}
+				mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
+					.then(function() {
+						if(settings.debug === false) {
+							shrinkimage.create(settings, self, source);
+						} else {
+							self.attr('src', source).removeAttr(settings.attribute);
+						}
+					})
+					.fail(function() {
+						self.attr('src', source).removeAttr(settings.attribute);
+					});
 			}
 
 			if(background !== 'none' && expressions.test.test(background) === true) {
-				if(process === true && settings.debug === false) {
-					shrinkimage.create(settings, self, background, true);
-				} else {
-					self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
-				}
+				mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
+					.then(function() {
+						if(settings.debug === false) {
+							shrinkimage.create(settings, self, background, true);
+						} else {
+							self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
+						}
+					})
+					.fail(function() {
+						self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
+					});
 			}
 		});
 	};

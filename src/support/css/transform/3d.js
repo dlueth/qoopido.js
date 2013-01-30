@@ -19,7 +19,7 @@
 }(function(mSupport, mSupportCssTransform, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/transform/3d', function(deferred) {
+	return mSupport.addTest('/css/transform/3d', function(deferred) {
 		mSupportCssTransform()
 			.then(function() {
 				var element = mSupport.getElement('div', true);
@@ -32,6 +32,4 @@
 				deferred.reject();
 			});
 	});
-
-	return mSupport.test['/css/transform/3d'];
 }, window, document));

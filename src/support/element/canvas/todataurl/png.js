@@ -19,7 +19,7 @@
 }(function(mSupport, mSupportElementCanvasTodataurl, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas/todataurl/png', function(deferred) {
+	return mSupport.addTest('/element/canvas/todataurl/png', function(deferred) {
 		mSupportElementCanvasTodataurl()
 			.then(function() {
 				(mSupport.getElement('canvas').toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
@@ -28,6 +28,4 @@
 				deferred.reject();
 			});
 	});
-
-	return mSupport.test['/element/canvas/todataurl/png'];
 }, window, document));

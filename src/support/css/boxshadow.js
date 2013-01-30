@@ -19,9 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/boxshadow', function(deferred) {
+	return mSupport.addTest('/css/boxshadow', function(deferred) {
 		(mSupport.supportsProperty('box-shadow')) ? deferred.resolve(mSupport.getProperty('box-shadow')) : deferred.reject();
 	});
-
-	return mSupport.test['/css/boxshadow'];
 }, window, document));

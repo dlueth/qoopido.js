@@ -19,19 +19,17 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/capability/datauri', function(deferred) {
+	return mSupport.addTest('/capability/datauri', function(deferred) {
 		var element = mSupport.getElement('image');
 
-		element.onerror = function onerror() {
+		element.onerror = function() {
 			deferred.reject();
 		};
 
-		element.onload = function onload() {
+		element.onload = function() {
 			(element.width === 1 && element.height === 1) ? deferred.resolve() : deferred.reject();
 		};
 
 		element.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 	});
-
-	return mSupport.test['/capability/datauri'];
 }, window, document));

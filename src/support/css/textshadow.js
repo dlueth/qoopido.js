@@ -19,9 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/textshadow', function(deferred) {
+	return mSupport.addTest('/css/textshadow', function(deferred) {
 		(mSupport.supportsProperty('text-shadow')) ? deferred.resolve(mSupport.getProperty('text-shadow')) : deferred.reject();
 	});
-
-	return mSupport.test['/css/textshadow'];
 }, window, document));

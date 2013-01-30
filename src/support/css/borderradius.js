@@ -19,9 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/borderradius', function(deferred) {
+	return mSupport.addTest('/css/borderradius', function(deferred) {
 		(mSupport.supportsProperty('border-radius')) ? deferred.resolve(mSupport.getProperty('border-radius')) : deferred.reject();
 	});
-
-	return mSupport.test['/css/borderradius'];
 }, window, document));

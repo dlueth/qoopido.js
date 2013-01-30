@@ -2,7 +2,7 @@
 * Qoopido remux, an REM-driven approach to RWD
 *
 * Source:  Qoopido JS
-* Version: 1.1.4
+* Version: 1.1.5
 * Date:    2013-01-30
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
@@ -256,7 +256,7 @@ else return a};var X=L()});
 				return mQ.all(tests);
 			},
 			getElement: function getElement(pType, pClone) {
-				var element = lookup.element[pType] = lookup.element[pType] || document.createElement(pType);
+				var element = lookup.element[pType] = lookup.element[pType] || (pType !== 'image') ? document.createElement(pType) : new Image();
 
 				pClone = !!(pClone);
 
@@ -448,21 +448,19 @@ else return a};var X=L()});
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/capability/datauri', function(deferred) {
+	return mSupport.addTest('/capability/datauri', function(deferred) {
 		var element = mSupport.getElement('image');
 
-		element.onerror = function onerror() {
+		element.onerror = function() {
 			deferred.reject();
 		};
 
-		element.onload = function onload() {
+		element.onload = function() {
 			(element.width === 1 && element.height === 1) ? deferred.resolve() : deferred.reject();
 		};
 
 		element.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 	});
-
-	return mSupport.test['/capability/datauri'];
 }, window, document));
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -485,13 +483,11 @@ else return a};var X=L()});
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas', function(deferred) {
+	return mSupport.addTest('/element/canvas', function(deferred) {
 		var element = mSupport.getElement('canvas');
 
 		(element.getContext && element.getContext('2d')) ? deferred.resolve() : deferred.reject();
 	});
-
-	return mSupport.test['/element/canvas'];
 }, window, document));
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -514,7 +510,7 @@ else return a};var X=L()});
 }(function(mSupport, mSupportElementCanvas, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas/todataurl', function(deferred) {
+	return mSupport.addTest('/element/canvas/todataurl', function(deferred) {
 		mSupportElementCanvas()
 			.then(function() {
 				(mSupport.getElement('canvas').toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
@@ -523,8 +519,6 @@ else return a};var X=L()});
 				deferred.reject();
 			});
 	});
-
-	return mSupport.test['/element/canvas/todataurl'];
 }, window, document));
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -547,7 +541,7 @@ else return a};var X=L()});
 }(function(mSupport, mSupportElementCanvasTodataurl, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas/todataurl/png', function(deferred) {
+	return mSupport.addTest('/element/canvas/todataurl/png', function(deferred) {
 		mSupportElementCanvasTodataurl()
 			.then(function() {
 				(mSupport.getElement('canvas').toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
@@ -556,8 +550,6 @@ else return a};var X=L()});
 				deferred.reject();
 			});
 	});
-
-	return mSupport.test['/element/canvas/todataurl/png'];
 }, window, document));
 ;(function(definition, window, document, undefined) {
 	'use strict';
@@ -583,7 +575,6 @@ else return a};var X=L()});
 	var // properties
 		name        = 'shrinkimage',
 		defaults    = { attribute: 'data-' + name, quality: 80, debug: false },
-		process     = false,
 		lookup      = {},
 		hostname    = window.location.hostname,
 		expressions = {
@@ -606,11 +597,6 @@ else return a};var X=L()});
 	// listener
 		LISTENER_LOAD   = 'load';
 
-	mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
-		.then(function() {
-			process = true;
-		});
-
 	mJquery.fn[name] = function(settings) {
 		settings = mJquery.extend({}, defaults, settings || {});
 
@@ -620,19 +606,31 @@ else return a};var X=L()});
 				background = self.css('background-image');
 
 			if(this.tagName === 'IMG') {
-				if(process === true && settings.debug === false) {
-					shrinkimage.create(settings, self, source);
-				} else {
-					self.attr('src', source).removeAttr(settings.attribute);
-				}
+				mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
+					.then(function() {
+						if(settings.debug === false) {
+							shrinkimage.create(settings, self, source);
+						} else {
+							self.attr('src', source).removeAttr(settings.attribute);
+						}
+					})
+					.fail(function() {
+						self.attr('src', source).removeAttr(settings.attribute);
+					});
 			}
 
 			if(background !== 'none' && expressions.test.test(background) === true) {
-				if(process === true && settings.debug === false) {
-					shrinkimage.create(settings, self, background, true);
-				} else {
-					self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
-				}
+				mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
+					.then(function() {
+						if(settings.debug === false) {
+							shrinkimage.create(settings, self, background, true);
+						} else {
+							self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
+						}
+					})
+					.fail(function() {
+						self.css('background-image', 'url(' + expressions.path.exec(background)[1] + ')');
+					});
 			}
 		});
 	};

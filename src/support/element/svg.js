@@ -19,9 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/svg', function(deferred) {
+	return mSupport.addTest('/element/svg', function(deferred) {
 		(document.createElementNS && document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect) ? deferred.resolve() : deferred.reject();
 	});
-
-	return mSupport.test['/element/svg'];
 }, window, document));

@@ -2,7 +2,7 @@
 * Qoopido remux, an REM-driven approach to RWD
 *
 * Source:  Qoopido JS
-* Version: 1.1.4
+* Version: 1.1.5
 * Date:    2013-01-30
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
@@ -166,7 +166,7 @@
 				return mQ.all(tests);
 			},
 			getElement: function getElement(pType, pClone) {
-				var element = lookup.element[pType] = lookup.element[pType] || document.createElement(pType);
+				var element = lookup.element[pType] = lookup.element[pType] || (pType !== 'image') ? document.createElement(pType) : new Image();
 
 				pClone = !!(pClone);
 

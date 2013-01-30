@@ -19,7 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/rgba', function(deferred) {
+	return mSupport.addTest('/css/rgba', function(deferred) {
 		var element = mSupport.getElement('div');
 
 		try {
@@ -28,6 +28,4 @@
 
 		((/rgba/).test(element.style.backgroundColor)) ? deferred.resolve() : deferred.reject();
 	});
-
-	return mSupport.test['/css/rgba'];
 }, window, document));

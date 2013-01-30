@@ -19,7 +19,7 @@
 }(function(mSupport, mSupportElementCanvasTodataurl, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas/todataurl/webp', function(deferred) {
+	return mSupport.addTest('/element/canvas/todataurl/webp', function(deferred) {
 		mSupportElementCanvasTodataurl()
 			.then(function() {
 				(mSupport.getElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') === 0) ? deferred.resolve() : deferred.reject();
@@ -28,6 +28,4 @@
 				deferred.reject();
 			});
 	});
-
-	return mSupport.test['/element/canvas/todataurl/webp'];
 }, window, document));

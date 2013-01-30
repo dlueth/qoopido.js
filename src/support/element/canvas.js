@@ -19,11 +19,9 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas', function(deferred) {
+	return mSupport.addTest('/element/canvas', function(deferred) {
 		var element = mSupport.getElement('canvas');
 
 		(element.getContext && element.getContext('2d')) ? deferred.resolve() : deferred.reject();
 	});
-
-	return mSupport.test['/element/canvas'];
 }, window, document));

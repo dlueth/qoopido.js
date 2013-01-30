@@ -19,9 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/transform', function(deferred) {
+	return mSupport.addTest('/css/transform', function(deferred) {
 		(mSupport.supportsProperty('transform')) ? deferred.resolve(mSupport.getProperty('transform')) : deferred.reject();
 	});
-
-	return mSupport.test['/css/transform'];
 }, window, document));

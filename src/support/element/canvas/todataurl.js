@@ -19,7 +19,7 @@
 }(function(mSupport, mSupportElementCanvas, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/element/canvas/todataurl', function(deferred) {
+	return mSupport.addTest('/element/canvas/todataurl', function(deferred) {
 		mSupportElementCanvas()
 			.then(function() {
 				(mSupport.getElement('canvas').toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
@@ -28,6 +28,4 @@
 				deferred.reject();
 			});
 	});
-
-	return mSupport.test['/element/canvas/todataurl'];
 }, window, document));

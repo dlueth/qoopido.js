@@ -19,7 +19,7 @@
 }(function(mSupport, window, document, undefined) {
 	'use strict';
 
-	mSupport.addTest('/css/rem', function(deferred) {
+	return mSupport.addTest('/css/rem', function(deferred) {
 		var element = mSupport.getElement('div');
 
 		try {
@@ -29,6 +29,4 @@
 
 		((/rem/).test(element.style.fontSize)) ? deferred.resolve() : deferred.reject();
 	});
-
-	return mSupport.test['/css/rem'];
 }, window, document));

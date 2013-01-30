@@ -71,7 +71,7 @@
 				return mQ.all(tests);
 			},
 			getElement: function getElement(pType, pClone) {
-				var element = lookup.element[pType] = lookup.element[pType] || document.createElement(pType);
+				var element = lookup.element[pType] = lookup.element[pType] || (pType !== 'image') ? document.createElement(pType) : new Image();
 
 				pClone = !!(pClone);
 
