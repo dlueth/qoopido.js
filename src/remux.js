@@ -46,6 +46,7 @@
 			},
 			ratio: {
 				device: window.devicePixelRatio || 1,
+				zoom:   null,
 				size:   null,
 				total:  null,
 				image:  null

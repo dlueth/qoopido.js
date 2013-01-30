@@ -373,6 +373,7 @@
 			},
 			ratio: {
 				device: window.devicePixelRatio || 1,
+				zoom:   null,
 				size:   null,
 				total:  null,
 				image:  null
@@ -496,7 +497,7 @@
 		},
 		updateState: function updateState() {
 			var i;
-			
+
 			state.ratio.device = window.devicePixelRatio || 1;
 			state.ratio.zoom   = detectZoom() || 1;
 			state.width        = element.offsetWidth * state.ratio.zoom;
