@@ -3,7 +3,7 @@
 *
 * Source:  Qoopido JS
 * Version: 1.1.6
-* Date:    2013-01-31
+* Date:    2013-02-01
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
@@ -106,6 +106,8 @@ else return a};var X=L()});
 			if(instance._constructor) {
 				instance._constructor.apply(instance, arguments);
 			}
+
+			instance.create = instance.extend = undefined;
 
 			return instance;
 		},

@@ -3,7 +3,7 @@
 *
 * Source:  Qoopido JS
 * Version: 1.1.6
-* Date:    2013-01-31
+* Date:    2013-02-01
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/Qoopido-JS
 *
@@ -82,6 +82,8 @@
 			if(instance._constructor) {
 				instance._constructor.apply(instance, arguments);
 			}
+
+			instance.create = instance.extend = undefined;
 
 			return instance;
 		},
@@ -355,18 +357,19 @@
 
 			window[namespace] = window[namespace] || { };
 
-			return (window[namespace][name] = definition.apply(null, arguments));
+			// .create() makes this a singleton effectively
+			return (window[namespace][name] = definition.apply(null, arguments).create());
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base', './support' ], initialize);
+		define([ './emitter', './support' ], initialize);
 	} else {
-		initialize(window[namespace].base, window[namespace].support);
+		initialize(window[namespace].emitter, window[namespace].support);
 	}
-}(function(mBase, mSupport, window, document, undefined) {
+}(function(mEmitter, mSupport, window, document, undefined) {
 	'use strict';
 
-	var timeout, candidate, layout, zoomed, type, event, detectZoom,
+	var timeout, candidate, zoomed, type, event, detectZoom,
 		html    = document.getElementsByTagName('html')[0],
 		element = document.documentElement,
 		layouts = { },
@@ -394,6 +397,7 @@
 	}
 
 	function _setupZoomByTextsize() {
+		temp.body      = document.body;
 		temp.element   = document.createElement('div');
 		temp.container = document.createElement('div');
 
@@ -406,21 +410,23 @@
 	function _getZoomByTextsize() {
 		var zoom;
 
-		document.body.appendChild(temp.container);
+		if(temp.body) {
+			temp.body.appendChild(temp.container);
 
-		zoom = Math.round((1000 / temp.element.clientHeight) * 100) / 100;
+			zoom = Math.round((1000 / temp.element.clientHeight) * 100) / 100;
 
-		document.body.removeChild(temp.container);
+			temp.body.removeChild(temp.container);
+		}
 
 		return zoom;
 	}
 
 	function _setupZoomByMatchmedia() {
-		temp.method   = function() {
+		temp.method = function() {
 			return window[mSupport.getMethod('matchMedia')].apply(window, arguments);
 		};
 
-		switch(mSupport.getPrefix().property) {
+		switch(mSupport.getPrefix().properties[0]) {
 			case 'webkit':
 				temp.property = '-webkit-min-device-pixel-ratio';
 				break;
@@ -460,7 +466,7 @@
 		return result;
 	}
 
-	return mBase.extend({
+	return mEmitter.extend({
 		_constructor: function _constructor() {
 			var self        = this,
 				timedUpdate = function _updateState() {
@@ -473,10 +479,12 @@
 					}, 20);
 				};
 
+			self._parent._constructor.call(self);
+
 			if(!isNaN(screen.logicalXDPI) && !isNaN(screen.systemXDPI)) {
 				// IE8+
 				detectZoom = _getZoomByLogicaldpi;
-			} else if(mSupport.supportsProperty('textSizeAdjust') !== false) {
+			} else if(mSupport.supportsProperty('webkitTextSizeAdjust') !== false) {
 				// Webkit
 				_setupZoomByTextsize();
 				detectZoom = _getZoomByTextsize;
@@ -496,15 +504,29 @@
 			self.updateState();
 		},
 		addLayout: function addLayout(pId, pLayout) {
-			layouts[pId] = pLayout;
+			var self = this;
 
-			return this;
+			if(arguments.length === 1) {
+				var id;
+
+				for(id in arguments[0]) {
+					layouts[id] = arguments[0][id];
+				}
+			} else {
+				layouts[arguments[0]] = arguments[1];
+			}
+
+			self.updateState();
+
+			return self;
 		},
 		getState: function getState() {
 			return state;
 		},
 		updateState: function updateState() {
-			var i;
+			var self   = this,
+				layout = null,
+				i;
 
 			state.ratio.device = window.devicePixelRatio || 1;
 			state.ratio.zoom   = detectZoom() || 1;
@@ -516,6 +538,10 @@
 				if(candidate.breakpoint && state.width >= candidate.breakpoint) {
 					layout = i;
 				}
+			}
+
+			if(layout === null) {
+				return self;
 			}
 
 			if(layout !== state.layout) {
@@ -543,16 +569,12 @@
 			}
 
 			for(i = 0; (type = events[i]) !== undefined; i++) {
-				event = document.createEvent('HTMLEvents');
-				event.initEvent(type, true, true);
-				event.state = state;
-
-				window.dispatchEvent(event);
+				self.emit(type, state);
 			}
 
 			events.length = 0;
 
-			return this;
+			return self;
 		}
 	});
 }, window, document));

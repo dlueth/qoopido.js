@@ -84,6 +84,8 @@
 				instance._constructor.apply(instance, arguments);
 			}
 
+			instance.create = instance.extend = undefined;
+
 			return instance;
 		},
 		extend: function extend(properties) {
