@@ -120,6 +120,7 @@ module.exports = function (grunt) {
 				src:[
 					'<banner:meta.remux>',
 					'<file_strip_banner:src/base.js>',
+					'<file_strip_banner:src/emitter.js>',
 					'<file_strip_banner:src/support.js>',
 					'<file_strip_banner:src/remux.js>'
 				],
