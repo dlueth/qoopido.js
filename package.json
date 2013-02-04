@@ -2,18 +2,18 @@
   "name": "qoopido.js",
   "title": "Qoopido JS",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
-  "version": "1.1.7",
-  "homepage": "https://github.com/dlueth/Qoopido-JS",
+  "version": "1.1.8",
+  "homepage": "https://github.com/dlueth/qoopido.js",
   "author": {
     "name": "Dirk Lüth",
     "email": "info@qoopido.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dlueth/Qoopido-JS.git"
+    "url": "git://github.com/dlueth/qoopido.js.git"
   },
   "bugs": {
-    "url": "https://github.com/dlueth/Qoopido-JS/issues"
+    "url": "https://github.com/dlueth/qoopido.js/issues"
   },
   "licenses": [
     {

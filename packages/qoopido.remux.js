@@ -2,10 +2,10 @@
 * Qoopido remux, an REM-driven approach to RWD
 *
 * Source:  Qoopido JS
-* Version: 1.1.7
-* Date:    2013-02-01
+* Version: 1.1.8
+* Date:    2013-02-04
 * Author:  Dirk Lüth <info@qoopido.com>
-* Website: https://github.com/dlueth/Qoopido-JS
+* Website: https://github.com/dlueth/qoopido.js
 *
 * Copyright (c) 2013 Dirk Lüth
 *

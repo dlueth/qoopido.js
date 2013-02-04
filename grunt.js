@@ -19,53 +19,6 @@ module.exports = function (grunt) {
 				'* Licensed under <%= _.pluck(pkg.licenses, "type").join(" and ") %> license.\n' +
 				'*  - <%= _.pluck(pkg.licenses, "url").join("\n*  - ") %>\n' +
 				'*/',
-			emerge:'/*!\n' +
-				'* Qoopido jQuery Plugin "emerge"\n' +
-				'*\n' +
-				'* Source:  <%= pkg.title || pkg.name %>\n' +
-				'* Version: <%= pkg.version %>\n' +
-				'* Date:    <%= grunt.template.today("yyyy-mm-dd") %>\n' +
-				'* Author:  <%= pkg.author.name %> <<%= pkg.author.email %>>\n' +
-				'* Website: <%= pkg.homepage %>\n' +
-				'*\n' +
-				'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
-				'*\n' +
-				'* Licensed under the <%= _.pluck(pkg.licenses, "type").join(" and ") %> license.\n' +
-				'*  - <%= _.pluck(pkg.licenses, "url").join("\n*  - ") %>\n' +
-				'*/',
-			lazyimage:'/*!\n' +
-				'* Qoopido jQuery Plugin "lazyimage"\n' +
-				'*\n' +
-				'* Source:  <%= pkg.title || pkg.name %>\n' +
-				'* Version: <%= pkg.version %>\n' +
-				'* Date:    <%= grunt.template.today("yyyy-mm-dd") %>\n' +
-				'* Author:  <%= pkg.author.name %> <<%= pkg.author.email %>>\n' +
-				'* Website: <%= pkg.homepage %>\n' +
-				'*\n' +
-				'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
-				'*\n' +
-				'* Licensed under the <%= _.pluck(pkg.licenses, "type").join(" and ") %> license.\n' +
-				'*  - <%= _.pluck(pkg.licenses, "url").join("\n*  - ") %>\n' +
-				'*/',
-			shrinkimage:'/*!\n' +
-				'* Qoopido remux, an REM-driven approach to RWD\n' +
-				'*\n' +
-				'* Source:  <%= pkg.title || pkg.name %>\n' +
-				'* Version: <%= pkg.version %>\n' +
-				'* Date:    <%= grunt.template.today("yyyy-mm-dd") %>\n' +
-				'* Author:  <%= pkg.author.name %> <<%= pkg.author.email %>>\n' +
-				'* Website: <%= pkg.homepage %>\n' +
-				'*\n' +
-				'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' +
-				'*\n' +
-				'* Licensed under the <%= _.pluck(pkg.licenses, "type").join(" and ") %> license.\n' +
-				'*  - <%= _.pluck(pkg.licenses, "url").join("\n*  - ") %>\n' +
-				'*\n' +
-				'* Important note:\n' +
-				'* Includes q.js by Kris Kowal which can be found under\n' +
-				'* https://github.com/kriskowal/q\n' +
-				'* and comes its own license\n' +
-				'*/',
 			remux:'/*!\n' +
 				'* Qoopido remux, an REM-driven approach to RWD\n' +
 				'*\n' +
@@ -82,40 +35,6 @@ module.exports = function (grunt) {
 				'*/'
 		},
 		concat:{
-			emerge:{
-				src:[
-					'<banner:meta.emerge>',
-					'<file_strip_banner:src/base.js>',
-					'<file_strip_banner:src/unique.js>',
-					'<file_strip_banner:src/jquery/plugins/emerge.js>'
-				],
-				dest:'packages/qoopido.emerge.js'
-			},
-			lazyimage:{
-				src:[
-					'<banner:meta.lazyimage>',
-					'<file_strip_banner:src/base.js>',
-					'<file_strip_banner:src/unique.js>',
-					'<file_strip_banner:src/jquery/plugins/emerge.js>',
-					'<file_strip_banner:src/jquery/plugins/lazyimage.js>'
-				],
-				dest:'packages/qoopido.lazyimage.js'
-			},
-			shrinkimage:{
-				src:[
-					'<banner:meta.shrinkimage>',
-					'<file_strip_banner:assets/q/q.min.js>',
-					'<file_strip_banner:src/base.js>',
-					'<file_strip_banner:src/unique.js>',
-					'<file_strip_banner:src/support.js>',
-					'<file_strip_banner:src/support/capability/datauri.js>',
-					'<file_strip_banner:src/support/element/canvas.js>',
-					'<file_strip_banner:src/support/element/canvas/todataurl.js>',
-					'<file_strip_banner:src/support/element/canvas/todataurl/png.js>',
-					'<file_strip_banner:src/jquery/plugins/shrinkimage.js>'
-				],
-				dest:'packages/qoopido.shrinkimage.js'
-			},
 			remux:{
 				src:[
 					'<banner:meta.remux>',
@@ -128,18 +47,6 @@ module.exports = function (grunt) {
 			}
 		},
 		min:{
-			emerge:{
-				src:['<config:concat.emerge.dest>'],
-				dest:'packages/qoopido.emerge.min.js'
-			},
-			lazyimage:{
-				src:['<config:concat.lazyimage.dest>'],
-				dest:'packages/qoopido.lazyimage.min.js'
-			},
-			shrinkimage:{
-				src:['<config:concat.shrinkimage.dest>'],
-				dest:'packages/qoopido.shrinkimage.min.js'
-			},
 			remux:{
 				src:['<config:concat.remux.dest>'],
 				dest:'packages/qoopido.remux.min.js'
@@ -164,39 +71,6 @@ module.exports = function (grunt) {
 			]
 		},
 		compress:{
-			emerge:{
-				options:{
-					mode:'zip',
-					basePath:'',
-					level:1,
-					flatten:true
-				},
-				files:{
-					'packages/qoopido.emerge.zip': ['packages/qoopido.emerge*.js']
-				}
-			},
-			lazyimage:{
-				options:{
-					mode:'zip',
-					basePath:'',
-					level:1,
-					flatten:true
-				},
-				files:{
-					'packages/qoopido.lazyimage.zip': ['packages/qoopido.lazyimage*.js']
-				}
-			},
-			shrinkimage:{
-				options:{
-					mode:'zip',
-					basePath:'',
-					level:1,
-					flatten:true
-				},
-				files:{
-					'packages/qoopido.shrinkimage.zip': ['packages/qoopido.shrinkimage*.js', 'assets/shrinkimage/*', 'assets/shrinkimage/.htaccess']
-				}
-			},
 			remux:{
 				options:{
 					mode:'zip',
