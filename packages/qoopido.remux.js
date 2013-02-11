@@ -2,8 +2,8 @@
 * Qoopido remux, an REM-driven approach to RWD
 *
 * Source:  Qoopido JS
-* Version: 1.1.8
-* Date:    2013-02-04
+* Version: 1.1.9
+* Date:    2013-02-11
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/qoopido.js
 *
@@ -485,7 +485,7 @@
 }(function(mEmitter, mSupport, window, document, undefined) {
 	'use strict';
 
-	var timeout, candidate, zoomed, type, event, detectZoom,
+	var timeout, candidate, zoomed, type, detectZoom,
 		html    = document.getElementsByTagName('html')[0],
 		element = document.documentElement,
 		layouts = { },
@@ -506,27 +506,34 @@
 				image:  null
 			}
 		},
-		temp = { };
+		temp = false;
 
 	function _getZoomByLogicaldpi() {
 		return Math.round((screen.deviceXDPI / screen.logicalXDPI) * 100);
 	}
 
 	function _setupZoomByTextsize() {
-		temp.body      = document.body;
-		temp.element   = document.createElement('div');
-		temp.container = document.createElement('div');
+		if(document.body) {
+			temp           = {};
+			temp.body      = document.body;
+			temp.element   = document.createElement('div');
+			temp.container = document.createElement('div');
 
-		temp.element.innerHTML = '1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>0';
-		temp.element.setAttribute('style', 'font: 100px/1em sans-serif !important; -webkit-text-size-adjust: none !important; height: auto !important; width: 1em !important; padding: 0 !important; overflow: visible !important;');
-		temp.container.setAttribute('style', 'width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; position: absolute; !important');
-		temp.container.appendChild(temp.element);
+			temp.element.innerHTML = '1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>0';
+			temp.element.setAttribute('style', 'font: 100px/1em sans-serif !important; -webkit-text-size-adjust: none !important; height: auto !important; width: 1em !important; padding: 0 !important; overflow: visible !important;');
+			temp.container.setAttribute('style', 'width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; position: absolute; !important');
+			temp.container.appendChild(temp.element);
+
+			detectZoom = _getZoomByTextsize;
+
+			return detectZoom();
+		}
 	}
 
 	function _getZoomByTextsize() {
 		var zoom;
 
-		if(temp.body) {
+		if(temp !== false) {
 			temp.body.appendChild(temp.container);
 
 			zoom = Math.round((1000 / temp.element.clientHeight) * 100) / 100;
@@ -538,6 +545,7 @@
 	}
 
 	function _setupZoomByMatchmedia() {
+		temp        = {};
 		temp.method = function() {
 			return window[mSupport.getMethod('matchMedia')].apply(window, arguments);
 		};
@@ -553,20 +561,26 @@
 				temp.property = 'min--moz-device-pixel-ratio';
 				break;
 		}
+
+		detectZoom = _getZoomByMatchmedia;
+
+		return detectZoom();
 	}
 
 	function _processZoomByMatchmedia(a, b, iterations, epsilon) {
-		var mid   = (a + b) / 2,
-			query = '(' + temp.property + ':' + mid + ')';
+		if(temp !== false) {
+			var mid   = (a + b) / 2,
+				query = '(' + temp.property + ':' + mid + ')';
 
-		if(iterations <= 0 || b - a < epsilon) {
-			return mid;
-		}
+			if(iterations <= 0 || b - a < epsilon) {
+				return mid;
+			}
 
-		if(temp.method(query).matches) {
-			return _processZoomByMatchmedia(mid, b, iterations - 1, epsilon);
-		} else {
-			return _processZoomByMatchmedia(a, mid, iterations - 1, epsilon);
+			if(temp.method(query).matches) {
+				return _processZoomByMatchmedia(mid, b, iterations - 1, epsilon);
+			} else {
+				return _processZoomByMatchmedia(a, mid, iterations - 1, epsilon);
+			}
 		}
 	}
 
@@ -602,12 +616,10 @@
 				detectZoom = _getZoomByLogicaldpi;
 			} else if(mSupport.supportsProperty('webkitTextSizeAdjust') !== false) {
 				// Webkit
-				_setupZoomByTextsize();
-				detectZoom = _getZoomByTextsize;
+				detectZoom = _setupZoomByTextsize;
 			} else if(mSupport.supportsMethod('matchMedia') !== false) {
 				// Firefox 4+ / IE10(?)
-				_setupZoomByMatchmedia();
-				detectZoom = _getZoomByMatchmedia;
+				detectZoom = _setupZoomByMatchmedia;
 			} else {
 				detectZoom = function() {
 					return 1;
