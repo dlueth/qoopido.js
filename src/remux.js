@@ -84,7 +84,6 @@
 				state.ratio.device   = (window.devicePixelRatio || 1);
 				state.ratio.fontsize = state.fontsize / base;
 				state.ratio.total    = state.ratio.device * state.ratio.fontsize;
-				state.ratio.rounded  = (Math.ceil(state.ratio.total / 0.25) * 25) / 100;
 
 				self.emit('statechange', state);
 			}

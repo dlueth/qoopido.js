@@ -3,7 +3,7 @@
 *
 * Source:  Qoopido JS
 * Version: 2.0.0
-* Date:    2013-02-14
+* Date:    2013-02-20
 * Author:  Dirk Lüth <info@qoopido.com>
 * Website: https://github.com/dlueth/qoopido.js
 *
@@ -298,7 +298,6 @@
 				state.ratio.device   = (window.devicePixelRatio || 1);
 				state.ratio.fontsize = state.fontsize / base;
 				state.ratio.total    = state.ratio.device * state.ratio.fontsize;
-				state.ratio.rounded  = (Math.ceil(state.ratio.total / 0.25) * 25) / 100;
 
 				self.emit('statechange', state);
 			}
