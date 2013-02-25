@@ -3,12 +3,17 @@ qoopido.js
 
 Collection of classes, functions and extensions for Javascript and jQuery.
 
+
+Attention
+---------------------------
+REMux, my REM and JS based approach to responsive web design featured on CSS-Tricks, and everything related was moved to it's [own repository](https://github.com/dlueth/qoopido.remux) by popular demand.
+
+
 Currently contains
 ---------------------------
 - Base (object inheritance)
 - Emitter (extendable event emitter)
 - Pager (data/animation independent pager)
-- Remux (REM based responsive website concept)
 - Unique (random UUID and string generator)
 - Worker (flexible web worker implementation)
 - Support (deferred/promise based modular feature detection) <sup>[1](#dependencies)</sup>

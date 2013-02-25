@@ -14,14 +14,15 @@
 	'use strict';
 
 	var namespace  = 'qoopido',
-		name       = 'jquery/functions/prefetch',
-		initialize = function initialize() {
-			[].push.apply(arguments, [ window, document, undefined ]);
+		name       = 'jquery/functions/prefetch';
 
-			window[namespace] = window[namespace] || { };
+	function initialize() {
+		[].push.apply(arguments, [ window, document, undefined ]);
 
-			return (window[namespace][name] = definition.apply(null, arguments));
-		};
+		window[namespace] = window[namespace] || { };
+
+		return (window[namespace][name] = definition.apply(null, arguments));
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ 'jquery' ], initialize);

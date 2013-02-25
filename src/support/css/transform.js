@@ -1,15 +1,16 @@
 ;(function(definition, window, document, undefined) {
 	'use strict';
 
-	var namespace  = 'qoopido',
-		name       = 'support/css/transform',
-		initialize = function initialize() {
-			[].push.apply(arguments, [ window, document, undefined ]);
+	var namespace = 'qoopido',
+		name      = 'support/css/transform';
 
-			window[namespace] = window[namespace] || { };
+	function initialize() {
+		[].push.apply(arguments, [ window, document, undefined ]);
 
-			return (window[namespace][name] = definition.apply(null, arguments));
-		};
+		window[namespace] = window[namespace] || { };
+
+		return (window[namespace][name] = definition.apply(null, arguments));
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../support' ], initialize);
