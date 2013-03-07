@@ -18,16 +18,15 @@
 ;(function(definition, window, document, undefined) {
 	'use strict';
 
-	var namespace = 'qoopido',
-		name      = 'base';
+	var namespace  = 'qoopido',
+		name       = 'base',
+		initialize = function initialize() {
+			[].push.apply(arguments, [ window, document, undefined ]);
 
-	function initialize() {
-		[].push.apply(arguments, [ window, document, undefined ]);
+			window[namespace] = window[namespace] || { };
 
-		window[namespace] = window[namespace] || { };
-
-		return (window[namespace][name] = definition.apply(null, arguments));
-	}
+			return (window[namespace][name] = definition.apply(null, arguments));
+		};
 
 	if(typeof define === 'function' && define.amd) {
 		define(initialize);
@@ -79,7 +78,7 @@
 
 	return {
 		create: function create() {
-			var instance = Object.create(this);
+			var instance = Object.create(this, Object.getOwnPropertyDescriptors(this));
 
 			if(instance._constructor) {
 				instance._constructor.apply(instance, arguments);
@@ -91,7 +90,7 @@
 		},
 		extend: function extend(properties) {
 			properties         = properties || {};
-			properties._parent = this;
+			properties._parent = Object.create(this, Object.getOwnPropertyDescriptors(this));
 
 			if(supportsEs5 === true) { // Primary version for ECMAScript 5 compatible browsers
 				return Object.create(this, Object.getOwnPropertyDescriptors(properties));
