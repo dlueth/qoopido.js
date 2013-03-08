@@ -20,24 +20,7 @@ module.exports = function (grunt) {
 		},
 		jshint:{
 			options: {
-				"curly":true,
-				"eqeqeq":true,
-				"immed":true,
-				"latedef":true,
-				"newcap":true,
-				"noarg":true,
-				"sub":true,
-				"undef":true,
-				"boss":true,
-				"eqnull":true,
-				"browser":true,
-				"proto":true,
-				"expr":true,
-				"globals":{
-					"jQuery": true,
-					"define": true,
-					"require": true
-				}
+				jshintrc: '.jshintrc'
 			},
 			all:[
 				'Gruntfile.js',
@@ -49,13 +32,6 @@ module.exports = function (grunt) {
 				force: true
 			},
 			all: ['min/**/*', 'packages/**/*']
-		},
-		copy: {
-			all: {
-				files: [
-					{src: ['src/**'], dest: 'min/'}
-				]
-			}
 		},
 		uglifyrecursive: {
 			all: {
@@ -69,12 +45,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-bump');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-uglifyrecursive');
-	//grunt.loadNpmTasks('grunt-mindirect');
-	//grunt.loadNpmTasks('grunt-qmin');
-	//grunt.loadNpmTasks('grunt-dependencygraph');
 
-	// Default task(s).
-	grunt.registerTask('default', ['jshint', 'clean', 'uglifyrecursive']); // 'copy',
+	grunt.registerTask('default', ['jshint', 'clean', 'uglifyrecursive']);
 };
