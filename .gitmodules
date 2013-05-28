@@ -1,0 +1,3 @@
+[submodule "vendor/q"]
+	path = vendor/q
+	url = git://github.com/kriskowal/q.git
