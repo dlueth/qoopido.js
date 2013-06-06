@@ -36,7 +36,7 @@ module.exports = function (grunt) {
 		copy: {
 			build: {
 				files: [
-					{src: ['src/**/*.js'], dest: 'dist/<%= pkg.version %>/src/'}
+					{src: ['src/**/*.js'], dest: 'dist/<%= pkg.version %>/'}
 				]
 			}
 		},

@@ -23,11 +23,15 @@
 			var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1),
 				pointer = window.qoopido.resolveNamespace(namespace);
 
+			console.log(this);
+
+			[].push.apply(arguments, [ window, document, undefined ]);
+
 			return (pointer[id] = definition.apply(null, arguments).create());
 		};
 
 	window.qoopido.resolveNamespace = function resolveNamespace(namespace) {
-		var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1),
+		var id      = namespace.splice(namespace.length - 1, 1),
 			pointer = window;
 
 		for(var i = 0; namespace[i] !== undefined; i++) {
@@ -46,6 +50,8 @@
 	}
 }(function(window, document, undefined) {
 	'use strict';
+
+	console.log(window.qoopido);
 
 	var supportsEs5 = !!(Object.getOwnPropertyNames && Array.prototype.forEach && Object.getOwnPropertyDescriptor);
 
