@@ -21,18 +21,23 @@
 	var namespace  = 'qoopido/base',
 		initialize = function initialize() {
 			var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1),
-				pointer = window;
-
-			for(var i = 0; namespace[i] !== undefined; i++) {
-				pointer[namespace[i]] = pointer[namespace[i]] || {};
-
-				pointer = pointer[namespace[i]];
-			}
-
-			[].push.apply(arguments, [ window, document, undefined ]);
+				pointer = window.qoopido.resolveNamespace(namespace);
 
 			return (pointer[id] = definition.apply(null, arguments).create());
 		};
+
+	window.qoopido.resolveNamespace = function resolveNamespace(namespace) {
+		var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1),
+			pointer = window;
+
+		for(var i = 0; namespace[i] !== undefined; i++) {
+			pointer[namespace[i]] = pointer[namespace[i]] || {};
+
+			pointer = pointer[namespace[i]];
+		}
+
+		return pointer[id];
+	};
 
 	if(typeof define === 'function' && define.amd) {
 		define(initialize);
