@@ -20,18 +20,13 @@
 
 	var namespace  = 'qoopido/base',
 		initialize = function initialize() {
-			var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1),
-				pointer = window.qoopido.resolveNamespace(namespace);
-
-			console.log(this);
-
-			[].push.apply(arguments, [ window, document, undefined ]);
-
-			return (pointer[id] = definition.apply(null, arguments).create());
+			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
 		};
 
-	window.qoopido.resolveNamespace = function resolveNamespace(namespace) {
-		var id      = namespace.splice(namespace.length - 1, 1),
+	window.qoopido                      = window.qoopido || {};
+	window.qoopido.shared               = window.qoopido.shared || {};
+	window.qoopido.shared.prepareModule = function prepareModule(namespace, definition, args, singleton) {
+		var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1)[0],
 			pointer = window;
 
 		for(var i = 0; namespace[i] !== undefined; i++) {
@@ -40,7 +35,9 @@
 			pointer = pointer[namespace[i]];
 		}
 
-		return pointer[id];
+		[].push.apply(args, [ window, document, undefined ]);
+
+		return (singleton === true) ? (pointer[id] = definition.apply(null, args).create()) : (pointer[id] = definition.apply(null, args));
 	};
 
 	if(typeof define === 'function' && define.amd) {
@@ -50,8 +47,6 @@
 	}
 }(function(window, document, undefined) {
 	'use strict';
-
-	console.log(window.qoopido);
 
 	var supportsEs5 = !!(Object.getOwnPropertyNames && Array.prototype.forEach && Object.getOwnPropertyDescriptor);
 

@@ -17,18 +17,7 @@
 
 	var namespace  = 'qoopido/worker',
 		initialize = function initialize() {
-			var id      = (namespace = namespace.split('/')).splice(namespace.length - 1, 1),
-				pointer = window;
-
-			for(var i = 0; namespace[i] !== undefined; i++) {
-				pointer[namespace[i]] = pointer[namespace[i]] || {};
-
-				pointer = pointer[namespace[i]];
-			}
-
-			[].push.apply(arguments, [ window, document, undefined ]);
-
-			return (pointer[id] = definition.apply(null, arguments));
+			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {

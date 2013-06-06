@@ -13,7 +13,6 @@
 	"proto":true,
 	"expr":true,
 	"validthis":true,
-	"debug":true,
 	"globals":{
 		"jQuery": true,
 		"define": true,
