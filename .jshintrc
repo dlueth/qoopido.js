@@ -12,9 +12,12 @@
 	"browser":true,
 	"proto":true,
 	"expr":true,
+	"validthis":true,
 	"globals":{
 		"jQuery": true,
 		"define": true,
-		"require": true
+		"require": true,
+		"ActiveXObject": true,
+		"console": true
 	}
 }
