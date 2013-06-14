@@ -15,6 +15,7 @@ Currently contains
 - Emitter (extendable event emitter)
 - Pager (data/animation independent pager)
 - Unique (random UUID and string generator)
+- XHR (standalone AJAX abstraction, still under heavy development)
 - Worker (flexible web worker implementation)
 - Support (deferred/promise based modular feature detection) <sup>[1](#dependencies)</sup>
 - Proximity (calculate distance of pixel coordinates)
@@ -32,4 +33,5 @@ See source code for any options that may be passed. Any dependencies are mention
 Dependencies
 ---------------------------
 <sup>1</sup> Support and all its tests require q.js by Kris Kowal which can be found under https://github.com/kriskowal/q and comes with its own license
+
 <sup>2</sup> jQuery extensions and functions require jQuery
