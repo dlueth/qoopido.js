@@ -11,20 +11,19 @@
  * @require ./base
  * @require q
  */
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/support',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('support', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base', 'q' ], initialize);
+		define([ './base', 'q' ], definition);
 	} else {
-		initialize(window.qoopido.base, window.Q);
+		definition(window.qoopido.base, window.Q);
 	}
-}(function(mPrototype, mQ, window, document, undefined) {
+}(function(mPrototype, mQ, namespace, window, document, undefined) {
 	'use strict';
 
 	var regexProperty = /-([a-z])/gi,
@@ -244,4 +243,4 @@
 			};
 		}
 	});
-}, window, document));
+}, window));

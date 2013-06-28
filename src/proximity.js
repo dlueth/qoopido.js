@@ -10,20 +10,19 @@
  * @author Dirk Lüth <info@qoopido.com>
  * @require ./base
  */
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/proximity',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('proximity', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base' ], initialize);
+		define([ './base' ], definition);
 	} else {
-		initialize(window.qoopido.base);
+		definition(window.qoopido.base);
 	}
-}(function(mPrototype, window, document, undefined) {
+}(function(mPrototype, namespace, window, document, undefined) {
 	'use strict';
 
 	return mPrototype.extend({
@@ -49,4 +48,4 @@
 			return proximity;
 		}
 	});
-}, window, document));
+}, window));

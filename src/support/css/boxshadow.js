@@ -1,20 +1,19 @@
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/support/css/boxshadow',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('support/css/boxshadow', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], initialize);
+		define([ '../../support' ], definition);
 	} else {
-		initialize(window.qoopido.support);
+		definition(window.qoopido.support);
 	}
-}(function(mSupport, window, document, undefined) {
+}(function(mSupport) {
 	'use strict';
 
 	return mSupport.addTest('/css/boxshadow', function(deferred) {
 		(mSupport.supportsProperty('box-shadow')) ? deferred.resolve(mSupport.getProperty('box-shadow')) : deferred.reject();
 	});
-}, window, document));
+}, window));

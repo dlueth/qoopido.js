@@ -10,20 +10,19 @@
  * @author Dirk Lüth <info@qoopido.com>
  * @require jquery
  */
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/jquery/extensions/selector',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('jquery/extensions/selector', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../base', 'jquery' ], initialize);
+		define([ '../../base', 'jquery' ], definition);
 	} else {
-		initialize(window.qoopido.base, window.jQuery);
+		definition(window.qoopido.base, window.jQuery);
 	}
-}(function(mBase, mJquery, window, document, undefined) {
+}(function(mBase, mJquery, namespace, window, document, undefined) {
 	'use strict';
 	
 	var $window   = mJquery(window),
@@ -120,4 +119,4 @@
 	});
 
 	return mJquery;
-}, window, document));
+}, window));

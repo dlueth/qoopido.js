@@ -12,20 +12,19 @@
  * @require ./support
  * @require q
  */
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/worker',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('worker', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base', './support', 'q' ], initialize);
+		define([ './base', './support', 'q' ], definition);
 	} else {
-		initialize(window.qoopido.base, window.qoopido.support, window.Q);
+		definition(window.qoopido.base, window.qoopido.support, window.Q);
 	}
-}(function(mPrototype, mSupport, mQ, window, document, undefined) {
+}(function(mPrototype, mSupport, mQ) {
 	'use strict';
 
 	var supportsWorker = mSupport.supportsMethod('Worker');
@@ -68,4 +67,4 @@
 			return deferred.promise;
 		}
 	});
-}, window, document));
+}, window));

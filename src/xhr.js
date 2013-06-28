@@ -12,20 +12,19 @@
  * @require ./unique
  * @require q
  */
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/xhr',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments, true);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('xhr', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ 'base', 'unique', 'q' ], initialize);
+		define([ 'base', 'unique', 'q' ], definition);
 	} else {
-		initialize(window.qoopido.base, window.qoopido.unique, window.Q);
+		definition(window.qoopido.base, window.qoopido.unique, window.Q);
 	}
-}(function(mPrototype, mUnique, mQ, window, document, undefined) {
+}(function(mPrototype, mUnique, mQ, namespace, window, document, undefined) {
 	'use strict';
 
 	var prototype, current, local,

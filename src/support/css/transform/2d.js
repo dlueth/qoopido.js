@@ -1,17 +1,16 @@
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/support/css/transform/2d',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('support/css/transform/2d', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../../support', '../transform' ], initialize);
+		define([ '../../../support', '../transform' ], definition);
 	} else {
-		initialize(window.qoopido.support, window.qoopido.support.css.transform);
+		definition(window.qoopido.support, window.qoopido.support.css.transform);
 	}
-}(function(mSupport, mSupportCssTransform, window, document, undefined) {
+}(function(mSupport, mSupportCssTransform) {
 	'use strict';
 
 	return mSupport.addTest('/css/transform/2d', function(deferred) {
@@ -27,4 +26,4 @@
 				deferred.reject();
 			});
 	});
-}, window, document));
+}, window));

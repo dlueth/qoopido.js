@@ -1,20 +1,19 @@
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/support/css/textshadow',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('support/css/textshadow', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], initialize);
+		define([ '../../support' ], definition);
 	} else {
-		initialize(window.qoopido.support);
+		definition(window.qoopido.support);
 	}
-}(function(mSupport, window, document, undefined) {
+}(function(mSupport) {
 	'use strict';
 
 	return mSupport.addTest('/css/textshadow', function(deferred) {
 		(mSupport.supportsProperty('text-shadow')) ? deferred.resolve(mSupport.getProperty('text-shadow')) : deferred.reject();
 	});
-}, window, document));
+}, window));

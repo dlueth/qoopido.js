@@ -1,17 +1,16 @@
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/support/element/canvas/todataurl/jpeg',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('support/element/canvas/todataurl/jpeg', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../../../support', '../todataurl' ], initialize);
+		define([ '../../../../support', '../todataurl' ], definition);
 	} else {
-		initialize(window.qoopido.support, window.qoopido.support.element.canvas.todataurl);
+		definition(window.qoopido.support, window.qoopido.support.element.canvas.todataurl);
 	}
-}(function(mSupport, mSupportElementCanvasTodataurl, window, document, undefined) {
+}(function(mSupport, mSupportElementCanvasTodataurl) {
 	'use strict';
 
 	return mSupport.addTest('/element/canvas/todataurl/jpeg', function(deferred) {
@@ -23,4 +22,4 @@
 				deferred.reject();
 			});
 	});
-}, window, document));
+}, window));

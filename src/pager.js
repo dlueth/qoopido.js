@@ -12,20 +12,19 @@
  * @require ./emitter
  */
 
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/pager',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('pager', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './emitter', 'jquery' ], initialize);
+		define([ './emitter', 'jquery' ], definition);
 	} else {
-		initialize(window.qoopido.emitter, window.jQuery);
+		definition(window.qoopido.emitter, window.jQuery);
 	}
-}(function(mPrototype, mJquery, window, document, undefined) {
+}(function(mPrototype, mJquery, namespace, window, document, undefined) {
 	'use strict';
 
 	var defaultSettings = { loop: true, initial: 0 };
@@ -126,4 +125,4 @@
 			return self;
 		}
 	});
-}, window, document));
+}, window));

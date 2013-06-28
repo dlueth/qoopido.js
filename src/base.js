@@ -15,42 +15,43 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  */
-;(function(definition, shim, window, document, undefined) {
+;(function(pDefinition, pShim, window, document, undefined) {
 	'use strict';
 
-	shim();
+	pShim();
 
-	var namespace  = 'qoopido/base',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var root       = 'qoopido',
+		definition = function definition() {
+			return initialize('base', pDefinition, arguments);
+		},
+		initialize = function initialize(pNamespace, pDefinition, pArgs, pSingleton) {
+			var namespace = pNamespace.split('/'),
+				id        = namespace[namespace.length - 1],
+				pointer   = window[root] = window[root] || {},
+				modules   = window[root].modules = window[root].modules || {};
+
+			for(var i = 0; namespace[i + 1] !== undefined; i++) {
+				pointer[namespace[i]] = pointer[namespace[i]] || {};
+
+				pointer = pointer[namespace[i]];
+			}
+
+			namespace = namespace.join('/');
+
+			[].push.apply(pArgs, [ namespace, window, document, undefined ]);
+
+			return (pSingleton === true) ? (pointer[id] = modules[namespace] = pDefinition.apply(null, pArgs).create()) : (pointer[id] = modules[namespace] = pDefinition.apply(null, pArgs));
 		};
 
-	window.qoopido                      = window.qoopido || {};
-	window.qoopido.modules              = window.qoopido.modules || {};
-	window.qoopido.shared               = window.qoopido.shared || {};
-	window.qoopido.shared.prepareModule = function prepareModule(pNamespace, pDefinition, pArgs, pSingleton) {
-		var id      = (namespace = pNamespace.split('/')).splice(namespace.length - 1, 1)[0],
-			pointer = window,
-			modules = window.qoopido.modules;
-
-		for(var i = 0; namespace[i] !== undefined; i++) {
-			pointer[namespace[i]] = pointer[namespace[i]] || {};
-
-			pointer = pointer[namespace[i]];
-		}
-
-		[].push.apply(pArgs, [ window, document, undefined ]);
-
-		return (pSingleton === true) ? (pointer[id] = modules[pNamespace] = pDefinition.apply(null, pArgs).create()) : (pointer[id] = modules[pNamespace] = pDefinition.apply(null, pArgs));
-	};
+	initialize('shared/module/initialize', function(module, namespace) { define(namespace, module); return module; }, [initialize]);
 
 	if(typeof define === 'function' && define.amd) {
-		define(initialize);
+		define(definition);
 	} else {
-		initialize();
+		definition();
 	}
 }(
-	function(window, document, undefined) {
+	function(namespace, window, document, undefined) {
 		'use strict';
 
 		return {

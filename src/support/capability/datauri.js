@@ -1,17 +1,16 @@
-;(function(definition, window, document, undefined) {
+;(function(pDefinition, window) {
 	'use strict';
 
-	var namespace  = 'qoopido/support/capability/datauri',
-		initialize = function initialize() {
-			return window.qoopido.shared.prepareModule(namespace, definition, arguments);
+	var definition = function definition() {
+			return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition, arguments);
 		};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], initialize);
+		define([ '../../support' ], definition);
 	} else {
-		initialize(window.qoopido.support);
+		definition(window.qoopido.support);
 	}
-}(function(mSupport, window, document, undefined) {
+}(function(mSupport) {
 	'use strict';
 
 	return mSupport.addTest('/capability/datauri', function(deferred) {
@@ -27,4 +26,4 @@
 
 		element.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 	});
-}, window, document));
+}, window));
