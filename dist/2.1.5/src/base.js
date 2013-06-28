@@ -43,7 +43,15 @@
 			return (pSingleton === true) ? (pointer[id] = modules[namespace] = pDefinition.apply(null, pArgs).create()) : (pointer[id] = modules[namespace] = pDefinition.apply(null, pArgs));
 		};
 
-	initialize('shared/module/initialize', function(module, namespace) { define(namespace, module); return module; }, [initialize]);
+	initialize('shared/module/initialize',
+		function(module, namespace) {
+			if(typeof define === 'function' && define.amd) {
+				define(namespace, module);
+			}
+
+			return module;
+		},
+		[initialize]);
 
 	if(typeof define === 'function' && define.amd) {
 		define(definition);
