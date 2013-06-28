@@ -31,7 +31,7 @@ module.exports = function (grunt) {
 			options: {
 				force: true
 			},
-			build: ['dist/<%= pkg.version %>/**/*']
+			build: ['dist/<%= pkg.version %>/**/*.js']
 		},
 		copy: {
 			build: {
