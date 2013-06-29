@@ -20,15 +20,16 @@
 
 	pShim();
 
-	var root       = 'qoopido',
-		modules    = window[root].modules = window[root].modules || {},
+	var id         = 'qoopido',
+		root       = window[id] = window[id] || {},
+		modules    = root.modules = root.modules || {},
 		definition = function definition() {
 			return initialize('base', pDefinition, arguments);
 		},
 		initialize = function initialize(pNamespace, pDefinition, pArgs, pSingleton) {
 			var namespace = pNamespace.split('/'),
 				id        = namespace[namespace.length - 1],
-				pointer   = window[root] = window[root] || {};
+				pointer   = root;
 
 			if(modules[pNamespace]) {
 				return modules[pNamespace];
