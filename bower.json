@@ -1,0 +1,9 @@
+{
+  "name": "qoopido.js",
+  "version": "2.1.5",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
