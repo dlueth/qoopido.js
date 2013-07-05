@@ -104,7 +104,7 @@
 			}
 		}
 
-		if(state !== self._state || priority !== self._priority) {
+		if(state !== self._state || (state === true && priority !== self._priority)) {
 			setState.call(self, state, priority);
 		}
 	}
