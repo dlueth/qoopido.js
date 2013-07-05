@@ -5,5 +5,8 @@
     "**/.*",
     "node_modules",
     "components"
-  ]
+  ],
+	"dependencies": {
+		"q": "latest"
+	}
 }

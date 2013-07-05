@@ -13,7 +13,7 @@ Currently contains
 ---------------------------
 - Base (object inheritance)
 - Emitter (extendable event emitter)
-- Pager (data/animation independent pager)
+- Pager (data/animation independent pager) <sup>[2](#dependencies)</sup>
 - Unique (random UUID and string generator)
 - XHR (standalone AJAX abstraction, still under heavy development)
 - Worker (flexible web worker implementation)
@@ -28,6 +28,15 @@ Currently contains
 General Usage
 ---------------------------
 See source code for any options that may be passed. Any dependencies are mentioned in the top comment block as "@require".
+
+### Base
+This is the most basic class that every other class extends. It provides the object inheritance/extension mechanism of qoopido.js. Every class that extends "base" has two methods
+
+ - extend (to extend that particular class)
+ - create (to get an instance of that class)
+
+ If "create" is called on a class both "extend" and "create" will be undefined to prohibit extension/creation from an already instanciated class.
+
 
 
 Dependencies
