@@ -66,4 +66,4 @@ This is the most basic class that every other class extends. It provides the obj
  - extend (to extend that particular class)
  - create (to get an instance of that class)
 
- If "create" is called on a class both "extend" and "create" will be undefined to prohibit extension/creation from an already instanciated class.
+ If "create" is called on a class both "extend" and "create" will be undefined to prohibit extension/creation of an already instanciated class.
