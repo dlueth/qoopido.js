@@ -1,5 +1,7 @@
 /*
- * Qoopido remux class to build responsive layouts fully based on rem
+ * Qoopido module remux
+ *
+ * Provides facilities for responsive layouts solely based on REM units and overall proportionally scaling
  *
  * Copyright (c) 2012 Dirk Lüth
  *
@@ -8,7 +10,7 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require ./emitter
+ * @require ../emitter
  */
 ;(function(pDefinition, window) {
 	'use strict';

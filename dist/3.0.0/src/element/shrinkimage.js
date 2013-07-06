@@ -29,11 +29,11 @@
 	};
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../element', '../function/merge', '../url', '../unique', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png' ], definition);
+		define([ '../element', '../function/merge', '../url', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png' ], definition);
 	} else {
-		definition(window.qoopido.element, window.qoopido.function.merge, window.qoopido.url, window.qoopido.unique, window.qoopido.support, null, null);
+		definition(window.qoopido.element, window.qoopido.function.merge, window.qoopido.url, window.qoopido.support, null, null);
 	}
-}(function(mPrototype, merge, mUrl, mUnique, mSupport, mUnused1, mUnused2, namespace, window, document, undefined) {
+}(function(mPrototype, merge, mUrl, mSupport, mUnused1, mUnused2, namespace, window, document, undefined) {
 	'use strict';
 
 	var
