@@ -17,7 +17,7 @@
 	'use strict';
 
 	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('support', pDefinition, arguments);
+			return window.qoopido.shared.module.initialize('support', pDefinition, arguments, true);
 		};
 
 	if(typeof define === 'function' && define.amd) {

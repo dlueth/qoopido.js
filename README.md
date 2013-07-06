@@ -3,12 +3,6 @@ qoopido.js
 
 Collection of classes, functions and extensions for Javascript and jQuery.
 
-
-Attention
----------------------------
-REMux, my REM and JS based approach to responsive web design featured on CSS-Tricks, and everything related was moved to it's [own repository](https://github.com/dlueth/qoopido.remux) by popular demand.
-
-
 Currently contains
 ---------------------------
 - base (object inheritance)
@@ -23,6 +17,7 @@ Currently contains
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
 - module
+	- remux (REM based aproach to responsive web design)
 	- pager (flexible and UI/UX independent data pager)
 - support (base for feature detection)
 	- capability
