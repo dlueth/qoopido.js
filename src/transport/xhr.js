@@ -13,7 +13,8 @@
  * @require ../base
  * @require ../url
  * @require ../unique
- * @require q
+ * @require q (external)
+ * @require json2 (external, for legacy support only)
  */
 ;(function(pDefinition, window) {
 	'use strict';

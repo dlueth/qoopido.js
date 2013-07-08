@@ -11,7 +11,7 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require ../../element/emerge
- * @require jquery
+ * @require jquery (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';

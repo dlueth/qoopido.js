@@ -12,7 +12,7 @@
  * @author Dirk Lüth <info@qoopido.com>
  * @require ./base
  * @require ./support
- * @require q
+ * @require q (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
