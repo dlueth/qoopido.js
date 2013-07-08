@@ -1,9 +1,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../support' ], definition);

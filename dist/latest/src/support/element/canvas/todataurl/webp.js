@@ -1,9 +1,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('support/element/canvas/todataurl/webp', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('support/element/canvas/todataurl/webp', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../../../support', '../todataurl' ], definition);

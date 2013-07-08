@@ -24,9 +24,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('element/shrinkimage', pDefinition, arguments);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../element', '../function/merge', '../url', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png' ], definition);
@@ -81,10 +81,10 @@
 				processMain.call(self, background, true);
 			}
 		},
-		hide: function hide() {
+		hide: function() {
 			this.setStyles({ visibility: 'hidden', opacity: 0 });
 		},
-		show: function show() {
+		show: function() {
 			this.setStyles({ visibility: '', opacity: '' });
 		}
 	});
@@ -174,12 +174,14 @@
 				element.stash = true;
 			}
 
+			element.setAttribute('crossOrigin', 'Anonymous');
+
 			prototype._parent._constructor.call(self, element);
 
 			self._url = url;
 
 			if(typeof define === 'function' && define.amd) {
-				require([ '../../transport/xhr' ], function (mXhr) {
+				require([ '../../transport/xhr' ], function(mXhr) {
 					processTransport.call(self, mXhr);
 				});
 			} else {
@@ -215,7 +217,7 @@
 	function processData(data) {
 		var canvas, context,
 			self = this,
-			onLoadMain = function onLoadMain(event) {
+			onLoadMain = function(event) {
 				canvas = stashCanvas.pop() || document.createElement('canvas');
 
 				canvas.style.display = 'none';
@@ -230,7 +232,7 @@
 
 				return suppressEvent(event);
 			},
-			onLoadAlpha = function onLoadAlpha(event) {
+			onLoadAlpha = function(event) {
 				var result;
 
 				context.globalCompositeOperation = 'xor';
@@ -244,7 +246,7 @@
 
 				return suppressEvent(event);
 			},
-			releaseStash = function releaseStash() {
+			releaseStash = function() {
 				if(canvas) {
 					stashCanvas.push(canvas);
 				}

@@ -18,9 +18,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, arguments, true);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, arguments, true);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../base', '../url', '../unique', 'q' ], definition);
@@ -158,7 +158,7 @@
 	}
 
 	prototype = mPrototype.extend({
-		setup: function setup(options) {
+		setup: function(options) {
 			setupGlobal(options);
 
 			return this;

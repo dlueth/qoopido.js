@@ -15,9 +15,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('module/remux', pDefinition, arguments, true);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../emitter' ], definition);
@@ -55,7 +55,7 @@
 	}
 
 	prototype = mPrototype.extend({
-		_constructor: function _constructor() {
+		_constructor: function() {
 			var self          = this,
 				pBase         = parseInt(html.getAttribute('data-base'), 10),
 				delayedUpdate = function delayedUpdate() {
@@ -84,10 +84,10 @@
 
 			updateState.call(self);
 		},
-		getState: function getState() {
+		getState: function() {
 			return state;
 		},
-		addLayout: function addLayout(pId, pLayout) {
+		addLayout: function(pId, pLayout) {
 			var parameter, id, layout, size, breakpoint, query,
 				self = this;
 

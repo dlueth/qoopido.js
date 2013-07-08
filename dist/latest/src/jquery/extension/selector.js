@@ -16,9 +16,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../base', 'jquery' ], definition);

@@ -15,9 +15,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('emitter', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('emitter', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
@@ -49,7 +49,7 @@
 	return mPrototype.extend({
 		_mapped:   null,
 		_listener: null,
-		_constructor: function _constructor() {
+		_constructor: function() {
 			var self = this,
 				method;
 
@@ -62,7 +62,7 @@
 				}
 			}
 		},
-		on: function on(event, listener) {
+		on: function(event, listener) {
 			var self = this;
 
 			if(event !== undefined && listener !== undefined) {
@@ -71,7 +71,7 @@
 
 			return self;
 		},
-		one: function one(event, listener) {
+		one: function(event, listener) {
 			var self = this;
 
 			if(event !== undefined && listener !== undefined) {
@@ -82,7 +82,7 @@
 
 			return self;
 		},
-		off: function off(event, listener) {
+		off: function(event, listener) {
 			var self = this,
 				i;
 
@@ -100,7 +100,7 @@
 
 			return self;
 		},
-		emit: function emit(event) {
+		emit: function(event) {
 			var self = this,
 				args = Array.prototype.slice.call(arguments).splice(1),
 				i, listener;

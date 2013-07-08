@@ -15,9 +15,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('function/merge', pDefinition, arguments);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../base' ], definition);

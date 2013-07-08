@@ -19,9 +19,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('element/lazyimage', pDefinition, arguments);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './emerge', '../function/merge' ], definition);

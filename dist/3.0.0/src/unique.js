@@ -15,9 +15,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('unique', pDefinition, arguments, true);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('unique', pDefinition, arguments, true);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
@@ -52,7 +52,7 @@
 	}
 
 	return mPrototype.extend({
-		uuid: function uuid() {
+		uuid: function() {
 			do {
 				result = generateUuid();
 			} while(typeof lookup.uuid[result] !== 'undefined');
@@ -61,7 +61,7 @@
 
 			return result;
 		},
-		string: function string(length) {
+		string: function(length) {
 			do {
 				result = generateString(length);
 			} while(typeof lookup.string[result] !== 'undefined');

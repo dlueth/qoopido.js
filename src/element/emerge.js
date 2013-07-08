@@ -17,9 +17,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('element/emerge', pDefinition, arguments);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../element', '../function/merge', '../unique' ], definition);
@@ -161,7 +161,7 @@
 			window.on(DOM_RESIZE, function() { instanceOnResize.call(self); });
 			instanceOnResize.call(self);
 		},
-		remove: function remove() {
+		remove: function() {
 			var self = this;
 
 			delete elements[self._settings.interval][self._uuid];

@@ -17,9 +17,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('worker', pDefinition, arguments, true);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('worker', pDefinition, arguments, true);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base', './support', 'q' ], definition);
@@ -32,7 +32,7 @@
 	var supportsWorker = mSupport.supportsMethod('Worker');
 
 	return mPrototype.extend({
-		execute: function execute(pWorker, pFunction, pArguments) {
+		execute: function(pWorker, pFunction, pArguments) {
 			var deferred  = mQ.defer();
 
 			pArguments = pArguments || [];

@@ -16,9 +16,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('jquery/plugins/emerge', pDefinition, arguments);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../element/emerge', 'jquery' ], definition);

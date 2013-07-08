@@ -17,9 +17,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('module/pager', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('module/pager', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../emitter', '../function/merge' ], definition);
@@ -34,7 +34,7 @@
 	return mPrototype.extend({
 		_settings: null,
 		_state:    null,
-		_constructor: function _constructor(data, settings) {
+		_constructor: function(data, settings) {
 			var self = this;
 
 			self._parent._constructor.call(self);
@@ -46,12 +46,12 @@
 				self.setData(data);
 			}
 		},
-		getState: function getState() {
+		getState: function() {
 			var self = this;
 
 			return self._state;
 		},
-		setData: function setData(data) {
+		setData: function(data) {
 			var self = this;
 
 			if(typeof data === 'object') {
@@ -65,22 +65,22 @@
 
 			return self;
 		},
-		getData: function getData(index) {
+		getData: function(index) {
 			var self = this;
 
 			return self._state.data;
 		},
-		getLength: function getLength() {
+		getLength: function() {
 			var self = this;
 
 			return self._state.length;
 		},
-		getIndex: function getIndex() {
+		getIndex: function() {
 			var self = this;
 
 			return self._state.index;
 		},
-		getItem: function getItem(index) {
+		getItem: function(index) {
 			var self = this;
 
 			if(self._state.data[index] !== undefined) {
@@ -89,17 +89,17 @@
 
 			return null;
 		},
-		first: function first() {
+		first: function() {
 			var self = this;
 
 			return self.seek(0);
 		},
-		last: function last() {
+		last: function() {
 			var self = this;
 
 			return self.seek(self._state.length - 1);
 		},
-		previous: function previous() {
+		previous: function() {
 			var self = this, index;
 
 			index = (self._settings.loop === true) ? (self._state.index - 1) % self._state.length : self._state.index - 1;
@@ -107,14 +107,14 @@
 
 			return self.seek(index);
 		},
-		next: function next() {
+		next: function() {
 			var self = this, index;
 
 			index = (self._settings.loop === true) ? (self._state.index + 1) % self._state.length : self._state.index + 1;
 
 			return self.seek(index);
 		},
-		seek: function seek(index) {
+		seek: function(index) {
 			var self = this;
 
 			index  = parseInt(index, 10);

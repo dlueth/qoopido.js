@@ -1,9 +1,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('support/css/transform/2d', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('support/css/transform/2d', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../../support', '../transform' ], definition);

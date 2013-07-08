@@ -15,9 +15,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('function/proximity', pDefinition, arguments);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('function/proximity', pDefinition, arguments);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../base' ], definition);

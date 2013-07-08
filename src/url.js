@@ -15,9 +15,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('url', pDefinition, arguments, true);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('url', pDefinition, arguments, true);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
@@ -47,7 +47,7 @@
 	}
 
 	return mPrototype.extend({
-		resolve: function resolve(url) {
+		resolve: function(url) {
 			return getResolver(url).href;
 		},
 		redirect: function redirect(url, target) {
@@ -55,7 +55,7 @@
 
 			target.location.href = this.resolve(url);
 		},
-		getParameter: function getParameter(url) {
+		getParameter: function(url) {
 			var params      = {},
 				querystring = getResolver(url).search.split('+').join(' '),
 				tokens;
@@ -66,7 +66,7 @@
 
 			return params;
 		},
-		isLocal: function isLocal(url) {
+		isLocal: function(url) {
 			return regexLocal.test(this.resolve(url));
 		}
 	});

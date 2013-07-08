@@ -16,9 +16,9 @@
 ;(function(pDefinition, window) {
 	'use strict';
 
-	var definition = function definition() {
-			return window.qoopido.shared.module.initialize('support', pDefinition, arguments, true);
-		};
+	function definition() {
+		return window.qoopido.shared.module.initialize('support', pDefinition, arguments, true);
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base', 'q' ], definition);
@@ -52,7 +52,7 @@
 
 	return mPrototype.extend({
 		test: { },
-		testMultiple: function testMultiple() {
+		testMultiple: function() {
 			var test, tests = [], i = 0;
 
 			for(i; (test = arguments[i]) !== undefined; i++) {
@@ -75,14 +75,14 @@
 
 			return mQ.all(tests);
 		},
-		getElement: function getElement(pType, pClone) {
+		getElement: function(pType, pClone) {
 			var element = lookup.element[pType] = lookup.element[pType] || (pType !== 'image') ? document.createElement(pType) : new Image();
 
 			pClone = !!(pClone);
 
 			return (pClone) ? element.cloneNode(false) : element;
 		},
-		getPrefix: function getPrefix() {
+		getPrefix: function() {
 			var property,
 				stored = lookup.prefix || null;
 
@@ -111,7 +111,7 @@
 
 			return stored;
 		},
-		getProperty: function getProperty(pProperty) {
+		getProperty: function(pProperty) {
 			pProperty = pProperty.replace(regexProperty, _ucfirst);
 
 			var stored = lookup.property[pProperty] || null;
@@ -138,7 +138,7 @@
 
 			return stored;
 		},
-		getMethod: function getMethod(pMethod, pElement) {
+		getMethod: function(pMethod, pElement) {
 			pElement = pElement || window;
 
 			var type    = pElement.tagName,
@@ -171,16 +171,16 @@
 
 			return stored;
 		},
-		supportsPrefix: function supportsPrefix() {
+		supportsPrefix: function() {
 			return !!this.getPrefix();
 		},
-		supportsProperty: function supportsProperty(pProperty) {
+		supportsProperty: function(pProperty) {
 			return !!this.getProperty(pProperty);
 		},
-		supportsMethod: function supportsMethod(pMethod, pElement) {
+		supportsMethod: function(pMethod, pElement) {
 			return !!this.getMethod(pMethod, pElement);
 		},
-		testPrefix: function testPrefix() {
+		testPrefix: function() {
 			var stored = lookup.promises.prefix;
 
 			if(stored === null) {
@@ -194,7 +194,7 @@
 
 			return stored;
 		},
-		testProperty: function testProperty(pProperty) {
+		testProperty: function(pProperty) {
 			var stored = lookup.promises.property[pProperty] || null;
 
 			if(stored === null) {
@@ -208,7 +208,7 @@
 
 			return stored;
 		},
-		testMethod: function testMethod(pMethod, pElement) {
+		testMethod: function(pMethod, pElement) {
 			pElement = pElement || window;
 
 			var type    = pElement.tagName,
@@ -226,7 +226,7 @@
 
 			return stored;
 		},
-		addTest: function addTest(pId, pTest) {
+		addTest: function(pId, pTest) {
 			return this.test[pId] = function() {
 				var stored = lookup.promises.test[pId] || null;
 

@@ -17,9 +17,9 @@
 
 	pPolyfill();
 
-	var definition = function definition() {
+	function definition() {
 		return window.qoopido.shared.module.initialize('element', pDefinition, arguments);
-	};
+	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
@@ -89,14 +89,14 @@
 			type:     null,
 			element:  null,
 			listener: null,
-			_constructor: function _constructor(element) {
+			_constructor: function(element) {
 				var self = this;
 
 				self.type     = element.tagName;
 				self.element  = element;
 				self.listener = {};
 			},
-			getAttribute: function getAttribute(attribute) {
+			getAttribute: function(attribute) {
 				if(attribute && typeof attribute === stringString) {
 					var self = this;
 
@@ -109,7 +109,7 @@
 					}
 				}
 			},
-			getAttributes: function getAttributes(attributes) {
+			getAttributes: function(attributes) {
 				var self   = this,
 					result = {};
 
@@ -127,7 +127,7 @@
 
 				return result;
 			},
-			setAttribute: function setAttribute(attribute, value) {
+			setAttribute: function(attribute, value) {
 				var self = this;
 
 				if(attribute && typeof attribute === stringString) {
@@ -136,7 +136,7 @@
 
 				return self;
 			},
-			setAttributes: function setAttributes(attributes) {
+			setAttributes: function(attributes) {
 				var self = this;
 
 				if(attributes && typeof attributes === stringObject && !attributes.length) {
@@ -149,7 +149,7 @@
 
 				return self;
 			},
-			removeAttribute: function removeAttribute(attribute) {
+			removeAttribute: function(attribute) {
 				var self = this;
 
 				if(attribute && typeof attribute === stringString) {
@@ -164,7 +164,7 @@
 
 				return self;
 			},
-			removeAttributes: function removeAttributes(attributes) {
+			removeAttributes: function(attributes) {
 				var self = this;
 
 				if(attributes) {
@@ -181,7 +181,7 @@
 
 				return self;
 			},
-			getStyle: function getStyle(property) {
+			getStyle: function(property) {
 				if(property && typeof property === stringString) {
 					var self = this;
 
@@ -194,7 +194,7 @@
 					}
 				}
 			},
-			getStyles: function getStyles(properties) {
+			getStyles: function(properties) {
 				var self   = this,
 					result = {};
 
@@ -212,7 +212,7 @@
 
 				return result;
 			},
-			setStyle: function setStyle(property, value) {
+			setStyle: function(property, value) {
 				var self = this;
 
 				if(property && typeof property === stringString) {
@@ -221,7 +221,7 @@
 
 				return self;
 			},
-			setStyles: function setStyle(properties) {
+			setStyles: function(properties) {
 				var self = this;
 
 				if(properties && typeof properties === stringObject && !properties.length) {
@@ -234,12 +234,12 @@
 
 				return self;
 			},
-			isVisible: function isVisible() {
+			isVisible: function() {
 				var element = this.element;
 
 				return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
 			},
-			on: function on(events, fn) {
+			on: function(events, fn) {
 				var self = this,
 					i, listener;
 
@@ -253,7 +253,7 @@
 
 				return self;
 			},
-			one: function one(events, fn, each) {
+			one: function(events, fn, each) {
 				each = (each === false) ? false : true;
 
 				var self = this;
@@ -266,7 +266,7 @@
 
 				return self;
 			},
-			off: function off(events, fn) {
+			off: function(events, fn) {
 				var self = this,
 					i, name, j, listener;
 
@@ -301,7 +301,7 @@
 
 				return self;
 			},
-			emit: function emit(event, data) {
+			emit: function(event, data) {
 				var self = this;
 
 				emitMethod.call(self, event, data);
