@@ -32,17 +32,6 @@
 	'use strict';
 
 	var prototype,
-		settings = {
-			accept:      '*/*',
-			timeout:     5000,
-			async:       true,
-			cache:       false,
-			header:      {},
-			username:    null,
-			password:    null,
-			contentType: 'application/x-www-form-urlencoded; charset=UTF-8 ',
-			xhrOptions:  {}
-		},
 		getXhr = (typeof window.XMLHttpRequest !== 'undefined') ?
 			function(url) {
 				if(mUrl.isLocal(url)) {
