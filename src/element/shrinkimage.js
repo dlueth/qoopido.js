@@ -20,6 +20,7 @@
  * @require ../support
  * @require ../support/capability/datauri
  * @require ../support/element/canvas/todataurl/png
+ * @require json (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
@@ -29,6 +30,10 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
+		if((!!window.JSON && !!JSON.parse)) {
+			define('json', function() { return window.JSON; });
+		}
+
 		define([ '../element', '../function/merge', '../url', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png' ], definition);
 	} else {
 		definition(window.qoopido.element, window.qoopido.function.merge, window.qoopido.url, window.qoopido.support, null, null);
@@ -88,7 +93,6 @@
 			this.setStyles({ visibility: '', opacity: '' });
 		}
 	});
-
 
 	function processMain(url, isBackground) {
 		url          = mUrl.resolve(regexPath.exec(url)[1]);
@@ -174,14 +178,12 @@
 				element.stash = true;
 			}
 
-			element.setAttribute('crossOrigin', 'Anonymous');
-
 			prototype._parent._constructor.call(self, element);
 
 			self._url = url;
 
 			if(typeof define === 'function' && define.amd) {
-				require([ '../../transport/xhr' ], function(mXhr) {
+				require([ '../../transport/xhr', 'json' ], function(mXhr) {
 					processTransport.call(self, mXhr);
 				});
 			} else {

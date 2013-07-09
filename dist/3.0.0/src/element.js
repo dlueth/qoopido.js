@@ -92,6 +92,10 @@
 			_constructor: function(element) {
 				var self = this;
 
+				if(!element) {
+					throw new Error('No element was passed to qoopido/element');
+				}
+
 				self.type     = element.tagName;
 				self.element  = element;
 				self.listener = {};

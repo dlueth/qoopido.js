@@ -8,7 +8,9 @@
 	<script type="text/javascript" src="dist/latest/min/url.js"></script>
 	<script type="text/javascript" src="dist/latest/min/element.js"></script>
 	<script type="text/javascript" src="dist/latest/min/function/merge.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport.js"></script>
 	<script type="text/javascript" src="dist/latest/min/transport/xhr.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport/jsonp.js"></script>
 	<script type="text/javascript" src="dist/latest/min/support.js"></script>
 	<script type="text/javascript" src="dist/latest/min/support/capability/datauri.js"></script>
 	<script type="text/javascript" src="dist/latest/min/support/element/canvas.js"></script>
@@ -47,7 +49,10 @@
 		console.log('lazyimage: ' + event.type);
 	});
 
-	window.qoopido.transport.xhr.get('http://www.qoopido.com');
+	window.qoopido.transport.jsonp.load('http://spielplatz/qoopido.js/dummy.php')
+		.then(function(response) { console.log(response); });
+
+	window.qoopido.transport.xhr.get('http://spielplatz/');
 </script>
 </body>
 </html>

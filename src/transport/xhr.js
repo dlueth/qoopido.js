@@ -24,11 +24,11 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../base', '../url', '../unique', 'q' ], definition);
+		define([ '../transport', '../function/merge', '../url', '../unique', 'q' ], definition);
 	} else {
-		definition(window.qoopido.base, window.qoopido.url, window.qoopido.unique, window.Q);
+		definition(window.qoopido.transport, window.qoopido.function.merge, window.qoopido.url, window.qoopido.unique, window.Q);
 	}
-}(function(mPrototype, mUrl, mUnique, mQ, namespace, window, document, undefined) {
+}(function(mPrototype, merge, mUrl, mUnique, mQ, namespace, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -59,36 +59,13 @@
 				}
 			};
 
-	function setupGlobal(options) {
-		if(typeof options === 'object') {
-			var option;
-
-			for(option in options) {
-				if(typeof settings[option] !== 'undefined') {
-					settings[option] = options[option];
-				}
-			}
-		}
-	}
-
-	function setupLocal(options) {
-		var self = this,
-			option;
-
-		options = (typeof options === 'object') ? options : {};
-
-		for(option in settings) {
-			self.settings[option] = options[option] || settings[option];
-		}
-	}
-
 	function sendRequest(method, url, content) {
 		var self     = this,
 			xhr      = self.xhr,
 			settings = self.settings,
 			id;
 
-		content = (typeof content === 'object') ? serialize(content) : content;
+		content = (typeof content === 'object') ? self.serialize(content) : content;
 		url     = (settings.cache === false) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', '_=' + new Date().getTime()) : url;
 		url     = (content && method === 'GET') ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
 
@@ -128,7 +105,7 @@
 			dfd  = self.dfd;
 
 		if(xhr.readyState === 4) {
-			clearTimeout(self.timeout);
+			clear.call(self);
 
 			if(xhr.status === 200) {
 				dfd.resolve({ data: xhr.responseText, xhr: xhr });
@@ -141,41 +118,44 @@
 	function onError() {
 		var self = this;
 
-		clearTimeout(self.timeout);
+		clear.call(self);
+
 		self.dfd.reject();
 	}
 
-	function serialize(obj, prefix) {
-		var parameter = [], id, key, value;
+	function clear() {
+		var self = this,
+			xhr  = self.xhr;
 
-		for(id in obj) {
-			key   = prefix ? ''.concat(prefix, '[', id, ']') : id;
-			value = obj[id];
+		clearTimeout(self.timeout);
 
-			parameter.push((typeof value === 'object') ? serialize(value, key) : ''.concat(encodeURIComponent(key), '=', encodeURIComponent(value)));
-		}
+		xhr.onprogress = xhr.onreadystatechange = xhr.onerror = null;
 
-		return parameter.join('&');
 	}
 
 	prototype = mPrototype.extend({
-		setup: function(options) {
-			setupGlobal(options);
-
-			return this;
+		_settings: {
+			accept:      '*/*',
+			timeout:     5000,
+			async:       true,
+			cache:       false,
+			header:      {},
+			username:    null,
+			password:    null,
+			contentType: 'application/x-www-form-urlencoded; charset=UTF-8 ',
+			xhrOptions:  {}
 		},
 		load: function(method, url, data, options) {
 			var self = {};
 
 			url = mUrl.resolve(url);
 
-			self.id       = mUnique.string();
+			self.id       = ''.concat('xhr-', mUnique.string());
 			self.dfd      = mQ.defer();
 			self.xhr      = getXhr(url);
 			self.timeout  = null;
-			self.settings = {};
+			self.settings = merge({}, this._settings, options);
 
-			setupLocal.apply(self, [ options ]);
 			sendRequest.apply(self, [ method.toUpperCase(), url, data ]);
 
 			return self.dfd.promise;
