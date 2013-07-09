@@ -1,7 +1,7 @@
 /*
- * Qoopido transport xhr
+ * Qoopido transport
  *
- * Provides basic XHR (AJAX) functionality
+ * Provides basic transport functionality
  *
  * Copyright (c) 2013 Dirk Lüth
  *
