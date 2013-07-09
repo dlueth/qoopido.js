@@ -38,7 +38,8 @@ Currently contains
 				- png
 				- webp
 		- svg
-- transport
+- transport (base class for all transports)
+	- jsonp (JSONP transport)
 	- xhr (AJAX transport)
 - worker (flexible web worker implementation)
 	- task
