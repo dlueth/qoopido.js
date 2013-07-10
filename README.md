@@ -98,7 +98,6 @@ If "create" is called on a class both "extend" and "create" will get undefined t
 Calling "create" will pass any arguments given to the class "_constructor" method.
 
 ---------------------------
-[element]:
 ### element
 Provides DOM element abstraction, adds some commonly used functionality and extends and unifies processing of DOM events.
 
@@ -214,7 +213,6 @@ If no listener is specified any listener for the given events will be removed.
 instance
 
 ---------------------------
-[emitter]:
 ### emitter
 Provides functions to emit events and or register listeners to events for a module. Whenever you need this kind of functions for a pure JavaScript module (for DOM elements use "element" instead). It offers the following methods:
 
