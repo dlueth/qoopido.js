@@ -22,54 +22,42 @@
 
 	pPolyfill();
 
-	var id         = 'qoopido',
-		root       = window[id] = window[id] || {},
-		modules    = root.modules = root.modules || {},
-		definition = function definition() {
-			return initialize('base', pDefinition, arguments);
-		},
-		initialize = function initialize(pNamespace, pDefinition, pArgs, pSingleton) {
-			var namespace = pNamespace.split('/'),
-				id        = namespace[namespace.length - 1],
-				pointer   = root;
+	var id      = 'qoopido',
+		root    = window[id] = window[id] || {},
+		modules = root.modules = root.modules || {};
 
-			if(modules[pNamespace]) {
-				return modules[pNamespace];
-			}
+	function definition() {
+		return initialize('base', pDefinition);
+	}
 
-			for(var i = 0; namespace[i + 1] !== undefined; i++) {
-				pointer[namespace[i]] = pointer[namespace[i]] || {};
+	function initialize(pNamespace, pDefinition, pSingleton) {
+		var namespace = pNamespace.split('/'),
+			id        = namespace[namespace.length - 1],
+			pointer   = root;
 
-				pointer = pointer[namespace[i]];
-			}
+		if(modules[pNamespace]) {
+			return modules[pNamespace];
+		}
 
-			[].push.apply(pArgs, [ namespace, window, document, undefined ]);
+		for(var i = 0; namespace[i + 1] !== undefined; i++) {
+			pointer[namespace[i]] = pointer[namespace[i]] || {};
 
-			return (pSingleton === true) ? (pointer[id] = modules[pNamespace] = pDefinition.apply(null, pArgs).create()) : (pointer[id] = modules[pNamespace] = pDefinition.apply(null, pArgs));
-		},
-		merge = function merge() {
+			pointer = pointer[namespace[i]];
+		}
 
-		};
+		return pointer[id] = modules[pNamespace] = (function() {
+			return ((pSingleton === true) ? pDefinition.call(null, root, namespace, window, document, undefined).create() : pDefinition.call(null, root, namespace, window, document, undefined));
+		})();
+	}
 
 	initialize('shared/module/initialize',
-		function(module, namespace) {
+		function(modules, namespace) {
 			if(typeof define === 'function' && define.amd) {
-				define(namespace, module);
+				define(namespace, initialize);
 			}
 
-			return module;
-		},
-		[initialize]);
-
-	initialize('shared/object/merge',
-		function(module, namespace) {
-			if(typeof define === 'function' && define.amd) {
-				define(namespace, module);
-			}
-
-			return module;
-		},
-		[merge]);
+			return initialize;
+		});
 
 	if(typeof define === 'function' && define.amd) {
 		define(definition);
@@ -77,11 +65,11 @@
 		definition();
 	}
 }(
-	function(namespace, window, document, undefined) {
+	function(modules, namespace, window, document, undefined) {
 		'use strict';
 
 		return {
-			create: function create() {
+			create: function() {
 				var instance = Object.create(this, Object.getOwnPropertyDescriptors(this));
 
 				if(instance._constructor) {
@@ -92,7 +80,7 @@
 
 				return instance;
 			},
-			extend: function extend(properties) {
+			extend: function(properties) {
 				properties         = properties || {};
 				properties._parent = Object.create(this, Object.getOwnPropertyDescriptors(this));
 
@@ -133,7 +121,7 @@
 				buggy = false;
 			}
 
-			Object.keys = function keys(object) {
+			Object.keys = function(object) {
 				var result = [],
 					name;
 
@@ -173,7 +161,7 @@
 		}
 
 		if(!Object[stringDefineProperty] || fallbackDefineProperty !== valueNull) {
-			Object[stringDefineProperty] = function defineProperty(object, property, descriptor) {
+			Object[stringDefineProperty] = function(object, property, descriptor) {
 				if((typeof object !== stringObject && typeof object !== stringFunction) || object === valueNull) {
 					throw new TypeError('Object[stringDefineProperty] called on non-object: ' + object);
 				}
@@ -221,7 +209,7 @@
 		}
 
 		if(!Object[stringDefineProperties] || fallbackDefineProperties !== valueNull) {
-			Object[stringDefineProperties] = function defineProperties(object, properties) {
+			Object[stringDefineProperties] = function(object, properties) {
 				var property;
 
 				if(fallbackDefineProperties) {
@@ -241,7 +229,7 @@
 		}
 
 		if(!Object[stringGetOwnPropertyDescriptor] || fallbackGetOwnPropertyDescriptor !== valueNull) {
-			Object[stringGetOwnPropertyDescriptor] = function getOwnPropertyDescriptor(object, property) {
+			Object[stringGetOwnPropertyDescriptor] = function(object, property) {
 				var descriptor =  { enumerable: true, configurable: true };
 
 				if((typeof object !== stringObject && typeof object !== stringFunction) || object === valueNull) {
@@ -304,7 +292,7 @@
 		}
 
 		if(!Object[stringGetOwnPropertyNames]) {
-			Object[stringGetOwnPropertyNames] = function getOwnPropertyNames(object) {
+			Object[stringGetOwnPropertyNames] = function(object) {
 				return Object.keys(object);
 			};
 		}
@@ -340,7 +328,7 @@
 
 					Blueprint[stringPrototype] = empty;
 
-					createEmpty = function () {
+					createEmpty = function() {
 						return new Blueprint();
 					};
 
@@ -348,7 +336,7 @@
 				};
 			}
 
-			Object.create = function create(prototype, properties) {
+			Object.create = function(prototype, properties) {
 				var object;
 
 				function Type() {}

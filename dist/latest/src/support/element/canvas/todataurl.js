@@ -2,21 +2,21 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/element/canvas/todataurl', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('support/element/canvas/todataurl', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../../support', '../canvas' ], definition);
 	} else {
-		definition(window.qoopido.support, window.qoopido.support.element.canvas);
+		definition();
 	}
-}(function(mSupport, mSupportElementCanvas, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
-	return mSupport.addTest('/element/canvas/todataurl', function(deferred) {
-		mSupportElementCanvas()
+	return modules.support.addTest('/element/canvas/todataurl', function(deferred) {
+		modules.support.element.canvas()
 			.then(function() {
-				(mSupport.getElement('canvas').toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
+				(modules.support.getElement('canvas').toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
 			})
 			.fail(function() {
 				deferred.reject();

@@ -2,19 +2,19 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/rgba', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('support/css/rgba', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../support' ], definition);
 	} else {
-		definition(window.qoopido.support);
+		definition();
 	}
-}(function(mSupport) {
+}(function(modules) {
 	'use strict';
 
-	return mSupport.addTest('/css/rgba', function(deferred) {
-		var element = mSupport.getElement('div');
+	return modules.support.addTest('/css/rgba', function(deferred) {
+		var element = modules.support.getElement('div');
 
 		try {
 			element.style.backgroundColor = 'rgba(150,255,150,.5)';

@@ -2,19 +2,19 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../support' ], definition);
 	} else {
-		definition(window.qoopido.support);
+		definition();
 	}
-}(function(mSupport) {
+}(function(modules) {
 	'use strict';
 
-	return mSupport.addTest('/capability/datauri', function(deferred) {
-		var element = mSupport.getElement('image');
+	return modules.support.addTest('/capability/datauri', function(deferred) {
+		var element = modules.support.getElement('image');
 
 		element.onerror = function() {
 			deferred.reject();

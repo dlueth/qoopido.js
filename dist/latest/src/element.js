@@ -18,16 +18,16 @@
 	pPolyfill();
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('element', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
 	} else {
-		definition(window.qoopido.base);
+		definition();
 	}
 }(
-	function(mPrototype, namespace, window, document, undefined) {
+	function(modules, namespace, window, document, undefined) {
 		'use strict';
 
 		var onMethod, offMethod, emitMethod,
@@ -85,7 +85,7 @@
 				element.fireEvent('on' + event.eventType, event);
 			};
 
-		return mPrototype.extend({
+		return modules.base.extend({
 			type:     null,
 			element:  null,
 			listener: null,
@@ -93,7 +93,7 @@
 				var self = this;
 
 				if(!element) {
-					throw new Error('No element was passed to qoopido/element');
+					throw new Error('Missing element argument');
 				}
 
 				self.type     = element.tagName;

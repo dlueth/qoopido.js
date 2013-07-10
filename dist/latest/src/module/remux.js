@@ -16,15 +16,15 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('module/remux', pDefinition, arguments, true);
+		return window.qoopido.shared.module.initialize('module/remux', pDefinition, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../emitter' ], definition);
 	} else {
-		definition(window.qoopido.emitter);
+		definition();
 	}
-}(function(mPrototype, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var prototype, style,
@@ -54,7 +54,7 @@
 		return self;
 	}
 
-	prototype = mPrototype.extend({
+	prototype = modules.emitter.extend({
 		_constructor: function() {
 			var self          = this,
 				pBase         = parseInt(html.getAttribute('data-base'), 10),

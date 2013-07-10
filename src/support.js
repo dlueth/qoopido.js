@@ -17,18 +17,19 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support', pDefinition, arguments, true);
+		return window.qoopido.shared.module.initialize('support', pDefinition, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base', 'q' ], definition);
 	} else {
-		definition(window.qoopido.base, window.Q);
+		definition();
 	}
-}(function(mPrototype, mQ, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
-	var regexProperty = /-([a-z])/gi,
+	var Q             = window.Q,
+		regexProperty = /-([a-z])/gi,
 		lookup = {
 			prefix:   null,
 			property: { },
@@ -50,7 +51,7 @@
 		}
 	}
 
-	return mPrototype.extend({
+	return modules.base.extend({
 		test: { },
 		testMultiple: function() {
 			var test, tests = [], i = 0;
@@ -61,7 +62,7 @@
 						tests.push(this.test[test]());
 						break;
 					case 'boolean':
-						var deferred = mQ.defer();
+						var deferred = Q.defer();
 
 						!!(test) ? deferred.resolve() : deferred.reject();
 
@@ -73,7 +74,7 @@
 				}
 			}
 
-			return mQ.all(tests);
+			return Q.all(tests);
 		},
 		getElement: function(pType, pClone) {
 			var element = lookup.element[pType] = lookup.element[pType] || (pType !== 'image') ? document.createElement(pType) : new Image();
@@ -184,7 +185,7 @@
 			var stored = lookup.promises.prefix;
 
 			if(stored === null) {
-				var deferred = mQ.defer(),
+				var deferred = Q.defer(),
 					prefix   = this.getPrefix();
 
 				(!!prefix) ? deferred.resolve(prefix) : deferred.reject();
@@ -198,7 +199,7 @@
 			var stored = lookup.promises.property[pProperty] || null;
 
 			if(stored === null) {
-				var deferred = mQ.defer(),
+				var deferred = Q.defer(),
 					property = this.getProperty(pProperty);
 
 				(!!property) ? deferred.resolve(property) : deferred.reject();
@@ -216,7 +217,7 @@
 				stored  = pointer[pMethod] = lookup.promises.method[type][pMethod] || null;
 
 			if(stored === null) {
-				var deferred = mQ.defer(),
+				var deferred = Q.defer(),
 					method   = this.getMethod(pMethod, pElement);
 
 				(!!method) ? deferred.resolve(method) : deferred.reject();
@@ -231,7 +232,7 @@
 				var stored = lookup.promises.test[pId] || null;
 
 				if(stored === null) {
-					var deferred  = mQ.defer(),
+					var deferred  = Q.defer(),
 						parameter = Array.prototype.slice.call(arguments);
 
 					parameter.splice(0, 0, deferred);

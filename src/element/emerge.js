@@ -18,15 +18,15 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element/emerge', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('element/emerge', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../element', '../function/merge', '../unique' ], definition);
 	} else {
-		definition(window.qoopido.element, window.qoopido.function.merge, window.qoopido.unique);
+		definition();
 	}
-}(function(mPrototype, merge, mUnique, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var
@@ -45,7 +45,7 @@
 		EVENT_DEMERGED = 'demerged',
 		DOM_RESIZE     = 'resize orientationchange';
 
-	window = mPrototype.create(window);
+	window = modules.element.create(window);
 
 	if(document.compatMode !== 'CSS1Compat') {
 		throw('This script requires your browser to work in standards mode');
@@ -126,7 +126,7 @@
 		}
 	}
 
-	prototype = mPrototype.extend({
+	prototype = modules.element.extend({
 		_viewport: null,
 		_uuid:     null,
 		_element:  null,
@@ -138,7 +138,7 @@
 
 			prototype._parent._constructor.call(self, element);
 
-			settings = merge({}, defaults, settings || {});
+			settings = modules.function.merge({}, defaults, settings || {});
 
 			if(settings.threshold === 'auto') {
 				delete settings.threshold;
@@ -150,7 +150,7 @@
 			}
 
 			self._viewport = {};
-			self._uuid     = mUnique.uuid();
+			self._uuid     = modules.unique.uuid();
 			self._settings = settings;
 			self._state    = false;
 			self._priority = 2;

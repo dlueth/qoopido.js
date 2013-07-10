@@ -2,18 +2,18 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/transform', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('support/css/transform', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../support' ], definition);
 	} else {
-		definition(window.qoopido.support);
+		definition();
 	}
-}(function(mSupport) {
+}(function(modules) {
 	'use strict';
 
-	return mSupport.addTest('/css/transform', function(deferred) {
-		(mSupport.supportsProperty('transform')) ? deferred.resolve(mSupport.getProperty('transform')) : deferred.reject();
+	return modules.support.addTest('/css/transform', function(deferred) {
+		(modules.support.supportsProperty('transform')) ? deferred.resolve(modules.support.getProperty('transform')) : deferred.reject();
 	});
 }, window));

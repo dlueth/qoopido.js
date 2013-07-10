@@ -26,7 +26,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element/shrinkimage', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('element/shrinkimage', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -36,9 +36,9 @@
 
 		define([ '../element', '../function/merge', '../url', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png' ], definition);
 	} else {
-		definition(window.qoopido.element, window.qoopido.function.merge, window.qoopido.url, window.qoopido.support, null, null);
+		definition();
 	}
-}(function(mPrototype, merge, mUrl, mSupport, mUnused1, mUnused2, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var
@@ -66,14 +66,14 @@
 		DOM_ERROR       = 'error',
 		DOM_STATE       = ''.concat(DOM_LOAD, ' ', DOM_ERROR);
 
-	prototype = mPrototype.extend({
+	prototype = modules.element.extend({
 		_constructor: function(element, settings) {
 			var self = this,
 				foreground, background;
 
 			prototype._parent._constructor.call(self, element);
 
-			self._settings = settings = merge({}, defaults, settings);
+			self._settings = settings = modules.function.merge({}, defaults, settings);
 
 			foreground = self.getAttribute(settings.attribute);
 			background = self.getStyle('background-image');
@@ -95,18 +95,18 @@
 	});
 
 	function processMain(url, isBackground) {
-		url          = mUrl.resolve(regexPath.exec(url)[1]);
+		url          = modules.url.resolve(regexPath.exec(url)[1]);
 		isBackground = (isBackground) ? true : false;
 
 		var self     = this,
-			settings = merge({}, self._settings, mUrl.getParameter(url)),
+			settings = modules.function.merge({}, self._settings, modules.url.getParameter(url)),
 			target   = settings.target || (url = url.split('?')[0]).replace(regexSuffix, ''.concat('.q', settings.quality, '.shrunk'));
 
 		if(!isBackground) {
 			self.removeAttribute(self._settings.attribute).hide();
 		}
 
-		mSupport.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
+		modules.support.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
 			.then(settings.debug)
 			.then(
 				function() {
@@ -167,7 +167,7 @@
 		self.off();
 	}
 
-	loader = mPrototype.extend({
+	loader = modules.element.extend({
 		_url:   null,
 		_constructor: function(url, element) {
 			var self = this;

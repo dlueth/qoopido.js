@@ -2,18 +2,18 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/textshadow', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('support/css/textshadow', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../support' ], definition);
 	} else {
-		definition(window.qoopido.support);
+		definition();
 	}
-}(function(mSupport) {
+}(function(modules) {
 	'use strict';
 
-	return mSupport.addTest('/css/textshadow', function(deferred) {
-		(mSupport.supportsProperty('text-shadow')) ? deferred.resolve(mSupport.getProperty('text-shadow')) : deferred.reject();
+	return modules.support.addTest('/css/textshadow', function(deferred) {
+		(modules.support.supportsProperty('text-shadow')) ? deferred.resolve(modules.support.getProperty('text-shadow')) : deferred.reject();
 	});
 }, window));

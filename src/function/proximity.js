@@ -16,15 +16,15 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('function/proximity', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('function/proximity', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../base' ], definition);
 	} else {
-		definition(window.qoopido.base);
+		definition();
 	}
-}(function(mBase, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	return function proximity(source, target) {

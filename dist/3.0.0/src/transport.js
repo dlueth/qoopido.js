@@ -20,24 +20,24 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('transport', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../base', '../function/merge' ], definition);
 	} else {
-		definition(window.qoopido.base, window.qoopido.function.merge);
+		definition();
 	}
-}(function(mPrototype, merge) {
+}(function(modules) {
 	'use strict';
 
 	var prototype;
 
-	prototype = mPrototype.extend({
+	prototype = modules.base.extend({
 		setup: function(options) {
 			var self = this;
 
-			self._settings = merge({}, self._settings, options);
+			self._settings = modules.function.merge({}, self._settings, options);
 
 			return self;
 		},

@@ -16,15 +16,15 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('url', pDefinition, arguments, true);
+		return window.qoopido.shared.module.initialize('url', pDefinition, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
 	} else {
-		definition(window.qoopido.base);
+		definition();
 	}
-}(function(mPrototype, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var urlCurrent, regexLocal,
@@ -46,7 +46,7 @@
 		return resolver;
 	}
 
-	return mPrototype.extend({
+	return modules.base.extend({
 		resolve: function(url) {
 			return getResolver(url).href;
 		},

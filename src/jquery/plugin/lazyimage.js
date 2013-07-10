@@ -17,20 +17,21 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/plugins/lazyimage', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('jquery/plugins/lazyimage', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../element/lazyimage', 'jquery' ], definition);
 	} else {
-		definition(window.qoopido.element.lazyimage, window.jQuery);
+		definition();
 	}
-}(function(mPrototype, mJquery, namespace) {
+}(function(modules, namespace) {
 	'use strict';
 
 	var
 	// variables
-		name = namespace.pop(),
+		jQuery = window.jQuery,
+		name   = namespace.pop(),
 
 	// classes
 		prototype,
@@ -41,16 +42,16 @@
 		JQUERY_REQUESTED = ''.concat(EVENT_REQUESTED, '.', name),
 		JQUERY_LOADED    = ''.concat(EVENT_LOADED, '.', name);
 
-	mJquery.fn[name] = function(settings) {
+	jQuery.fn[name] = function(settings) {
 		return this.each(function() {
 			prototype.create(this, settings);
 		});
 	};
 
-	prototype = mPrototype.extend({
+	prototype = modules.element.lazyimage.extend({
 		_constructor: function(element, settings) {
 			var self   = this,
-				object = mJquery(element);
+				object = jQuery(element);
 
 			prototype._parent._constructor.call(self, element, settings);
 

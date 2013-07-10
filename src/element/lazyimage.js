@@ -20,15 +20,15 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element/lazyimage', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('element/lazyimage', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './emerge', '../function/merge' ], definition);
 	} else {
-		definition(window.qoopido.element.emerge, window.qoopido.function.merge);
+		definition();
 	}
-}(function(mPrototype, merge) {
+}(function(modules, merge) {
 	'use strict';
 
 	var
@@ -69,11 +69,11 @@
 			.removeAttribute(attribute);
 	}
 
-	prototype = mPrototype.extend({
+	prototype = modules.element.emerge.extend({
 		_constructor: function(element, settings) {
 			var self = this;
 
-			prototype._parent._constructor.call(self, element, merge({}, defaults, settings || {}));
+			prototype._parent._constructor.call(self, element, modules.function.merge({}, defaults, settings || {}));
 
 			self.on(EVENT_EMERGED, function onEmerge(priority) {
 				if(queue === 0 || priority === 1) {

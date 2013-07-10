@@ -16,15 +16,15 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('unique', pDefinition, arguments, true);
+		return window.qoopido.shared.module.initialize('unique', pDefinition, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base' ], definition);
 	} else {
-		definition(window.qoopido.base);
+		definition();
 	}
-}(function(mPrototype, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var result, x, i,
@@ -51,7 +51,7 @@
 		return result;
 	}
 
-	return mPrototype.extend({
+	return modules.base.extend({
 		uuid: function() {
 			do {
 				result = generateUuid();

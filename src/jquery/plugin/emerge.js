@@ -17,20 +17,21 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/plugins/emerge', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('jquery/plugins/emerge', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../element/emerge', 'jquery' ], definition);
 	} else {
-		definition(window.qoopido.element.emerge, window.jQuery);
+		definition();
 	}
-}(function(mPrototype, mJquery, namespace) {
+}(function(modules, namespace) {
 	'use strict';
 
 	var
 	// variables
-		name = namespace.pop(),
+		jQuery = window.jQuery,
+		name   = namespace.pop(),
 
 	// classes
 		prototype,
@@ -41,16 +42,16 @@
 		JQUERY_EMERGED  = ''.concat(EVENT_EMERGED, '.', name),
 		JQUERY_DEMERGED = ''.concat(EVENT_DEMERGED, '.', name);
 
-	mJquery.fn[name] = function(settings) {
+	jQuery.fn[name] = function(settings) {
 		return this.each(function() {
 			prototype.create(this, settings);
 		});
 	};
 
-	prototype = mPrototype.extend({
+	prototype = modules.element.emerge.extend({
 		_constructor: function(element, settings) {
 			var self   = this,
-				object = mJquery(element);
+				object = jQuery(element);
 
 			prototype._parent._constructor.call(self, element, settings);
 

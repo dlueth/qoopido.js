@@ -17,48 +17,49 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../base', 'jquery' ], definition);
 	} else {
-		definition(window.qoopido.base, window.jQuery);
+		definition();
 	}
-}(function(mBase, mJquery, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 	
-	var $window   = mJquery(window),
-		$document = mJquery(document);
+	var jQuery    = window.jQuery,
+		$window   = jQuery(window),
+		$document = jQuery(document);
 
-	mJquery.extend(mJquery.expr[':'], {
+	jQuery.extend(jQuery.expr[':'], {
 		loaded: function(el) {
-			return mJquery(el).data('loaded');
+			return jQuery(el).data('loaded');
 		},
 		scrollable: function(el, i, m) {
-			return mJquery(el).css('overflow') === 'auto';
+			return jQuery(el).css('overflow') === 'auto';
 		},
 		width: function(el, i, m) {
 			if(!m[3] || !(/^(<|>)\d+$/).test(m[3])) {
 				return false;
 			}
 
-			return m[3].substr(0,1) === '>' ? mJquery(el).width() > m[3].substr(1) : mJquery(el).width() < m[3].substr(1);
+			return m[3].substr(0,1) === '>' ? jQuery(el).width() > m[3].substr(1) : jQuery(el).width() < m[3].substr(1);
 		},
 		height: function(el, i, m) {
 			if(!m[3]||!(/^(<|>)\d+$/).test(m[3])) {
 				return false;
 			}
 
-			return m[3].substr(0,1) === '>' ? mJquery(el).height() > m[3].substr(1) : mJquery(el).height() < m[3].substr(1);
+			return m[3].substr(0,1) === '>' ? jQuery(el).height() > m[3].substr(1) : jQuery(el).height() < m[3].substr(1);
 		},
 		leftOf: function(el, i, m) {
 			if(!m[3]) {
 				return false;
 			}
 
-			el = mJquery(el);
-			m  = mJquery(m[3]);
+			el = jQuery(el);
+			m  = jQuery(m[3]);
 
 			return el.offset().left + el.width() < m.offset().left;
 		},
@@ -67,8 +68,8 @@
 				return false;
 			}
 
-			el = mJquery(el);
-			m  = mJquery(m[3]);
+			el = jQuery(el);
+			m  = jQuery(m[3]);
 
 			return el.offset().left > m.offset().left + m.width();
 		},
@@ -80,7 +81,7 @@
 			return el.hostname && el.hostname !== window.location.hostname;
 		},
 		inView: function(el) {
-			el = mJquery(el);
+			el = jQuery(el);
 
 			var w = $window,
 				d = $document,
@@ -99,27 +100,27 @@
 				return false;
 			}
 
-			el = mJquery(el);
-			m  = mJquery(m[3]);
+			el = jQuery(el);
+			m  = jQuery(m[3]);
 
 			return el.width() * el.height() > m.width() * m.height();
 		},
 		isBold: function(el) {
-			return mJquery(el).css('fontWeight') === '700';
+			return jQuery(el).css('fontWeight') === '700';
 		},
 		color: function(el, i, m) {
 			if(!m[3]) {
 				return false;
 			}
 
-			return mJquery(el).css('color') === m[3];
+			return jQuery(el).css('color') === m[3];
 		},
 		hasId: function(el) {
-			el = mJquery(el);
+			el = jQuery(el);
 
 			return el.attr('id') !== undefined && el.attr('id') !== '';
 		}
 	});
 
-	return mJquery;
+	return jQuery;
 }, window));

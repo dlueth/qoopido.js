@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.2/q.min.js"></script>
+	<script type="text/javascript" src="vendor/q/q.min.js"></script>
 	<script type="text/javascript" src="dist/latest/min/base.js"></script>
 	<script type="text/javascript" src="dist/latest/min/emitter.js"></script>
 	<script type="text/javascript" src="dist/latest/min/unique.js"></script>
@@ -49,9 +49,7 @@
 		console.log('lazyimage: ' + event.type);
 	});
 
-	window.qoopido.transport.jsonp.load('http://spielplatz/qoopido.js/dummy.php')
-		.then(function(response) { console.log(response); });
-
+	window.qoopido.transport.jsonp.load('http://spielplatz/qoopido.js/dummy.php');
 	window.qoopido.transport.xhr.get('http://spielplatz/');
 </script>
 </body>

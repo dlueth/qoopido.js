@@ -20,21 +20,22 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, arguments, true);
+		return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../transport', '../function/merge', '../url', '../unique', 'q' ], definition);
 	} else {
-		definition(window.qoopido.transport, window.qoopido.function.merge, window.qoopido.url, window.qoopido.unique, window.Q);
+		definition();
 	}
-}(function(mPrototype, merge, mUrl, mUnique, mQ, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var prototype,
+		Q      = window.Q,
 		getXhr = (typeof window.XMLHttpRequest !== 'undefined') ?
 			function(url) {
-				if(mUrl.isLocal(url)) {
+				if(modules.url.isLocal(url)) {
 					return new window.XMLHttpRequest();
 				} else {
 					return window.XDomainRequest ? new window.XDomainRequest() : new window.XMLHttpRequest();
@@ -77,15 +78,11 @@
 		xhr.onerror            = function() { onError.call(self); };
 		xhr.send(content || null);
 
-		self.timeout = setTimeout(function() { timeout(xhr); }, settings.timeout);
-	}
-
-	function timeout(xhr) {
-		xhr.abort();
+		self.timeout = setTimeout(function() { onTimeout(xhr); }, settings.timeout);
 	}
 
 	function onProgress(event) {
-		this.dfd.notify(event.loaded / event.total);
+		this.dfd.notify(event);
 	}
 
 	function onReadyStateChange() {
@@ -112,6 +109,10 @@
 		self.dfd.reject();
 	}
 
+	function onTimeout(xhr) {
+		xhr.abort();
+	}
+
 	function clear() {
 		var self = this,
 			xhr  = self.xhr;
@@ -122,7 +123,7 @@
 
 	}
 
-	prototype = mPrototype.extend({
+	prototype = modules.transport.extend({
 		_settings: {
 			accept:      '*/*',
 			timeout:     5000,
@@ -137,15 +138,15 @@
 		load: function(method, url, data, options) {
 			var self = {};
 
-			url = mUrl.resolve(url);
+			url = modules.url.resolve(url);
 
-			self.id       = ''.concat('xhr-', mUnique.string());
-			self.dfd      = mQ.defer();
+			self.id       = ''.concat('xhr-', modules.unique.string());
+			self.dfd      = Q.defer();
 			self.xhr      = getXhr(url);
 			self.timeout  = null;
-			self.settings = merge({}, this._settings, options);
+			self.settings = modules.function.merge({}, this._settings, options);
 
-			sendRequest.apply(self, [ method.toUpperCase(), url, data ]);
+			sendRequest.call(self, method.toUpperCase(), url, data);
 
 			return self.dfd.promise;
 		},

@@ -17,30 +17,31 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/function/prefetch', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('jquery/function/prefetch', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../../base', 'jquery' ], definition);
 	} else {
-		definition(window.qoopido.base, window.jQuery);
+		definition();
 	}
-}(function(mBase, mJquery) {
+}(function() {
 	'use strict';
 
-	var $head   = mJquery('head'),
+	var jQuery = window.jQuery,
+		$head  = jQuery('head'),
 		lookup = [];
 
-	mJquery.prefetch = function() {
-		var urls = mJquery.unique(mJquery('a[rel="prefetch"]').removeAttr('rel').map(function() { return mJquery(this).attr('href'); }));
+	jQuery.prefetch = function() {
+		var urls = jQuery.unique(jQuery('a[rel="prefetch"]').removeAttr('rel').map(function() { return jQuery(this).attr('href'); }));
 
 		urls.each(function(index, url) {
-			if(mJquery.inArray(url, lookup) === -1) {
-				mJquery('<link />', { rel: 'prefetch', href: url }).appendTo($head);
-				mJquery('<link />', { rel: 'prerender', href: url }).appendTo($head);
+			if(jQuery.inArray(url, lookup) === -1) {
+				jQuery('<link />', { rel: 'prefetch', href: url }).appendTo($head);
+				jQuery('<link />', { rel: 'prerender', href: url }).appendTo($head);
 			}
 		});
 	};
 
-	return mJquery;
+	return jQuery;
 }, window));

@@ -18,22 +18,23 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('worker', pDefinition, arguments, true);
+		return window.qoopido.shared.module.initialize('worker', pDefinition, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ './base', './support', 'q' ], definition);
 	} else {
-		definition(window.qoopido.base, window.qoopido.support, window.Q);
+		definition();
 	}
-}(function(mPrototype, mSupport, mQ) {
+}(function(modules) {
 	'use strict';
 
-	var supportsWorker = mSupport.supportsMethod('Worker');
+	var Q              = window.Q,
+		supportsWorker = modules.support.supportsMethod('Worker');
 
-	return mPrototype.extend({
+	return modules.base.extend({
 		execute: function(pWorker, pFunction, pArguments) {
-			var deferred  = mQ.defer();
+			var deferred  = Q.defer();
 
 			pArguments = pArguments || [];
 

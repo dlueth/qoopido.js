@@ -18,20 +18,20 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('module/pager', pDefinition, arguments);
+		return window.qoopido.shared.module.initialize('module/pager', pDefinition);
 	}
 
 	if(typeof define === 'function' && define.amd) {
 		define([ '../emitter', '../function/merge' ], definition);
 	} else {
-		definition(window.qoopido.emitter, window.qoopido.function.merge);
+		definition();
 	}
-}(function(mPrototype, merge, namespace, window, document, undefined) {
+}(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
 	var defaultSettings = { loop: true, initial: 0 };
 
-	return mPrototype.extend({
+	return modules.emitter.extend({
 		_settings: null,
 		_state:    null,
 		_constructor: function(data, settings) {
@@ -39,7 +39,7 @@
 
 			self._parent._constructor.call(self);
 
-			self._settings = merge({}, defaultSettings, settings || {});
+			self._settings = modules.function.merge({}, defaultSettings, settings || {});
 			self._state    = { length: null, index: null, item: null, data: null };
 
 			if(data !== undefined && data !== null) {
