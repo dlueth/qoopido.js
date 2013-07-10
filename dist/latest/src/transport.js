@@ -11,10 +11,7 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require ../base
- * @require ../url
- * @require ../unique
- * @require q (external)
- * @require json2 (external, for legacy support only)
+ * @require ../function/merge
  */
 ;(function(pDefinition, window) {
 	'use strict';

@@ -10,10 +10,10 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require ../base
+ * @require ../transport
+ * @require ../function/merge
  * @require ../url
  * @require ../unique
- * @require ../element
  * @require q (external)
  */
 ;(function(pDefinition, window) {

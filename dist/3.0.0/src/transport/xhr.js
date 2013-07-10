@@ -10,11 +10,11 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require ../base
+ * @require ../transport
+ * @require ../function/merge
  * @require ../url
  * @require ../unique
  * @require q (external)
- * @require json2 (external, for legacy support only)
  */
 ;(function(pDefinition, window) {
 	'use strict';

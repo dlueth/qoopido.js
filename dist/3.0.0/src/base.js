@@ -22,9 +22,9 @@
 
 	pPolyfill();
 
-	var id      = 'qoopido',
-		root    = window[id] = window[id] || {},
-		modules = root.modules = root.modules || {};
+	var id     = 'qoopido',
+		root   = window[id] = window[id] || {},
+		lookup = root._lookup = root._lookup || {};
 
 	function definition() {
 		return initialize('base', pDefinition);
@@ -35,8 +35,8 @@
 			id        = namespace[namespace.length - 1],
 			pointer   = root;
 
-		if(modules[pNamespace]) {
-			return modules[pNamespace];
+		if(lookup[pNamespace]) {
+			return lookup[pNamespace];
 		}
 
 		for(var i = 0; namespace[i + 1] !== undefined; i++) {
@@ -45,7 +45,7 @@
 			pointer = pointer[namespace[i]];
 		}
 
-		return pointer[id] = modules[pNamespace] = (function() {
+		return pointer[id] = lookup[pNamespace] = (function() {
 			return ((pSingleton === true) ? pDefinition.call(null, root, namespace, window, document, undefined).create() : pDefinition.call(null, root, namespace, window, document, undefined));
 		})();
 	}
