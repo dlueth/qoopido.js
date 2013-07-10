@@ -17,11 +17,11 @@ By the time of this writing only one module (shrinkimage) requires support for J
 
 Currently contains
 ---------------------------
-- [base][base] (object inheritance)
-- [emitter][emitter] (event emitter)
+- [base](#base) (object inheritance)
+- [emitter](#emitter) (event emitter)
 - unique (generate UUIDs and unique strings)
 - url (handle URLs, parameter etc.)
-- [element][element] (DOM element extension)
+- [element](#element) (DOM element extension)
 	- emerge (react on elements entering or nearing the visible browser area)
 	- lazyimage (load images when entering or nearing the visible browser area)
 	- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
@@ -87,7 +87,6 @@ Alter your require config to include "qoopido" pointing towards the folder where
 
 Usage
 ---------------------------
-[base]:
 ### base
 Most basic class that every(!) other class extends. It provides the object inheritance/extension mechanism of Qoopido.js and provides and manages the module factory. Every class that extends "base" inherits two methods
 
