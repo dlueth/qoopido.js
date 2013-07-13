@@ -29,7 +29,8 @@
 	'use strict';
 
 	var Q             = window.Q,
-		regexProperty = /-([a-z])/gi,
+		regexProperty = new RegExp('-([a-z])', 'gi'),
+		regexPrefix   = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
 		lookup = {
 			prefix:   null,
 			property: { },
@@ -88,14 +89,13 @@
 				stored = lookup.prefix || null;
 
 			if(stored === null) {
-				var styles = this.getElement('div').style,
-					regex  = /^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])/;
+				var styles = this.getElement('div').style;
 
 				stored = false;
 
 				for(property in styles) {
-					if(regex.test(property)) {
-						stored = property.match(regex)[0];
+					if(regexPrefix.test(property)) {
+						stored = property.match(regexPrefix)[0];
 					}
 				}
 

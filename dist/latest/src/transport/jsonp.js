@@ -47,9 +47,7 @@
 		url     = (content) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
 
 		window[self.id] = function(data) {
-			if(dfd.promise.isPending()) {
-				dfd.resolve(data);
-			}
+			dfd.resolve(data);
 
 			try {
 				delete window[self.id];
@@ -88,11 +86,7 @@
 	}
 
 	function onTimeout() {
-		var dfd = this.dfd;
-
-		if(dfd.promise.isPending()) {
-			this.dfd.reject();
-		}
+		this.dfd.reject();
 	}
 
 	function clear() {
@@ -109,21 +103,21 @@
 			timeout:  200
 		},
 		load: function(url, data, options) {
-			var self = {};
+			var context = {};
 
 			url = modules.url.resolve(url);
 
-			self.id       = ''.concat('jsonp-', modules.unique.string());
-			self.dfd      = Q.defer();
-			self.script   = document.createElement('script');
-			self.settings = modules.function.merge({}, this._settings, options);
-			self.timeout  = null;
+			context.id       = ''.concat('jsonp-', modules.unique.string());
+			context.dfd      = Q.defer();
+			context.script   = document.createElement('script');
+			context.settings = modules.function.merge({}, this._settings, options);
+			context.timeout  = null;
 
-			self.script.setAttribute('async', true);
+			context.script.setAttribute('async', true);
 
-			sendRequest.call(self, url, data);
+			sendRequest.call(context, url, data);
 
-			return self.dfd.promise;
+			return context.dfd.promise;
 		}
 	});
 

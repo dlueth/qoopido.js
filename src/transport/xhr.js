@@ -136,19 +136,19 @@
 			xhrOptions:  {}
 		},
 		load: function(method, url, data, options) {
-			var self = {};
+			var context = {};
 
 			url = modules.url.resolve(url);
 
-			self.id       = ''.concat('xhr-', modules.unique.string());
-			self.dfd      = Q.defer();
-			self.xhr      = getXhr(url);
-			self.timeout  = null;
-			self.settings = modules.function.merge({}, this._settings, options);
+			context.id       = ''.concat('xhr-', modules.unique.string());
+			context.dfd      = Q.defer();
+			context.xhr      = getXhr(url);
+			context.settings = modules.function.merge({}, this._settings, options);
+			context.timeout  = null;
 
-			sendRequest.call(self, method.toUpperCase(), url, data);
+			sendRequest.call(context, method.toUpperCase(), url, data);
 
-			return self.dfd.promise;
+			return context.dfd.promise;
 		},
 		get: function(url, data, options) {
 			return this.load('GET', url, data, options);

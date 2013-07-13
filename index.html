@@ -19,6 +19,10 @@
 	<script type="text/javascript" src="dist/latest/min/element/shrinkimage.js"></script>
 	<script type="text/javascript" src="dist/latest/min/element/emerge.js"></script>
 	<script type="text/javascript" src="dist/latest/min/element/lazyimage.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/array.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/object.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/dom.js"></script>
 </head>
 <body>
 
@@ -49,8 +53,45 @@
 		console.log('lazyimage: ' + event.type);
 	});
 
-	window.qoopido.transport.jsonp.load('http://spielplatz/qoopido.js/dummy.php');
+	window.qoopido.transport.jsonp.load('http://spielplatz/qoopido.js/dummy.php')
+		.then(function(data) { console.log('jsonp: ', data) });
 	window.qoopido.transport.xhr.get('http://spielplatz/');
+
+	var poolDom = window.qoopido.pool.dom.create('shared');
+	for(var i = 1; i <= 100; i++) {
+		setTimeout(function() {
+			var rand = Math.round(Math.random()),
+				temp;
+
+			if(rand === 0) {
+				rand = Math.round(Math.random() * 1000);
+				temp = poolDom.obtain('div');
+
+				setTimeout(function() { poolDom.dispose(temp); }, rand);
+			} else {
+				rand = Math.round(Math.random() * 1000);
+				temp = poolDom.obtain('img');
+
+				setTimeout(function() { poolDom.dispose(temp); }, rand);
+			}
+		}, i * (Math.round(Math.random() * 50)));
+	}
+
+	poolDom.dispose(document.createElement('canvas'));
+
+	//setInterval(function() { console.log(poolDom.metrics); }, 5000);
+	/*
+	var poolArrayItem1 = poolArray.obtain();
+	var poolArrayItem2 = poolArray.obtain();
+	var poolArrayItem3 = poolArray.obtain();
+	var poolArrayItem4 = poolArray.obtain();
+
+	poolArrayItem2 = poolArray.dispose(poolArrayItem2);
+	poolArrayItem3 = poolArray.dispose(poolArrayItem3);
+
+	var poolArrayItem5 = poolArray.obtain();
+	var poolArrayItem6 = poolArray.obtain();
+	*/
 </script>
 </body>
 </html>
