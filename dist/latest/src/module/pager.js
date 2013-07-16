@@ -29,15 +29,16 @@
 }(function(modules, namespace, window, document, undefined) {
 	'use strict';
 
-	var defaultSettings = { loop: true, initial: 0 };
+	var prototype,
+		defaultSettings = { loop: true, initial: 0 };
 
-	return modules.emitter.extend({
+	prototype = modules.emitter.extend({
 		_settings: null,
 		_state:    null,
 		_constructor: function(data, settings) {
 			var self = this;
 
-			self._parent._constructor.call(self);
+			prototype._parent._constructor.call(self);
 
 			self._settings = modules.function.merge({}, defaultSettings, settings || {});
 			self._state    = { length: null, index: null, item: null, data: null };
@@ -127,4 +128,6 @@
 			return self;
 		}
 	});
+
+	return prototype;
 }, window));

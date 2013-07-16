@@ -25,11 +25,10 @@
 	} else {
 		definition();
 	}
-}(function(modules) {
+}(function(modules, namespace) {
 	'use strict';
 
 	var prototype,
-		pools    = {},
 		settings = {
 			interval:    15,
 			frameBudget: 0.5,
@@ -83,7 +82,6 @@
 			recycled:  0,
 			destroyed: 0
 		},
-		_uuid:     null,
 		_settings: null,
 		_pool:     null,
 		_queue:    [],
@@ -95,10 +93,8 @@
 		_constructor: function(id, options) {
 			var self = this;
 
-			self._uuid        = id || modules.unique.uuid();
 			self._settings    = modules.function.merge({}, settings, options);
 			self._pool        = self._initPool();
-			pools[self._uuid] = self;
 
 			setInterval(function() { processQueue.call(self); }, self._settings.interval);
 		},
@@ -107,9 +103,6 @@
 		},
 		_getPool: function() {
 			return this._pool;
-		},
-		get: function(id) {
-			return pools[id] || null;
 		},
 		obtain: function() {
 			var self    = this,

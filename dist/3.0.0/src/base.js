@@ -82,7 +82,7 @@
 			},
 			extend: function(properties) {
 				properties         = properties || {};
-				properties._parent = Object.create(this, Object.getOwnPropertyDescriptors(this));
+				properties._parent = this; //Object.create(this, Object.getOwnPropertyDescriptors(this));
 
 				return Object.create(this, Object.getOwnPropertyDescriptors(properties));
 			}
@@ -91,33 +91,21 @@
 	function(undefined) {
 		'use strict';
 
-		var valueNull                       = null,
-			stringFunction                  = 'function',
-			stringObject                    = 'object',
-			stringUndefined                 = 'undefined',
-			stringProto                     = '__proto__',
-			stringPrototype                 = 'prototype',
-			stringHasOwnProperty            = 'hasOwnProperty',
-			stringDefineProperty            = 'defineProperty',
-			stringDefineProperties          = 'defineProperties',
-			stringGetOwnPropertyDescriptor  = 'getOwnPropertyDescriptor',
-			stringGetOwnPropertyDescriptors = 'getOwnPropertyDescriptors',
-			stringGetOwnPropertyNames       = 'getOwnPropertyNames',
-			pointerObjectPrototype          = Object[stringPrototype],
-			supportsProto                   = (pointerObjectPrototype[stringProto] === valueNull),
-			supportsAccessors               = pointerObjectPrototype[stringHasOwnProperty]('__defineGetter__'),
+		var pointerObjectPrototype = Object.prototype,
+			supportsProto          = (pointerObjectPrototype.hasOwnProperty === null),
+			supportsAccessors      = pointerObjectPrototype.hasOwnProperty('__defineGetter__'),
 			fallbackDefineProperty, fallbackDefineProperties, fallbackGetOwnPropertyDescriptor;
 
 		function Blueprint() {}
-		function checkDefineProperty(object) { try { Object[stringDefineProperty](object, 'sentinel', {}); return ('sentinel' in object); } catch (exception) {}}
-		function checkGetOwnPropertyDescriptor(object) { try { object.sentinel = 0; return (Object[stringGetOwnPropertyDescriptor](object, 'sentinel').value === 0); } catch (exception) {}}
+		function checkDefineProperty(object) { try { Object.defineProperty(object, 'sentinel', {}); return ('sentinel' in object); } catch (exception) {}}
+		function checkGetOwnPropertyDescriptor(object) { try { object.sentinel = 0; return (Object.getOwnPropertyDescriptor(object, 'sentinel').value === 0); } catch (exception) {}}
 
 		if(!Object.keys) {
 			var buggy   = true,
 				exclude = [	'toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor' ],
 				key;
 
-			for(key in { 'toString': valueNull }) {
+			for(key in { 'toString': null }) {
 				buggy = false;
 			}
 
@@ -125,12 +113,12 @@
 				var result = [],
 					name;
 
-				if((typeof object !== stringObject && typeof object !== stringFunction) || object === valueNull) {
+				if((typeof object !== 'object' && typeof object !== 'function') || object === null) {
 					throw new TypeError('Object.keys called on a non-object');
 				}
 
 				for(name in object) {
-					if(object[stringHasOwnProperty](name)) {
+					if(object.hasOwnProperty(name)) {
 						result.push(name);
 					}
 				}
@@ -139,7 +127,7 @@
 					var i;
 
 					for(i = 0; (name = exclude[i]) !== undefined; i++) {
-						if(object[stringHasOwnProperty](name)) {
+						if(object.hasOwnProperty(name)) {
 							result.push(name);
 						}
 					}
@@ -149,44 +137,44 @@
 			};
 		}
 
-		if(Object[stringDefineProperty]) {
-			if(!(checkDefineProperty({})) || !(typeof document === stringUndefined || checkDefineProperty(document.createElement('div')))) {
-				fallbackDefineProperty   = Object[stringDefineProperty];
-				fallbackDefineProperties = Object[stringDefineProperties];
+		if(Object.defineProperty) {
+			if(!(checkDefineProperty({})) || !(typeof document === 'undefined' || checkDefineProperty(document.createElement('div')))) {
+				fallbackDefineProperty   = Object.defineProperty;
+				fallbackDefineProperties = Object.defineProperties;
 			}
 
-			if(!(checkGetOwnPropertyDescriptor({})) || !(typeof document === stringUndefined || checkGetOwnPropertyDescriptor(document.createElement('div')))) {
-				fallbackGetOwnPropertyDescriptor = Object[stringGetOwnPropertyDescriptor];
+			if(!(checkGetOwnPropertyDescriptor({})) || !(typeof document === 'undefined' || checkGetOwnPropertyDescriptor(document.createElement('div')))) {
+				fallbackGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 			}
 		}
 
-		if(!Object[stringDefineProperty] || fallbackDefineProperty !== valueNull) {
-			Object[stringDefineProperty] = function(object, property, descriptor) {
-				if((typeof object !== stringObject && typeof object !== stringFunction) || object === valueNull) {
-					throw new TypeError('Object[stringDefineProperty] called on non-object: ' + object);
+		if(!Object.defineProperty || fallbackDefineProperty !== null) {
+			Object.defineProperty = function(object, property, descriptor) {
+				if((typeof object !== 'object' && typeof object !== 'function') || object === null) {
+					throw new TypeError('Object.defineProperty called on non-object: ' + object);
 				}
 
-				if((typeof descriptor !== stringObject && typeof descriptor !== stringFunction) || descriptor === valueNull) {
+				if((typeof descriptor !== 'object' && typeof descriptor !== 'function') || descriptor === null) {
 					throw new TypeError('Property description must be an object: ' + descriptor);
 				}
 
-				if(fallbackDefineProperty !== valueNull) {
+				if(fallbackDefineProperty !== null) {
 					try {
 						return fallbackDefineProperty.call(Object, object, property, descriptor);
 					} catch (exception) {}
 				}
 
-				if(descriptor[stringHasOwnProperty]('value')) {
+				if(descriptor.hasOwnProperty('value')) {
 					if(supportsAccessors && (object.__lookupGetter__(property) || object.__lookupSetter__(property))) {
-						var prototype = object[stringProto];
+						var prototype = object.__proto__;
 
-						object[stringProto] = pointerObjectPrototype;
+						object.__proto__ = pointerObjectPrototype;
 
 						delete object[property];
 
 						object[property] = descriptor.value;
 
-						object[stringProto] = prototype;
+						object.__proto__ = prototype;
 					} else {
 						object[property] = descriptor.value;
 					}
@@ -195,11 +183,11 @@
 						throw new TypeError('getters & setters can not be defined on this javascript engine');
 					}
 
-					if(descriptor[stringHasOwnProperty]('get')) {
+					if(descriptor.hasOwnProperty('get')) {
 						object.__defineGetter__(property, descriptor.get);
 					}
 
-					if(descriptor[stringHasOwnProperty]('set')) {
+					if(descriptor.hasOwnProperty('set')) {
 						object.__defineSetter__(property, descriptor.set);
 					}
 				}
@@ -208,8 +196,8 @@
 			};
 		}
 
-		if(!Object[stringDefineProperties] || fallbackDefineProperties !== valueNull) {
-			Object[stringDefineProperties] = function(object, properties) {
+		if(!Object.defineProperties || fallbackDefineProperties !== null) {
+			Object.defineProperties = function(object, properties) {
 				var property;
 
 				if(fallbackDefineProperties) {
@@ -219,8 +207,8 @@
 				}
 
 				for(property in properties) {
-					if(properties[stringHasOwnProperty](property) && property !== '__proto__') {
-						Object[stringDefineProperty](object, property, properties[property]);
+					if(properties.hasOwnProperty(property) && property !== '__proto__') {
+						Object.defineProperty(object, property, properties[property]);
 					}
 				}
 
@@ -228,34 +216,34 @@
 			};
 		}
 
-		if(!Object[stringGetOwnPropertyDescriptor] || fallbackGetOwnPropertyDescriptor !== valueNull) {
-			Object[stringGetOwnPropertyDescriptor] = function(object, property) {
+		if(!Object.getOwnPropertyDescriptor || fallbackGetOwnPropertyDescriptor !== null) {
+			Object.getOwnPropertyDescriptor = function(object, property) {
 				var descriptor =  { enumerable: true, configurable: true };
 
-				if((typeof object !== stringObject && typeof object !== stringFunction) || object === valueNull) {
-					throw new TypeError('Object[stringGetOwnPropertyDescriptor] called on non-object: ' + object);
+				if((typeof object !== 'object' && typeof object !== 'function') || object === null) {
+					throw new TypeError('Object.getOwnPropertyDescriptor called on non-object: ' + object);
 				}
 
-				if(fallbackGetOwnPropertyDescriptor !== valueNull) {
+				if(fallbackGetOwnPropertyDescriptor !== null) {
 					try {
 						return fallbackGetOwnPropertyDescriptor.call(Object, object, property);
 					} catch (exception) {}
 				}
 
-				if(!object[stringHasOwnProperty](property)) {
+				if(!object.hasOwnProperty(property)) {
 					return;
 				}
 
 				if(supportsAccessors === true) {
-					var prototype = object[stringProto],
+					var prototype = object.__proto__,
 						getter, setter;
 
-					object[stringProto] = pointerObjectPrototype;
+					object.__proto__ = pointerObjectPrototype;
 
 					getter = object.__lookupGetter__(property);
 					setter = object.__lookupSetter__(property);
 
-					object[stringProto] = prototype;
+					object.__proto__ = prototype;
 
 					if(getter || setter) {
 						if(getter) {
@@ -277,22 +265,22 @@
 			};
 		}
 
-		if(!Object[stringGetOwnPropertyDescriptors]) {
-			Object[stringGetOwnPropertyDescriptors] = function(object) {
+		if(!Object.getOwnPropertyDescriptors) {
+			Object.getOwnPropertyDescriptors = function(object) {
 				var descriptors = {},
-					propertiers = Object[stringGetOwnPropertyNames](object),
+					propertiers = Object.getOwnPropertyNames(object),
 					i, property;
 
 				for(i = 0; (property = propertiers[i]) !== undefined; i++) {
-					descriptors[property] = Object[stringGetOwnPropertyDescriptor](object, property);
+					descriptors[property] = Object.getOwnPropertyDescriptor(object, property);
 				}
 
 				return descriptors;
 			};
 		}
 
-		if(!Object[stringGetOwnPropertyNames]) {
-			Object[stringGetOwnPropertyNames] = function(object) {
+		if(!Object.getOwnPropertyNames) {
+			Object.getOwnPropertyNames = function(object) {
 				return Object.keys(object);
 			};
 		}
@@ -300,8 +288,8 @@
 		if(!Object.create) {
 			var createEmpty;
 
-			if(supportsProto || typeof document === stringUndefined) {
-				createEmpty = function() { return { '__proto__': valueNull }; };
+			if(supportsProto || typeof document === 'undefined') {
+				createEmpty = function() { return { '__proto__': null }; };
 			} else {
 				createEmpty = function() {
 					var iframe = document.createElement('iframe'),
@@ -321,12 +309,12 @@
 					delete empty.toLocaleString;
 					delete empty.toString;
 					delete empty.valueOf;
-					empty[stringProto] = valueNull;
+					empty.__proto__ = null;
 
 					parent.removeChild(iframe);
-					iframe = valueNull;
+					iframe = null;
 
-					Blueprint[stringPrototype] = empty;
+					Blueprint.prototype = empty;
 
 					createEmpty = function() {
 						return new Blueprint();
@@ -341,21 +329,21 @@
 
 				function Type() {}
 
-				if(prototype === valueNull) {
+				if(prototype === null) {
 					object = createEmpty();
 				} else {
-					if(typeof prototype !== stringObject && typeof prototype !== stringFunction) {
+					if(typeof prototype !== 'object' && typeof prototype !== 'function') {
 						throw new TypeError('Object prototype may only be an Object or null');
 					}
 
-					Type[stringPrototype] = prototype;
+					Type.prototype = prototype;
 
 					object = new Type();
-					object[stringProto] = prototype;
+					object.__proto__ = prototype;
 				}
 
 				if(properties !== void 0) {
-					Object[stringDefineProperties](object, properties);
+					Object.defineProperties(object, properties);
 				}
 
 				return object;
