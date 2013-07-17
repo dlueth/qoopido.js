@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/element/canvas', pDefinition);
+		return window.qoopido.shared.module.initialize('support/element/canvas', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

@@ -18,7 +18,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('module/pager', pDefinition);
+		return window.qoopido.shared.module.initialize('component/pager', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -26,7 +26,7 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document, undefined) {
+}(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -66,7 +66,7 @@
 
 			return self;
 		},
-		getData: function(index) {
+		getData: function() {
 			var self = this;
 
 			return self._state.data;

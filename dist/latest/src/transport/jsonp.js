@@ -20,7 +20,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport/jsonp', pDefinition, true);
+		return window.qoopido.shared.module.initialize('transport/jsonp', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -28,11 +28,11 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document) {
+}(function(modules, dependencies, namespace, window, document) {
 	'use strict';
 
 	var prototype,
-		Q    = window.Q,
+		Q    = window.Q || dependencies[4],
 		head = document.getElementsByTagName('head')[0];
 
 	function sendRequest(url, content) {

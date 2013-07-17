@@ -20,7 +20,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element/lazyimage', pDefinition);
+		return window.qoopido.shared.module.initialize('element/lazyimage', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition);
+		return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -25,10 +25,10 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document, undefined) {
+}(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 	
-	var jQuery    = window.jQuery,
+	var jQuery    = window.jQuery || dependencies[1],
 		$window   = jQuery(window),
 		$document = jQuery(document);
 

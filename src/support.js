@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support', pDefinition, true);
+		return window.qoopido.shared.module.initialize('support', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -25,10 +25,10 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document, undefined) {
+}(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 
-	var Q             = window.Q,
+	var Q             = window.Q || dependencies[1],
 		regexProperty = new RegExp('-([a-z])', 'gi'),
 		regexPrefix   = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
 		lookup = {

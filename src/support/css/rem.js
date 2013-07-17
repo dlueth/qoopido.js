@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/rem', pDefinition);
+		return window.qoopido.shared.module.initialize('support/css/rem', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

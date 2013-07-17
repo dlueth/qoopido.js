@@ -30,10 +30,10 @@
 		return initialize('base', pDefinition);
 	}
 
-	function initialize(pNamespace, pDefinition, pSingleton) {
-		var namespace = pNamespace.split('/'),
-			id        = namespace[namespace.length - 1],
-			pointer   = root;
+	function initialize(pNamespace, pDefinition, pArguments, pSingleton) {
+		var namespace  = pNamespace.split('/'),
+			id         = namespace[namespace.length - 1],
+			pointer    = root;
 
 		if(lookup[pNamespace]) {
 			return lookup[pNamespace];
@@ -45,13 +45,15 @@
 			pointer = pointer[namespace[i]];
 		}
 
+		pArguments = (pArguments) ? [].slice.call(pArguments, 0) : [];
+
 		return pointer[id] = lookup[pNamespace] = (function() {
-			return ((pSingleton === true) ? pDefinition.call(null, root, namespace, window, document, undefined).create() : pDefinition.call(null, root, namespace, window, document, undefined));
+			return ((pSingleton === true) ? pDefinition.call(null, root, pArguments, namespace, window, document, undefined).create() : pDefinition.call(null, root, pArguments, namespace, window, document, undefined));
 		})();
 	}
 
 	initialize('shared/module/initialize',
-		function(modules, namespace) {
+		function(modules, dependencies, namespace) {
 			if(typeof define === 'function' && define.amd) {
 				define(namespace, initialize);
 			}
@@ -65,7 +67,7 @@
 		definition();
 	}
 }(
-	function(modules, namespace, window, document, undefined) {
+	function(modules, dependencies, namespace, window, document, undefined) {
 		'use strict';
 
 		return {

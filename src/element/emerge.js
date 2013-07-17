@@ -18,7 +18,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element/emerge', pDefinition);
+		return window.qoopido.shared.module.initialize('element/emerge', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -26,7 +26,7 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document, undefined) {
+}(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 
 	var

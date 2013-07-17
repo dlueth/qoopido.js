@@ -16,7 +16,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('pool/object', pDefinition);
+		return window.qoopido.shared.module.initialize('pool/object', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -24,7 +24,7 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document) {
+}(function(modules, dependencies, namespace, window, document) {
 	'use strict';
 
 	var prototype,

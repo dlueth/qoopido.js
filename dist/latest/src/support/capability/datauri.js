@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition);
+		return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/function/prefetch', pDefinition);
+		return window.qoopido.shared.module.initialize('jquery/function/prefetch', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -25,10 +25,10 @@
 	} else {
 		definition();
 	}
-}(function() {
+}(function(modules, dependencies) {
 	'use strict';
 
-	var jQuery = window.jQuery,
+	var jQuery = window.jQuery || dependencies[1],
 		$head  = jQuery('head'),
 		lookup = [];
 

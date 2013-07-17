@@ -20,13 +20,14 @@
  * @require ../support
  * @require ../support/capability/datauri
  * @require ../support/element/canvas/todataurl/png
+ * @require ../transport/xhr
  * @require json (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('element/shrinkimage', pDefinition);
+		return window.qoopido.shared.module.initialize('element/shrinkimage', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -34,12 +35,14 @@
 			define('json', function() { return window.JSON; });
 		}
 
-		define([ '../element', '../function/merge', '../url', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png' ], definition);
+		define([ '../element', '../function/merge', '../url', '../support', '../support/capability/datauri', '../support/element/canvas/todataurl/png', '../transport/xhr', 'json' ], definition);
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document, undefined) {
+}(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
+
+	console.log('hier');
 
 	var
 	// properties
@@ -109,48 +112,48 @@
 		modules.support.testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
 			.then(settings.debug)
 			.then(
-				function() {
-					switch(typeof lookup[target]) {
-						case 'object':
+			function() {
+				switch(typeof lookup[target]) {
+					case 'object':
 
-							lookup[target].one(EVENT_LOADED, function(event) {
-								assign.call(self, event.data, isBackground);
-							});
+						lookup[target].one(EVENT_LOADED, function(event) {
+							assign.call(self, event.data, isBackground);
+						});
 
-							self.emit(EVENT_QUEUED);
-							break;
-						case 'string':
-							assign.call(self, lookup[target], isBackground);
-							break;
-						default:
-							lookup[target] = loader
-								.create(target, (!isBackground) ? self._element : null)
-								.one(EVENT_STATE, function(event) {
-									if(event.type === EVENT_LOADED) {
-										lookup[target] = event.data;
+						self.emit(EVENT_QUEUED);
+						break;
+					case 'string':
+						assign.call(self, lookup[target], isBackground);
+						break;
+					default:
+						lookup[target] = loader
+							.create(target, (!isBackground) ? self._element : null)
+							.one(EVENT_STATE, function(event) {
+								if(event.type === EVENT_LOADED) {
+									lookup[target] = event.data;
 
-										self.emit(EVENT_CACHED);
+									self.emit(EVENT_CACHED);
 
-										assign.call(self, event.data, isBackground);
-									} else {
-										lookup[target] = url;
+									assign.call(self, event.data, isBackground);
+								} else {
+									lookup[target] = url;
 
-										assign.call(self, url, isBackground);
-									}
-								}, false);
+									assign.call(self, url, isBackground);
+								}
+							}, false);
 
-							self.emit(EVENT_REQUESTED);
-							break;
-					}
+						self.emit(EVENT_REQUESTED);
+						break;
 				}
-			)
+			}
+		)
 			.fail(
-				function() {
-					lookup[target] = url;
+			function() {
+				lookup[target] = url;
 
-					assign.call(self, url, isBackground);
-				}
-			)
+				assign.call(self, url, isBackground);
+			}
+		)
 			.done();
 	}
 
@@ -182,13 +185,7 @@
 
 			self._url = url;
 
-			if(typeof define === 'function' && define.amd) {
-				require([ '../../transport/xhr', 'json' ], function(mXhr) {
-					processTransport.call(self, mXhr);
-				});
-			} else {
-				processTransport.call(self, window.qoopido.transport.xhr);
-			}
+			processTransport.call(self, window.qoopido.transport.xhr);
 		}
 	});
 
@@ -197,22 +194,22 @@
 
 		transport.get(self._url)
 			.then(
-				function(response) {
-					try {
-						var data = JSON.parse(response.data);
+			function(response) {
+				try {
+					var data = JSON.parse(response.data);
 
-						data.width  = parseInt(data.width, 10);
-						data.height = parseInt(data.height, 10);
+					data.width  = parseInt(data.width, 10);
+					data.height = parseInt(data.height, 10);
 
-						processData.call(self, data);
-					} catch(exception) {
-						self.emit(EVENT_FAILED);
-					}
-				},
-				function() {
+					processData.call(self, data);
+				} catch(exception) {
 					self.emit(EVENT_FAILED);
 				}
-			)
+			},
+			function() {
+				self.emit(EVENT_FAILED);
+			}
+		)
 			.done();
 	}
 

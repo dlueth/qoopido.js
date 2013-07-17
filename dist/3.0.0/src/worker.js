@@ -18,7 +18,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('worker', pDefinition, true);
+		return window.qoopido.shared.module.initialize('worker', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -26,10 +26,10 @@
 	} else {
 		definition();
 	}
-}(function(modules) {
+}(function(modules, dependencies) {
 	'use strict';
 
-	var Q              = window.Q,
+	var Q              = window.Q || dependencies[2],
 		supportsWorker = modules.support.supportsMethod('Worker');
 
 	return modules.base.extend({

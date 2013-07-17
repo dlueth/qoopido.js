@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/rgba', pDefinition);
+		return window.qoopido.shared.module.initialize('support/css/rgba', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/plugins/lazyimage', pDefinition);
+		return window.qoopido.shared.module.initialize('jquery/plugins/lazyimage', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -25,12 +25,12 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace) {
+}(function(modules, dependencies, namespace) {
 	'use strict';
 
 	var
 	// variables
-		jQuery = window.jQuery,
+		jQuery = window.jQuery || dependencies[1],
 		name   = namespace.pop(),
 
 	// classes

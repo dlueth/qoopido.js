@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport', pDefinition);
+		return window.qoopido.shared.module.initialize('transport', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

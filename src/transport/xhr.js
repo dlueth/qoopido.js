@@ -20,7 +20,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, true);
+		return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -28,11 +28,11 @@
 	} else {
 		definition();
 	}
-}(function(modules, namespace, window, document, undefined) {
+}(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 
 	var prototype,
-		Q      = window.Q,
+		Q      = window.Q || dependencies[4],
 		getXhr = (typeof window.XMLHttpRequest !== 'undefined') ?
 			function(url) {
 				if(modules.url.isLocal(url)) {

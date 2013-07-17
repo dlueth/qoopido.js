@@ -32,7 +32,7 @@ Currently contains
 - function (provides single functions, e.g. helper)
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
-- module
+- component
 	- remux (REM based aproach to responsive web design)
 	- pager (flexible and UI/UX independent data pager)
 - support (base for feature detection)
