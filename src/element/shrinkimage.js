@@ -42,8 +42,6 @@
 }(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 
-	console.log('hier');
-
 	var
 	// properties
 		name            = namespace.pop(),
