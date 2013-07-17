@@ -21,7 +21,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../base', '../function/merge' ], definition);
+		define([ './base', './function/merge' ], definition);
 	} else {
 		definition();
 	}
