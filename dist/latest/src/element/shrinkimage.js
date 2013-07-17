@@ -161,11 +161,12 @@
 		if(isBackground) {
 			self.setStyle('background-image', 'url(' + source + ')');
 		} else {
-			self.setAttribute('src', source).show();
+			self.one(DOM_LOAD, function() {
+				self.show();
+				self.emit(EVENT_LOADED);
+				self.off();
+			}).setAttribute('src', source);
 		}
-
-		self.emit(EVENT_LOADED);
-		self.off();
 	}
 
 	loader = modules.element.extend({
