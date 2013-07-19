@@ -19,22 +19,52 @@ Currently contains
 ---------------------------
 - [base](#base) (object inheritance)
 - [emitter](#emitter) (event emitter)
-- unique (generate UUIDs and unique strings)
+- proxy (universal proxy method)
 - url (handle URLs, parameter etc.)
-- [element](#element) (DOM element extension)
-	- emerge (react on elements entering or nearing the visible browser area)
-	- lazyimage (load images when entering or nearing the visible browser area)
-	- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
+- component
+	- remux (REM based aproach to responsive web design)
+	- pager (flexible and UI/UX independent data pager)
+- dom
+	- [element](#element) (DOM element extension)
+		- emerge (react on elements entering or nearing the visible browser area)
+		- lazyimage (load images when entering or nearing the visible browser area)
+		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
+- function (provides single functions, e.g. helper)
+   	- merge (function to deep merge objects)
+   	- proximity (calculate px distance between two positions)
+   	- unique (generate unique identifiers)
+   		- string (generate unique strings, e.g. for callbacks)
+   		- uuid (generate unique ids)
+- jquery
+	- extension
+		- selector
+	- function
+		- prefetch
+	- plugin
+		- emerge
+		- lazyimage
+- polyfill
+	- document
+		- getelementsbyclassname
+		- queryselector
+		- queryselectorall
+	- element
+		- matches/matchesSelector
+	- object
+		- create
+		- defineproperties
+		- defineproperty
+		- getoqnpropertynames
+		- keys
+	- string
+		- trim
+		- ucfirst
+	- window
+		- getcomputedstyle
 - pool (pooling facilities and pool factory)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
 	- object (pooling facilities for objects)
-- function (provides single functions, e.g. helper)
-   	- merge (function to deep merge objects)
-   	- proximity (calculate px distance between two positions)
-- component
-	- remux (REM based aproach to responsive web design)
-	- pager (flexible and UI/UX independent data pager)
 - support (base for feature detection)
 	- capability
 		- datauri
@@ -59,14 +89,6 @@ Currently contains
 	- xhr (AJAX transport)
 - worker (flexible web worker implementation)
 	- task
-- jquery
-	- extension
-		- selector
-	- function
-		- prefetch
-	- plugin
-		- emerge
-		- lazyimage
 
 Installation
 ---------------------------
