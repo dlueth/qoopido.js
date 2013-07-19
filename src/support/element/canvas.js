@@ -6,7 +6,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], definition);
+		define([ '../../support', '../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -14,8 +14,10 @@
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas', function(deferred) {
-		var element = modules['support'].getElement('canvas');
+		var sample = window.qoopido.shared.pool.dom.obtain('canvas');
 
-		(element.getContext && element.getContext('2d')) ? deferred.resolve() : deferred.reject();
+		(sample.getContext && sample.getContext('2d')) ? deferred.resolve() : deferred.reject();
+
+		sample.dispose();
 	});
 }, window));

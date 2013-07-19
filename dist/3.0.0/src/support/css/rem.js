@@ -6,21 +6,23 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], definition);
+		define([ '../../support', '../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
-}(function(modules) {
+}(function(modules, dependencies, namespace, window) {
 	'use strict';
 
 	return modules['support'].addTest('/css/rem', function(deferred) {
-		var element = modules['support'].getElement('div');
+		var sample = window.qoopido.shared.pool.dom.obtain('div');
 
 		try {
-			element.style.fontSize = '3rem';
+			sample.style.fontSize = '3rem';
 		} catch(exception) { }
 
 
-		((/rem/).test(element.style.fontSize)) ? deferred.resolve() : deferred.reject();
+		((/rem/).test(sample.style.fontSize)) ? deferred.resolve() : deferred.reject();
+
+		sample.dispose();
 	});
 }, window));

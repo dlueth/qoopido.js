@@ -25,7 +25,7 @@
 	} else {
 		definition();
 	}
-}(function(modules, dependencies, namespace) {
+}(function(modules) {
 	'use strict';
 
 	var prototype,
@@ -55,7 +55,14 @@
 					durationStart = new Date().getTime();
 
 					for(i = 0, element = elements[i]; i < spliceLength; i++) {
-						self._getPool.call(self, element).push(self._dispose(element));
+						var quid    = element._quid,
+							dispose = element.dispose;
+
+						element         = self._dispose(element);
+						element._quid   = quid;
+						element.dispose = dispose;
+
+						self._getPool.call(self, element).push(element);
 					}
 
 					metrics.inPool            += spliceLength;
@@ -74,27 +81,19 @@
 	}
 
 	prototype = modules['base'].extend({
-		metrics: {
-			total:     0,
-			inPool:    0,
-			inUse:     0,
-			inQueue:   0,
-			recycled:  0,
-			destroyed: 0
-		},
-		_settings: null,
-		_pool:     null,
-		_queue:    [],
-		_variables: {
-			durationSamples: 0,
-			durationTotal:   0,
-			durationAverage: 0
-		},
+		metrics:    null,
+		_settings:  null,
+		_pool:      null,
+		_queue:     null,
+		_variables: null,
 		_constructor: function(options) {
 			var self = this;
 
+			self.metrics      = { total: 0, inPool: 0, inUse: 0, inQueue: 0, recycled: 0, destroyed: 0 };
 			self._settings    = modules['function/merge']({}, settings, options);
 			self._pool        = self._initPool();
+			self._queue       = [];
+			self._variables   = { durationSamples: 0, durationTotal: 0, durationAverage: 0 };
 
 			setInterval(function() { processQueue.call(self); }, self._settings.interval);
 		},
@@ -112,14 +111,14 @@
 				self.metrics.inPool--;
 				self.metrics.recycled++;
 			} else {
-				element = self._obtain.apply(self, arguments);
+				element         = self._obtain.apply(self, arguments);
+				element._quid   = modules['function/unique/uuid']();
+				element.dispose = function() { self.dispose(element); };
 
 				self.metrics.total++;
 			}
 
 			self.metrics.inUse++;
-
-			element._quid = modules['function/unique/uuid']();
 
 			return element;
 		},
@@ -128,7 +127,8 @@
 				queue = self._queue;
 
 			if(!element._quid) {
-				element._quid = modules['function/unique/uuid']();
+				element._quid   = modules['function/unique/uuid']();
+				element.dispose = function() { self.dispose(element); };
 
 				self.metrics.total++;
 				self.metrics.inUse++;

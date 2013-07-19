@@ -1,8 +1,5 @@
 /*
- * Qoopido polyfill/object/defineproperties
- *
- * Borrowed from:
- * https://github.com/inexorabletash/polyfill
+ * Qoopido polyfill/elements/matches
  *
  * Copyright (c) 2013 Dirk Lüth
  *
@@ -29,10 +26,10 @@
 }(function() {
 	'use strict';
 
-	if(!HTMLElement.prototype.matches) {
-		var prototype = HTMLElement.prototype;
+	if(!Element.prototype.matches) {
+		var prototype = Element.prototype;
 
-		prototype.matches = prototype.webkitMatchesSelector || prototype.mozMatchesSelector || prototype.msMatchesSelector || prototype.oMatchesSelector || function (selector) {
+		prototype.matches = prototype.matchesSelector = prototype.matchesSelector || prototype.webkitMatchesSelector || prototype.mozMatchesSelector || prototype.msMatchesSelector || prototype.oMatchesSelector || function (selector) {
 			var elements = this.parentElement.querySelectorAll(selector),
 				element,
 				i = 0;

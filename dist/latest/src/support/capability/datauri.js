@@ -6,24 +6,26 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], definition);
+		define([ '../../support', '../../dom/element', '../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
-}(function(modules) {
+}(function(modules, dependencies, namespace, window) {
 	'use strict';
 
 	return modules['support'].addTest('/capability/datauri', function(deferred) {
-		var element = modules['support'].getElement('image');
+		var sample = modules['dom/element'].create(window.qoopido.shared.pool.dom.obtain('img'));
 
-		element.onerror = function() {
-			deferred.reject();
-		};
+		sample
+			.one('error load', function(event) {
+				if(event.type === 'load' && sample.element.width === 1 && sample.element.height === 1) {
+					deferred.resolve();
+				} else {
+					deferred.reject();
+				}
 
-		element.onload = function() {
-			(element.width === 1 && element.height === 1) ? deferred.resolve() : deferred.reject();
-		};
-
-		element.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+				sample.element.dispose();
+			}, false)
+			.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
 	});
 }, window));

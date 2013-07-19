@@ -14,12 +14,14 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @require ../element
- * @require ../function/merge
- * @require ../url
- * @require ../support
- * @require ../support/capability/datauri
- * @require ../support/element/canvas/todataurl/png
- * @require ../transport/xhr
+ * @require ../../proxy
+ * @require ../../function/merge
+ * @require ../../url
+ * @require ../../support
+ * @require ../../support/capability/datauri
+ * @require ../../support/element/canvas/todataurl/png
+ * @require ../../transport/xhr
+ * @require ../../pool/dom
  * @require json (external)
  */
 ;(function(pDefinition, window) {
@@ -34,7 +36,7 @@
 			define('json', function() { return window.JSON; });
 		}
 
-		define([ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', 'json' ], definition);
+		define([ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', '../../pool/dom', 'json' ], definition);
 	} else {
 		definition();
 	}
@@ -173,9 +175,7 @@
 			var self = this;
 
 			if(!element) {
-				element = stashImage.pop() || document.createElement('img');
-
-				element.stash = true;
+				element = window.qoopido.shared.pool.dom.obtain('img');
 			}
 
 			prototype._parent._constructor.call(self, element);
@@ -214,7 +214,7 @@
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = stashCanvas.pop() || document.createElement('canvas');
+				canvas = window.qoopido.shared.pool.dom.obtain('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -236,19 +236,19 @@
 
 				result = canvas.toDataURL('image/png');
 
-				releaseStash();
+				dispose();
 
 				self.emit(EVENT_LOADED, result);
 
 				return suppressEvent(event);
 			},
-			releaseStash = function() {
+			dispose = function() {
 				if(canvas) {
-					stashCanvas.push(canvas);
+					canvas.dispose();
 				}
 
-				if(self.element.stash) {
-					stashImage.push(self.removeAttribute('src').element);
+				if(self.element._quid && self.element.dispose) {
+					self.element.dispose();
 				}
 			};
 
@@ -257,7 +257,7 @@
 				if(event.type === DOM_LOAD) {
 					onLoadMain.call(this, event);
 				} else {
-					releaseStash();
+					dispose();
 
 					self.emit(EVENT_FAILED);
 				}

@@ -6,7 +6,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../../support', '../transform' ], definition);
+		define([ '../../../support', '../transform', '../../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -16,11 +16,15 @@
 	return modules['support'].addTest('/css/transform/3d', function(deferred) {
 		modules['support/css/transform']()
 			.then(function() {
-				var element = modules['support'].getElement('div', true);
+				var sample = window.qoopido.shared.pool.dom.obtain('div');
 
-				element.style.property = 'translate3d(0,0,0)';
+				try {
+					sample.style.property = 'translate3d(0,0,0)';
+				} catch(exception) { }
 
-				((/translate3d/).test(element.style.property)) ? deferred.resolve() : deferred.reject();
+				((/translate3d/).test(sample.style.property)) ? deferred.resolve() : deferred.reject();
+
+				sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();

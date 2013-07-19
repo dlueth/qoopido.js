@@ -14,7 +14,9 @@
  * @require ../transport
  * @require ../function/merge
  * @require ../function/unique/uuid
-  * @require q (external)
+ * @require ../dom/element
+ * @require ../pool/dom
+ * @require q (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
@@ -24,7 +26,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../transport', '../function/merge', '../function/unique/uuid', '../url', 'q' ], definition);
+		define([ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../pool/dom', 'q' ], definition);
 	} else {
 		definition();
 	}
@@ -56,12 +58,16 @@
 			}
 		};
 
-		script.onload  = script.onreadystatechange = function(event) { onReadyStateChange.call(self, event); };
-		script.onerror = function() { onError.call(self); };
+		script
+			.on('load readystatechange', function(event) {
+				onReadyStateChange.call(self, event);
+			})
+			.one('error', function() {
+				onError.call(self);
+			})
+			.setAttribute('src', url);
 
-		script.setAttribute('src', url);
-
-		head.appendChild(script);
+		head.appendChild(script.element);
 	}
 
 	function onReadyStateChange(event) {
@@ -69,7 +75,7 @@
 			dfd  = self.dfd;
 
 		if(!event.readyState || event.readyState === 'loaded' || event.readyState === 'complete') {
-			clear.call(self);
+			self.script.off().element.dispose();
 
 			self.timeout = setTimeout(function() { onTimeout.call(self); }, self.settings.timeout);
 		}
@@ -80,20 +86,12 @@
 	function onError() {
 		var self = this;
 
-		clear.call(self);
-
+		self.script.off().element.dispose();
 		self.dfd.reject();
 	}
 
 	function onTimeout() {
 		this.dfd.reject();
-	}
-
-	function clear() {
-		var script = this.script;
-
-		script.onload = script.onreadystatechange = script.onerror = null;
-		script.parentNode.removeChild(script);
 	}
 
 	prototype = modules['transport'].extend({
@@ -109,7 +107,7 @@
 
 			context.id       = ''.concat('jsonp-', modules['function/unique/string']());
 			context.dfd      = Q.defer();
-			context.script   = document.createElement('script');
+			context.script   = modules['dom/element'].create(window.qoopido.shared.pool.dom.obtain('script'));
 			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;
 

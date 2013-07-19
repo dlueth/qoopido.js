@@ -48,17 +48,6 @@
 			}
 		};
 
-	/*
-	function _ucfirst() {
-		if(arguments.length > 1) {
-			console.log('hier', arguments);
-			return arguments[1].toUpperCase();
-		} else {
-			return arguments[0].charAt(0).toUpperCase() + arguments[0].slice(1);
-		}
-	}
-	*/
-
 	return modules['base'].extend({
 		test: { },
 		testMultiple: function() {
@@ -83,13 +72,6 @@
 			}
 
 			return Q.all(tests);
-		},
-		getElement: function(pType, pClone) {
-			var element = lookup.element[pType] = lookup.element[pType] || (pType !== 'image') ? document.createElement(pType) : new Image();
-
-			pClone = !!(pClone);
-
-			return (pClone) ? element.cloneNode(false) : element;
 		},
 		getPrefix: function() {
 			var property,

@@ -6,7 +6,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], definition);
+		define([ '../../support', '../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -14,12 +14,14 @@
 	'use strict';
 
 	return modules['support'].addTest('/css/rgba', function(deferred) {
-		var element = modules['support'].getElement('div');
+		var sample = window.qoopido.shared.pool.dom.obtain('div');
 
 		try {
-			element.style.backgroundColor = 'rgba(150,255,150,.5)';
+			sample.style.backgroundColor = 'rgba(150,255,150,.5)';
 		} catch(exception) { }
 
-		((/rgba/).test(element.style.backgroundColor)) ? deferred.resolve() : deferred.reject();
+		((/rgba/).test(sample.style.backgroundColor)) ? deferred.resolve() : deferred.reject();
+
+		sample.dispose();
 	});
 }, window));

@@ -6,7 +6,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../../support', '../canvas' ], definition);
+		define([ '../../../support', '../canvas', '../../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -16,7 +16,11 @@
 	return modules['support'].addTest('/element/canvas/todataurl', function(deferred) {
 		modules['support/element/canvas']()
 			.then(function() {
-				(modules['support'].getElement('canvas').toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
+				var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+
+				(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
+
+				sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();

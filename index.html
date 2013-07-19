@@ -2,30 +2,30 @@
 <html lang="en-US">
 <head>
 	<script type="text/javascript" src="vendor/q/q.min.js"></script>
-	<script type="text/javascript" src="dist/latest/src/base.js"></script>
-	<script type="text/javascript" src="dist/latest/src/polyfill/string/ucfirst.js"></script>
-	<script type="text/javascript" src="dist/latest/src/function/unique/uuid.js"></script>
-	<script type="text/javascript" src="dist/latest/src/function/unique/string.js"></script>
-	<script type="text/javascript" src="dist/latest/src/proxy.js"></script>
-	<script type="text/javascript" src="dist/latest/src/emitter.js"></script>
-	<script type="text/javascript" src="dist/latest/src/url.js"></script>
-	<script type="text/javascript" src="dist/latest/src/dom/element.js"></script>
-	<script type="text/javascript" src="dist/latest/src/dom/element/shrinkimage.js"></script>
-	<script type="text/javascript" src="dist/latest/src/dom/element/emerge.js"></script>
-	<script type="text/javascript" src="dist/latest/src/dom/element/lazyimage.js"></script>
-	<script type="text/javascript" src="dist/latest/src/function/merge.js"></script>
-	<script type="text/javascript" src="dist/latest/src/transport.js"></script>
-	<script type="text/javascript" src="dist/latest/src/transport/xhr.js"></script>
-	<script type="text/javascript" src="dist/latest/src/transport/jsonp.js"></script>
-	<script type="text/javascript" src="dist/latest/src/support.js"></script>
-	<script type="text/javascript" src="dist/latest/src/support/capability/datauri.js"></script>
-	<script type="text/javascript" src="dist/latest/src/support/element/canvas.js"></script>
-	<script type="text/javascript" src="dist/latest/src/support/element/canvas/todataurl.js"></script>
-	<script type="text/javascript" src="dist/latest/src/support/element/canvas/todataurl/png.js"></script>
-	<script type="text/javascript" src="dist/latest/src/pool.js"></script>
-	<script type="text/javascript" src="dist/latest/src/pool/array.js"></script>
-	<script type="text/javascript" src="dist/latest/src/pool/object.js"></script>
-	<script type="text/javascript" src="dist/latest/src/pool/dom.js"></script>
+	<script type="text/javascript" src="dist/latest/min/base.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/string/ucfirst.js"></script>
+	<script type="text/javascript" src="dist/latest/min/function/merge.js"></script>
+	<script type="text/javascript" src="dist/latest/min/function/unique/uuid.js"></script>
+	<script type="text/javascript" src="dist/latest/min/function/unique/string.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/array.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/object.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/dom.js"></script>
+	<script type="text/javascript" src="dist/latest/min/proxy.js"></script>
+	<script type="text/javascript" src="dist/latest/min/emitter.js"></script>
+	<script type="text/javascript" src="dist/latest/min/url.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element/shrinkimage.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element/emerge.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element/lazyimage.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport/xhr.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport/jsonp.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/capability/datauri.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/element/canvas.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl/png.js"></script>
 </head>
 <body>
 
@@ -81,7 +81,7 @@
 		}, i * (Math.round(Math.random() * 50)));
 	}
 
-console.log(window.qoopido);
+	setTimeout(function() { console.log(window.qoopido.shared.pool.dom.metrics); console.log(window.qoopido.shared.pool.dom._pool); }, 2000);
 </script>
 </body>
 </html>

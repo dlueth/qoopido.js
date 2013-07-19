@@ -6,7 +6,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../../support', '../transform' ], definition);
+		define([ '../../../support', '../transform', '../../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -16,11 +16,15 @@
 	return modules['support'].addTest('/css/transform/2d', function(deferred) {
 		modules['support/css/transform']()
 			.then(function() {
-				var element = modules['support'].getElement('div', true);
+				var sample = window.qoopido.shared.pool.dom.obtain('div');
 
-				element.style.property = 'rotate(30deg)';
+				try {
+					sample.style.property = 'rotate(30deg)';
+				} catch(exception) { }
 
-				((/rotate/).test(element.style.property)) ? deferred.resolve() : deferred.reject();
+				((/rotate/).test(sample.style.property)) ? deferred.resolve() : deferred.reject();
+
+				sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();

@@ -6,7 +6,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../../../support', '../todataurl' ], definition);
+		define([ '../../../../support', '../todataurl', '../../../../pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -16,7 +16,11 @@
 	return modules['support'].addTest('/element/canvas/todataurl/png', function(deferred) {
 		modules['support/element/canvas/todataurl']()
 			.then(function() {
-				(modules['support'].getElement('canvas').toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
+				var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+
+				(sample.toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
+
+				sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();
