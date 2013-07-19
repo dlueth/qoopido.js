@@ -1,5 +1,5 @@
 /*
- * Qoopido jquery extension selector
+ * Qoopido jquery/extension/selector
  *
  * Provides additional jQuery selectors
  *
@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/extension/selector', pDefinition, arguments);
+		return window.qoopido.initialize('jquery/extension/selector', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

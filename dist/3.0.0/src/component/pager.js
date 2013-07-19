@@ -1,5 +1,5 @@
 /*
- * Qoopido module pager
+ * Qoopido component/pager
  *
  * Proves UI independent paging mechanics
  *
@@ -18,7 +18,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('component/pager', pDefinition, arguments);
+		return window.qoopido.initialize('component/pager', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -32,7 +32,7 @@
 	var prototype,
 		defaultSettings = { loop: true, initial: 0 };
 
-	prototype = modules.emitter.extend({
+	prototype = modules['emitter'].extend({
 		_settings: null,
 		_state:    null,
 		_constructor: function(data, settings) {
@@ -40,7 +40,7 @@
 
 			prototype._parent._constructor.call(self);
 
-			self._settings = modules.function.merge({}, defaultSettings, settings || {});
+			self._settings = modules['function/merge']({}, defaultSettings, settings || {});
 			self._state    = { length: null, index: null, item: null, data: null };
 
 			if(data !== undefined && data !== null) {

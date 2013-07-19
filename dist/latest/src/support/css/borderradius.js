@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/borderradius', pDefinition, arguments);
+		return window.qoopido.initialize('support/css/borderradius', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -13,7 +13,7 @@
 }(function(modules) {
 	'use strict';
 
-	return modules.support.addTest('/css/borderradius', function(deferred) {
-		(modules.support.supportsProperty('border-radius')) ? deferred.resolve(modules.support.getProperty('border-radius')) : deferred.reject();
+	return modules['support'].addTest('/css/borderradius', function(deferred) {
+		(modules['support'].supportsProperty('border-radius')) ? deferred.resolve(modules['support'].getProperty('border-radius')) : deferred.reject();
 	});
 }, window));

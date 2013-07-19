@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/transform/2d', pDefinition, arguments);
+		return window.qoopido.initialize('support/css/transform/2d', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -13,10 +13,10 @@
 }(function(modules) {
 	'use strict';
 
-	return modules.support.addTest('/css/transform/2d', function(deferred) {
-		modules.support.css.transform()
+	return modules['support'].addTest('/css/transform/2d', function(deferred) {
+		modules['support/css/transform']()
 			.then(function() {
-				var element = modules.support.getElement('div', true);
+				var element = modules['support'].getElement('div', true);
 
 				element.style.property = 'rotate(30deg)';
 

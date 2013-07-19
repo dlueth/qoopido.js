@@ -1,5 +1,5 @@
 /*
- * Qoopido jquery plugin emerge
+ * Qoopido jquery/plugin/emerge
  *
  * jQuery plugin for Qoopido module emerge
  *
@@ -10,18 +10,18 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require ../../element/emerge
+ * @require ../../dom/element/emerge
  * @require jquery (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/plugins/emerge', pDefinition, arguments);
+		return window.qoopido.initialize('jquery/plugins/emerge', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../element/emerge', 'jquery' ], definition);
+		define([ '../../dom/element/emerge', 'jquery' ], definition);
 	} else {
 		definition();
 	}
@@ -48,14 +48,14 @@
 		});
 	};
 
-	prototype = modules.element.emerge.extend({
+	prototype = modules['element/emerge'].extend({
 		_constructor: function(element, settings) {
 			var self   = this,
 				object = jQuery(element);
 
 			prototype._parent._constructor.call(self, element, settings);
 
-			self.on(EVENT_EMERGED, function(priority) { object.trigger(JQUERY_EMERGED, { priority: priority }); });
+			self.on(EVENT_EMERGED, function(event) { object.trigger(JQUERY_EMERGED, { priority: event.data }); });
 			self.on(EVENT_DEMERGED, function() { object.trigger(JQUERY_DEMERGED); });
 		}
 	});

@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/element/canvas/todataurl/png', pDefinition, arguments);
+		return window.qoopido.initialize('support/element/canvas/todataurl/png', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -13,10 +13,10 @@
 }(function(modules) {
 	'use strict';
 
-	return modules.support.addTest('/element/canvas/todataurl/png', function(deferred) {
-		modules.support.element.canvas.todataurl()
+	return modules['support'].addTest('/element/canvas/todataurl/png', function(deferred) {
+		modules['support/element/canvas/todataurl']()
 			.then(function() {
-				(modules.support.getElement('canvas').toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
+				(modules['support'].getElement('canvas').toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
 			})
 			.fail(function() {
 				deferred.reject();

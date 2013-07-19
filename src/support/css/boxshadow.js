@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/boxshadow', pDefinition, arguments);
+		return window.qoopido.initialize('support/css/boxshadow', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -13,7 +13,7 @@
 }(function(modules) {
 	'use strict';
 
-	return modules.support.addTest('/css/boxshadow', function(deferred) {
-		(modules.support.supportsProperty('box-shadow')) ? deferred.resolve(modules.support.getProperty('box-shadow')) : deferred.reject();
+	return modules['support'].addTest('/css/boxshadow', function(deferred) {
+		(modules['support'].supportsProperty('box-shadow')) ? deferred.resolve(modules['support'].getProperty('box-shadow')) : deferred.reject();
 	});
 }, window));

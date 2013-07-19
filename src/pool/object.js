@@ -1,5 +1,5 @@
 /*
- * Qoopido pool object
+ * Qoopido pool/object
  *
  * Provides object pooling facilities
  *
@@ -16,7 +16,12 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('pool/object', pDefinition, arguments);
+		var module = window.qoopido.initialize('pool/object', pDefinition, arguments);
+
+		window.qoopido.shared.pool        = window.qoopido.shared.pool || {};
+		window.qoopido.shared.pool.object = module.create();
+
+		return module;
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -52,7 +57,10 @@
 			return empty;
 		}());
 
-	prototype = modules.pool.extend({
+	prototype = modules['pool'].extend({
+		getModel: function() {
+			return model;
+		},
 		_dispose: function(element) {
 			var property;
 

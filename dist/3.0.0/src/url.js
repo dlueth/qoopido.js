@@ -16,7 +16,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('url', pDefinition, arguments, true);
+		return window.qoopido.initialize('url', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -46,7 +46,7 @@
 		return resolver;
 	}
 
-	return modules.base.extend({
+	return modules['base'].extend({
 		resolve: function(url) {
 			return getResolver(url).href;
 		},

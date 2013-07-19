@@ -16,7 +16,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('emitter', pDefinition, arguments);
+		return window.qoopido.initialize('emitter', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -40,13 +40,13 @@
 
 			context.emit.apply(context, ['pre' + event, args]);
 			returnValue = context._mapped[method].apply(context, args);
-			context.emit.apply(context, ['post' + event, returnValue, args]);
+			context.emit.apply(context, ['post' + event, args, returnValue]);
 
 			return returnValue;
 		};
 	}
 
-	return modules.base.extend({
+	return modules['base'].extend({
 		_mapped:   null,
 		_listener: null,
 		_constructor: function() {
@@ -62,38 +62,55 @@
 				}
 			}
 		},
-		on: function(event, listener) {
-			var self = this;
-
-			if(event !== undefined && listener !== undefined) {
-				(self._listener[event] = self._listener[event] || []).push(listener);
-			}
-
-			return self;
-		},
-		one: function(event, listener) {
-			var self = this;
-
-			if(event !== undefined && listener !== undefined) {
-				listener.once = true;
-
-				self.on(event, listener);
-			}
-
-			return self;
-		},
-		off: function(event, listener) {
+		on: function(events, fn) {
 			var self = this,
-				i;
+				i, event;
 
-			if(event !== undefined) {
-				self._listener[event] = self._listener[event] || [];
+			events = events.split(' ');
 
-				if(listener) {
-					while((i = self._listener[event].indexOf(listener)) !== -1) {
-						self._listener[event].splice(i, 1);
+			for(i = 0; (event = events[i]) !== undefined; i++) {
+				(self._listener[event] = self._listener[event] || []).push(fn);
+			}
+
+			return self;
+		},
+		one: function(events, fn, each) {
+			each = (each !== false);
+
+			var self = this;
+
+			self.on(events, function listener(event) {
+				self.off(((each === true) ? event : events), listener);
+
+				fn.apply(this, arguments);
+			});
+
+			return self;
+		},
+		off: function(events, fn) {
+			var self = this,
+				i, event, j, listener;
+
+			if(events) {
+				events = events.split(' ');
+
+				for(i = 0; (event = events[i]) !== undefined; i++) {
+					self._listener[event] = self._listener[event] || [];
+
+					if(fn) {
+						for(j = 0; (listener = self._listener[event][j]) !== undefined; j++) {
+							if(listener === fn) {
+								self._listener[event].splice(j, 1);
+
+								j--;
+							}
+						}
+					} else {
+						self._listener[event].length = 0;
 					}
-				} else {
+				}
+			} else {
+				for(event in self._listener) {
 					self._listener[event].length = 0;
 				}
 			}
@@ -102,19 +119,13 @@
 		},
 		emit: function(event) {
 			var self = this,
-				args = Array.prototype.slice.call(arguments).splice(1),
 				i, listener;
 
 			if(event !== undefined) {
 				self._listener[event] = self._listener[event] || [];
 
 				for(i = 0; (listener = self._listener[event][i]) !== undefined; i++) {
-					listener.apply(self, args);
-
-					if(listener.once === true) {
-						self._listener[event].splice(i, 1);
-						i--;
-					}
+					listener.apply(self, arguments);
 				}
 			}
 

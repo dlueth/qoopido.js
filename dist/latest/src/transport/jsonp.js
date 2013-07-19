@@ -1,5 +1,5 @@
 /*
- * Qoopido transport jsonp
+ * Qoopido transport/jsonp
  *
  * Provides basic JSONP functionality
  *
@@ -10,21 +10,21 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
+ * @require ../url
  * @require ../transport
  * @require ../function/merge
- * @require ../url
- * @require ../unique
- * @require q (external)
+ * @require ../function/unique/uuid
+  * @require q (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport/jsonp', pDefinition, arguments, true);
+		return window.qoopido.initialize('transport/jsonp', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../transport', '../function/merge', '../url', '../unique', 'q' ], definition);
+		define([ '../transport', '../function/merge', '../function/unique/uuid', '../url', 'q' ], definition);
 	} else {
 		definition();
 	}
@@ -32,7 +32,7 @@
 	'use strict';
 
 	var prototype,
-		Q    = window.Q || dependencies[4],
+		Q    = window.Q || dependencies[4],
 		head = document.getElementsByTagName('head')[0];
 
 	function sendRequest(url, content) {
@@ -96,7 +96,7 @@
 		script.parentNode.removeChild(script);
 	}
 
-	prototype = modules.transport.extend({
+	prototype = modules['transport'].extend({
 		_settings: {
 			callback: 'callback',
 			cache:    false,
@@ -105,12 +105,12 @@
 		load: function(url, data, options) {
 			var context = {};
 
-			url = modules.url.resolve(url);
+			url = modules['url'].resolve(url);
 
-			context.id       = ''.concat('jsonp-', modules.unique.string());
+			context.id       = ''.concat('jsonp-', modules['function/unique/string']());
 			context.dfd      = Q.defer();
 			context.script   = document.createElement('script');
-			context.settings = modules.function.merge({}, this._settings, options);
+			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;
 
 			context.script.setAttribute('async', true);

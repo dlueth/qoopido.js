@@ -2,27 +2,30 @@
 <html lang="en-US">
 <head>
 	<script type="text/javascript" src="vendor/q/q.min.js"></script>
-	<script type="text/javascript" src="dist/latest/min/base.js"></script>
-	<script type="text/javascript" src="dist/latest/min/emitter.js"></script>
-	<script type="text/javascript" src="dist/latest/min/unique.js"></script>
-	<script type="text/javascript" src="dist/latest/min/url.js"></script>
-	<script type="text/javascript" src="dist/latest/min/element.js"></script>
-	<script type="text/javascript" src="dist/latest/min/function/merge.js"></script>
-	<script type="text/javascript" src="dist/latest/min/transport.js"></script>
-	<script type="text/javascript" src="dist/latest/min/transport/xhr.js"></script>
-	<script type="text/javascript" src="dist/latest/min/transport/jsonp.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/capability/datauri.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/element/canvas.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl/png.js"></script>
-	<script type="text/javascript" src="dist/latest/min/element/shrinkimage.js"></script>
-	<script type="text/javascript" src="dist/latest/min/element/emerge.js"></script>
-	<script type="text/javascript" src="dist/latest/min/element/lazyimage.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool/array.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool/object.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool/dom.js"></script>
+	<script type="text/javascript" src="dist/latest/src/base.js"></script>
+	<script type="text/javascript" src="dist/latest/src/polyfill/string/ucfirst.js"></script>
+	<script type="text/javascript" src="dist/latest/src/function/unique/uuid.js"></script>
+	<script type="text/javascript" src="dist/latest/src/function/unique/string.js"></script>
+	<script type="text/javascript" src="dist/latest/src/proxy.js"></script>
+	<script type="text/javascript" src="dist/latest/src/emitter.js"></script>
+	<script type="text/javascript" src="dist/latest/src/url.js"></script>
+	<script type="text/javascript" src="dist/latest/src/dom/element.js"></script>
+	<script type="text/javascript" src="dist/latest/src/dom/element/shrinkimage.js"></script>
+	<script type="text/javascript" src="dist/latest/src/dom/element/emerge.js"></script>
+	<script type="text/javascript" src="dist/latest/src/dom/element/lazyimage.js"></script>
+	<script type="text/javascript" src="dist/latest/src/function/merge.js"></script>
+	<script type="text/javascript" src="dist/latest/src/transport.js"></script>
+	<script type="text/javascript" src="dist/latest/src/transport/xhr.js"></script>
+	<script type="text/javascript" src="dist/latest/src/transport/jsonp.js"></script>
+	<script type="text/javascript" src="dist/latest/src/support.js"></script>
+	<script type="text/javascript" src="dist/latest/src/support/capability/datauri.js"></script>
+	<script type="text/javascript" src="dist/latest/src/support/element/canvas.js"></script>
+	<script type="text/javascript" src="dist/latest/src/support/element/canvas/todataurl.js"></script>
+	<script type="text/javascript" src="dist/latest/src/support/element/canvas/todataurl/png.js"></script>
+	<script type="text/javascript" src="dist/latest/src/pool.js"></script>
+	<script type="text/javascript" src="dist/latest/src/pool/array.js"></script>
+	<script type="text/javascript" src="dist/latest/src/pool/object.js"></script>
+	<script type="text/javascript" src="dist/latest/src/pool/dom.js"></script>
 </head>
 <body>
 
@@ -33,15 +36,15 @@
 
 
 <script type="text/javascript">
-	window.qoopido.element.shrinkimage.create(document.getElementById('shrinkimage1')).on('requested queued cached loaded failed', function(event) {
+	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage1')).on('requested queued cached loaded failed', function(event) {
 		console.log('shrinkimage 1: ', event.type);
 	});
 
-	window.qoopido.element.shrinkimage.create(document.getElementById('shrinkimage2')).on('requested queued cached loaded failed', function(event) {
+	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage2')).on('requested queued cached loaded failed', function(event) {
 		console.log('shrinkimage 2: ', event.type);
 	});
 
-	window.qoopido.element.emerge.create(document.getElementById('emerge')).on('emerged demerged', function(event) {
+	window.qoopido.modules['dom/element/emerge'].create(document.getElementById('emerge')).on('emerged demerged', function(event) {
 		if(event.type === 'emerged') {
 			console.log('emerge: ', 'emerged, priority = ' + event.data);
 		} else {
@@ -49,15 +52,16 @@
 		}
 	});
 
-	window.qoopido.element.lazyimage.create(document.getElementById('lazyimage')).on('requested loaded failed', function(event) {
+	window.qoopido.modules['dom/element/lazyimage'].create(document.getElementById('lazyimage')).on('requested loaded failed', function(event) {
 		console.log('lazyimage: ' + event.type);
 	});
 
-	window.qoopido.transport.jsonp.load('http://spielplatz/qoopido.js/dummy.php')
+	window.qoopido.modules['transport/jsonp'].load('http://spielplatz/qoopido.js/dummy.php')
 		.then(function(data) { console.log('jsonp: ', data) });
-	window.qoopido.transport.xhr.get('http://spielplatz/');
 
-	var poolDom = window.qoopido.pool.dom.create('shared');
+	window.qoopido.modules['transport/xhr'].get('http://spielplatz/');
+
+	var poolDom = window.qoopido.modules['pool/dom'].create();
 	for(var i = 1; i <= 10000; i++) {
 		setTimeout(function() {
 			var rand = Math.round(Math.random()),
@@ -77,8 +81,7 @@
 		}, i * (Math.round(Math.random() * 50)));
 	}
 
-
-console.log(poolDom);
+console.log(window.qoopido);
 </script>
 </body>
 </html>

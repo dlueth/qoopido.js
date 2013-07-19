@@ -17,52 +17,40 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  */
-;(function(pDefinition, pPolyfill, window, document, undefined) {
+;(function(pDefinition, window, document, undefined) {
 	'use strict';
 
-	pPolyfill();
+	function initialize(pNamespace, pDefinition, pArguments, pSingleton) {
+		var namespace = pNamespace.split('/');
 
-	var id     = 'qoopido',
-		root   = window[id] = window[id] || {},
-		lookup = root._lookup = root._lookup || {};
+		if(modules[pNamespace]) {
+			return modules[pNamespace];
+		}
+
+		pArguments = (pArguments) ? [].slice.call(pArguments, 0) : [];
+
+		return modules[pNamespace]  = (function() {
+			return ((pSingleton === true) ? pDefinition.call(null, modules, pArguments, namespace, window, document, undefined).create() : pDefinition.call(null, modules, pArguments, namespace, window, document, undefined));
+		})();
+	}
+
+	var id      = 'qoopido',
+		root    = window[id] = window[id] || { initialize: initialize },
+		shared  = root.shared  = {},
+		modules = root.modules = {};
 
 	function definition() {
 		return initialize('base', pDefinition);
 	}
 
-	function initialize(pNamespace, pDefinition, pArguments, pSingleton) {
-		var namespace  = pNamespace.split('/'),
-			id         = namespace[namespace.length - 1],
-			pointer    = root;
-
-		if(lookup[pNamespace]) {
-			return lookup[pNamespace];
-		}
-
-		for(var i = 0; namespace[i + 1] !== undefined; i++) {
-			pointer[namespace[i]] = pointer[namespace[i]] || {};
-
-			pointer = pointer[namespace[i]];
-		}
-
-		pArguments = (pArguments) ? [].slice.call(pArguments, 0) : [];
-
-		return pointer[id] = lookup[pNamespace] = (function() {
-			return ((pSingleton === true) ? pDefinition.call(null, root, pArguments, namespace, window, document, undefined).create() : pDefinition.call(null, root, pArguments, namespace, window, document, undefined));
-		})();
-	}
-
-	initialize('shared/module/initialize',
-		function(modules, dependencies, namespace) {
-			if(typeof define === 'function' && define.amd) {
-				define(namespace, initialize);
-			}
-
-			return initialize;
-		});
-
 	if(typeof define === 'function' && define.amd) {
-		define(definition);
+		var dependencies = [];
+
+		if(!Object.create) {
+			dependencies.push('../polyfill/object/create');
+		}
+
+		define(dependencies, definition);
 	} else {
 		definition();
 	}
@@ -70,26 +58,40 @@
 	function(modules, dependencies, namespace, window, document, undefined) {
 		'use strict';
 
+		function getOwnPropertyDescriptors(object) {
+			var descriptors = {},
+				propertiers = Object.getOwnPropertyNames(object),
+				i, property;
+
+			for(i = 0; (property = propertiers[i]) !== undefined; i++) {
+				descriptors[property] = Object.getOwnPropertyDescriptor(object, property);
+			}
+
+			return descriptors;
+		}
+
 		return {
 			create: function() {
-				var instance = Object.create(this, Object.getOwnPropertyDescriptors(this));
+				var instance = Object.create(this, getOwnPropertyDescriptors(this)),
+					result;
 
 				if(instance._constructor) {
-					instance._constructor.apply(instance, arguments);
+					result = instance._constructor.apply(instance, arguments);
 				}
 
 				instance.create = instance.extend = undefined;
 
-				return instance;
+				return result || instance;
 			},
 			extend: function(properties) {
 				properties         = properties || {};
-				properties._parent = this; //Object.create(this, Object.getOwnPropertyDescriptors(this));
+				properties._parent = this;
 
-				return Object.create(this, Object.getOwnPropertyDescriptors(properties));
+				return Object.create(this, getOwnPropertyDescriptors(properties));
 			}
 		};
 	},
+	/*
 	function(undefined) {
 		'use strict';
 
@@ -352,5 +354,6 @@
 			};
 		}
 	},
+	*/
 	window, document
 ));

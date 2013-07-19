@@ -18,7 +18,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('worker', pDefinition, arguments, true);
+		return window.qoopido.initialize('worker', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -30,9 +30,9 @@
 	'use strict';
 
 	var Q              = window.Q || dependencies[2],
-		supportsWorker = modules.support.supportsMethod('Worker');
+		supportsWorker = modules['support'].supportsMethod('Worker');
 
-	return modules.base.extend({
+	return modules['base'].extend({
 		execute: function(pWorker, pFunction, pArguments) {
 			var deferred  = Q.defer();
 

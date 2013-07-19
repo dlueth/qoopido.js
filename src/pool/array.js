@@ -1,5 +1,5 @@
 /*
- * Qoopido pool array
+ * Qoopido pool/array
  *
  * Provides array pooling facilities
  *
@@ -16,7 +16,12 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('pool/array', pDefinition, arguments);
+		var module = window.qoopido.initialize('pool/array', pDefinition, arguments);
+
+		window.qoopido.shared.pool       = window.qoopido.shared.pool || {};
+		window.qoopido.shared.pool.array = module.create();
+
+		return module;
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -29,7 +34,7 @@
 
 	var prototype;
 
-	prototype = modules.pool.extend({
+	prototype = modules['pool'].extend({
 		_dispose: function(element) {
 			element.length = 0;
 

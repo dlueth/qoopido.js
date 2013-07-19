@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/capability/datauri', pDefinition, arguments);
+		return window.qoopido.initialize('support/capability/datauri', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -13,8 +13,8 @@
 }(function(modules) {
 	'use strict';
 
-	return modules.support.addTest('/capability/datauri', function(deferred) {
-		var element = modules.support.getElement('image');
+	return modules['support'].addTest('/capability/datauri', function(deferred) {
+		var element = modules['support'].getElement('image');
 
 		element.onerror = function() {
 			deferred.reject();

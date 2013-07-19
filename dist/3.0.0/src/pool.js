@@ -11,17 +11,17 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require ./base
- * @require ./unique
+ * @require ./function/unique/uuid
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('pool', pDefinition, arguments);
+		return window.qoopido.initialize('pool', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define(['./base', './unique'], definition);
+		define([ './base', './function/unique/uuid' ], definition);
 	} else {
 		definition();
 	}
@@ -73,7 +73,7 @@
 		}
 	}
 
-	prototype = modules.base.extend({
+	prototype = modules['base'].extend({
 		metrics: {
 			total:     0,
 			inPool:    0,
@@ -90,10 +90,10 @@
 			durationTotal:   0,
 			durationAverage: 0
 		},
-		_constructor: function(id, options) {
+		_constructor: function(options) {
 			var self = this;
 
-			self._settings    = modules.function.merge({}, settings, options);
+			self._settings    = modules['function/merge']({}, settings, options);
 			self._pool        = self._initPool();
 
 			setInterval(function() { processQueue.call(self); }, self._settings.interval);
@@ -119,7 +119,7 @@
 
 			self.metrics.inUse++;
 
-			element._uuid = modules.unique.uuid();
+			element._quid = modules['function/unique/uuid']();
 
 			return element;
 		},
@@ -127,8 +127,8 @@
 			var self  = this,
 				queue = self._queue;
 
-			if(!element._uuid) {
-				element._uuid = modules.unique.uuid();
+			if(!element._quid) {
+				element._quid = modules['function/unique/uuid']();
 
 				self.metrics.total++;
 				self.metrics.inUse++;

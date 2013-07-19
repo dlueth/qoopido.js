@@ -1,5 +1,5 @@
 /*
- * Qoopido function proximity
+ * Qoopido function/proximity
  *
  * Function to calculate the proximity of two given coordinates
  *
@@ -16,7 +16,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('function/proximity', pDefinition, arguments);
+		return window.qoopido.initialize('function/proximity', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

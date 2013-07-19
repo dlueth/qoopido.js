@@ -1,5 +1,5 @@
 /*
- * Qoopido jquery plugin lazyimage
+ * Qoopido jquery/plugin/lazyimage
  *
  * jQuery plugin for Qoopido module lazyimage
  *
@@ -10,18 +10,18 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
- * @require ../../element/emerge
+ * @require ../../dom/element/emerge
  * @require jquery (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/plugins/lazyimage', pDefinition, arguments);
+		return window.qoopido.initialize('jquery/plugins/lazyimage', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../../element/lazyimage', 'jquery' ], definition);
+		define([ '../../dom/element/lazyimage', 'jquery' ], definition);
 	} else {
 		definition();
 	}
@@ -48,7 +48,7 @@
 		});
 	};
 
-	prototype = modules.element.lazyimage.extend({
+	prototype = modules['element/lazyimage'].extend({
 		_constructor: function(element, settings) {
 			var self   = this,
 				object = jQuery(element);

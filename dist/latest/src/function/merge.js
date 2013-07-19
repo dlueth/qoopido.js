@@ -1,5 +1,5 @@
 /*
- * Qoopido function merge
+ * Qoopido function/merge
  *
  * Function to deep merge any number of data structures. First argument is the target and will be modified!
  *
@@ -16,7 +16,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('function/merge', pDefinition, arguments);
+		return window.qoopido.initialize('function/merge', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

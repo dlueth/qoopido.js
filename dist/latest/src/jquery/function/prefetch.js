@@ -1,5 +1,5 @@
 /*
- * Qoopido jquery function prefetch
+ * Qoopido jquery/function/prefetch
  *
  * jQuery function to prefetch resources
  *
@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('jquery/function/prefetch', pDefinition, arguments);
+		return window.qoopido.initialize('jquery/function/prefetch', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

@@ -11,26 +11,30 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require ./base
+ * @require ./polyfill/string/ucfirst
  * @require q (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support', pDefinition, arguments, true);
+		return window.qoopido.initialize('support', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base', 'q' ], definition);
+		define([ './base', './polyfill/string/ucfirst', 'q' ], definition);
 	} else {
 		definition();
 	}
 }(function(modules, dependencies, namespace, window, document, undefined) {
 	'use strict';
 
-	var Q             = window.Q || dependencies[1],
-		regexProperty = new RegExp('-([a-z])', 'gi'),
-		regexPrefix   = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
+	var Q               = window.Q || dependencies[2],
+		regexProperty   = new RegExp('-([a-z])', 'gi'),
+		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
+		callbackUcfirst = function(value) {
+			return value.ucfirst();
+		},
 		lookup = {
 			prefix:   null,
 			property: { },
@@ -44,15 +48,18 @@
 			}
 		};
 
+	/*
 	function _ucfirst() {
 		if(arguments.length > 1) {
+			console.log('hier', arguments);
 			return arguments[1].toUpperCase();
 		} else {
 			return arguments[0].charAt(0).toUpperCase() + arguments[0].slice(1);
 		}
 	}
+	*/
 
-	return modules.base.extend({
+	return modules['base'].extend({
 		test: { },
 		testMultiple: function() {
 			var test, tests = [], i = 0;
@@ -107,13 +114,13 @@
 					stored =  'Khtml';
 				}
 
-				stored = lookup.prefix = (stored === false)? false : { method: stored, properties: [ stored.toLowerCase(), _ucfirst(stored.toLowerCase()) ] };
+				stored = lookup.prefix = (stored === false)? false : { method: stored, properties: [ stored.toLowerCase(), stored.toLowerCase().ucfirst() ] };
 			}
 
 			return stored;
 		},
 		getProperty: function(pProperty) {
-			pProperty = pProperty.replace(regexProperty, _ucfirst);
+			pProperty = pProperty.replace(regexProperty, callbackUcfirst);
 
 			var stored = lookup.property[pProperty] || null;
 
@@ -123,7 +130,7 @@
 				var candidate,
 					i          = 0,
 					element    = this.getElement('div'),
-					uProperty  = _ucfirst(pProperty),
+					uProperty  = pProperty.ucfirst(),
 					prefixes   = (this.getPrefix() || { properties: [] }).properties,
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 
@@ -151,7 +158,7 @@
 
 				var candidates, candidate,
 					i          = 0,
-					uMethod    = _ucfirst(pMethod),
+					uMethod    = pMethod.ucfirst(),
 					prefixes   = this.getPrefix();
 
 				if(prefixes !== false) {

@@ -1,5 +1,5 @@
 /*
- * Qoopido module remux
+ * Qoopido component/remux
  *
  * Provides facilities for responsive layouts solely based on REM units and overall proportionally scaling
  *
@@ -16,7 +16,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('component/remux', pDefinition, arguments, true);
+		return window.qoopido.initialize('component/remux', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -54,7 +54,7 @@
 		return self;
 	}
 
-	prototype = modules.emitter.extend({
+	prototype = modules['emitter'].extend({
 		_constructor: function() {
 			var self          = this,
 				pBase         = parseInt(html.getAttribute('data-base'), 10),

@@ -1,5 +1,5 @@
 /*
- * Qoopido transport xhr
+ * Qoopido transport/xhr
  *
  * Provides basic XHR (AJAX) functionality
  *
@@ -10,21 +10,21 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
+ * @require ../url
  * @require ../transport
  * @require ../function/merge
- * @require ../url
- * @require ../unique
+ * @require ../function/unique/uuid
  * @require q (external)
  */
 ;(function(pDefinition, window) {
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport/xhr', pDefinition, arguments, true);
+		return window.qoopido.initialize('transport/xhr', pDefinition, arguments, true);
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../transport', '../function/merge', '../url', '../unique', 'q' ], definition);
+		define([ '../transport', '../function/merge', '../function/unique/uuid', '../url', 'q' ], definition);
 	} else {
 		definition();
 	}
@@ -32,10 +32,10 @@
 	'use strict';
 
 	var prototype,
-		Q      = window.Q || dependencies[4],
+		Q      = window.Q || dependencies[4],
 		getXhr = (typeof window.XMLHttpRequest !== 'undefined') ?
 			function(url) {
-				if(modules.url.isLocal(url)) {
+				if(modules['url'].isLocal(url)) {
 					return new window.XMLHttpRequest();
 				} else {
 					return window.XDomainRequest ? new window.XDomainRequest() : new window.XMLHttpRequest();
@@ -123,7 +123,7 @@
 
 	}
 
-	prototype = modules.transport.extend({
+	prototype = modules['transport'].extend({
 		_settings: {
 			accept:      '*/*',
 			timeout:     5000,
@@ -138,12 +138,12 @@
 		load: function(method, url, data, options) {
 			var context = {};
 
-			url = modules.url.resolve(url);
+			url = modules['url'].resolve(url);
 
-			context.id       = ''.concat('xhr-', modules.unique.string());
+			context.id       = ''.concat('xhr-', modules['function/unique/string']());
 			context.dfd      = Q.defer();
 			context.xhr      = getXhr(url);
-			context.settings = modules.function.merge({}, this._settings, options);
+			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;
 
 			sendRequest.call(context, method.toUpperCase(), url, data);

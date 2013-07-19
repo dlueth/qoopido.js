@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('support/css/transform', pDefinition, arguments);
+		return window.qoopido.initialize('support/css/transform', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -13,7 +13,7 @@
 }(function(modules) {
 	'use strict';
 
-	return modules.support.addTest('/css/transform', function(deferred) {
-		(modules.support.supportsProperty('transform')) ? deferred.resolve(modules.support.getProperty('transform')) : deferred.reject();
+	return modules['support'].addTest('/css/transform', function(deferred) {
+		(modules['support'].supportsProperty('transform')) ? deferred.resolve(modules['support'].getProperty('transform')) : deferred.reject();
 	});
 }, window));

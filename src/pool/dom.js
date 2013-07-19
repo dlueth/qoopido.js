@@ -1,5 +1,5 @@
 /*
- * Qoopido pool dom
+ * Qoopido pool/dom
  *
  * Provides dom pooling facilities
  *
@@ -16,7 +16,12 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('pool/dom', pDefinition, arguments);
+		var module = window.qoopido.initialize('pool/dom', pDefinition, arguments);
+
+		window.qoopido.shared.pool     = window.qoopido.shared.pool || {};
+		window.qoopido.shared.pool.dom = module.create();
+
+		return module;
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -29,7 +34,7 @@
 
 	var prototype;
 
-	prototype = modules.pool.extend({
+	prototype = modules['pool'].extend({
 		_initPool: function() {
 			return {};
 		},

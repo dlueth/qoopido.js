@@ -17,7 +17,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.shared.module.initialize('transport', pDefinition, arguments);
+		return window.qoopido.initialize('transport', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {
@@ -30,11 +30,11 @@
 
 	var prototype;
 
-	prototype = modules.base.extend({
+	prototype = modules['base'].extend({
 		setup: function(options) {
 			var self = this;
 
-			self._settings = modules.function.merge({}, self._settings, options);
+			self._settings = modules['function/merge']({}, self._settings, options);
 
 			return self;
 		},
