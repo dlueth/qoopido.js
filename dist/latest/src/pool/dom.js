@@ -55,7 +55,7 @@
 			}
 
 			for(property in element) {
-				if(element.hasOwnProperty(property)) {
+				if(Object.prototype.hasOwnProperty.call(element, property)) {
 					try {
 						element.removeAttribute(property);
 					} catch(exception) {

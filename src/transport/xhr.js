@@ -65,16 +65,19 @@
 
 		xhr.open(method, url, settings.async, settings.username, settings.password);
 
-		xhr.setRequestHeader('Accept', settings.accept);
-		if(content && method !== 'GET') {
-			xhr.setRequestHeader('Content-Type', settings.contentType);
+		if(xhr.setRequestHeader) {
+			xhr.setRequestHeader('Accept', settings.accept);
+			if(content && method !== 'GET') {
+				xhr.setRequestHeader('Content-Type', settings.contentType);
+			}
+			for(id in settings.header) {
+				xhr.setRequestHeader(id, settings.header[id]);
+			}
 		}
-		for(id in settings.header) {
-			xhr.setRequestHeader(id, settings.header[id]);
-		}
+
 		xhr.timeout            = settings.timeout;
 		xhr.onprogress         = function(event) { onProgress.call(self, event); };
-		xhr.onreadystatechange = function() { onReadyStateChange.call(self); };
+		xhr.onreadystatechange = xhr.onload = function() { onReadyStateChange.call(self); };
 		xhr.onerror            = function() { onError.call(self); };
 		xhr.send(content || null);
 
@@ -90,10 +93,10 @@
 			xhr  = self.xhr,
 			dfd  = self.dfd;
 
-		if(xhr.readyState === 4) {
+		if(!xhr.readyState || xhr.readyState === 4) {
 			clear.call(self);
 
-			if(xhr.status === 200) {
+			if(!xhr.status || xhr.status === 200) {
 				dfd.resolve({ data: xhr.responseText, xhr: xhr });
 			} else {
 				dfd.reject({ status: xhr.status, xhr: xhr });
@@ -140,6 +143,7 @@
 
 			url = modules['url'].resolve(url);
 
+			context.url      = url;
 			context.id       = ''.concat('xhr-', modules['function/unique/string']());
 			context.dfd      = Q.defer();
 			context.xhr      = getXhr(url);

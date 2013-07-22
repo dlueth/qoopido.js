@@ -50,6 +50,14 @@
 			dependencies.push('../polyfill/object/create');
 		}
 
+		if(!Object.getOwnPropertyNames) {
+			dependencies.push('../polyfill/object/getownpropertynames');
+		}
+
+		if(!Object.getOwnPropertyDescriptor) {
+			dependencies.push('../polyfill/object/getownpropertydescriptor');
+		}
+
 		define(dependencies, definition);
 	} else {
 		definition();
@@ -60,10 +68,10 @@
 
 		function getOwnPropertyDescriptors(object) {
 			var descriptors = {},
-				propertiers = Object.getOwnPropertyNames(object),
+				properties  = Object.getOwnPropertyNames(object),
 				i, property;
 
-			for(i = 0; (property = propertiers[i]) !== undefined; i++) {
+			for(i = 0; (property = properties[i]) !== undefined; i++) {
 				descriptors[property] = Object.getOwnPropertyDescriptor(object, property);
 			}
 

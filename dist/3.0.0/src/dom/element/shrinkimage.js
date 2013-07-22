@@ -78,7 +78,7 @@
 			self._settings = settings = modules['function/merge']({}, defaults, settings);
 
 			foreground = self.getAttribute(settings.attribute);
-			background = self.getStyle('background-image');
+			background = self.element.style.backgroundImage;
 
 			if(self.type === 'IMG') {
 				processMain.call(self, foreground);
@@ -159,7 +159,9 @@
 		var self = this;
 
 		if(isBackground) {
-			self.setStyle('background-image', 'url(' + source + ')');
+			self.element.style.backgroundImage = 'url(' + source + ')';
+			self.emit(EVENT_LOADED);
+			self.off();
 		} else {
 			self.one(DOM_LOAD, function() {
 				self.show();

@@ -39,14 +39,16 @@
 			stringString = 'string';
 
 		function normalizeEvent(event) {
-			event.target        = event.target || event.srcElement;
-			event.offsetX       = event.offsetX || event.layerX;
-			event.offsetY       = event.offsetY || event.layerY;
-			event.relatedTarget = event.relatedTarget || event.type === 'mouseover' ? event.fromElement : event.toElement;
-			event.target        = event.target || event.srcElement;
+			if(!event.target) {
+				event.target = event.srcElement || document;
+			}
 
 			if(event.target.nodeType === 3) {
 				event.target = event.target.parentNode;
+			}
+
+			if(!event.relatedTarget && event.fromElement ) {
+				event.relatedTarget = (event.fromElement === event.target) ? event.toElement : event.fromElement;
 			}
 
 			return event;
@@ -67,7 +69,18 @@
 					luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
 
 				element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
-				element.attachEvent('on' + name, element[luid]);
+				if(element['on' + name] !== undefined) {
+					element.attachEvent('on' + name, element[luid]);
+				} else {
+					name = ''.concat('fake[', name, ']');
+
+					element[name] = null;
+					element.attachEvent('onpropertychange', function(event) {
+						if(event.propertyName === name) {
+							fn.call(this, normalizeEvent(element[name]));
+						}
+					});
+				}
 			};
 
 		offMethod = (window.removeEventListener) ?
@@ -103,9 +116,18 @@
 					element = self.element,
 					event   = document.createEventObject();
 
-				event.eventType = type;
-				event.data      = data;
-				element.fireEvent('on' + event.eventType, event);
+				event.type = event.eventType = type;
+				event.data = data;
+
+				try{
+					element.fireEvent('on' + event.eventType, event);
+				} catch(exception) {
+					var name = ''.concat('fake[', type, ']');
+
+					if(element[name] !== undefined) {
+						element[name] = event;
+					}
+				}
 			};
 
 		return modules['base'].extend({
