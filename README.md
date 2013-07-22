@@ -3,9 +3,16 @@ Qoopido.js
 
 Qoopido.js is a concept for a modularly built and loadable JavaScript library. Due to its modular structure and the extension/interitance pattern it is based on it is easily extendable as well. Every module supports being loaded via require.js as an AMD module beside including it (and its dependencies) via script tags.
 
-The idea to build Qoopido.js was born when developing jQuery plugins. Trying to find the best possible plugin skeleton/boilerplate started to show that jQuery has, albeit being a really exceptional library, its limitations. Especially when dealing with more and more complex plugins. Complex, in this case, mainly stands for stateful and programmatically independent via a public API that supports or encourages the use of Vanilla JS.
+The idea to build Qoopido.js was born while developing jQuery plugins. Trying to find the best possible plugin skeleton/boilerplate started to show that jQuery has, albeit being a really exceptional library, its limitations. Especially when dealing with more and more complex plugins. Complex, in this case, mainly stands for stateful and programmatically independent via a public API that supports or encourages the use of Vanilla JS.
 
-If you really need to compare Qoopido.js to something: It is a mixture of jQuery, modernizr and standalone JavaScript modules providing more complex functionality together building a highly modular, flexible and extendable foundation.
+If you really need to compare Qoopido.js to something: It is a mixture of jQuery, modernizr and standalone JavaScript modules providing more complex functionality together building a highly modular, flexible and extendable foundation. Ir is, so to speak, a collection of concepts and standalone scripts I developed over time.
+
+Using qoopido.js
+---------------------------
+
+Compatibility
+---------------------------
+Qoopido.js is not meant to support older legacy Internet Explorers but should run (with limitations regarding some of the modules) from IE8 onwards. I test on Chrome, Firefox, Safari for OSX, Safari for iOS and Android as well as IE8 and IE9.
 
 External dependencies
 ---------------------------

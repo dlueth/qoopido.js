@@ -22,7 +22,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../element', '../../function/merge', '../function/unique/uuid' ], definition);
+		define([ '../element', '../../function/merge', '../../function/unique/uuid' ], definition);
 	} else {
 		definition();
 	}

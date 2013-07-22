@@ -14,7 +14,7 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @require ./emerge
- * @require ../function/merge
+ * @require ../../function/merge
  */
 ;(function(pDefinition, window) {
 	'use strict';

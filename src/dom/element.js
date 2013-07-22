@@ -11,6 +11,7 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require ../base
+ * @require ../proxy
  */
 ;(function(pDefinition, window) {
 	'use strict';
