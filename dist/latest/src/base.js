@@ -54,7 +54,7 @@
 			dependencies.push('../polyfill/object/getownpropertynames');
 		}
 
-		if(!Object.getOwnPropertyDescriptor) {
+		if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
 			dependencies.push('../polyfill/object/getownpropertydescriptor');
 		}
 

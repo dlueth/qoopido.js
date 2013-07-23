@@ -23,19 +23,17 @@
 }(function() {
 	'use strict';
 
-	var fallback = Object.getOwnPropertyDescriptor;
+	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
+		var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
-	if(!Object.getOwnPropertyDescriptor || fallback) {
 		Object.getOwnPropertyDescriptor = function(obj, property) {
 			if(obj !== Object(obj)) {
 				throw new TypeError();
 			}
 
-			if(fallback) {
-				try {
-					return fallback.call(Object, obj, property);
-				} catch (exception) {}
-			}
+			try {
+				return getOwnPropertyDescriptor.call(Object, obj, property);
+			} catch (exception) {}
 
 			if(Object.prototype.hasOwnProperty.call(obj, property)) {
 				return {

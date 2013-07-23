@@ -18,7 +18,7 @@
 	if(typeof define === 'function' && define.amd) {
 		var dependencies = [];
 
-		if(!Object.defineProperty) {
+		if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
 			dependencies.push('./defineproperty');
 		}
 
