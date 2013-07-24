@@ -22,7 +22,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base', './polyfill/string/ucfirst', 'q' ], definition);
+		define([ './base', './polyfill/string/ucfirst', 'q', './pool/dom' ], definition);
 	} else {
 		definition();
 	}
@@ -78,7 +78,8 @@
 				stored = lookup.prefix || null;
 
 			if(stored === null) {
-				var styles = this.getElement('div').style;
+				var sample = window.qoopido.shared.pool.dom.obtain('div'),
+					styles = sample.style;
 
 				stored = false;
 
@@ -97,6 +98,8 @@
 				}
 
 				stored = lookup.prefix = (stored === false)? false : { method: stored, properties: [ stored.toLowerCase(), stored.toLowerCase().ucfirst() ] };
+
+				sample.dispose();
 			}
 
 			return stored;
@@ -111,19 +114,21 @@
 
 				var candidate,
 					i          = 0,
-					element    = this.getElement('div'),
+					sample     = window.qoopido.shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = (this.getPrefix() || { properties: [] }).properties,
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 
 				for(i; (candidate = candidates[i]) !== undefined; i++) {
-					if(element.style[candidate] !== undefined) {
+					if(sample.style[candidate] !== undefined) {
 						stored = candidate;
 						break;
 					}
 				}
 
 				lookup.property[pProperty] = stored;
+
+				sample.dispose();
 			}
 
 			return stored;
@@ -179,7 +184,7 @@
 
 				(!!prefix) ? deferred.resolve(prefix) : deferred.reject();
 
-				stored = lookup.promises.prefix =  deferred.promise;
+				stored = lookup.promises.prefix = deferred.promise;
 			}
 
 			return stored;
@@ -228,7 +233,7 @@
 
 					pTest.apply(null, parameter);
 
-					stored = lookup.promises.test[pId] =  deferred.promise;
+					stored = lookup.promises.test[pId] = deferred.promise;
 				}
 
 				return stored;

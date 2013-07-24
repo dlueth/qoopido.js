@@ -10,7 +10,7 @@
 	} else {
 		definition();
 	}
-}(function(modules) {
+}(function(modules, dependencies, namespace, window) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas', function(deferred) {

@@ -49,13 +49,14 @@
 		url     = (content) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
 
 		window[self.id] = function(data) {
-			dfd.resolve(data);
-
 			try {
 				delete window[self.id];
 			} catch (exception) {
 				window[self.id] = null;
 			}
+
+			clear.call(self);
+			dfd.resolve(data);
 		};
 
 		script
@@ -68,6 +69,8 @@
 			.setAttribute('src', url);
 
 		head.appendChild(script.element);
+
+		self.timeout = setTimeout(function() { onTimeout.call(self); }, settings.timeout);
 	}
 
 	function onReadyStateChange(event) {
@@ -76,9 +79,13 @@
 
 		if(!event.readyState || event.readyState === 'loaded' || event.readyState === 'complete') {
 			self.script.off().element.dispose();
-
-			self.timeout = setTimeout(function() { onTimeout.call(self); }, self.settings.timeout);
 		}
+
+		if(self.timeout) {
+			clearTimeout(self.timeout);
+		}
+
+		self.timeout = setTimeout(function() { onTimeout.call(self); }, self.settings.timeout);
 
 		dfd.notify(event);
 	}
@@ -86,19 +93,32 @@
 	function onError() {
 		var self = this;
 
-		self.script.off().element.dispose();
+		clear.call(self);
 		self.dfd.reject();
 	}
 
 	function onTimeout() {
-		this.dfd.reject();
+		var self = this;
+
+		clear.call(self);
+		self.dfd.reject(false);
+	}
+
+	function clear() {
+		var self = this;
+
+		if(self.timeout) {
+			clearTimeout(self.timeout);
+		}
+
+		self.script.off().element.dispose();
 	}
 
 	prototype = modules['transport'].extend({
 		_settings: {
 			callback: 'callback',
 			cache:    false,
-			timeout:  200
+			timeout:  5000
 		},
 		load: function(url, data, options) {
 			var context = {};

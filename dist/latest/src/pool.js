@@ -21,7 +21,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './base', './function/unique/uuid' ], definition);
+		define([ './base', './function/merge', './function/unique/uuid' ], definition);
 	} else {
 		definition();
 	}

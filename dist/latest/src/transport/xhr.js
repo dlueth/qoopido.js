@@ -81,7 +81,7 @@
 		xhr.onerror            = function() { onError.call(self); };
 		xhr.send(content || null);
 
-		self.timeout = setTimeout(function() { onTimeout(xhr); }, settings.timeout);
+		self.timeout = setTimeout(function() { onTimeout.call(self); }, settings.timeout);
 	}
 
 	function onProgress(event) {
@@ -93,10 +93,13 @@
 			xhr  = self.xhr,
 			dfd  = self.dfd;
 
+		// @TODO check refresh of timeout according to ./jsonp
+
 		if(!xhr.readyState || xhr.readyState === 4) {
 			clear.call(self);
 
-			if(!xhr.status || xhr.status === 200) {
+			// @TODO check === undefined for IE8 (and evaluate two lines above this as well)
+			if(xhr.status === undefined || xhr.status === 200) {
 				dfd.resolve({ data: xhr.responseText, xhr: xhr });
 			} else {
 				dfd.reject({ status: xhr.status, xhr: xhr });
@@ -108,22 +111,26 @@
 		var self = this;
 
 		clear.call(self);
-
 		self.dfd.reject();
 	}
 
-	function onTimeout(xhr) {
-		xhr.abort();
+	function onTimeout() {
+		var self = this;
+
+		self.xhr.abort();
+		clear.call(self);
+		self.dfd.reject();
 	}
 
 	function clear() {
 		var self = this,
 			xhr  = self.xhr;
 
-		clearTimeout(self.timeout);
+		if(self.timeout) {
+			clearTimeout(self.timeout);
+		}
 
 		xhr.onprogress = xhr.onreadystatechange = xhr.onerror = null;
-
 	}
 
 	prototype = modules['transport'].extend({

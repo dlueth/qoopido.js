@@ -2,7 +2,7 @@
 	'use strict';
 
 	function definition() {
-		return window.qoopido.initialize('support/element/canvas', pDefinition, arguments);
+		return window.qoopido.initialize('support/element/svg', pDefinition, arguments);
 	}
 
 	if(typeof define === 'function' && define.amd) {

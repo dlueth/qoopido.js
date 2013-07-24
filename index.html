@@ -38,35 +38,46 @@
 
 <img id="shrinkimage1" data-shrinkimage="http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20" style="display: inline-block; width: 210px; height: 294px;" />
 <div id="shrinkimage2" style="background-image: url(data:image/shrink,http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20); display: inline-block; width: 210px; height: 294px;"></div>
-<div id="emerge" style="position: absolute; left: 0; top: 1000px;">HUHU</div>
+<div id="emerge" style="position: absolute; left: 0; top: 1000px;">[dom/element/emerge container]</div>
 <img id="lazyimage" style="position: absolute; left: 0; top: 2000px; width: 1200px; height: 750px;" data-lazyimage="http://www.thehollywoodnews.com/wp-content/uploads/13594933595bd11b9253fef97b38af59e20ee5bed2Cameron-Diaz-Free-Hd-Wallpaper-2013-2.jpg" />
 
-
 <script type="text/javascript">
-	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage1')).on('requested queued cached loaded failed', function(event) {
-		console.log('shrinkimage 1: ', event.type);
-	});
+	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage1'))
+		.on('requested queued cached loaded failed', function(event) {
+			console.log('shrinkimage 1: ', event.type);
+		});
 
-	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage2')).on('requested queued cached loaded failed', function(event) {
-		console.log('shrinkimage 2: ', event.type);
-	});
+	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage2'))
+		.on('requested queued cached loaded failed', function(event) {
+			console.log('shrinkimage 2: ', event.type);
+		});
 
-	window.qoopido.modules['dom/element/emerge'].create(document.getElementById('emerge')).on('emerged demerged', function(event) {
-		if(event.type === 'emerged') {
-			console.log('emerge: ', 'emerged, priority = ' + event.data);
-		} else {
-			console.log('emerge: ', 'demerged');
-		}
-	});
+	window.qoopido.modules['dom/element/emerge'].create(document.getElementById('emerge'))
+		.on('emerged demerged', function(event) {
+			if(event.type === 'emerged') {
+				console.log('emerge: ', 'emerged, priority = ' + event.data);
+			} else {
+				console.log('emerge: ', 'demerged');
+			}
+		});
 
-	window.qoopido.modules['dom/element/lazyimage'].create(document.getElementById('lazyimage')).on('requested loaded failed', function(event) {
-		console.log('lazyimage: ' + event.type);
-	});
+	window.qoopido.modules['dom/element/lazyimage'].create(document.getElementById('lazyimage'))
+		.on('requested loaded failed', function(event) {
+			console.log('lazyimage: ' + event.type);
+		});
 
-	window.qoopido.modules['transport/jsonp'].load('http://172.20.2.244/qoopido.js/dummy.php')
-		.then(function(data) { console.log('jsonp: ', data) });
+	window.qoopido.modules['transport/jsonp'].load('http://spielplatz/qoopido.js/dummy.php')
+		.done(
+			function(data) { console.log('jsonp success: ', data) },
+			function() { console.log('jsonp: failed') }
+		);
 
-	window.qoopido.modules['transport/xhr'].get('http://172.20.2.244/');
+	window.qoopido.modules['transport/xhr'].get('http://spielplatz/')
+		.done(
+			function(data) { console.log('xhr: success', data) },
+			function() { console.log('xhr: failed') },
+			function(event) { console.log('xhr: progress', event); }
+		);
 
 	var poolDom = window.qoopido.modules['pool/dom'].create();
 	for(var i = 1; i <= 10000; i++) {
