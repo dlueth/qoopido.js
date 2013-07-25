@@ -13,7 +13,7 @@
  * @require ../url
  * @require ../transport
  * @require ../function/merge
- * @require ../function/unique/uuid
+ * @require ../function/unique/string
  * @require q (external)
  */
 ;(function(pDefinition, window) {
@@ -24,7 +24,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../transport', '../function/merge', '../function/unique/uuid', '../url', 'q' ], definition);
+		define([ '../transport', '../function/merge', '../function/unique/string', '../url', 'q' ], definition);
 	} else {
 		definition();
 	}
@@ -85,7 +85,15 @@
 	}
 
 	function onProgress(event) {
-		this.dfd.notify(event);
+		var self = this;
+
+		if(self.timeout) {
+			clearTimeout(self.timeout);
+		}
+
+		self.timeout = setTimeout(function() { onTimeout.call(self); }, self.settings.timeout);
+
+		self.dfd.notify(event);
 	}
 
 	function onReadyStateChange() {
@@ -93,12 +101,9 @@
 			xhr  = self.xhr,
 			dfd  = self.dfd;
 
-		// @TODO check refresh of timeout according to ./jsonp
-
-		if(!xhr.readyState || xhr.readyState === 4) {
+		if(xhr.readyState === undefined || xhr.readyState === 4) {
 			clear.call(self);
 
-			// @TODO check === undefined for IE8 (and evaluate two lines above this as well)
 			if(xhr.status === undefined || xhr.status === 200) {
 				dfd.resolve({ data: xhr.responseText, xhr: xhr });
 			} else {

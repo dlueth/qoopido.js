@@ -184,7 +184,7 @@
 
 				(!!prefix) ? deferred.resolve(prefix) : deferred.reject();
 
-				stored = lookup.promises.prefix =  deferred.promise;
+				stored = lookup.promises.prefix = deferred.promise;
 			}
 
 			return stored;

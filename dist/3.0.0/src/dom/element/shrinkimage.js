@@ -48,8 +48,6 @@
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
 		lookup          = {},
-		stashCanvas     = [],
-		stashImage      = [],
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
 		regexSuffix     = new RegExp('\\.png$', 'i'),
@@ -140,7 +138,6 @@
 									}
 								}, false);
 
-							self.emit(EVENT_REQUESTED);
 							break;
 					}
 				}
@@ -192,24 +189,23 @@
 		var self = this;
 
 		transport.get(self._url)
-			.then(
-			function(response) {
-				try {
-					var data = JSON.parse(response.data);
+			.done(
+				function(response) {
+					try {
+						var data = JSON.parse(response.data);
 
-					data.width  = parseInt(data.width, 10);
-					data.height = parseInt(data.height, 10);
+						data.width  = parseInt(data.width, 10);
+						data.height = parseInt(data.height, 10);
 
-					processData.call(self, data);
-				} catch(exception) {
+						processData.call(self, data);
+					} catch(exception) {
+						self.emit(EVENT_FAILED);
+					}
+				},
+				function() {
 					self.emit(EVENT_FAILED);
 				}
-			},
-			function() {
-				self.emit(EVENT_FAILED);
-			}
-		)
-			.done();
+			);
 	}
 
 	function processData(data) {

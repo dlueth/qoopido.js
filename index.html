@@ -66,13 +66,13 @@
 			console.log('lazyimage: ' + event.type);
 		});
 
-	window.qoopido.modules['transport/jsonp'].load('http://spielplatz/qoopido.js/dummy.php')
+	window.qoopido.modules['transport/jsonp'].load('http://172.20.2.244/qoopido.js/dummy.php')
 		.done(
 			function(data) { console.log('jsonp success: ', data) },
 			function() { console.log('jsonp: failed') }
 		);
 
-	window.qoopido.modules['transport/xhr'].get('http://spielplatz/')
+	window.qoopido.modules['transport/xhr'].get('http://172.20.2.244/')
 		.done(
 			function(data) { console.log('xhr: success', data) },
 			function() { console.log('xhr: failed') },
