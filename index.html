@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<script type="text/javascript" src="vendor/q/q.min.js"></script>
+
+	<script type="text/javascript" src="dist/latest/min/polyfill/string/ucfirst.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/window/getcomputedstyle.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/object/defineproperty.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/object/defineproperties.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/object/getownpropertynames.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/object/getownpropertydescriptor.js"></script>
+	<script type="text/javascript" src="dist/latest/min/polyfill/object/create.js"></script>
+	<script type="text/javascript" src="dist/latest/src/base.js"></script>
+	<script type="text/javascript" src="dist/latest/min/function/merge.js"></script>
+	<script type="text/javascript" src="dist/latest/min/function/unique/uuid.js"></script>
+	<script type="text/javascript" src="dist/latest/min/function/unique/string.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/array.js"></script>
+	<script type="text/javascript" src="dist/latest/min/pool/object.js"></script>
+	<script type="text/javascript" src="dist/latest/src/pool/dom.js"></script>
+	<script type="text/javascript" src="dist/latest/min/proxy.js"></script>
+	<script type="text/javascript" src="dist/latest/min/emitter.js"></script>
+	<script type="text/javascript" src="dist/latest/min/url.js"></script>
+	<script type="text/javascript" src="dist/latest/src/dom/element.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element/shrinkimage.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element/emerge.js"></script>
+	<script type="text/javascript" src="dist/latest/min/dom/element/lazyimage.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport/xhr.js"></script>
+	<script type="text/javascript" src="dist/latest/min/transport/jsonp.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/capability/datauri.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/element/canvas.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl.js"></script>
+	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl/png.js"></script>
+</head>
+<body>
+
+<img id="shrinkimage1" data-shrinkimage="http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20" style="display: inline-block; width: 210px; height: 294px;" />
+<div id="shrinkimage2" style="background-image: url(data:image/shrink,http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20); display: inline-block; width: 210px; height: 294px;"></div>
+<div id="emerge" style="position: absolute; left: 0; top: 1000px;">[dom/element/emerge container]</div>
+<img id="lazyimage" style="position: absolute; left: 0; top: 2000px; width: 1200px; height: 750px;" data-lazyimage="http://www.thehollywoodnews.com/wp-content/uploads/13594933595bd11b9253fef97b38af59e20ee5bed2Cameron-Diaz-Free-Hd-Wallpaper-2013-2.jpg" />
+
+<script type="text/javascript">
+	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage1'))
+		.on('requested queued cached loaded failed', function(event) {
+			console.log('shrinkimage 1: ', event.type);
+		});
+
+	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage2'))
+		.on('requested queued cached loaded failed', function(event) {
+			console.log('shrinkimage 2: ', event.type);
+		});
+
+	window.qoopido.modules['dom/element/emerge'].create(document.getElementById('emerge'))
+		.on('emerged demerged', function(event) {
+			if(event.type === 'emerged') {
+				console.log('emerge: ', 'emerged, priority = ' + event.data);
+			} else {
+				console.log('emerge: ', 'demerged');
+			}
+		});
+
+	window.qoopido.modules['dom/element/lazyimage'].create(document.getElementById('lazyimage'))
+		.on('requested loaded failed', function(event) {
+			console.log('lazyimage: ' + event.type);
+		});
+
+	window.qoopido.modules['transport/jsonp'].load('http://172.20.2.244/qoopido.js/dummy.php')
+		.done(
+			function(data) { console.log('jsonp success: ', data) },
+			function() { console.log('jsonp: failed') }
+		);
+
+	window.qoopido.modules['transport/xhr'].get('http://172.20.2.244/')
+		.done(
+			function(data) { console.log('xhr: success', data) },
+			function() { console.log('xhr: failed') },
+			function(event) { console.log('xhr: progress', event); }
+		);
+
+	var poolDom = window.qoopido.modules['pool/dom'].create();
+	for(var i = 1; i <= 10000; i++) {
+		setTimeout(function() {
+			var rand = Math.round(Math.random()),
+				temp;
+
+			if(rand === 0) {
+				rand = Math.round(Math.random() * 1000);
+				temp = poolDom.obtain('div');
+
+				setTimeout(function() { poolDom.dispose(temp); }, rand);
+			} else {
+				rand = Math.round(Math.random() * 1000);
+				temp = poolDom.obtain('img');
+
+				setTimeout(function() { poolDom.dispose(temp); }, rand);
+			}
+		}, i * (Math.round(Math.random() * 50)));
+	}
+
+	setTimeout(function() { console.log(window.qoopido.shared.pool.dom.metrics); console.log(window.qoopido.shared.pool.dom._pool); }, 2000);
+</script>
+</body>
+</html>

@@ -2,6 +2,11 @@
 module.exports = function (grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		config: {
+			src:    'src',
+			dist:   'dist/<%= pkg.version %>',
+			latest: 'dist/latest'
+		},
 		meta:{
 			general:'/*!\n' +
 				'* This file is part of <%= pkg.title || pkg.name %>\n' +
@@ -17,6 +22,13 @@ module.exports = function (grunt) {
 				'* Licensed under <%= _.pluck(pkg.licenses, "type").join(" and ") %> license.\n' +
 				'*  - <%= _.pluck(pkg.licenses, "url").join("\\n*  - ") %>\n' +
 				'*/'
+		},
+		bump: {
+			options: {
+				commit: false,
+				createTag: false,
+				push: false
+			}
 		},
 		jshint:{
 			options: {
@@ -36,30 +48,40 @@ module.exports = function (grunt) {
 		copy: {
 			build: {
 				files: [
-					{src: ['src/**/*.js'], dest: 'dist/<%= pkg.version %>/'}
+					{
+						expand: true,
+						cwd: '<%= config.src %>',
+						src: ['**/*.js'],
+						dest: '<%= config.dist %>/src/'
+					}
+				]
+			},
+			latest: {
+				files: [
+					{
+						expand: true,
+						cwd: '<%= config.dist %>',
+						src: ['**/*.js'],
+						dest: '<%= config.latest %>/'
+					}
 				]
 			}
 		},
 		uglifyrecursive: {
 			build: {
 				files: [
-					{ strip: 'src', src: ['src/**/*.js'], dest: 'dist/<%= pkg.version %>/min/'}
+					{ strip: '<%= config.src %>', src: ['<%= config.src %>/**/*.js'], dest: '<%= config.dist %>/min/'}
 				]
 			}
 		},
 		dependo: {
-			targetPath: './src',
+			targetPath: '<%= config.src %>',
 			outputPath: './dependo',
 			format: 'amd'
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-bump');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-uglifyrecursive');
-	grunt.loadNpmTasks('grunt-dependo');
+	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-	grunt.registerTask('default', ['jshint', 'clean', 'copy', 'uglifyrecursive', 'dependo']);
+	grunt.registerTask('default', ['jshint', 'clean', 'copy:build', 'uglifyrecursive', 'dependo', 'copy:latest']);
 };

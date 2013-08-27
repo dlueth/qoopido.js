@@ -1,9 +1,14 @@
 {
   "name": "qoopido.js",
-  "version": "2.1.8",
+  "version": "3.0.0",
   "ignore": [
     "**/.*",
     "node_modules",
     "components"
-  ]
+  ],
+	"dependencies": {
+		"q": "latest",
+		"json2": "latest",
+		"jquery": ">=1.10.0"
+	}
 }
