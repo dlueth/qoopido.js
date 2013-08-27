@@ -71,10 +71,9 @@
 					variables.durationTotal   += new Date().getTime() - durationStart;
 					variables.durationAverage  = variables.durationTotal / variables.durationSamples;
 				} else {
-					elements           = queue.splice(0, ~~(queue.length * settings.queueFactor));
+					elements.length    = queue.length - spliceLength;
 					metrics.inQueue   -= spliceLength + elements.length;
 					metrics.destroyed += spliceLength + elements.length;
-					elements.length    = 0;
 				}
 			}
 		}
@@ -134,15 +133,10 @@
 				self.metrics.inUse++;
 			}
 
-			if(queue.length < self._settings.maxPoolsize) {
-				queue.push(element);
+			queue.push(element);
 
-				self.metrics.inUse--;
-				self.metrics.inQueue++;
-			} else {
-				self.metrics.inUse--;
-				self.metrics.destroyed++;
-			}
+			self.metrics.inUse--;
+			self.metrics.inQueue++;
 
 			return null;
 		}
