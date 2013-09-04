@@ -78,6 +78,15 @@ module.exports = function (grunt) {
 			targetPath: '<%= config.src %>',
 			outputPath: './dependo',
 			format: 'amd'
+		},
+		watch: {
+			scripts: {
+				files: ['**/*.js', '**/*.hbs'],
+				tasks: ['jshint', 'clean', 'copy:build', 'uglifyrecursive', 'dependo', 'copy:latest'],
+				options: {
+					spawn: false
+				}
+			}
 		}
 	});
 

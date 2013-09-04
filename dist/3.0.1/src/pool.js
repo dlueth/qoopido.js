@@ -50,7 +50,7 @@
 				spliceLimit = ~~(((spliceLimit = settings.frameBudget / variables.durationAverage) < 1) ? 1 : spliceLimit);
 			}
 
-			if((spliceLength = (elements = queue.splice(0, spliceLimit)).length) > 0) {
+			if((spliceLength = Math.min(queue.length, (elements = queue.splice(0, spliceLimit)).length)) > 0) {
 				if(metrics.inPool + spliceLength <= settings.maxPoolsize) {
 					durationStart = new Date().getTime();
 
@@ -71,9 +71,9 @@
 					variables.durationTotal   += new Date().getTime() - durationStart;
 					variables.durationAverage  = variables.durationTotal / variables.durationSamples;
 				} else {
-					elements.length    = queue.length - spliceLength;
-					metrics.inQueue   -= spliceLength + elements.length;
-					metrics.destroyed += spliceLength + elements.length;
+					elements.length    = 0;
+					metrics.inQueue   -= spliceLength;
+					metrics.destroyed += spliceLength;
 				}
 			}
 		}
