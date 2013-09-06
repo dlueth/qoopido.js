@@ -50,6 +50,7 @@ Currently contains
 	- plugin
 		- emerge
 		- lazyimage
+- particle (still very basic)
 - polyfill
 	- document
 		- getelementsbyclassname
@@ -71,6 +72,7 @@ Currently contains
 - pool (pooling facilities and pool factory)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
+	- module (pooling facilities for Qoopido.js modules or external objects/classes)
 	- object (pooling facilities for objects)
 - support (base for feature detection)
 	- capability
