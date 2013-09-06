@@ -43,7 +43,7 @@
 			queue       = self._queue,
 			variables   = self._variables,
 			spliceLimit = 1,
-			spliceLength, elements, i, element, durationStart;
+			spliceLength, elements, durationStart;
 
 		if(queue.length > 0) {
 			if(variables.durationAverage > 0) {
@@ -54,8 +54,9 @@
 				if(metrics.inPool + spliceLength <= settings.maxPoolsize) {
 					durationStart = new Date().getTime();
 
-					for(i = 0, element = elements[i]; i < spliceLength; i++) {
-						var quid    = element._quid,
+					for(var i = 0; i < spliceLength; i++) {
+						var element = elements[i],
+							quid    = element._quid,
 							dispose = element.dispose;
 
 						element         = self._dispose(element);
@@ -99,6 +100,16 @@
 		_initPool: function() {
 			return [];
 		},
+		_initElement: function(element) {
+			var self = this;
+
+			element._quid   = modules['function/unique/uuid']();
+			element.dispose = function() { self.dispose(element); };
+
+			self.metrics.total++;
+
+			return element;
+		},
 		_getPool: function() {
 			return this._pool;
 		},
@@ -110,11 +121,11 @@
 				self.metrics.inPool--;
 				self.metrics.recycled++;
 			} else {
-				element         = self._obtain.apply(self, arguments);
-				element._quid   = modules['function/unique/uuid']();
-				element.dispose = function() { self.dispose(element); };
+				element = self._initElement(self._obtain.apply(self, arguments));
+			}
 
-				self.metrics.total++;
+			if(typeof element._obtain === 'function') {
+				element._obtain.apply(element, arguments);
 			}
 
 			self.metrics.inUse++;
@@ -126,11 +137,13 @@
 				queue = self._queue;
 
 			if(!element._quid) {
-				element._quid   = modules['function/unique/uuid']();
-				element.dispose = function() { self.dispose(element); };
+				element = self._initElement(element);
 
-				self.metrics.total++;
 				self.metrics.inUse++;
+			}
+
+			if(typeof element._dispose === 'function') {
+				element._dispose();
 			}
 
 			queue.push(element);
