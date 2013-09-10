@@ -14,6 +14,6 @@
 	'use strict';
 
 	return modules['support'].addTest('/css/borderradius', function(deferred) {
-		(modules['support'].supportsProperty('border-radius')) ? deferred.resolve(modules['support'].getProperty('border-radius')) : deferred.reject();
+		(modules['support'].supportsCssProperty('border-radius')) ? deferred.resolve(modules['support'].getCssProperty('border-radius')) : deferred.reject();
 	});
 }, window));

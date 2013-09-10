@@ -14,6 +14,6 @@
 	'use strict';
 
 	return modules['support'].addTest('/css/transform', function(deferred) {
-		(modules['support'].supportsProperty('transform')) ? deferred.resolve(modules['support'].getProperty('transform')) : deferred.reject();
+		(modules['support'].supportsCssProperty('transform')) ? deferred.resolve(modules['support'].getCssProperty('transform')) : deferred.reject();
 	});
 }, window));

@@ -14,6 +14,6 @@
 	'use strict';
 
 	return modules['support'].addTest('/css/boxshadow', function(deferred) {
-		(modules['support'].supportsProperty('box-shadow')) ? deferred.resolve(modules['support'].getProperty('box-shadow')) : deferred.reject();
+		(modules['support'].supportsCssProperty('box-shadow')) ? deferred.resolve(modules['support'].getCssProperty('box-shadow')) : deferred.reject();
 	});
 }, window));

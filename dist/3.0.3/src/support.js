@@ -37,14 +37,16 @@
 		},
 		lookup = {
 			prefix:   null,
-			property: { },
 			method:   { },
+			property: { },
+			css:      { },
 			element:  { },
 			promises: {
-				prefix: null,
+				prefix:   null,
+				method:   { },
 				property: { },
-				method: { },
-				test: { }
+				css:      { },
+				test:     { }
 			}
 		};
 
@@ -104,35 +106,6 @@
 
 			return stored;
 		},
-		getProperty: function(pProperty) {
-			pProperty = pProperty.replace(regexProperty, callbackUcfirst);
-
-			var stored = lookup.property[pProperty] || null;
-
-			if(stored === null) {
-				stored = false;
-
-				var candidate,
-					i          = 0,
-					sample     = window.qoopido.shared.pool.dom.obtain('div'),
-					uProperty  = pProperty.ucfirst(),
-					prefixes   = (this.getPrefix() || { properties: [] }).properties,
-					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
-
-				for(i; (candidate = candidates[i]) !== undefined; i++) {
-					if(sample.style[candidate] !== undefined) {
-						stored = candidate;
-						break;
-					}
-				}
-
-				lookup.property[pProperty] = stored;
-
-				sample.dispose();
-			}
-
-			return stored;
-		},
 		getMethod: function(pMethod, pElement) {
 			pElement = pElement || window;
 
@@ -166,14 +139,79 @@
 
 			return stored;
 		},
+		getProperty: function(pProperty, pElement) {
+			pElement = pElement || window;
+
+			var type    = pElement.tagName,
+				pointer = lookup.property[type] = lookup.property[type] || { },
+				stored  = pointer[pProperty] = lookup.property[type][pProperty] || null;
+
+			if(stored === null) {
+				stored = false;
+
+				var candidates, candidate,
+					i         = 0,
+					uProperty = pProperty.ucfirst(),
+					prefixes  = this.getPrefix();
+
+				if(prefixes !== false) {
+					candidates = (pProperty + ' ' + prefixes.properties.join(uProperty + ' ') + uProperty).split(' ');
+				} else {
+					candidates = [ pProperty ];
+				}
+
+				for(i; (candidate = candidates[i]) !== undefined; i++) {
+					if(pElement[candidate] !== undefined) {
+						stored = candidate;
+						break;
+					}
+				}
+
+				lookup.property[type][pProperty] = stored;
+			}
+
+			return stored;
+		},
+		getCssProperty: function(pProperty) {
+			pProperty = pProperty.replace(regexProperty, callbackUcfirst);
+
+			var stored = lookup.css[pProperty] || null;
+
+			if(stored === null) {
+				stored = false;
+
+				var candidate,
+					i          = 0,
+					sample     = window.qoopido.shared.pool.dom.obtain('div'),
+					uProperty  = pProperty.ucfirst(),
+					prefixes   = (this.getPrefix() || { properties: [] }).properties,
+					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
+
+				for(i; (candidate = candidates[i]) !== undefined; i++) {
+					if(sample.style[candidate] !== undefined) {
+						stored = candidate;
+						break;
+					}
+				}
+
+				lookup.css[pProperty] = stored;
+
+				sample.dispose();
+			}
+
+			return stored;
+		},
 		supportsPrefix: function() {
 			return !!this.getPrefix();
 		},
-		supportsProperty: function(pProperty) {
-			return !!this.getProperty(pProperty);
-		},
 		supportsMethod: function(pMethod, pElement) {
 			return !!this.getMethod(pMethod, pElement);
+		},
+		supportsProperty: function(pProperty, pElement) {
+			return !!this.getProperty(pProperty, pElement);
+		},
+		supportsCssProperty: function(pProperty) {
+			return !!this.getCssProperty(pProperty);
 		},
 		testPrefix: function() {
 			var stored = lookup.promises.prefix;
@@ -185,20 +223,6 @@
 				(!!prefix) ? deferred.resolve(prefix) : deferred.reject();
 
 				stored = lookup.promises.prefix = deferred.promise;
-			}
-
-			return stored;
-		},
-		testProperty: function(pProperty) {
-			var stored = lookup.promises.property[pProperty] || null;
-
-			if(stored === null) {
-				var deferred = Q.defer(),
-					property = this.getProperty(pProperty);
-
-				(!!property) ? deferred.resolve(property) : deferred.reject();
-
-				stored = lookup.promises.property[pProperty] =  deferred.promise;
 			}
 
 			return stored;
@@ -217,6 +241,38 @@
 				(!!method) ? deferred.resolve(method) : deferred.reject();
 
 				stored = lookup.promises.method[type][pMethod] = deferred.promise;
+			}
+
+			return stored;
+		},
+		testProperty: function(pProperty, pElement) {
+			pElement = pElement || window;
+
+			var type    = pElement.tagName,
+				pointer = lookup.promises.property[type] = lookup.promises.property[type] || { },
+				stored  = pointer[pProperty] = lookup.promises.property[type][pProperty] || null;
+
+			if(stored === null) {
+				var deferred = Q.defer(),
+					property = this.getProperty(pProperty, pElement);
+
+				(!!property) ? deferred.resolve(property) : deferred.reject();
+
+				stored = lookup.promises.property[type][pProperty] = deferred.promise;
+			}
+
+			return stored;
+		},
+		testCssProperty: function(pProperty) {
+			var stored = lookup.promises.css[pProperty] || null;
+
+			if(stored === null) {
+				var deferred = Q.defer(),
+					property = this.getCssProperty(pProperty);
+
+				(!!property) ? deferred.resolve(property) : deferred.reject();
+
+				stored = lookup.promises.css[pProperty] =  deferred.promise;
 			}
 
 			return stored;
