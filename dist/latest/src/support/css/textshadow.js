@@ -14,6 +14,6 @@
 	'use strict';
 
 	return modules['support'].addTest('/css/textshadow', function(deferred) {
-		(modules['support'].supportsProperty('text-shadow')) ? deferred.resolve(modules['support'].getProperty('text-shadow')) : deferred.reject();
+		(modules['support'].supportsCssProperty('text-shadow')) ? deferred.resolve(modules['support'].getCssProperty('text-shadow')) : deferred.reject();
 	});
 }, window));

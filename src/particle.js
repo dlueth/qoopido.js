@@ -33,13 +33,14 @@
 
 	prototype = modules['emitter'].extend({
 		_settings: null,
+		angle:     null,
 		velocity:  null,
 		position:  null,
 		_constructor: function(x, y, settings) {
 			var self = this;
 
 			self._settings = modules['function/merge']({}, defaults, settings);
-			self.position  = { current: { x: x || 0, y: y || 0 }, last: { x: x || 0, y: y || 0 } };
+			self.position  = { x: x || 0, y: y || 0 };
 			self.velocity  = self._settings.velocity;
 
 			prototype._parent._constructor.call(self);
@@ -50,18 +51,15 @@
 			self._settings = modules['function/merge'](self._settings, settings);
 			self.velocity  = self._settings.velocity;
 
-			self.position.current.x = x || 0;
-			self.position.current.y = y || 0;
-			self.position.last.x    = x || 0;
-			self.position.last.y    = y || 0;
+			self.position.x = x || 0;
+			self.position.y = y || 0;
 		},
 		update: function() {
 			var self = this;
 
-			self.position.last       = self.position.current;
-			self.velocity.y         += self._settings.gravity;
-			self.position.current.x += self.velocity.x;
-			self.position.current.y += self.velocity.y;
+			self.velocity.y += self._settings.gravity;
+			self.position.x += self.velocity.x;
+			self.position.y += self.velocity.y;
 		}
 	});
 
