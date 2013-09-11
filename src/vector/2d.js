@@ -48,12 +48,6 @@
 		getLength: function(squared) {
 			return squared ? (this.x * this.x) + (this.y * this.y) : Math.sqrt((this.x * this.x) + (this.y * this.y));
 		},
-		invert: function() {
-			this.x = -this.x;
-			this.y = -this.y;
-
-			return this;
-		},
 		rotate: function(angle, useRadians) {
 			var cosRY = Math.cos(angle * (useRadians ? 1 : TO_RADIANS)),
 				sinRY = Math.sin(angle * (useRadians ? 1 : TO_RADIANS));
@@ -66,27 +60,33 @@
 
 			return this;
 		},
+		invert: function() {
+			this.x = -this.x;
+			this.y = -this.y;
+
+			return this;
+		},
 		add: function(vector) {
-			this.x += vector.x;
-			this.y += vector.y;
+			this.x += (typeof vector === 'object') ? vector.x : vector;
+			this.y += (typeof vector === 'object') ? vector.y : vector;
 
 			return this;
 		},
 		subtract: function(vector) {
-			this.x -= vector.x;
-			this.y -= vector.y;
+			this.x -= (typeof vector === 'object') ? vector.x : vector;
+			this.y -= (typeof vector === 'object') ? vector.y : vector;
 
 			return this;
 		},
 		multiply: function(vector) {
-			this.x *= vector.x;
-			this.y *= vector.y;
+			this.x *= (typeof vector === 'object') ? vector.x : vector;
+			this.y *= (typeof vector === 'object') ? vector.y : vector;
 
 			return this;
 		},
 		divide: function(vector) {
-			this.x /= vector.x;
-			this.y /= vector.y;
+			this.x /= (typeof vector === 'object') ? vector.x : vector;
+			this.y /= (typeof vector === 'object') ? vector.y : vector;
 
 			return this;
 		}

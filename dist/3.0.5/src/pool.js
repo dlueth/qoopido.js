@@ -30,10 +30,9 @@
 
 	var prototype,
 		settings = {
-			interval:    15,
+			interval:    1000 / 60,
 			frameBudget: 0.5,
-			maxPoolsize: 1000,
-			queueFactor: 0.2
+			maxPoolsize: 1000
 		};
 
 	function processQueue() {
