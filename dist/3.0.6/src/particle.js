@@ -11,7 +11,8 @@
  *
  * @author Dirk Lüth <info@qoopido.com>
  * @require ./emitter
- * @require ./function/merge
+ * @require ./pool/module
+ * @require ./vector/2d
  */
 ;(function(pDefinition, window) {
 	'use strict';
@@ -32,13 +33,17 @@
 		poolVector = modules['pool/module'].create(modules['vector/2d']);
 
 	prototype = modules['emitter'].extend({
-		position:     null,
-		velocity:     null,
-		acceleration: null,
+		_velocity:     null,
+		_acceleration: null,
+		position:      null,
+		velocity:      null,
+		acceleration:  null,
 		_constructor: function(x, y) {
-			this.position     = poolVector.obtain(x, y);
-			this.velocity     = poolVector.obtain(0, 0);
-			this.acceleration = [];
+			this._velocity     = poolVector.obtain(0, 0);
+			this._acceleration = poolVector.obtain(0, 0);
+			this.position      = poolVector.obtain(x, y);
+			this.velocity      = poolVector.obtain(0, 0);
+			this.acceleration  = [];
 
 			prototype._parent._constructor.call(this);
 		},
@@ -50,8 +55,10 @@
 			this.acceleration.length = 0;
 		},
 		_destroy: function() {
-			this.position = this.position.dispose();
-			this.velocity = this.velocity.dispose();
+			this._velocity     = this._velocity.dispose();
+			this._acceleration = this._acceleration.dispose();
+			this.position      = this.position.dispose();
+			this.velocity      = this.velocity.dispose();
 		},
 		update: function(factor) {
 			factor = (typeof factor !== 'undefined') ? parseFloat(factor) : 1;
@@ -59,19 +66,19 @@
 			var i, acceleration;
 
 			if(factor !== 1) {
-				var velocity = poolVector.obtain(this.velocity.x, this.velocity.y).multiply(factor);
+				this._velocity.x = this.velocity.x;
+				this._velocity.y = this.velocity.y;
+				this._velocity   = this._velocity.multiply(factor);
 
 				for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
-					acceleration = poolVector.obtain(acceleration.x, acceleration.y).multiply(factor);
+					this._acceleration.x = acceleration.x;
+					this._acceleration.y = acceleration.y;
+					this._acceleration   = this._acceleration.multiply(factor);
 
-					velocity.add(acceleration);
-
-					acceleration = acceleration.dispose();
+					this._velocity.add(this._acceleration);
 				}
 
-				this.position.add(velocity);
-
-				velocity = velocity.dispose();
+				this.position.add(this._velocity);
 			} else {
 				for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
 					this.velocity.add(acceleration);
