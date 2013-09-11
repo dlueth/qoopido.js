@@ -30,11 +30,18 @@
 	var prototype;
 
 	prototype = modules['pool'].extend({
-		_module: null,
+		_module:  null,
+		_destroy: null,
 		_constructor: function(module, options) {
 			var self = this;
 
 			self._module = module;
+
+			if(typeof module._destroy === 'function') {
+				self._destroy = function(element) {
+					element._destroy();
+				};
+			}
 
 			prototype._parent._constructor.call(self, options);
 		},
@@ -43,7 +50,7 @@
 		},
 		_obtain: function() {
 			return this._module.create.apply(this._module, arguments);
-		}
+		},
 	});
 
 	return prototype;

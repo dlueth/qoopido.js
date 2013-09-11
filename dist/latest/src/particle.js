@@ -21,7 +21,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ './emitter', './function/merge' ], definition);
+		define([ './emitter', 'pool/module', './vector/2d' ], definition);
 	} else {
 		definition();
 	}
@@ -29,37 +29,44 @@
 	'use strict';
 
 	var prototype,
-		defaults = { gravity:  0.06, velocity: { x: 0, y: 0 } };
+		poolVector = modules['pool/module'].create(modules['vector/2d']);
 
 	prototype = modules['emitter'].extend({
-		_settings: null,
-		angle:     null,
-		velocity:  null,
-		position:  null,
-		_constructor: function(x, y, settings) {
-			var self = this;
+		position:     null,
+		lifetime:     null,
+		velocity:     null,
+		acceleration: null,
+		_constructor: function(x, y, lifetime) {
+			this.position     = poolVector.obtain(x, y);
+			this.lifetime     = lifetime || 0;
+			this.velocity     = poolVector.obtain(0, 0);
+			this.acceleration = [];
 
-			self._settings = modules['function/merge']({}, defaults, settings);
-			self.position  = { x: x || 0, y: y || 0 };
-			self.velocity  = self._settings.velocity;
-
-			prototype._parent._constructor.call(self);
+			prototype._parent._constructor.call(this);
 		},
-		_obtain: function(x, y, settings) {
-			var self = this;
+		_obtain: function(x, y, lifetime) {
+			this.position.x          = x || 0;
+			this.position.y          = y || 0;
+			this.lifetime            = lifetime || 0;
+			this.velocity.x          = 0;
+			this.velocity.y          = 0;
+			this.acceleration.length = 0;
+		},
+		_destroy: function() {
+			this.position.dispose();
+			this.velocity.dispose();
 
-			self._settings = modules['function/merge'](self._settings, settings);
-			self.velocity  = self._settings.velocity;
-
-			self.position.x = x || 0;
-			self.position.y = y || 0;
+			this.position = null;
+			this.velocity = null;
 		},
 		update: function() {
-			var self = this;
+			var i, acceleration;
 
-			self.velocity.y += self._settings.gravity;
-			self.position.x += self.velocity.x;
-			self.position.y += self.velocity.y;
+			for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
+				this.velocity.add(acceleration);
+			}
+
+			this.position.add(this.velocity);
 		}
 	});
 

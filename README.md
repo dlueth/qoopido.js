@@ -96,6 +96,8 @@ Currently contains
 - transport (base class for all transports)
 	- jsonp (JSONP transport)
 	- xhr (AJAX transport)
+- vector
+	- 2d
 - worker (flexible web worker implementation)
 	- task
 
