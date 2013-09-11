@@ -10,6 +10,8 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lüth <info@qoopido.com>
+ * @require ../base
+ * @require ../pool/object
  */
 ;(function(pDefinition, window) {
 	'use strict';
@@ -19,7 +21,7 @@
 	}
 
 	if(typeof define === 'function' && define.amd) {
-		define([ '../base' ], definition);
+		define([ '../base', '../pool/object' ], definition);
 	} else {
 		definition();
 	}
@@ -28,19 +30,26 @@
 
 	var prototype,
 		TO_DEGREES = 180 / Math.PI,
-		TO_RADIANS = Math.PI / 180,
-		temp       = { x: 0, y: 0 };
+		TO_RADIANS = Math.PI / 180;
 
 	prototype = modules['base'].extend({
-		x: null,
-		y: null,
+		_temp: null,
+		x:     null,
+		y:     null,
 		_constructor: function(x, y) {
-			this.x = x || 0;
-			this.y = y || 0;
+			this._temp    = window.qoopido.shared.pool.object.obtain();
+			this._temp.x  = 0;
+			this._temp.y  = 0;
+
+			this.x        = x || 0;
+			this.y        = y || 0;
 		},
 		_obtain: function(x, y) {
 			this.x = x || 0;
 			this.y = y || 0;
+		},
+		_destroy: function() {
+			this._temp = this._temp.dispose();
 		},
 		getAngle: function(useRadians) {
 			return useRadians ? Math.atan2(this.y, this.x) : (Math.atan2(this.y, this.x) * TO_DEGREES) % 360;
@@ -52,11 +61,11 @@
 			var cosRY = Math.cos(angle * (useRadians ? 1 : TO_RADIANS)),
 				sinRY = Math.sin(angle * (useRadians ? 1 : TO_RADIANS));
 
-			temp.x = this.x;
-			temp.y = this.y;
+			this._temp.x = this.x;
+			this._temp.y = this.y;
 
-			this.x = (temp.x * cosRY) - (temp.y * sinRY);
-			this.y = (temp.x * sinRY) + (temp.y * cosRY);
+			this.x = (this._temp.x * cosRY) - (this._temp.y * sinRY);
+			this.y = (this._temp.x * sinRY) + (this._temp.y * cosRY);
 
 			return this;
 		},

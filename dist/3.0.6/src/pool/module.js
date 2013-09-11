@@ -50,7 +50,7 @@
 		},
 		_obtain: function() {
 			return this._module.create.apply(this._module, arguments);
-		},
+		}
 	});
 
 	return prototype;
