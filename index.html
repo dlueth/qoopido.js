@@ -4,9 +4,9 @@
 	<script type="text/javascript" src="http://www.qoopido.com/portfolio/assets/vendor/require.2.1.6.min.js"></script>
 	<script type="text/javascript">
 		require.config({
-			baseUrl: 'dist/latest/src/',
+			baseUrl: 'src/',
 			paths: {
-				q: '../../../vendor/q/q.min'
+				q: '../vendor/q/q.min'
 			}
 		});
 	</script>
@@ -53,13 +53,20 @@
 <img id="lazyimage" style="position: absolute; left: 0; top: 2000px; width: 1200px; height: 750px;" data-lazyimage="http://www.thehollywoodnews.com/wp-content/uploads/13594933595bd11b9253fef97b38af59e20ee5bed2Cameron-Diaz-Free-Hd-Wallpaper-2013-2.jpg" />
 
 <script type="text/javascript">
-	require([ 'vector/2d' ], function(vector) {
-		var v1 = vector.create(0, -100);
-		var v2 = vector.create(100, -20);
+	require([ 'particle', 'vector/2d' ], function(particle, vector) {
+		var p1 = particle.create(100, 100);
 
-		v1.add(v2);
+		p1.velocity.x = 10;
+		p1.velocity.y = 10;
 
-		console.log(v1.getAngle(), v1.getLength());
+		p1.acceleration.push(vector.create(5, 5));
+
+		p1.update();
+		p1.update();
+
+		console.log(typeof p1.position);
+
+		console.log(p1.position.x, p1.position.y);
 	});
 
 	require([ 'dom/element/shrinkimage' ], function(shrinkimage) {

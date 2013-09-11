@@ -33,40 +33,52 @@
 
 	prototype = modules['emitter'].extend({
 		position:     null,
-		lifetime:     null,
 		velocity:     null,
 		acceleration: null,
-		_constructor: function(x, y, lifetime) {
+		_constructor: function(x, y) {
 			this.position     = poolVector.obtain(x, y);
-			this.lifetime     = lifetime || 0;
 			this.velocity     = poolVector.obtain(0, 0);
 			this.acceleration = [];
 
 			prototype._parent._constructor.call(this);
 		},
-		_obtain: function(x, y, lifetime) {
+		_obtain: function(x, y) {
 			this.position.x          = x || 0;
 			this.position.y          = y || 0;
-			this.lifetime            = lifetime || 0;
 			this.velocity.x          = 0;
 			this.velocity.y          = 0;
 			this.acceleration.length = 0;
 		},
 		_destroy: function() {
-			this.position.dispose();
-			this.velocity.dispose();
-
-			this.position = null;
-			this.velocity = null;
+			this.position = this.position.dispose();
+			this.velocity = this.velocity.dispose();
 		},
-		update: function() {
+		update: function(factor) {
+			factor = (typeof factor !== 'undefined') ? parseFloat(factor) : 1;
+
 			var i, acceleration;
 
-			for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
-				this.velocity.add(acceleration);
-			}
+			if(factor !== 1) {
+				var velocity = poolVector.obtain(this.velocity.x, this.velocity.y).multiply(factor);
 
-			this.position.add(this.velocity);
+				for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
+					acceleration = poolVector.obtain(acceleration.x, acceleration.y).multiply(factor);
+
+					velocity.add(acceleration);
+
+					acceleration = acceleration.dispose();
+				}
+
+				this.position.add(velocity);
+
+				velocity = velocity.dispose();
+			} else {
+				for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
+					this.velocity.add(acceleration);
+				}
+
+				this.position.add(this.velocity);
+			}
 		}
 	});
 
