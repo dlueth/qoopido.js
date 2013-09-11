@@ -72,6 +72,12 @@
 					variables.durationTotal   += new Date().getTime() - durationStart;
 					variables.durationAverage  = variables.durationTotal / variables.durationSamples;
 				} else {
+					if(typeof self._destroy === 'function') {
+						for(var j = 0; j < spliceLength; j++) {
+							self._destroy(elements[j]);
+						}
+					}
+
 					elements.length    = 0;
 					metrics.inQueue   -= spliceLength;
 					metrics.destroyed += spliceLength;
