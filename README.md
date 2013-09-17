@@ -99,7 +99,6 @@ Currently contains
 - vector
 	- 2d
 - worker (flexible web worker implementation)
-	- task
 
 Installation
 ---------------------------
