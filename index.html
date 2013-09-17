@@ -53,6 +53,31 @@
 <img id="lazyimage" style="position: absolute; left: 0; top: 2000px; width: 1200px; height: 750px;" data-lazyimage="http://www.thehollywoodnews.com/wp-content/uploads/13594933595bd11b9253fef97b38af59e20ee5bed2Cameron-Diaz-Free-Hd-Wallpaper-2013-2.jpg" />
 
 <script type="text/javascript">
+	require([ 'worker' ], function(worker) {
+		worker.execute(
+			function() {
+				var result = 0;
+
+				for(var i = 0; i < 1000; i++) {
+					result += 1;
+
+					self.postProgress(result);
+				}
+
+				return result;
+			})
+			.then(
+				function() {
+					console.log('result', arguments);
+				}
+			)
+			.progress(
+				function() {
+					console.log('progress', arguments);
+				}
+			);
+	});
+
 	require([ 'particle', 'vector/2d' ], function(particle, vector) {
 		var p1 = particle.create(100, 100);
 
