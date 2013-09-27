@@ -28,9 +28,9 @@
 
 	return modules['base'].extend({
 		_constructor: function(context, fn) {
-			var args  = [].splice.call(arguments, 2),
+			var args  = Array.prototype.splice.call(arguments, 2),
 				proxy = function() {
-					return fn.apply(context, [].slice.call(arguments, 0).concat(args));
+					return fn.apply(context, Array.prototype.slice.call(arguments, 0).concat(args));
 				};
 
 			proxy._quid = modules['function/unique/uuid']();
