@@ -93,6 +93,7 @@ Currently contains
 				- png
 				- webp
 		- svg
+		- video
 - transport (base class for all transports)
 	- jsonp (JSONP transport)
 	- xhr (AJAX transport)

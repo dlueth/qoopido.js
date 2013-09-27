@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-	<script type="text/javascript" src="http://www.qoopido.com/portfolio/assets/vendor/require.2.1.6.min.js"></script>
+	<script type="text/javascript" src="http://cdn.qoopido.com/portfolio/assets/vendor/require.2.1.8.min.js"></script>
 	<script type="text/javascript">
 		require.config({
 			baseUrl: 'src/',
@@ -10,49 +10,425 @@
 			}
 		});
 	</script>
-	<!--
-	<script type="text/javascript" src="vendor/q/q.min.js"></script>
 
-	<script type="text/javascript" src="dist/latest/min/polyfill/string/ucfirst.js"></script>
-	<script type="text/javascript" src="dist/latest/min/polyfill/window/getcomputedstyle.js"></script>
-	<script type="text/javascript" src="dist/latest/min/polyfill/object/defineproperty.js"></script>
-	<script type="text/javascript" src="dist/latest/min/polyfill/object/defineproperties.js"></script>
-	<script type="text/javascript" src="dist/latest/min/polyfill/object/getownpropertynames.js"></script>
-	<script type="text/javascript" src="dist/latest/min/polyfill/object/getownpropertydescriptor.js"></script>
-	<script type="text/javascript" src="dist/latest/min/polyfill/object/create.js"></script>
-	<script type="text/javascript" src="dist/latest/min/base.js"></script>
-	<script type="text/javascript" src="dist/latest/min/function/merge.js"></script>
-	<script type="text/javascript" src="dist/latest/min/function/unique/uuid.js"></script>
-	<script type="text/javascript" src="dist/latest/min/function/unique/string.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool/array.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool/object.js"></script>
-	<script type="text/javascript" src="dist/latest/min/pool/dom.js"></script>
-	<script type="text/javascript" src="dist/latest/min/proxy.js"></script>
-	<script type="text/javascript" src="dist/latest/min/emitter.js"></script>
-	<script type="text/javascript" src="dist/latest/min/url.js"></script>
-	<script type="text/javascript" src="dist/latest/min/dom/element.js"></script>
-	<script type="text/javascript" src="dist/latest/min/dom/element/shrinkimage.js"></script>
-	<script type="text/javascript" src="dist/latest/min/dom/element/emerge.js"></script>
-	<script type="text/javascript" src="dist/latest/min/dom/element/lazyimage.js"></script>
-	<script type="text/javascript" src="dist/latest/min/transport.js"></script>
-	<script type="text/javascript" src="dist/latest/min/transport/xhr.js"></script>
-	<script type="text/javascript" src="dist/latest/min/transport/jsonp.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/capability/datauri.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/element/canvas.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl.js"></script>
-	<script type="text/javascript" src="dist/latest/min/support/element/canvas/todataurl/png.js"></script>
-	-->
+<style type="text/css">
+	* {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-khtml-user-select: none;
+		-ms-user-select: none;
+	}
+
+	body {
+		overflow: hidden;
+		padding: 0;
+		background-color: #333;
+		font-family: Tahoma, Verdana, Segoe, sans-serif;;
+		font-size: 14px;
+		line-height: 18px;
+		color: #ddd;
+	}
+
+	#console {
+		z-index: 999;
+		position: absolute;
+		left: 20px;
+		top: 20px;
+		overflow: hidden;
+		width: 220px;
+		background-color: #595551;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-khtml-user-select: none;
+		-ms-user-select: none;
+	}
+
+	#console svg {
+		position: absolute;
+		right: 8px;
+		top: 8px;
+	}
+
+	#console h3 {
+		margin: 0;
+		padding: 10px;
+		background-color: #95ba00;
+		font-family: "Trebuchet MS",Tahoma,Arial,sans-serif;
+		color: #fff;
+	}
+
+	#console ul {
+		list-style: none outside none;
+		margin: 0;
+		padding: 0;
+	}
+
+	#console li {
+		padding: 0 10px;
+		line-height: 28px;
+	}
+
+	#console li:hover {
+		background-color: #6e6964;
+	}
+
+	#console li > span {
+		float: right;
+		width: 80px;
+		padding: 0 18px;
+		text-align: center;
+	}
+
+	#console .previous {
+		cursor: pointer;
+		float: left;
+		width: 28px;
+		height: 28px;
+		margin-left: -28px;
+		font-weight: bold;
+	}
+
+	#console .next {
+		cursor: pointer;
+		float: right;
+		width: 28px;
+		height: 28px;
+		margin-right: -28px;
+		font-weight: bold;
+	}
+
+	#canvas {
+		z-index: 1;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 640px;
+		height: 480px;
+		margin: auto;
+		border: 20px solid #000;
+	}
+
+	canvas:before, canvas:after {
+		z-index: -1;
+		position: absolute;
+		left: 12px;
+		bottom: 12px;
+		width: 40%;
+		height: 10px;
+		background: transparent;
+		content: '';
+		-webkit-transform-origin: left bottom;
+		-moz-transform-origin: left bottom;
+		-o-transform-origin: left bottom;
+		-ms-transform-origin: left bottom;
+		transform-origin: left bottom;
+		-webkit-transform: skew(-3deg) rotate(-3deg);
+		-moz-transform: skew(-3deg) rotate(-3deg);
+		-o-transform: skew(-3deg) rotate(-3deg);
+		-ms-transform: skew(-3deg) rotate(-3deg);
+		transform: skew(-3deg) rotate(-3deg);
+		-webkit-box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
+		-moz-box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
+		box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
+	}
+
+	canvas:after {
+		left: auto;
+		right: 12px;
+		-webkit-transform-origin: right bottom;
+		-moz-transform-origin: right bottom;
+		-o-transform-origin: right bottom;
+		-ms-transform-origin: right bottom;
+		transform-origin: right bottom;
+		-webkit-transform: skew(3deg) rotate(3deg);
+		-moz-transform: skew(3deg) rotate(3deg);
+		-o-transform: skew(3deg) rotate(3deg);
+		-ms-transform: skew(3deg) rotate(3deg);
+		transform: skew(3deg) rotate(3deg);
+	}
+
+	.hint {
+		z-index: 1000;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 180px;
+		height: 74px;
+		margin: auto;
+		padding: 10px;
+		background-color: rgba(255, 255, 255, 0.2);
+		border-radius: 6px;
+		text-align: center;
+	}
+</style>
+
 </head>
 <body>
 
+<!--
 <img id="shrinkimage1" data-shrinkimage="http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20" style="display: inline-block; width: 210px; height: 294px;" />
 <div id="shrinkimage2" style="background-image: url(data:image/shrink,http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20); display: inline-block; width: 210px; height: 294px;"></div>
 <div id="emerge" style="position: absolute; left: 0; top: 1000px;">[dom/element/emerge container]</div>
 <img id="lazyimage" style="position: absolute; left: 0; top: 2000px; width: 1200px; height: 750px;" data-lazyimage="http://www.thehollywoodnews.com/wp-content/uploads/13594933595bd11b9253fef97b38af59e20ee5bed2Cameron-Diaz-Free-Hd-Wallpaper-2013-2.jpg" />
+-->
+
+<div id="console">
+	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
+		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
+	</svg>
+
+	<h3>Settings</h3>
+	<ul>
+		<li>Brightness:    <span data-setting="brightness:-100,100,1"></span></li>
+		<li>Contrast:      <span data-setting="contrast:0,100,1"></span></li>
+		<li>Pixel size:    <span data-setting="size:4,24,1"></span></li>
+		<li>Pixel spacing: <span data-setting="space:0,10,1"></span></li>
+		<li>Pixel alpha:   <span data-setting="alpha:0,100,1"></span></li>
+		<li>Pixel radius:  <span data-setting="radius:0,8,1"></span></li>
+	</ul>
+</div>
 
 <script type="text/javascript">
+	var settings = {
+		brightness: 15,
+		contrast:   5,
+		size:       6,
+		space:      1,
+		alpha:      100,
+		radius:     2
+	};
+
+	;(function(window, document, undefined) {
+		var TARGET_FRAMERATE  = 1000 / 60,
+			MATH_PI_TIMES_TWO = 2 * Math.PI,
+			options = {
+				brightness: 0,
+				contrast:   0,
+				size:       0,
+				space:      0,
+				alpha:      0,
+				radius:     0
+			},
+			qWindow = qDocument = requestAnimationFrame = cancelAnimationFrame = visibilityProperty = video = iCanvas = iContext = tCanvas = tContext = methodURL = getUserMedia = interval = paused = imageData = colorData = false,
+			radius = factor = width = height = xOffset = yOffset = i = px = x = y = color = 0;
+
+		function requestAnimationFrameFallback(callback) {
+			window.setTimeout(callback, TARGET_FRAMERATE);
+		}
+
+		function onResize() {
+		}
+
+		function onVisibilityChange() {
+			if(document[visibilityProperty]) {
+				if(interval) {
+					cancelAnimationFrame(interval);
+					interval = null;
+				}
+			} else {
+				if(!interval) {
+					update();
+				}
+			}
+		}
+
+		function onSettingsChanged() {
+			options.brightness = (255 * (settings.brightness / 100)) >> 0;
+			options.contrast   = Math.pow((settings.contrast + 100) / 100, 2);
+			options.size       = settings.size;
+			options.space      = settings.space;
+			options.alpha      = settings.alpha / 100;
+			options.radius     = Math.min(settings.radius, settings.size / 2);
+
+			radius     = options.size / 2;
+			factor     = 640 / ((640 * (options.size + options.space)) - options.space);
+			width      = (640 * factor) >> 0;
+			height     = (480 * factor) >> 0;
+			xOffset    = (640 - (width / factor)) / 2;
+			yOffset    = (480 - (height / factor)) / 2;
+
+			iCanvas.width  = width;
+			iCanvas.height = height;
+		}
+
+		function onIncompatible() {
+			var hint = document.createElement('div');
+
+			hint.className   = 'hint';
+			hint.textContent = 'Your browser seems to be incompatible with this demo :(';
+
+			document.body.appendChild(hint);
+		}
+
+		function initializeControl(element, mDomElement) {
+			var parameter = mDomElement.create(element).getAttribute('data-setting').split(':'),
+				setting   = parameter[0],
+				range     = parameter[1].split(','),
+				stepping  = parseFloat(range.pop()),
+				previous  = document.createElement('span'),
+				value     = document.createElement('span'),
+				next      = document.createElement('span');
+
+			previous.className = 'previous';
+			value.className    = 'value';
+			next.className     = 'next';
+
+			previous.textContent = '-';
+			value.textContent    = settings[setting];
+			next.textContent     = '+';
+
+			element.appendChild(previous);
+			element.appendChild(value);
+			element.appendChild(next);
+
+			previous = mDomElement.create(previous);
+			next     = mDomElement.create(next);
+
+			previous.on('click', function(event) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				settings[setting] = Math.max(range[0], Math.min(range[1], settings[setting] - stepping));
+				value.textContent = settings[setting];
+
+				onSettingsChanged();
+
+				return false;
+			});
+
+			next.on('click', function(event) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				settings[setting] = Math.max(range[0], Math.min(range[1], settings[setting] + stepping));
+				value.textContent = settings[setting];
+
+				onSettingsChanged();
+
+				return false;
+			});
+		}
+
+		function update() {
+			iContext.drawImage(video, 0, 0, width, height);
+
+			tContext.fillStyle = '#000';
+			tContext.fillRect(0, 0, 640, 480);
+
+			try {
+				imageData = iContext.getImageData(0, 0, width, height);
+			} catch(e) {}
+
+			if(imageData) {
+				colorData = imageData.data;
+
+				for(i = 0; i < colorData.length; i += 4) {
+					px    = i / 4;
+					x     = ((px % width) / factor) + radius + xOffset;
+					y     = (((px / width) >> 0) / factor) + radius + yOffset;
+					color = 0.299 * colorData[i] + 0.587 * colorData[i + 1] + 0.114 * colorData[i + 2];
+
+					color /= 255;
+					color -= 0.5;
+					color *= options.contrast;
+					color += 0.5;
+					color *= 255;
+					color  = (color + 0.5) >> 0;
+					color += options.brightness;
+					color  = Math.max(0, Math.min(255, color));
+
+					tContext.beginPath();
+
+					if(radius === options.radius) {
+						tContext.arc(x, y, radius, 0, MATH_PI_TIMES_TWO, false);
+					} else {
+						x -= radius;
+						y -= radius;
+
+						tContext.moveTo(x + options.radius, y);
+						tContext.lineTo(x + options.size - options.radius, y);
+						tContext.quadraticCurveTo(x + options.size, y, x + options.size, y + options.radius);
+						tContext.lineTo(x + options.size, y + options.size - options.radius);
+						tContext.quadraticCurveTo(x + options.size, y + options.size, x + options.size - options.radius, y + options.size);
+						tContext.lineTo(x + options.radius, y + options.size);
+						tContext.quadraticCurveTo(x, y + options.size, x, y + options.size - options.radius);
+						tContext.lineTo(x, y + options.radius);
+						tContext.quadraticCurveTo(x, y, x + options.radius, y);
+					}
+
+					tContext.closePath();
+					tContext.fillStyle = 'rgba(' + color + ', ' + color + ', ' + color + ', ' + options.alpha + ')';
+					tContext.fill();
+				}
+			}
+
+			interval = requestAnimationFrame(update);
+		}
+
+		require([ 'support', 'dom/element', 'proxy', 'support/element/video', 'support/element/canvas' ], function(mSupport, mDomElement, mProxy) {
+			mSupport.testMultiple('/element/video', '/element/canvas', mSupport.supportsMethod('URL'), mSupport.supportsMethod('getUserMedia', navigator))
+				.then(
+					function() {
+						qWindow               = mDomElement.create(window);
+						qDocument             = mDomElement.create(document);
+						requestAnimationFrame = window[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback;
+						cancelAnimationFrame  = window[mSupport.getMethod('cancelAnimationFrame')] || clearTimeout;
+						visibilityProperty    = mSupport.getProperty('hidden', document);
+						video                 = document.createElement('video');
+						iCanvas               = document.createElement('canvas');
+						iContext              = iCanvas.getContext('2d');
+						tCanvas               = document.createElement('canvas');
+						tContext              = tCanvas.getContext('2d');
+						methodURL             = mSupport.getMethod('URL');
+						getUserMedia          = mProxy.create(navigator, navigator[mSupport.getMethod('getUserMedia', navigator)]);
+
+						mDomElement.create(video).setAttribute('autoplay', 'autoplay');
+						mDomElement.create(tCanvas).setAttribute('id', 'canvas');
+
+						var container = document.querySelectorAll('#console [data-setting]');
+
+						for(i = 0; container[i] !== undefined; i++) {
+							initializeControl(container[i], mDomElement);
+						}
+
+						qWindow
+							.on('resize orientationchange', onResize)
+							.emit('resize');
+
+						if(visibilityProperty) {
+							qDocument
+								.on(''.concat('visibilitychange ', mSupport.getPrefix().properties[0], 'visibilitychange'), onVisibilityChange)
+								.emit('visibilitychange');
+						}
+
+						getUserMedia({ video: true, audio: false },
+							function(stream) {
+								video.width  = tCanvas.width = 640;
+								video.height = tCanvas.height = 480;
+								video.src    = window[methodURL].createObjectURL(stream);
+
+								document.body.appendChild(tCanvas);
+
+								onSettingsChanged();
+								update();
+							},
+							onIncompatible
+						);
+					},
+					onIncompatible
+				);
+		});
+	}(window, document));
+
+	/*
 	require([ 'worker' ], function(worker) {
 		worker.execute(
 			function() {
@@ -152,6 +528,7 @@
 
 		setInterval(function() { console.log(poolDom.metrics); }, 4000);
 	});
+	*/
 
 	/*
 	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage1'))
