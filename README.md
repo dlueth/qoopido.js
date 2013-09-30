@@ -94,6 +94,9 @@ Currently contains
 				- webp
 		- svg
 		- video
+			- mp4
+			- ogg
+			- webm
 - transport (base class for all transports)
 	- jsonp (JSONP transport)
 	- xhr (AJAX transport)
