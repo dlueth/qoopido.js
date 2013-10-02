@@ -4,14 +4,16 @@
  * Provides mechanics to load, process and display shrunk-files (server side compression for alpha transparent PNGs)
  *
  * Source:  Qoopido Shrinkimage
- * Author:  Dirk Lüth <info@qoopido.com>
- * Website: https://github.com/dlueth/qoopido.shrinkimage
+ * Author:  Dirk Lueth <info@qoopido.com>
+ * Website: https://github.com/dLueth/qoopido.shrinkimage
  *
- * Copyright (c) 2013 Dirk Lüth
+ * Copyright (c) 2013 Dirk Lueth
  *
  * Licensed under the MIT and GPL license.
  *  - http://www.opensource.org/licenses/mit-license.php
  *  - http://www.gnu.org/copyleft/gpl.html
+ *
+ * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../element
  * @require ../../proxy
@@ -22,7 +24,7 @@
  * @require ../../support/element/canvas/todataurl/png
  * @require ../../transport/xhr
  * @require ../../pool/dom
- * @require json (external)
+ * @external JSON
  */
 ;(function(pDefinition, window) {
 	'use strict';
