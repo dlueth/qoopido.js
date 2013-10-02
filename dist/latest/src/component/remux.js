@@ -3,13 +3,14 @@
  *
  * Provides facilities for responsive layouts solely based on REM units and overall proportionally scaling
  *
- * Copyright (c) 2012 Dirk Lüth
+ * Copyright (c) 2012 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
  *  - http://www.gnu.org/copyleft/gpl.html
  *
- * @author Dirk Lüth <info@qoopido.com>
+ * @author Dirk Lueth <info@qoopido.com>
+ *
  * @require ../emitter
  */
 ;(function(pDefinition, window) {
@@ -113,7 +114,7 @@
 				}
 			}
 
-			self.updateState();
+			updateState.call(self);
 
 			return self;
 		}

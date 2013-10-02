@@ -9,13 +9,17 @@
  * Shims borrowed from es5-shim by Kris Kowal
  * https://github.com/kriskowal/es5-shim
  *
- * Copyright (c) 2013 Dirk Lüth
+ * Copyright (c) 2013 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
  *  - http://www.gnu.org/copyleft/gpl.html
  *
- * @author Dirk Lüth <info@qoopido.com>
+ * @author Dirk Lueth <info@qoopido.com>
+ *
+ * @polyfill ./polyfill/object/create
+ * @polyfill ./polyfill/object/getownpropertynames
+ * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 ;(function(pDefinition, window, document, undefined) {
 	'use strict';
@@ -36,8 +40,8 @@
 
 	var id      = 'qoopido',
 		root    = window[id] = window[id] || { initialize: initialize },
-		shared  = root.shared  = {},
-		modules = root.modules = {};
+		shared  = root.shared  = root.shared || {},
+		modules = root.modules = root.modules || {};
 
 	function definition() {
 		return initialize('base', pDefinition);
@@ -47,15 +51,15 @@
 		var dependencies = [];
 
 		if(!Object.create) {
-			dependencies.push('../polyfill/object/create');
+			dependencies.push('./polyfill/object/create');
 		}
 
 		if(!Object.getOwnPropertyNames) {
-			dependencies.push('../polyfill/object/getownpropertynames');
+			dependencies.push('./polyfill/object/getownpropertynames');
 		}
 
 		if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
-			dependencies.push('../polyfill/object/getownpropertydescriptor');
+			dependencies.push('./polyfill/object/getownpropertydescriptor');
 		}
 
 		define(dependencies, definition);

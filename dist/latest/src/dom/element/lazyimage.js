@@ -5,13 +5,15 @@
  *
  * Source:  Qoopido Lazyimage
  * Author:  Dirk Lüth <info@qoopido.com>
- * Website: https://github.com/dlueth/qoopido.lazyimage
+ * Website: https://github.com/dLueth/qoopido.lazyimage
  *
  * Copyright (c) 2013 Dirk Lüth
  *
  * Licensed under the MIT and GPL license.
  *  - http://www.opensource.org/licenses/mit-license.php
  *  - http://www.gnu.org/copyleft/gpl.html
+ *
+ * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./emerge
  * @require ../../function/merge

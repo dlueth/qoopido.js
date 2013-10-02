@@ -3,13 +3,14 @@
  *
  * Function to calculate the proximity of two given coordinates
  *
- * Copyright (c) 2013 Dirk Lüth
+ * Copyright (c) 2013 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
  *  - http://www.gnu.org/copyleft/gpl.html
  *
- * @author Dirk Lüth <info@qoopido.com>
+ * @author Dirk Lueth <info@qoopido.com>
+ *
  * @require ../base
  */
 ;(function(pDefinition, window) {

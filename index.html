@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
+	<script type="text/javascript" src="./packages/3.1.0/min/remux.js"></script>
+	<script type="text/javascript" src="./packages/3.1.0/min/emerge.js"></script>
+	<script type="text/javascript" src="./packages/3.1.0/min/lazyimage.js"></script>
+	<script type="text/javascript" src="./packages/3.1.0/min/shrinkimage.js"></script>
+	<script type="text/javascript">
+		console.log(window.qoopido.modules);
+		/*
+		window.qoopido.modules['component/remux']
+			.on('statechange', function(event, state) {
+				console.log(state.fontsize, state.layout);
+			})
+			.addLayout({
+				mobile:  { width: 420, min: 10, max: 23 },
+				desktop: { width: 980, min: 10, max: 18 }
+			});
+		*/
+	</script>
+	<!--
 	<script type="text/javascript" src="http://cdn.qoopido.com/portfolio/assets/vendor/require.2.1.8.min.js"></script>
 	<script type="text/javascript">
 		require.config({
@@ -10,7 +28,7 @@
 			}
 		});
 	</script>
-
+	-->
 <style type="text/css">
 * {
 	-webkit-box-sizing: border-box;
@@ -111,6 +129,7 @@ body {
 	height: 480px;
 	margin: auto;
 	border: 20px solid #000;
+	background-color: #000;
 }
 
 canvas:before, canvas:after {
@@ -159,7 +178,7 @@ canvas:after {
 	top: 0;
 	right: 0;
 	bottom: 0;
-	width: 180px;
+	width: 160px;
 	height: 74px;
 	margin: auto;
 	padding: 10px;
@@ -225,7 +244,10 @@ require.config({
 				radius:     0
 			},
 			qDocument = requestAnimationFrame = cancelAnimationFrame = visibilityProperty = video = iCanvas = iContext = tCanvas = tContext = methodURL = getUserMedia = interval = imageData = colorLookup = colorData = false,
-			size = radius = factor = width = height = xOffset = yOffset = i = px = x = y = color = 0;
+			size = radius = factor = width = height = xOffset = yOffset = i = px = x = y = color = 0,
+			hint = document.createElement('div');
+
+	hint.className   = 'hint';
 
 	function requestAnimationFrameFallback(callback) {
 		window.setTimeout(callback, TARGET_FRAMERATE);
@@ -267,10 +289,19 @@ require.config({
 	}
 
 	function onIncompatible() {
-		var hint = document.createElement('div');
+		hint.textContent = 'Sure your browser is up to date and you have a webcam?';
 
-		hint.className   = 'hint';
-		hint.textContent = 'Your browser seems to be incompatible with this demo :(';
+		document.body.appendChild(hint);
+	}
+
+	function onAccessRequested() {
+		hint.textContent = 'Please grant access to your webcam for this demo to work.';
+
+		document.body.appendChild(hint);
+	}
+
+	function onAccessDenied() {
+		hint.textContent = 'You might really want to grant me access to your webcam :)';
 
 		document.body.appendChild(hint);
 	}
@@ -324,7 +355,7 @@ require.config({
 		});
 	}
 
-	function getPixel(color) {
+	function createPixel(color) {
 		if(!colorLookup[color]) {
 			var pColor   = color,
 					pCanvas  = document.createElement('canvas'),
@@ -369,9 +400,7 @@ require.config({
 
 	function update() {
 		iContext.drawImage(video, 0, 0, width, height);
-
-		tContext.fillStyle = '#000';
-		tContext.fillRect(0, 0, 640, 480);
+		tContext.clearRect(0, 0, 640, 480);
 
 		try {
 			imageData = iContext.getImageData(0, 0, width, height);
@@ -386,7 +415,7 @@ require.config({
 				x     = (px % width) * size + xOffset;
 				y     = ((px / width) >> 0) * size + yOffset;
 
-				tContext.drawImage(colorLookup[color] || getPixel(color), x, y);
+				tContext.drawImage(colorLookup[color] || createPixel(color), x, y);
 			}
 		}
 
@@ -395,7 +424,7 @@ require.config({
 
 	require([ 'support', 'dom/element', 'proxy', 'support/element/video', 'support/element/canvas' ], function(mSupport, mDomElement, mProxy) {
 		mSupport.testMultiple('/element/video', '/element/canvas', mSupport.supportsMethod('URL'), mSupport.supportsMethod('getUserMedia', navigator))
-				.then(
+			.then(
 				function() {
 					qDocument             = mDomElement.create(document);
 					requestAnimationFrame = window[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback;
@@ -420,26 +449,32 @@ require.config({
 
 					if(visibilityProperty) {
 						qDocument
-								.on(''.concat('visibilitychange ', mSupport.getPrefix().properties[0], 'visibilitychange'), onVisibilityChange)
-								.emit('visibilitychange');
+							.on(''.concat('visibilitychange ', mSupport.getPrefix().properties[0], 'visibilitychange'), onVisibilityChange)
+							.emit('visibilitychange');
 					}
 
+					onAccessRequested();
+
 					getUserMedia({ video: true, audio: false },
-							function(stream) {
-								video.width  = tCanvas.width = 640;
-								video.height = tCanvas.height = 480;
-								video.src    = window[methodURL].createObjectURL(stream);
+						function(stream) {
+							video.width  = tCanvas.width = 640;
+							video.height = tCanvas.height = 480;
+							video.src    = window[methodURL].createObjectURL(stream);
 
-								document.body.appendChild(tCanvas);
+							tContext.translate(640, 0);
+							tContext.scale(-1, 1);
 
-								onSettingsChanged();
-								update();
-							},
-							onIncompatible
+							document.body.removeChild(hint);
+							document.body.appendChild(tCanvas);
+
+							onSettingsChanged();
+							update();
+						},
+						onAccessDenied
 					);
 				},
 				onIncompatible
-		);
+			);
 	});
 }(window, document));
 
