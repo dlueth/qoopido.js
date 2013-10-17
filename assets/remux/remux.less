@@ -1,0 +1,378 @@
+@remuxFontsize: 16px;
+@remuxFallback: false;
+
+.remux(font-size, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		font-size: ~"@{value}";
+		font-size: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		font-size: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(line-height, @value) {
+	// line-height with more than 6 decimal digits causes
+	// problems in Chrome (at least in version 23.0.1271.91)
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 100000)) / 100000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		line-height: ~"@{value}";
+		line-height: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		line-height: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(left, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		left: ~"@{value}";
+		left: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		left: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(right, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		right: ~"@{value}";
+		right: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		right: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(top, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		top: ~"@{value}";
+		top: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		top: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(bottom, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		bottom: ~"@{value}";
+		bottom: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		bottom: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(width, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		width: ~"@{value}";
+		width: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		width: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(min-width, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		min-width: ~"@{value}";
+		min-width: ~"@{processingRem}";
+		width: auto !important;
+		width: ~"@{value}";
+		width: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		min-width: ~"@{processingRem}";
+		width: auto !important;
+		width: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(height, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		height: ~"@{value}";
+		height: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		height: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(min-height, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		min-height: ~"@{value}";
+		min-height: ~"@{processingRem}";
+		height: auto !important;
+		height: ~"@{value}";
+		height: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		min-height: ~"@{processingRem}";
+		height: auto !important;
+		height: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(margin, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		margin: @value;
+		margin: @processingRem;
+	}
+	.result(false) {
+		margin: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(margin-top, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		margin-top: ~"@{value}";
+		margin-top: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		margin-top: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(margin-right, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		margin-right: ~"@{value}";
+		margin-right: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		margin-right: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(margin-bottom, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		margin-bottom: ~"@{value}";
+		margin-bottom: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		margin-bottom: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(margin-left, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		margin-left: ~"@{value}";
+		margin-left: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		margin-left: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(padding, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		padding: @value;
+		padding: @processingRem;
+	}
+	.result(false) {
+		padding: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(padding-top, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		padding-top: ~"@{value}";
+		padding-top: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		padding-top: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(padding-right, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		padding-right: ~"@{value}";
+		padding-right: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		padding-right: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(padding-bottom, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		padding-bottom: ~"@{value}";
+		padding-bottom: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		padding-bottom: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(padding-left, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(@value, @fallback) when (@fallback = true) {
+		padding-left: ~"@{value}";
+		padding-left: ~"@{processingRem}";
+	}
+	.result(@value, @fallback) when (@fallback = false) {
+		padding-left: ~"@{processingRem}";
+	}
+
+	.result(@value, @remuxFallback);
+}
+
+.remux(border, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		border: @value;
+		border: @processingRem;
+	}
+	.result(false) {
+		border: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(border-top, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		border-top: @value;
+		border-top: @processingRem;
+	}
+	.result(false) {
+		border-top: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(border-right, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		border-right: @value;
+		border-right: @processingRem;
+	}
+	.result(false) {
+		border-right: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(border-bottom, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		border-bottom: @value;
+		border-bottom: @processingRem;
+	}
+	.result(false) {
+		border-bottom: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(border-left, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		border-left: @value;
+		border-left: @processingRem;
+	}
+	.result(false) {
+		border-left: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
+
+.remux(text-shadow, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(true) {
+		text-shadow: @value;
+		text-shadow: @processingRem;
+	}
+	.result(false) {
+		text-shadow: @processingRem;
+	}
+
+	.result(@remuxFallback);
+}
