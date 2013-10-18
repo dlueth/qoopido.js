@@ -14,19 +14,9 @@
  * @require ./base
  * @require ./function/unique/uuid
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('pool', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './base', './function/merge', './function/unique/uuid' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules) {
+;(function(definition) {
+	window.qoopido.register('pool', definition, [ './function/merge', './function/unique/uuid' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -162,4 +152,4 @@
 	});
 
 	return prototype;
-}, window));
+}));

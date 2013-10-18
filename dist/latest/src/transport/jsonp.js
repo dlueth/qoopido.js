@@ -17,25 +17,15 @@
  * @require ../function/unique/uuid
  * @require ../dom/element
  * @require ../pool/dom
- * @external Q.js
+ * @external Q
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('transport/jsonp', pDefinition, arguments, true);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../pool/dom', 'q' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document) {
+;(function(definition) {
+	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../pool/dom', 'q' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
-		Q    = window.Q || dependencies[4],
+		Q    = modules['q'] || window.Q,
 		head = document.getElementsByTagName('head')[0];
 
 	function sendRequest(url, content) {

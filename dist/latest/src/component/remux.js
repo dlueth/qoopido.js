@@ -13,19 +13,9 @@
  *
  * @require ../emitter
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('component/remux', pDefinition, arguments, true);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../emitter' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype, style,
@@ -121,4 +111,4 @@
 	});
 
 	return prototype;
-}, window));
+}));

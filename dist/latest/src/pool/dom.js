@@ -13,29 +13,12 @@
  *
  * @require ../pool
  */
-;(function(pDefinition, window) {
+;(function(definition) {
+	window.qoopido.register('pool/dom', definition, [ '../pool' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	function definition() {
-		var module = window.qoopido.initialize('pool/dom', pDefinition, arguments);
-
-		window.qoopido.shared.pool     = window.qoopido.shared.pool || {};
-		window.qoopido.shared.pool.dom = module.create();
-
-		return module;
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define(['../pool'], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document) {
-	'use strict';
-
-	var prototype;
-
-	prototype = modules['pool'].extend({
+	var prototype = modules['pool'].extend({
 		_initPool: function() {
 			return {};
 		},
@@ -72,5 +55,8 @@
 		}
 	});
 
+	window.qoopido.shared.pool     = window.qoopido.shared.pool || {};
+	window.qoopido.shared.pool.dom = prototype.create();
+
 	return prototype;
-}, window));
+}));

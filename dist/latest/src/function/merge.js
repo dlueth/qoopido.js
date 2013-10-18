@@ -13,19 +13,9 @@
  *
  * @require ../base
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('function/merge', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../base' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.register('function/merge', definition);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return function merge() {
@@ -55,4 +45,4 @@
 
 		return target;
 	};
-}, window));
+}));

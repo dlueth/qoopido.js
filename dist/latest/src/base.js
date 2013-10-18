@@ -1,5 +1,5 @@
 /*
- * Qoopido base
+ * qoopido base
  *
  * Provides the basic object inheritance and extension mechanism
  *
@@ -21,53 +21,93 @@
  * @polyfill ./polyfill/object/getownpropertynames
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
-;(function(pDefinition, window, document, undefined) {
+;(function(definition, navigator, window, document, undefined) {
 	'use strict';
 
-	function initialize(pNamespace, pDefinition, pArguments, pSingleton) {
-		var namespace = pNamespace.split('/');
+	function register(id, definition, dependencies, callback) {
+		var namespace = id.split('/'),
+			initialize;
 
-		if(modules[pNamespace]) {
-			return modules[pNamespace];
+		if(modules[id]) {
+			return modules[id];
 		}
 
-		pArguments = (pArguments) ? [].slice.call(pArguments, 0) : [];
+		initialize = function() {
+			if(dependencies) {
+				var path = namespace.slice(0, -1).join('/'),
+					i, dependency;
 
-		return modules[pNamespace] = (function() {
-			return ((pSingleton === true) ? pDefinition.call(null, modules, pArguments, namespace, window, document, undefined).create() : pDefinition.call(null, modules, pArguments, namespace, window, document, undefined));
-		})();
+				for(i = 0; (dependency = dependencies[i]) !== undefined; i++) {
+					if(isInternal.test(dependency)) {
+						dependency = canonicalize(path + '/' + dependency);
+					}
+
+					if(!modules[dependency] && arguments[i]) {
+						modules[dependency] = arguments[i];
+					}
+
+					if(!modules[dependency] && typeof console !== 'undefined') {
+						console.error(''.concat('[Qoopido.js] ', id, ': Could not load dependency ', dependency));
+					}
+				}
+			}
+
+			modules[id] = definition(modules, namespace, navigator, window, document, undefined);
+
+			if(callback) {
+				callback(modules[id]);
+			}
+
+			return modules[id];
+		};
+
+		if(typeof define === 'function' && define.amd) {
+			dependencies ? define(dependencies, initialize) : define(initialize);
+		} else {
+			initialize();
+		}
 	}
 
-	var id      = 'qoopido',
-		root    = window[id] = window[id] || { initialize: initialize },
-		shared  = root.shared  = root.shared || {},
-		modules = root.modules = root.modules || {};
-
-	function definition() {
-		return initialize('base', pDefinition);
+	function registerSingleton(id, definition, dependencies) {
+		register(id, definition, dependencies, function(module) {
+			modules[id] = module.create();
+		});
 	}
 
-	if(typeof define === 'function' && define.amd) {
-		var dependencies = [];
+	function canonicalize(path) {
+		var collapsed;
 
-		if(!Object.create) {
-			dependencies.push('./polyfill/object/create');
+		while((collapsed = path.replace(regexCanonicalize, '')) !== path) {
+			path = collapsed;
 		}
 
-		if(!Object.getOwnPropertyNames) {
-			dependencies.push('./polyfill/object/getownpropertynames');
-		}
-
-		if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
-			dependencies.push('./polyfill/object/getownpropertydescriptor');
-		}
-
-		define(dependencies, definition);
-	} else {
-		definition();
+		return path.replace(removeNeutral, '');
 	}
+
+	var id                = 'qoopido',
+		root              = window[id] = window[id] || { register: register, registerSingleton: registerSingleton },
+		shared            = root.shared  = root.shared || {},
+		modules           = root.modules = root.modules || {},
+		dependencies      = [],
+		isInternal        = new RegExp('^\\.+\\/'),
+		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
+		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
+
+	if(!Object.create) {
+		dependencies.push('./polyfill/object/create');
+	}
+
+	if(!Object.getOwnPropertyNames) {
+		dependencies.push('./polyfill/object/getownpropertynames');
+	}
+
+	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
+		dependencies.push('./polyfill/object/getownpropertydescriptor');
+	}
+
+	register('base', definition, dependencies);
 }(
-	function(modules, dependencies, namespace, window, document, undefined) {
+	function(modules, namespace, navigator, window, document, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {
@@ -103,5 +143,5 @@
 			}
 		};
 	},
-	window, document
+	navigator, window, document
 ));

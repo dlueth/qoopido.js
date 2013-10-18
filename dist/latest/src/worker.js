@@ -13,24 +13,14 @@
  *
  * @require ./base
  * @require ./support
- * @external Q.js
+ * @external Q
  */
-;(function(pDefinition, window) {
+;(function(definition) {
+	window.qoopido.register('worker', definition, [ './base', './support', 'q' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	function definition() {
-		return window.qoopido.initialize('worker', pDefinition, arguments, true);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './base', './support', 'q' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies) {
-	'use strict';
-
-	var Q              = window.Q || dependencies[2],
+	var Q              = modules['q'] || window.Q,
 		regex          = new RegExp('Blob$', 'i'),
 		supportsWorker = modules['support'].supportsMethod('Worker'),
 		urlMethod      = modules['support'].supportsMethod('URL') ? window[modules['support'].getMethod('URL')] : null,
@@ -84,4 +74,4 @@
 			return deferred.promise;
 		}
 	});
-}, window));
+}));

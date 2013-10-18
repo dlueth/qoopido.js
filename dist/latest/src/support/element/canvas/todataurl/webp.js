@@ -14,19 +14,9 @@
  * @require ../../../../pool/dom
  */
 
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('support/element/canvas/todataurl/webp', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../../../support', '../todataurl', '../../../../pool/dom' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules) {
+;(function(definition) {
+	window.qoopido.register('support/element/canvas/todataurl/webp', definition, [ '../../../../support', '../todataurl', '../../../../pool/dom' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas/todataurl/webp', function(deferred) {
@@ -42,4 +32,4 @@
 				deferred.reject();
 			});
 	});
-}, window));
+}));

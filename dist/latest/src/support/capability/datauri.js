@@ -14,19 +14,9 @@
  * @require ../../pool/dom
  */
 
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('support/capability/datauri', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../support', '../../dom/element', '../../pool/dom' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window) {
+;(function(definition) {
+	window.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element', '../../pool/dom' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/capability/datauri', function(deferred) {
@@ -44,4 +34,4 @@
 			}, false)
 			.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
 	});
-}, window));
+}));

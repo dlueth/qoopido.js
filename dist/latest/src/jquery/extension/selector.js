@@ -14,22 +14,12 @@
  * @require ../../base
  * @external jQuery
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('jquery/extension/selector', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../base', 'jquery' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.register('jquery/extension/selector', definition, [ '../../base', 'jquery' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 	
-	var jQuery    = window.jQuery || dependencies[1],
+	var jQuery    = modules['jquery'] || window.jQuery,
 		$window   = jQuery(window),
 		$document = jQuery(document);
 
@@ -124,4 +114,4 @@
 	});
 
 	return jQuery;
-}, window));
+}));

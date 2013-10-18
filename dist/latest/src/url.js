@@ -13,19 +13,9 @@
  *
  * @require ./base
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('url', pDefinition, arguments, true);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './base' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.registerSingleton('url', definition);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var urlCurrent, regexLocal,
@@ -71,4 +61,4 @@
 			return regexLocal.test(this.resolve(url));
 		}
 	});
-}, window));
+}));

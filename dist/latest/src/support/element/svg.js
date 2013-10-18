@@ -12,22 +12,12 @@
  * @require ../../support
  */
 
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('support/element/svg', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../support' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document) {
+;(function(definition) {
+	window.qoopido.register('support/element/svg', definition, [ '../../support' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/svg', function(deferred) {
 		(document.createElementNS && document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect) ? deferred.resolve() : deferred.reject();
 	});
-}, window));
+}));

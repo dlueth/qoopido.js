@@ -13,24 +13,9 @@
  *
  * @require ../pool
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		var module = window.qoopido.initialize('pool/object', pDefinition, arguments);
-
-		window.qoopido.shared.pool        = window.qoopido.shared.pool || {};
-		window.qoopido.shared.pool.object = module.create();
-
-		return module;
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define(['../pool'], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document) {
+;(function(definition) {
+	window.qoopido.register('pool/object', definition, [ '../pool' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -89,5 +74,8 @@
 		}
 	});
 
+	window.qoopido.shared.pool        = window.qoopido.shared.pool || {};
+	window.qoopido.shared.pool.object = prototype.create();
+
 	return prototype;
-}, window));
+}));

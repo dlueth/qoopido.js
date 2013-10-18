@@ -13,20 +13,14 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 ;(function(definition) {
-	'use strict';
+	var dependencies = [];
 
-	if(typeof define === 'function' && define.amd) {
-		var dependencies = [];
-
-		if(!Object.defineProperties) {
-			dependencies.push('./defineproperties');
-		}
-
-		define(dependencies, definition);
-	} else {
-		definition();
+	if(!Object.defineProperties) {
+		dependencies.push('./defineproperties');
 	}
-}(function() {
+
+	window.qoopido.register('polyfill/object/create', definition, dependencies);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.create) {
@@ -55,4 +49,6 @@
 			return obj;
 		};
 	}
+
+	return true;
 }));

@@ -14,19 +14,9 @@
  * @require ./base
  * @require ./function/merge
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('transport', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './base', './function/merge' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules) {
+;(function(definition) {
+	window.qoopido.register('transport', definition, [ './function/merge' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype;

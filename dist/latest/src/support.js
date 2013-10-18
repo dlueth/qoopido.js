@@ -13,24 +13,14 @@
  *
  * @require ./base
  * @require ./polyfill/string/ucfirst
- * @external Q.js
+ * @external Q
  */
-;(function(pDefinition, window) {
+;(function(definition) {
+	window.qoopido.registerSingleton('support', definition, [ './base', './polyfill/string/ucfirst', './pool/dom', 'q' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	function definition() {
-		return window.qoopido.initialize('support', pDefinition, arguments, true);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './base', './polyfill/string/ucfirst', 'q', './pool/dom' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
-	'use strict';
-
-	var Q               = window.Q || dependencies[2],
+	var Q               = modules['q'] || window.Q,
 		regexProperty   = new RegExp('-([a-z])', 'gi'),
 		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
 		callbackUcfirst = function(value) {
@@ -297,4 +287,4 @@
 			};
 		}
 	});
-}, window));
+}));

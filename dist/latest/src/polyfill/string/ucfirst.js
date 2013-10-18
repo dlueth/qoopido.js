@@ -1,7 +1,5 @@
 /*
- * Qoopido function/unique/string
- *
- * Provides globally unique strings
+ * Qoopido polyfill/string/ucfirst
  *
  * Copyright (c) 2013 Dirk Lueth
  *
@@ -12,14 +10,8 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 ;(function(definition) {
-	'use strict';
-
-	if(typeof define === 'function' && define.amd) {
-		define( definition);
-	} else {
-		definition();
-	}
-}(function() {
+	window.qoopido.register('polyfill/string/ucfirst', definition);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!String.prototype.ucfirst) {
@@ -29,4 +21,6 @@
 			return self.charAt(0).toUpperCase() + self.slice(1);
 		};
 	}
+
+	return true;
 }));

@@ -14,19 +14,9 @@
  * @require ../../../pool/dom
  */
 
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('support/element/video/webm', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../../support', '../video', '../../../pool/dom' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules) {
+;(function(definition) {
+	window.qoopido.register('support/element/video/webm', definition, [ '../../../support', '../video', '../../../pool/dom' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/video/webm', function(deferred) {
@@ -42,4 +32,4 @@
 				deferred.reject();
 			});
 	});
-}, window));
+}));

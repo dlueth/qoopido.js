@@ -15,20 +15,14 @@
  * @polyfill ./defineproperty
  */
 ;(function(definition) {
-	'use strict';
+	var dependencies = [];
 
-	if(typeof define === 'function' && define.amd) {
-		var dependencies = [];
-
-		if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
-			dependencies.push('./defineproperty');
-		}
-
-		define(dependencies, definition);
-	} else {
-		definition();
+	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
+		dependencies.push('./defineproperty');
 	}
-}(function() {
+
+	window.qoopido.register('polyfill/object/defineproperties', definition, dependencies);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperties) {
@@ -48,4 +42,6 @@
 			return obj;
 		};
 	}
+
+	return true;
 }));

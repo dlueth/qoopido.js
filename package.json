@@ -2,7 +2,7 @@
   "name": "qoopido.js",
   "title": "Qoopido.js library",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "homepage": "https://github.com/dlueth/qoopido.js",
   "author": {
     "name": "Dirk Lueth",
@@ -32,7 +32,6 @@
     "grunt-contrib-clean": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-uglifyrecursive": "~0.0.2",
-    "grunt-dependo": "~0.1.0",
     "grunt-contrib-copy": "~0.4.1",
     "matchdep": "~0.1.2",
     "grunt-contrib-watch": "~0.5.3",

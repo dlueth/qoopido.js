@@ -14,19 +14,9 @@
  * @require ../../../pool/dom
  */
 
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('support/css/transform/3d', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../../support', '../transform', '../../../pool/dom' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules) {
+;(function(definition) {
+	window.qoopido.register('support/css/transform/3d', definition, [ '../../../support', '../transform', '../../../pool/dom' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/transform/3d', function(deferred) {
@@ -46,4 +36,4 @@
 				deferred.reject();
 			});
 	});
-}, window));
+}));

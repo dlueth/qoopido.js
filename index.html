@@ -1,203 +1,31 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-	<script type="text/javascript" src="./packages/3.1.0/min/remux.js"></script>
-	<script type="text/javascript" src="./packages/3.1.0/min/emerge.js"></script>
-	<script type="text/javascript" src="./packages/3.1.0/min/lazyimage.js"></script>
-	<script type="text/javascript" src="./packages/3.1.0/min/shrinkimage.js"></script>
-	<script type="text/javascript">
-		console.log(window.qoopido.modules);
-		/*
-		window.qoopido.modules['component/remux']
-			.on('statechange', function(event, state) {
-				console.log(state.fontsize, state.layout);
-			})
-			.addLayout({
-				mobile:  { width: 420, min: 10, max: 23 },
-				desktop: { width: 980, min: 10, max: 18 }
-			});
-		*/
-	</script>
-	<!--
-	<script type="text/javascript" src="http://cdn.qoopido.com/portfolio/assets/vendor/require.2.1.8.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./base.css" />
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 	<script type="text/javascript">
 		require.config({
-			baseUrl: 'src/',
+			baseUrl: 'dist/latest/min',
 			paths: {
-				q: '../vendor/q/q.min'
-			}
+				jquery: '//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min',
+				q:      '//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.6/q.min',
+				json:   '//cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.min'
+			}/*,
+			shim: {
+				jquery: {
+					exports: 'jQuery'
+				},
+				q: {
+					exports: 'Q'
+				},
+				json: {
+					exports: 'JSON'
+				}
+			}*/
 		});
 	</script>
-	-->
-<style type="text/css">
-* {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-khtml-user-select: none;
-	-ms-user-select: none;
-}
-
-body {
-	overflow: hidden;
-	padding: 0;
-	background-color: #333;
-	font-family: Tahoma, Verdana, Segoe, sans-serif;;
-	font-size: 14px;
-	line-height: 18px;
-	color: #ddd;
-}
-
-#console {
-	z-index: 999;
-	position: absolute;
-	left: 20px;
-	top: 20px;
-	overflow: hidden;
-	width: 220px;
-	background-color: #595551;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-khtml-user-select: none;
-	-ms-user-select: none;
-}
-
-#console svg {
-	position: absolute;
-	right: 8px;
-	top: 8px;
-}
-
-#console h3 {
-	margin: 0;
-	padding: 10px;
-	background-color: #95ba00;
-	font-family: "Trebuchet MS",Tahoma,Arial,sans-serif;
-	color: #fff;
-}
-
-#console ul {
-	list-style: none outside none;
-	margin: 0;
-	padding: 0;
-}
-
-#console li {
-	padding: 0 10px;
-	line-height: 28px;
-}
-
-#console li:hover {
-	background-color: #6e6964;
-}
-
-#console li > span {
-	float: right;
-	width: 80px;
-	padding: 0 18px;
-	text-align: center;
-}
-
-#console .previous {
-	cursor: pointer;
-	float: left;
-	width: 28px;
-	height: 28px;
-	margin-left: -28px;
-	font-weight: bold;
-}
-
-#console .next {
-	cursor: pointer;
-	float: right;
-	width: 28px;
-	height: 28px;
-	margin-right: -28px;
-	font-weight: bold;
-}
-
-#canvas {
-	z-index: 1;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	width: 640px;
-	height: 480px;
-	margin: auto;
-	border: 20px solid #000;
-	background-color: #000;
-}
-
-canvas:before, canvas:after {
-	z-index: -1;
-	position: absolute;
-	left: 12px;
-	bottom: 12px;
-	width: 40%;
-	height: 10px;
-	background: transparent;
-	content: '';
-	-webkit-transform-origin: left bottom;
-	-moz-transform-origin: left bottom;
-	-o-transform-origin: left bottom;
-	-ms-transform-origin: left bottom;
-	transform-origin: left bottom;
-	-webkit-transform: skew(-3deg) rotate(-3deg);
-	-moz-transform: skew(-3deg) rotate(-3deg);
-	-o-transform: skew(-3deg) rotate(-3deg);
-	-ms-transform: skew(-3deg) rotate(-3deg);
-	transform: skew(-3deg) rotate(-3deg);
-	-webkit-box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
-	-moz-box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
-	box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
-}
-
-canvas:after {
-	left: auto;
-	right: 12px;
-	-webkit-transform-origin: right bottom;
-	-moz-transform-origin: right bottom;
-	-o-transform-origin: right bottom;
-	-ms-transform-origin: right bottom;
-	transform-origin: right bottom;
-	-webkit-transform: skew(3deg) rotate(3deg);
-	-moz-transform: skew(3deg) rotate(3deg);
-	-o-transform: skew(3deg) rotate(3deg);
-	-ms-transform: skew(3deg) rotate(3deg);
-	transform: skew(3deg) rotate(3deg);
-}
-
-.hint {
-	z-index: 1000;
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	width: 160px;
-	height: 74px;
-	margin: auto;
-	padding: 10px;
-	background-color: rgba(255, 255, 255, 0.2);
-	border-radius: 6px;
-	text-align: center;
-}
-</style>
-
 </head>
 <body>
-
-<!--
-<img id="shrinkimage1" data-shrinkimage="http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20" style="display: inline-block; width: 210px; height: 294px;" />
-<div id="shrinkimage2" style="background-image: url(data:image/shrink,http://cdn.qoopido.com/portfolio/assets/img/visual/aiaiai.tma1studio.png?quality=20); display: inline-block; width: 210px; height: 294px;"></div>
-<div id="emerge" style="position: absolute; left: 0; top: 1000px;">[dom/element/emerge container]</div>
-<img id="lazyimage" style="position: absolute; left: 0; top: 2000px; width: 1200px; height: 750px;" data-lazyimage="http://www.thehollywoodnews.com/wp-content/uploads/13594933595bd11b9253fef97b38af59e20ee5bed2Cameron-Diaz-Free-Hd-Wallpaper-2013-2.jpg" />
--->
-
 <div id="console">
 	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
 		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
@@ -206,6 +34,7 @@ canvas:after {
 
 	<h3>Settings</h3>
 	<ul>
+		<li>Width:         <span data-setting="width:320,800,8"></span></li>
 		<li>Brightness:    <span data-setting="brightness:-100,100,1"></span></li>
 		<li>Contrast:      <span data-setting="contrast:0,100,1"></span></li>
 		<li>Pixel size:    <span data-setting="size:4,24,1"></span></li>
@@ -213,10 +42,15 @@ canvas:after {
 		<li>Pixel alpha:   <span data-setting="alpha:0,100,1"></span></li>
 		<li>Pixel radius:  <span data-setting="radius:0,8,1"></span></li>
 	</ul>
+	<div class="actions">
+		<span data-pause="pause,resume">pause</span>
+		<span data-download><a href="#" download="pixelated_me.png">download</a></span>
+	</div>
 </div>
 
 <script type="text/javascript">
 var settings = {
+	width:      640,
 	brightness: 0,
 	contrast:   0,
 	size:       8,
@@ -225,29 +59,24 @@ var settings = {
 	radius:     2
 };
 
-require.config({
-	baseUrl: 'http://cdn.qoopido.com/portfolio/assets/vendor/qoopido.js/dist/latest/min',
-	paths: {
-		q: 'http://cdn.qoopido.com/portfolio/assets/vendor/q.0.9.7.min'
-	}
-});
-
 ;(function(window, document, undefined) {
 	var TARGET_FRAMERATE  = 1000 / 60,
-			MATH_PI_TIMES_TWO = 2 * Math.PI,
-			options = {
-				brightness: 0,
-				contrast:   0,
-				size:       0,
-				space:      0,
-				alpha:      0,
-				radius:     0
-			},
-			qDocument = requestAnimationFrame = cancelAnimationFrame = visibilityProperty = video = iCanvas = iContext = tCanvas = tContext = methodURL = getUserMedia = interval = imageData = colorLookup = colorData = false,
-			size = radius = factor = width = height = xOffset = yOffset = i = px = x = y = color = 0,
-			hint = document.createElement('div');
+		MATH_PI_TIMES_TWO = 2 * Math.PI,
+		options = {
+			width:      0,
+			height:     0,
+			brightness: 0,
+			contrast:   0,
+			size:       0,
+			space:      0,
+			alpha:      0,
+			radius:     0
+		},
+		qDocument = requestAnimationFrame = cancelAnimationFrame = visibilityProperty = video = iCanvas = iContext = sCanvas = sContext = tCanvas = tContext = methodURL = getUserMedia = interval = paused = imageCache = imageData = colorLookup = colorData = false,
+		size = radius = factor = width = height = xOffset = yOffset = i = px = x = y = color = 0,
+		hint = document.createElement('div');
 
-	hint.className   = 'hint';
+	hint.className = 'hint';
 
 	function requestAnimationFrameFallback(callback) {
 		window.setTimeout(callback, TARGET_FRAMERATE);
@@ -267,6 +96,8 @@ require.config({
 	}
 
 	function onSettingsChanged() {
+		options.width      = settings.width;
+		options.height     = settings.width * 3 / 4;
 		options.brightness = (255 * (settings.brightness / 100)) >> 0;
 		options.contrast   = Math.pow((settings.contrast + 100) / 100, 2);
 		options.size       = settings.size;
@@ -276,16 +107,25 @@ require.config({
 
 		size    = options.size + options.space;
 		radius  = options.size / 2;
-		factor  = 640 / ((640 * size) - options.space);
-		width   = (640 * factor) >> 0;
-		height  = (480 * factor) >> 0;
-		xOffset = (640 - (640 - (640 % size)) + options.space) / 2;
-		yOffset = (480 - (480 - (480 % size)) + options.space) / 2;
+		factor  = options.width / ((options.width * size) - options.space);
+		width   = (options.width * factor) >> 0;
+		height  = (options.height * factor) >> 0;
+		xOffset = ((options.width - (options.width - (options.width % size)) + options.space) / 2) >> 0;
+		yOffset = ((options.height - (options.height - (options.height % size)) + options.space) / 2) >> 0;
 
 		iCanvas.width  = width;
 		iCanvas.height = height;
 
 		colorLookup = {};
+
+		video.width  = sCanvas.width  = tCanvas.width  = imageCache.width = options.width;
+		video.height = sCanvas.height = tCanvas.height = imageCache.height = options.height;
+
+		tCanvas.style.width  = (options.width + 40) + 'px';
+		tCanvas.style.height = (options.height + 40) + 'px';
+
+		tContext.translate(options.width, 0);
+		tContext.scale(-1, 1);
 	}
 
 	function onIncompatible() {
@@ -306,14 +146,14 @@ require.config({
 		document.body.appendChild(hint);
 	}
 
-	function initializeControl(element, mDomElement) {
+	function initializeSetting(element, mDomElement) {
 		var parameter = mDomElement.create(element).getAttribute('data-setting').split(':'),
-				setting   = parameter[0],
-				range     = parameter[1].split(','),
-				stepping  = parseFloat(range.pop()),
-				previous  = document.createElement('span'),
-				value     = document.createElement('span'),
-				next      = document.createElement('span');
+			setting   = parameter[0],
+			range     = parameter[1].split(','),
+			stepping  = parseFloat(range.pop()),
+			previous  = document.createElement('span'),
+			value     = document.createElement('span'),
+			next      = document.createElement('span');
 
 		previous.className = 'previous';
 		value.className    = 'value';
@@ -355,11 +195,52 @@ require.config({
 		});
 	}
 
+	function initializePause(element) {
+		var states = element.getAttribute('data-pause').split(',');
+
+		element.setStyle('display', 'inline-block').on('click', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if(paused === true) {
+				this.textContent = states[0];
+
+				imageCache.src = '';
+				paused         = false;
+			} else {
+				this.textContent = states[1];
+
+				sContext.drawImage(video, 0, 0, options.width, options.height);
+
+				imageCache.src = sCanvas.toDataURL('image/png');
+				paused         = true;
+			}
+
+			return false;
+		});
+	}
+
+	function initializeDownload(element, link) {
+		element.setStyle('display', 'inline-block');
+
+		link.on('click', function() {
+			if(paused === false) {
+				paused = true;
+
+				link.setAttribute('href', tCanvas.toDataURL('image/png'));
+
+				paused = false;
+			} else {
+				link.setAttribute('href', tCanvas.toDataURL('image/png'));
+			}
+		});
+	}
+
 	function createPixel(color) {
 		if(!colorLookup[color]) {
 			var pColor   = color,
-					pCanvas  = document.createElement('canvas'),
-					pContext = pCanvas.getContext('2d');
+				pCanvas  = document.createElement('canvas'),
+				pContext = pCanvas.getContext('2d');
 
 			pCanvas.width = pCanvas.height = options.size;
 
@@ -399,8 +280,8 @@ require.config({
 	}
 
 	function update() {
-		iContext.drawImage(video, 0, 0, width, height);
-		tContext.clearRect(0, 0, 640, 480);
+		iContext.drawImage((paused === false) ? video : imageCache, 0, 0, width, height);
+		tContext.clearRect(0, 0, options.width, options.height);
 
 		try {
 			imageData = iContext.getImageData(0, 0, width, height);
@@ -422,7 +303,7 @@ require.config({
 		interval = requestAnimationFrame(update);
 	}
 
-	require([ 'support', 'dom/element', 'proxy', 'support/element/video', 'support/element/canvas' ], function(mSupport, mDomElement, mProxy) {
+	require([ 'base', 'support', 'dom/element', 'proxy', 'support/element/video', 'support/element/canvas', 'support/element/canvas/todataurl/png' ], function(mBase, mSupport, mDomElement, mProxy) {
 		mSupport.testMultiple('/element/video', '/element/canvas', mSupport.supportsMethod('URL'), mSupport.supportsMethod('getUserMedia', navigator))
 			.then(
 				function() {
@@ -433,19 +314,16 @@ require.config({
 					video                 = document.createElement('video');
 					iCanvas               = document.createElement('canvas');
 					iContext              = iCanvas.getContext('2d');
+					sCanvas               = document.createElement('canvas');
+					sContext              = sCanvas.getContext('2d');
 					tCanvas               = document.createElement('canvas');
 					tContext              = tCanvas.getContext('2d');
+					imageCache            = document.createElement('img');
 					methodURL             = mSupport.getMethod('URL');
 					getUserMedia          = mProxy.create(navigator, navigator[mSupport.getMethod('getUserMedia', navigator)]);
 
 					mDomElement.create(video).setAttribute('autoplay', 'autoplay');
 					mDomElement.create(tCanvas).setAttribute('id', 'canvas');
-
-					var container = document.querySelectorAll('#console [data-setting]');
-
-					for(i = 0; container[i] !== undefined; i++) {
-						initializeControl(container[i], mDomElement);
-					}
 
 					if(visibilityProperty) {
 						qDocument
@@ -457,18 +335,34 @@ require.config({
 
 					getUserMedia({ video: true, audio: false },
 						function(stream) {
-							video.width  = tCanvas.width = 640;
-							video.height = tCanvas.height = 480;
-							video.src    = window[methodURL].createObjectURL(stream);
+							var temp;
 
-							tContext.translate(640, 0);
-							tContext.scale(-1, 1);
+							video.src = window[methodURL].createObjectURL(stream);
 
 							document.body.removeChild(hint);
 							document.body.appendChild(tCanvas);
 
 							onSettingsChanged();
 							update();
+
+							temp = document.querySelectorAll('#console [data-setting]');
+							for(i = 0; temp[i] !== undefined; i++) {
+								initializeSetting(temp[i], mDomElement);
+							}
+
+							mSupport.testMultiple('/element/canvas/todataurl/png')
+								.then(function() {
+									initializePause(mDomElement.create(document.querySelectorAll('#console [data-pause]')[0]));
+								})
+								.done();
+
+							mSupport.testMultiple('/element/canvas/todataurl/png', mSupport.supportsProperty('download', document.createElement('a')))
+								.then(function() {
+									temp = document.querySelectorAll('#console [data-download]')[0];
+
+									initializeDownload(mDomElement.create(temp), mDomElement.create(temp.firstChild));
+								})
+								.done();
 						},
 						onAccessDenied
 					);
@@ -477,169 +371,6 @@ require.config({
 			);
 	});
 }(window, document));
-
-	/*
-	require([ 'worker' ], function(worker) {
-		worker.execute(
-			function() {
-				var result = 0;
-
-				for(var i = 0; i < 1000; i++) {
-					result += 1;
-
-					self.postProgress(result);
-				}
-
-				return result;
-			})
-			.then(
-				function() {
-					console.log('result', arguments);
-				}
-			)
-			.progress(
-				function() {
-					console.log('progress', arguments);
-				}
-			);
-	});
-
-	require([ 'particle', 'vector/2d' ], function(particle, vector) {
-		var p1 = particle.create(100, 100);
-
-		p1.velocity.x = 10;
-		p1.velocity.y = 10;
-
-		p1.acceleration.push(vector.create(5, 5));
-
-		p1.update();
-		p1.update();
-
-		console.log(typeof p1.position);
-
-		console.log(p1.position.x, p1.position.y);
-	});
-
-	require([ 'dom/element/shrinkimage' ], function(shrinkimage) {
-		shrinkimage
-			.create(document.getElementById('shrinkimage1'))
-			.on('requested queued cached loaded failed', function(event) {
-				console.log('shrinkimage 1: ', event.type);
-			});
-
-		shrinkimage
-			.create(document.getElementById('shrinkimage2'))
-			.on('requested queued cached loaded failed', function(event) {
-				console.log('shrinkimage 2: ', event.type);
-			});
-	});
-
-	require([ 'dom/element/emerge' ], function(emerge) {
-		emerge
-			.create(document.getElementById('emerge'))
-			.on('emerged demerged', function(event) {
-				if(event.type === 'emerged') {
-					console.log('emerge: ', 'emerged, priority = ' + event.data);
-				} else {
-					console.log('emerge: ', 'demerged');
-				}
-			});
-	});
-
-	require([ 'dom/element/lazyimage' ], function(lazyimage) {
-		lazyimage
-			.create(document.getElementById('lazyimage'))
-			.on('requested loaded failed', function(event) {
-				console.log('lazyimage: ' + event.type);
-			});
-	});
-
-	require([ 'pool/dom' ], function(pool) {
-		var poolDom = pool.create();
-
-		for(var i = 1; i <= 10000; i++) {
-			setTimeout(function() {
-				var rand = Math.round(Math.random()),
-					temp;
-
-				if(rand === 0) {
-					rand = Math.round(Math.random() * 1000);
-					temp = poolDom.obtain('div');
-
-					setTimeout(function() { poolDom.dispose(temp); }, rand);
-				} else {
-					rand = Math.round(Math.random() * 1000);
-					temp = poolDom.obtain('img');
-
-					setTimeout(function() { poolDom.dispose(temp); }, rand);
-				}
-			}, i * (Math.round(Math.random() * 50)));
-		}
-
-		setInterval(function() { console.log(poolDom.metrics); }, 4000);
-	});
-	*/
-
-	/*
-	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage1'))
-		.on('requested queued cached loaded failed', function(event) {
-			console.log('shrinkimage 1: ', event.type);
-		});
-
-	window.qoopido.modules['dom/element/shrinkimage'].create(document.getElementById('shrinkimage2'))
-		.on('requested queued cached loaded failed', function(event) {
-			console.log('shrinkimage 2: ', event.type);
-		});
-
-	window.qoopido.modules['dom/element/emerge'].create(document.getElementById('emerge'))
-		.on('emerged demerged', function(event) {
-			if(event.type === 'emerged') {
-				console.log('emerge: ', 'emerged, priority = ' + event.data);
-			} else {
-				console.log('emerge: ', 'demerged');
-			}
-		});
-
-	window.qoopido.modules['dom/element/lazyimage'].create(document.getElementById('lazyimage'))
-		.on('requested loaded failed', function(event) {
-			console.log('lazyimage: ' + event.type);
-		});
-
-	window.qoopido.modules['transport/jsonp'].load('http://172.20.2.244/qoopido.js/dummy.php')
-		.done(
-			function(data) { console.log('jsonp success: ', data) },
-			function() { console.log('jsonp: failed') }
-		);
-
-	window.qoopido.modules['transport/xhr'].get('http://172.20.2.244/')
-		.done(
-			function(data) { console.log('xhr: success', data) },
-			function() { console.log('xhr: failed') },
-			function(event) { console.log('xhr: progress', event); }
-		);
-
-	var poolDom = window.qoopido.modules['pool/dom'].create();
-	for(var i = 1; i <= 10000; i++) {
-		setTimeout(function() {
-			var rand = Math.round(Math.random()),
-				temp;
-
-			if(rand === 0) {
-				rand = Math.round(Math.random() * 1000);
-				temp = poolDom.obtain('div');
-
-				setTimeout(function() { poolDom.dispose(temp); }, rand);
-			} else {
-				rand = Math.round(Math.random() * 1000);
-				temp = poolDom.obtain('img');
-
-				setTimeout(function() { poolDom.dispose(temp); }, rand);
-			}
-		}, i * (Math.round(Math.random() * 50)));
-	}
-
-	setTimeout(function() { console.log(window.qoopido.shared.pool.dom.metrics); console.log(window.qoopido.shared.pool.dom._pool); }, 2000);
-	*/
 </script>
 </body>
 </html>

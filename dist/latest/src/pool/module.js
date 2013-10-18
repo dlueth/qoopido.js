@@ -13,24 +13,12 @@
  *
  * @require ../pool
  */
-;(function(pDefinition, window) {
+;(function(definition) {
+	window.qoopido.register('pool/module', definition, [ '../pool' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	function definition() {
-		return window.qoopido.initialize('pool/module', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define(['../pool'], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document) {
-	'use strict';
-
-	var prototype;
-
-	prototype = modules['pool'].extend({
+	var prototype = modules['pool'].extend({
 		_module:  null,
 		_destroy: null,
 		_constructor: function(module, options) {
@@ -55,4 +43,4 @@
 	});
 
 	return prototype;
-}, window));
+}));

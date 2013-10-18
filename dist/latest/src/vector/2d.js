@@ -14,19 +14,9 @@
  * @require ../base
  * @require ../pool/object
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('vector/2d', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../base', '../pool/object' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.register('vector/2d', definition, [ '../base', '../pool/object' ]);
+}(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -103,4 +93,4 @@
 	});
 
 	return prototype;
-}, window));
+}));
