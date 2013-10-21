@@ -9,17 +9,17 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
+ * @supports ../../pool/dom
  * @require ../../support
- * @require ../../pool/dom
  */
 
 ;(function(definition) {
 	window.qoopido.register('support/element/canvas', definition, [ '../../support', '../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas', function(deferred) {
-		var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+		var sample = shared.pool.dom.obtain('canvas');
 
 		(sample.getContext && sample.getContext('2d')) ? deferred.resolve() : deferred.reject();
 

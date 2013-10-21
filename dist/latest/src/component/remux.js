@@ -15,7 +15,7 @@
  */
 ;(function(definition) {
 	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype, style,

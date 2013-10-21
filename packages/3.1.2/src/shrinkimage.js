@@ -14,7 +14,7 @@
 */
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/defineproperty', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
@@ -56,7 +56,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/defineproperties', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperties) {
@@ -87,7 +87,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/create', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.create) {
@@ -121,7 +121,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/getownpropertydescriptor', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
@@ -180,7 +180,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, namespace, navigator, window, document, undefined);
+			modules[id] = definition(modules, shared, namespace, navigator, window, document, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -234,8 +234,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(
-	function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {
@@ -275,7 +274,7 @@
 ));
 ;(function(definition) {
 	window.qoopido.register('proxy', definition, [ './function/unique/uuid' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['base'].extend({
@@ -299,7 +298,7 @@
 	}
 
 	window.qoopido.register('dom/element', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var onMethod, offMethod, emitMethod,
@@ -630,7 +629,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('function/merge', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return function merge() {
@@ -663,7 +662,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('function/unique/uuid', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var lookup     = {},
@@ -692,7 +691,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('function/unique/string', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var lookup     = {},
@@ -725,7 +724,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.registerSingleton('url', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var urlCurrent, regexLocal,
@@ -774,7 +773,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('pool', definition, [ './function/merge', './function/unique/uuid' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -913,7 +912,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('pool/dom', definition, [ '../pool' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype = modules['pool'].extend({
@@ -960,7 +959,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('transport', definition, [ './function/merge' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype;
@@ -991,7 +990,7 @@
 }, window, document));
 ;(function(definition) {
 	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', 'q' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -1150,7 +1149,7 @@
 }, window, document));
 ;(function(definition) {
 	window.qoopido.register('polyfill/string/ucfirst', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!String.prototype.ucfirst) {
@@ -1171,7 +1170,7 @@
 	}
 
 	window.qoopido.registerSingleton('support', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var Q               = modules['q'] || window.Q,
@@ -1225,7 +1224,7 @@
 				stored = lookup.prefix || null;
 
 			if(stored === null) {
-				var sample = window.qoopido.shared.pool.dom.obtain('div'),
+				var sample = shared.pool.dom.obtain('div'),
 					styles = sample.style;
 
 				stored = false;
@@ -1327,7 +1326,7 @@
 
 				var candidate,
 					i          = 0,
-					sample     = window.qoopido.shared.pool.dom.obtain('div'),
+					sample     = shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = (this.getPrefix() || { properties: [] }).properties,
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
@@ -1444,11 +1443,11 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element', '../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/capability/datauri', function(deferred) {
-		var sample = modules['dom/element'].create(window.qoopido.shared.pool.dom.obtain('img'));
+		var sample = modules['dom/element'].create(shared.pool.dom.obtain('img'));
 
 		sample
 			.one('error load', function(event) {
@@ -1465,11 +1464,11 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('support/element/canvas', definition, [ '../../support', '../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas', function(deferred) {
-		var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+		var sample = shared.pool.dom.obtain('canvas');
 
 		(sample.getContext && sample.getContext('2d')) ? deferred.resolve() : deferred.reject();
 
@@ -1478,13 +1477,13 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('support/element/canvas/todataurl', definition, [ '../../../support', '../canvas', '../../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas/todataurl', function(deferred) {
 		modules['support/element/canvas']()
 			.then(function() {
-				var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+				var sample = shared.pool.dom.obtain('canvas');
 
 				(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
 
@@ -1497,13 +1496,13 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('support/element/canvas/todataurl/png', definition, [ '../../../../support', '../todataurl', '../../../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas/todataurl/png', function(deferred) {
 		modules['support/element/canvas/todataurl']()
 			.then(function() {
-				var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+				var sample = shared.pool.dom.obtain('canvas');
 
 				(sample.toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
 
@@ -1516,7 +1515,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('dom/element/shrinkimage', definition, [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', '../../pool/dom', 'json' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var
@@ -1643,7 +1642,7 @@
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = window.qoopido.shared.pool.dom.obtain('canvas');
+				canvas = shared.pool.dom.obtain('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -1735,7 +1734,7 @@
 			var self = this;
 
 			if(!element) {
-				element = window.qoopido.shared.pool.dom.obtain('img');
+				element = shared.pool.dom.obtain('img');
 			}
 
 			prototype._parent._constructor.call(self, element);

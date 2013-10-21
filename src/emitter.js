@@ -15,7 +15,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('emitter', definition, [ './base' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var excludeMethods = /^(_|extend$|create$|on$|one$|off$|emit$|get.+)/;

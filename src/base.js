@@ -52,7 +52,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, namespace, navigator, window, document, undefined);
+			modules[id] = definition(modules, shared, namespace, navigator, window, document, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -106,8 +106,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(
-	function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {

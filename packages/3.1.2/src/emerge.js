@@ -14,7 +14,7 @@
 */
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/defineproperty', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
@@ -56,7 +56,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/defineproperties', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperties) {
@@ -87,7 +87,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/create', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.create) {
@@ -121,7 +121,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/getownpropertydescriptor', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
@@ -180,7 +180,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, namespace, navigator, window, document, undefined);
+			modules[id] = definition(modules, shared, namespace, navigator, window, document, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -234,8 +234,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(
-	function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {
@@ -275,7 +274,7 @@
 ));
 ;(function(definition) {
 	window.qoopido.register('proxy', definition, [ './function/unique/uuid' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['base'].extend({
@@ -299,7 +298,7 @@
 	}
 
 	window.qoopido.register('dom/element', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var onMethod, offMethod, emitMethod,
@@ -630,7 +629,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('function/merge', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return function merge() {
@@ -663,7 +662,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('function/unique/uuid', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var lookup     = {},
@@ -692,7 +691,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var

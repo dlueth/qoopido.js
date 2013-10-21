@@ -15,11 +15,11 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/element/video', definition, [ '../../support', '../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/video', function(deferred) {
-		var sample = window.qoopido.shared.pool.dom.obtain('video');
+		var sample = shared.pool.dom.obtain('video');
 
 		(sample.canPlayType) ? deferred.resolve() : deferred.reject();
 

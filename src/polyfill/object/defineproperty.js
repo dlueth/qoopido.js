@@ -14,7 +14,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/defineproperty', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {

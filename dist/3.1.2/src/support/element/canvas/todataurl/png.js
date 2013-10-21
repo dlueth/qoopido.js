@@ -16,13 +16,13 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/element/canvas/todataurl/png', definition, [ '../../../../support', '../todataurl', '../../../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/canvas/todataurl/png', function(deferred) {
 		modules['support/element/canvas/todataurl']()
 			.then(function() {
-				var sample = window.qoopido.shared.pool.dom.obtain('canvas');
+				var sample = shared.pool.dom.obtain('canvas');
 
 				(sample.toDataURL('image/png').indexOf('data:image/png') === 0) ? deferred.resolve() : deferred.reject();
 

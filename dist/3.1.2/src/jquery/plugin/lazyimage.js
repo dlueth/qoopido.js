@@ -16,7 +16,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('jquery/plugins/lazyimage', definition, [ '../../dom/element/lazyimage', 'jquery' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var

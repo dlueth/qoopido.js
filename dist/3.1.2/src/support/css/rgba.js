@@ -15,11 +15,11 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/css/rgba', definition, [ '../../support', '../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/rgba', function(deferred) {
-		var sample = window.qoopido.shared.pool.dom.obtain('div');
+		var sample = shared.pool.dom.obtain('div');
 
 		try {
 			sample.style.backgroundColor = 'rgba(0,0,0,.5)';

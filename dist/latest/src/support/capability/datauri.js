@@ -16,11 +16,11 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element', '../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/capability/datauri', function(deferred) {
-		var sample = modules['dom/element'].create(window.qoopido.shared.pool.dom.obtain('img'));
+		var sample = modules['dom/element'].create(shared.pool.dom.obtain('img'));
 
 		sample
 			.one('error load', function(event) {

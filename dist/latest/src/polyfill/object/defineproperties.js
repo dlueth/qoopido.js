@@ -22,7 +22,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/defineproperties', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperties) {

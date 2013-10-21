@@ -16,7 +16,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('transport', definition, [ './function/merge' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype;

@@ -21,7 +21,7 @@
  */
 ;(function(definition) {
 	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../pool/dom', 'q' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -118,7 +118,7 @@
 
 			context.id       = ''.concat('jsonp-', modules['function/unique/string']());
 			context.dfd      = Q.defer();
-			context.script   = modules['dom/element'].create(window.qoopido.shared.pool.dom.obtain('script'));
+			context.script   = modules['dom/element'].create(shared.pool.dom.obtain('script'));
 			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;
 

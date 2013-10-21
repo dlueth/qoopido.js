@@ -17,7 +17,7 @@
 
 ;(function(definition) {
 	window.qoopido.register('component/pager', definition, [ '../emitter', '../function/merge' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,

@@ -16,13 +16,13 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/element/video/ogg', definition, [ '../../../support', '../video', '../../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/element/video/ogg', function(deferred) {
 		modules['support/element/video']()
 			.then(function() {
-				var sample = window.qoopido.shared.pool.dom.obtain('video');
+				var sample = shared.pool.dom.obtain('video');
 
 				(sample.canPlayType('video/ogg; codecs="theora, vorbis"')) ? deferred.resolve() : deferred.reject();
 

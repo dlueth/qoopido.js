@@ -16,13 +16,13 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/css/transform/2d', definition, [ '../../../support', '../transform', '../../../pool/dom' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/transform/2d', function(deferred) {
 		modules['support/css/transform']()
 			.then(function() {
-				var sample = window.qoopido.shared.pool.dom.obtain('div');
+				var sample = shared.pool.dom.obtain('div');
 
 				try {
 					sample.style.property = 'rotate(30deg)';

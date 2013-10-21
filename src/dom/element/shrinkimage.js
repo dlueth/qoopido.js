@@ -28,7 +28,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('dom/element/shrinkimage', definition, [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', '../../pool/dom', 'json' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var
@@ -155,7 +155,7 @@
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = window.qoopido.shared.pool.dom.obtain('canvas');
+				canvas = shared.pool.dom.obtain('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -247,7 +247,7 @@
 			var self = this;
 
 			if(!element) {
-				element = window.qoopido.shared.pool.dom.obtain('img');
+				element = shared.pool.dom.obtain('img');
 			}
 
 			prototype._parent._constructor.call(self, element);

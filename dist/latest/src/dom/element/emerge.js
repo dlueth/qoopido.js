@@ -17,7 +17,7 @@
   */
 ;(function(definition) {
 	window.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var

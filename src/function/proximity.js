@@ -15,7 +15,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('function/proximity', definition, [ '../base' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return function proximity(source, target) {

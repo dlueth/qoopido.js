@@ -14,7 +14,7 @@
 
 ;(function(definition) {
 	window.qoopido.register('support/css/transform', definition, [ '../../support' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/transform', function(deferred) {

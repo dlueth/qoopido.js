@@ -14,7 +14,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('proxy', definition, [ './function/unique/uuid' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['base'].extend({

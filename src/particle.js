@@ -17,7 +17,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('particle', definition, [ './emitter', 'pool/module', './vector/2d' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,

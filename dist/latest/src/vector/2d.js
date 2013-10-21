@@ -16,7 +16,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('vector/2d', definition, [ '../base', '../pool/object' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -28,7 +28,7 @@
 		x:     null,
 		y:     null,
 		_constructor: function(x, y) {
-			this._temp    = window.qoopido.shared.pool.object.obtain();
+			this._temp    = shared.pool.object.obtain();
 			this._temp.x  = 0;
 			this._temp.y  = 0;
 

@@ -12,6 +12,7 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./base
+ * @require ./pool/dom
  * @require ./polyfill/string/ucfirst
  * @external Q
  */
@@ -23,7 +24,7 @@
 	}
 
 	window.qoopido.registerSingleton('support', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var Q               = modules['q'] || window.Q,
@@ -77,7 +78,7 @@
 				stored = lookup.prefix || null;
 
 			if(stored === null) {
-				var sample = window.qoopido.shared.pool.dom.obtain('div'),
+				var sample = shared.pool.dom.obtain('div'),
 					styles = sample.style;
 
 				stored = false;
@@ -179,7 +180,7 @@
 
 				var candidate,
 					i          = 0,
-					sample     = window.qoopido.shared.pool.dom.obtain('div'),
+					sample     = shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = (this.getPrefix() || { properties: [] }).properties,
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');

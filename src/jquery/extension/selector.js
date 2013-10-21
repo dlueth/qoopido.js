@@ -16,7 +16,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('jquery/extension/selector', definition, [ '../../base', 'jquery' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 	
 	var jQuery    = modules['jquery'] || window.jQuery,

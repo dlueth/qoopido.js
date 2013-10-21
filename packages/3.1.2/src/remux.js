@@ -14,7 +14,7 @@
 */
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/defineproperty', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
@@ -56,7 +56,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/defineproperties', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.defineProperties) {
@@ -87,7 +87,7 @@
 	}
 
 	window.qoopido.register('polyfill/object/create', definition, dependencies);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.create) {
@@ -121,7 +121,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.register('polyfill/object/getownpropertydescriptor', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
@@ -180,7 +180,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, namespace, navigator, window, document, undefined);
+			modules[id] = definition(modules, shared, namespace, navigator, window, document, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -234,8 +234,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(
-	function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {
@@ -275,7 +274,7 @@
 ));
 ;(function(definition) {
 	window.qoopido.register('emitter', definition, [ './base' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var excludeMethods = /^(_|extend$|create$|on$|one$|off$|emit$|get.+)/;
@@ -386,7 +385,7 @@
 }));
 ;(function(definition) {
 	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype, style,

@@ -11,7 +11,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('polyfill/window/getcomputedstyle', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!window.getComputedStyle) {

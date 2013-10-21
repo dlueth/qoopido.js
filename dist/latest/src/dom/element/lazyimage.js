@@ -20,7 +20,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('dom/element/lazyimage', definition, [ './emerge', '../../function/merge' ]);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var

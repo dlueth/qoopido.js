@@ -15,7 +15,7 @@
  */
 ;(function(definition) {
 	window.qoopido.register('function/unique/string', definition);
-}(function(modules, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var lookup     = {},
