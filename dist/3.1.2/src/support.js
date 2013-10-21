@@ -16,7 +16,13 @@
  * @external Q
  */
 ;(function(definition) {
-	window.qoopido.registerSingleton('support', definition, [ './base', './polyfill/string/ucfirst', './pool/dom', 'q' ]);
+	var dependencies = [ './base', './pool/dom', 'q' ];
+
+	if(!String.prototype.ucfirst) {
+		dependencies.push('./polyfill/string/ucfirst');
+	}
+
+	window.qoopido.registerSingleton('support', definition, dependencies);
 }(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 

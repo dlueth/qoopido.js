@@ -280,10 +280,10 @@ var settings = {
 	}
 
 	function update() {
-		iContext.drawImage((paused === false) ? video : imageCache, 0, 0, width, height);
-		tContext.clearRect(0, 0, options.width, options.height);
-
 		try {
+			iContext.drawImage((paused === false) ? video : imageCache, 0, 0, width, height);
+			tContext.clearRect(0, 0, options.width, options.height);
+
 			imageData = iContext.getImageData(0, 0, width, height);
 		} catch(e) {}
 
@@ -303,72 +303,74 @@ var settings = {
 		interval = requestAnimationFrame(update);
 	}
 
-	require([ 'base', 'support', 'dom/element', 'proxy', 'support/element/video', 'support/element/canvas', 'support/element/canvas/todataurl/png' ], function(mBase, mSupport, mDomElement, mProxy) {
-		mSupport.testMultiple('/element/video', '/element/canvas', mSupport.supportsMethod('URL'), mSupport.supportsMethod('getUserMedia', navigator))
-			.then(
-				function() {
-					qDocument             = mDomElement.create(document);
-					requestAnimationFrame = window[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback;
-					cancelAnimationFrame  = window[mSupport.getMethod('cancelAnimationFrame')] || clearTimeout;
-					visibilityProperty    = mSupport.getProperty('hidden', document);
-					video                 = document.createElement('video');
-					iCanvas               = document.createElement('canvas');
-					iContext              = iCanvas.getContext('2d');
-					sCanvas               = document.createElement('canvas');
-					sContext              = sCanvas.getContext('2d');
-					tCanvas               = document.createElement('canvas');
-					tContext              = tCanvas.getContext('2d');
-					imageCache            = document.createElement('img');
-					methodURL             = mSupport.getMethod('URL');
-					getUserMedia          = mProxy.create(navigator, navigator[mSupport.getMethod('getUserMedia', navigator)]);
+	require([ 'base' ], function() {
+		require([ 'support', 'dom/element', 'proxy', 'support/element/video', 'support/element/canvas', 'support/element/canvas/todataurl/png' ], function(mSupport, mDomElement, mProxy) {
+			mSupport.testMultiple('/element/video', '/element/canvas', mSupport.supportsMethod('URL'), mSupport.supportsMethod('getUserMedia', navigator))
+				.then(
+					function() {
+						qDocument             = mDomElement.create(document);
+						requestAnimationFrame = window[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback;
+						cancelAnimationFrame  = window[mSupport.getMethod('cancelAnimationFrame')] || clearTimeout;
+						visibilityProperty    = mSupport.getProperty('hidden', document);
+						video                 = document.createElement('video');
+						iCanvas               = document.createElement('canvas');
+						iContext              = iCanvas.getContext('2d');
+						sCanvas               = document.createElement('canvas');
+						sContext              = sCanvas.getContext('2d');
+						tCanvas               = document.createElement('canvas');
+						tContext              = tCanvas.getContext('2d');
+						imageCache            = document.createElement('img');
+						methodURL             = mSupport.getMethod('URL');
+						getUserMedia          = mProxy.create(navigator, navigator[mSupport.getMethod('getUserMedia', navigator)]);
 
-					mDomElement.create(video).setAttribute('autoplay', 'autoplay');
-					mDomElement.create(tCanvas).setAttribute('id', 'canvas');
+						mDomElement.create(video).setAttribute('autoplay', 'autoplay');
+						mDomElement.create(tCanvas).setAttribute('id', 'canvas');
 
-					if(visibilityProperty) {
-						qDocument
-							.on(''.concat('visibilitychange ', mSupport.getPrefix().properties[0], 'visibilitychange'), onVisibilityChange)
-							.emit('visibilitychange');
-					}
+						if(visibilityProperty) {
+							qDocument
+								.on(''.concat('visibilitychange ', mSupport.getPrefix().properties[0], 'visibilitychange'), onVisibilityChange)
+								.emit('visibilitychange');
+						}
 
-					onAccessRequested();
+						onAccessRequested();
 
-					getUserMedia({ video: true, audio: false },
-						function(stream) {
-							var temp;
+						getUserMedia({ video: true, audio: false },
+							function(stream) {
+								var temp;
 
-							video.src = window[methodURL].createObjectURL(stream);
+								video.src = window[methodURL].createObjectURL(stream);
 
-							document.body.removeChild(hint);
-							document.body.appendChild(tCanvas);
+								document.body.removeChild(hint);
+								document.body.appendChild(tCanvas);
 
-							onSettingsChanged();
-							update();
+								onSettingsChanged();
+								update();
 
-							temp = document.querySelectorAll('#console [data-setting]');
-							for(i = 0; temp[i] !== undefined; i++) {
-								initializeSetting(temp[i], mDomElement);
-							}
+								temp = document.querySelectorAll('#console [data-setting]');
+								for(i = 0; temp[i] !== undefined; i++) {
+									initializeSetting(temp[i], mDomElement);
+								}
 
-							mSupport.testMultiple('/element/canvas/todataurl/png')
-								.then(function() {
-									initializePause(mDomElement.create(document.querySelectorAll('#console [data-pause]')[0]));
-								})
-								.done();
+								mSupport.testMultiple('/element/canvas/todataurl/png')
+									.then(function() {
+										initializePause(mDomElement.create(document.querySelectorAll('#console [data-pause]')[0]));
+									})
+									.done();
 
-							mSupport.testMultiple('/element/canvas/todataurl/png', mSupport.supportsProperty('download', document.createElement('a')))
-								.then(function() {
-									temp = document.querySelectorAll('#console [data-download]')[0];
+								mSupport.testMultiple('/element/canvas/todataurl/png', mSupport.supportsProperty('download', document.createElement('a')))
+									.then(function() {
+										temp = document.querySelectorAll('#console [data-download]')[0];
 
-									initializeDownload(mDomElement.create(temp), mDomElement.create(temp.firstChild));
-								})
-								.done();
-						},
-						onAccessDenied
-					);
-				},
-				onIncompatible
-			);
+										initializeDownload(mDomElement.create(temp), mDomElement.create(temp.firstChild));
+									})
+									.done();
+							},
+							onAccessDenied
+						);
+					},
+					onIncompatible
+				);
+		});
 	});
 }(window, document));
 </script>

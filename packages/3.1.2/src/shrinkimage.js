@@ -2,7 +2,7 @@
 * Qoopido.js library package
 *
 * version: 3.1.2
-* date:    2013-10-18
+* date:    2013-10-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -1164,7 +1164,13 @@
 	return true;
 }));
 ;(function(definition) {
-	window.qoopido.registerSingleton('support', definition, [ './base', './polyfill/string/ucfirst', './pool/dom', 'q' ]);
+	var dependencies = [ './base', './pool/dom', 'q' ];
+
+	if(!String.prototype.ucfirst) {
+		dependencies.push('./polyfill/string/ucfirst');
+	}
+
+	window.qoopido.registerSingleton('support', definition, dependencies);
 }(function(modules, namespace, navigator, window, document, undefined) {
 	'use strict';
 
