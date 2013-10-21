@@ -74,8 +74,8 @@
 		}
 	});
 
-	window.qoopido.shared.pool        = window.qoopido.shared.pool || {};
-	window.qoopido.shared.pool.object = prototype.create();
+	shared.pool        = shared.pool || {};
+	shared.pool.object = prototype.create();
 
 	return prototype;
 }));

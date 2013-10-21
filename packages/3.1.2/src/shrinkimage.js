@@ -952,8 +952,8 @@
 		}
 	});
 
-	window.qoopido.shared.pool     = window.qoopido.shared.pool || {};
-	window.qoopido.shared.pool.dom = prototype.create();
+	shared.pool     = shared.pool || {};
+	shared.pool.dom = prototype.create();
 
 	return prototype;
 }));
