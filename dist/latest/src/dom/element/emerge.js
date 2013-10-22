@@ -15,19 +15,9 @@
  * @require ../../function/merge
  * @require ../../function/unique/uuid
   */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('dom/element/emerge', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../element', '../../function/merge', '../../function/unique/uuid' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var
@@ -174,4 +164,4 @@
 	globalOnResize();
 
 	return prototype;
-}, window));
+}));

@@ -15,20 +15,14 @@
  * @polyfill ./queryselectorall
  */
 ;(function(definition) {
-	'use strict';
+	var dependencies = [];
 
-	if(typeof define === 'function' && define.amd) {
-		var dependencies = [];
-
-		if(!Object.defineProperty) {
-			dependencies.push('./queryselectorall');
-		}
-
-		define(dependencies, definition);
-	} else {
-		definition();
+	if(!Object.defineProperty) {
+		dependencies.push('./queryselectorall');
 	}
-}(function() {
+
+	window.qoopido.register('polyfill/document/queryselector', definition, dependencies);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!document.querySelector) {
@@ -38,4 +32,6 @@
 			return (elements.length) ? elements[0] : null;
 		};
 	}
+
+	return true;
 }));

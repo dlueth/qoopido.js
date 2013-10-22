@@ -26,23 +26,9 @@
  * @require ../../pool/dom
  * @external JSON
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('dom/element/shrinkimage', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		if((!!window.JSON && !!JSON.parse)) {
-			define('json', function() { return window.JSON; });
-		}
-
-		define([ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', '../../pool/dom', 'json' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.register('dom/element/shrinkimage', definition, [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', '../../pool/dom', 'json' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var
@@ -67,34 +53,6 @@
 		DOM_LOAD        = 'load',
 		DOM_ERROR       = 'error',
 		DOM_STATE       = ''.concat(DOM_LOAD, ' ', DOM_ERROR);
-
-	prototype = modules['dom/element'].extend({
-		_constructor: function(element, settings) {
-			var self = this,
-				foreground, background;
-
-			prototype._parent._constructor.call(self, element);
-
-			self._settings = settings = modules['function/merge']({}, defaults, settings);
-
-			foreground = self.getAttribute(settings.attribute);
-			background = self.element.style.backgroundImage;
-
-			if(self.type === 'IMG') {
-				processMain.call(self, foreground);
-			}
-
-			if(background !== 'none' && regexBackground.test(background)) {
-				processMain.call(self, background, true);
-			}
-		},
-		hide: function() {
-			this.setStyles({ visibility: 'hidden', opacity: 0 });
-		},
-		show: function() {
-			this.setStyles({ visibility: '', opacity: '' });
-		}
-	});
 
 	function processMain(url, isBackground) {
 		url          = modules['url'].resolve(regexPath.exec(url)[1]);
@@ -170,23 +128,6 @@
 		}
 	}
 
-	loader = modules['dom/element'].extend({
-		_url:   null,
-		_constructor: function(url, element) {
-			var self = this;
-
-			if(!element) {
-				element = window.qoopido.shared.pool.dom.obtain('img');
-			}
-
-			prototype._parent._constructor.call(self, element);
-
-			self._url = url;
-
-			processTransport.call(self, modules['transport/xhr']);
-		}
-	});
-
 	function processTransport(transport) {
 		var self = this;
 
@@ -214,7 +155,7 @@
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = window.qoopido.shared.pool.dom.obtain('canvas');
+				canvas = shared.pool.dom.obtain('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -272,5 +213,50 @@
 		return false;
 	}
 
+	prototype = modules['dom/element'].extend({
+		_constructor: function(element, settings) {
+			var self = this,
+				foreground, background;
+
+			prototype._parent._constructor.call(self, element);
+
+			self._settings = settings = modules['function/merge']({}, defaults, settings);
+
+			foreground = self.getAttribute(settings.attribute);
+			background = self.element.style.backgroundImage;
+
+			if(self.type === 'IMG') {
+				processMain.call(self, foreground);
+			}
+
+			if(background !== 'none' && regexBackground.test(background)) {
+				processMain.call(self, background, true);
+			}
+		},
+		hide: function() {
+			this.setStyles({ visibility: 'hidden', opacity: 0 });
+		},
+		show: function() {
+			this.setStyles({ visibility: '', opacity: '' });
+		}
+	});
+
+	loader = modules['dom/element'].extend({
+		_url:   null,
+		_constructor: function(url, element) {
+			var self = this;
+
+			if(!element) {
+				element = shared.pool.dom.obtain('img');
+			}
+
+			prototype._parent._constructor.call(self, element);
+
+			self._url = url;
+
+			processTransport.call(self, modules['transport/xhr']);
+		}
+	});
+
 	return prototype;
-}, window));
+}));

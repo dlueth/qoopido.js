@@ -14,22 +14,12 @@
  * @require ../../base
  * @external jQuery
  */
-;(function(pDefinition, window) {
+;(function(definition) {
+	window.qoopido.register('jquery/function/prefetch', definition, [ '../../base', 'jquery' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	function definition() {
-		return window.qoopido.initialize('jquery/function/prefetch', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../../base', 'jquery' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies) {
-	'use strict';
-
-	var jQuery = window.jQuery || dependencies[1],
+	var jQuery = modules['jquery'] || window.jQuery,
 		$head  = jQuery('head'),
 		lookup = [];
 
@@ -45,4 +35,4 @@
 	};
 
 	return jQuery;
-}, window));
+}));

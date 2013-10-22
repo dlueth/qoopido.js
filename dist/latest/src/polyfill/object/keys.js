@@ -13,14 +13,8 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 ;(function(definition) {
-	'use strict';
-
-	if(typeof define === 'function' && define.amd) {
-		define(definition);
-	} else {
-		definition();
-	}
-}(function() {
+	window.qoopido.register('polyfill/object/keys', definition);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!Object.keys) {
@@ -41,4 +35,6 @@
 			return ret;
 		};
 	}
+
+	return true;
 }));

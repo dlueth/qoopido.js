@@ -12,25 +12,22 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./base
+ * @require ./pool/dom
  * @require ./polyfill/string/ucfirst
- * @external Q.js
+ * @external Q
  */
-;(function(pDefinition, window) {
-	'use strict';
+;(function(definition) {
+	var dependencies = [ './base', './pool/dom', 'q' ];
 
-	function definition() {
-		return window.qoopido.initialize('support', pDefinition, arguments, true);
+	if(!String.prototype.ucfirst) {
+		dependencies.push('./polyfill/string/ucfirst');
 	}
 
-	if(typeof define === 'function' && define.amd) {
-		define([ './base', './polyfill/string/ucfirst', 'q', './pool/dom' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+	window.qoopido.registerSingleton('support', definition, dependencies);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var Q               = window.Q || dependencies[2],
+	var Q               = modules['q'] || window.Q,
 		regexProperty   = new RegExp('-([a-z])', 'gi'),
 		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
 		callbackUcfirst = function(value) {
@@ -81,7 +78,7 @@
 				stored = lookup.prefix || null;
 
 			if(stored === null) {
-				var sample = window.qoopido.shared.pool.dom.obtain('div'),
+				var sample = shared.pool.dom.obtain('div'),
 					styles = sample.style;
 
 				stored = false;
@@ -183,7 +180,7 @@
 
 				var candidate,
 					i          = 0,
-					sample     = window.qoopido.shared.pool.dom.obtain('div'),
+					sample     = shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = (this.getPrefix() || { properties: [] }).properties,
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
@@ -297,4 +294,4 @@
 			};
 		}
 	});
-}, window));
+}));

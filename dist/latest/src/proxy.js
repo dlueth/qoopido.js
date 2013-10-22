@@ -12,19 +12,9 @@
  * @require ./base
  * @require ./function/unique/uuid
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('proxy', pDefinition);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './base', './function/unique/uuid' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules) {
+;(function(definition) {
+	window.qoopido.register('proxy', definition, [ './function/unique/uuid' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	return modules['base'].extend({
@@ -39,4 +29,4 @@
 			return proxy;
 		}
 	});
-}, window));
+}));

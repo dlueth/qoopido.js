@@ -15,25 +15,15 @@
  * @require ../transport
  * @require ../function/merge
  * @require ../function/unique/string
- * @external Q.js
+ * @external Q
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('transport/xhr', pDefinition, arguments, true);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ '../transport', '../function/merge', '../function/unique/string', '../url', 'q' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', 'q' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
-		Q      = window.Q || dependencies[4],
+		Q      = modules['q'] || window.Q,
 		getXhr = (typeof window.XMLHttpRequest !== 'undefined') ?
 			function(url) {
 				if(modules['url'].isLocal(url)) {
