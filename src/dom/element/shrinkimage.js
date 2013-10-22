@@ -27,12 +27,19 @@
  * @external JSON
  */
 ;(function(definition) {
-	window.qoopido.register('dom/element/shrinkimage', definition, [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr', '../../pool/dom', 'json' ]);
+	var dependencies = [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr' ];
+
+	if(!window.JSON || !window.JSON.parse) {
+		dependencies.push('json');
+	}
+
+	window.qoopido.register('dom/element/shrinkimage', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var
 	// properties
+		JSON            = modules['json'] || window.JSON,
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
 		lookup          = {},
@@ -259,4 +266,4 @@
 	});
 
 	return prototype;
-}));
+}, window));

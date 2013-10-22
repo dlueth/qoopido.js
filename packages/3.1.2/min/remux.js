@@ -2,7 +2,7 @@
 * Qoopido.js library package
 *
 * version: 3.1.2
-* date:    2013-10-21
+* date:    2013-10-22
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -12,7 +12,7 @@
 *  - http://www.opensource.org/licenses/mit-license.php
 *  - http://www.gnu.org/copyleft/gpl.html
 */
-(function(t){window.qoopido.register("polyfill/object/defineproperty",t)})(function(){"use strict";if(!Object.defineProperty||!function(){try{return Object.defineProperty({},"x",{}),!0}catch(t){return!1}}()){var t=Object.defineProperty,e=Object.prototype.__defineGetter__,n=Object.prototype.__defineSetter__;Object.defineProperty=function(r,i,o){if(t)try{return t(r,i,o)}catch(l){}if(r!==Object(r))throw new TypeError("Object.defineProperty called on non-object");return e&&"get"in o&&e.call(r,i,o.get),n&&"set"in o&&n.call(r,i,o.set),"value"in o&&(r[i]=o.value),r}}return!0});
+(function(t){window.qoopido.register("polyfill/object/defineproperty",t)})(function(){"use strict";if(!Object.defineProperty||!function(){try{return Object.defineProperty({},"x",{}),!0}catch(t){return!1}}()){var t=Object.defineProperty,e=Object.prototype.__defineGetter__,n=Object.prototype.__defineSetter__;Object.defineProperty=function(r,i,o){if(t)try{return t(r,i,o)}catch(s){}if(r!==Object(r))throw new TypeError("Object.defineProperty called on non-object");return e&&"get"in o&&e.call(r,i,o.get),n&&"set"in o&&n.call(r,i,o.set),"value"in o&&(r[i]=o.value),r}}return!0});
 (function(t){var e=[];Object.defineProperty&&function(){try{return Object.defineProperty({},"x",{}),!0}catch(t){return!1}}()||e.push("./defineproperty"),window.qoopido.register("polyfill/object/defineproperties",t,e)})(function(){"use strict";return Object.defineProperties||(Object.defineProperties=function(t,e){if(t!==Object(t))throw new TypeError("Object.defineProperties called on non-object");var n;for(n in e)Object.prototype.hasOwnProperty.call(e,n)&&Object.defineProperty(t,n,e[n]);return t}),!0});
 (function(t){var e=[];Object.defineProperties||e.push("./defineproperties"),window.qoopido.register("polyfill/object/create",t,e)})(function(){"use strict";return Object.create||(Object.create=function(t,e){function n(){}if("object"!=typeof t)throw new TypeError;n.prototype=t;var r=new n;if(t&&(r.constructor=n),arguments.length>1){if(e!==Object(e))throw new TypeError;Object.defineProperties(r,e)}return r}),!0});
 (function(t){window.qoopido.register("polyfill/object/getownpropertydescriptor",t)})(function(){"use strict";if(!Object.getOwnPropertyDescriptor||!function(){try{return Object.getOwnPropertyDescriptor({x:0},"x"),!0}catch(t){return!1}}()){var t=Object.getOwnPropertyDescriptor;Object.getOwnPropertyDescriptor=function(e,n){if(e!==Object(e))throw new TypeError;try{return t.call(Object,e,n)}catch(r){}return Object.prototype.hasOwnProperty.call(e,n)?{value:e[n],enumerable:!0,writable:!0,configurable:!0}:undefined}}return!0});
