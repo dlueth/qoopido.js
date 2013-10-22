@@ -74,11 +74,6 @@ module.exports = function (grunt) {
 				]
 			}
 		},
-		dependo: {
-			targetPath: '<%= config.src %>',
-			outputPath: './dependo',
-			format: 'amd'
-		},
 		concat:{
 			options:{
 				stripBanners: true,
@@ -229,5 +224,5 @@ module.exports = function (grunt) {
 
 	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-	grunt.registerTask('default', ['jshint:all', 'clean:dist', 'copy:dist', 'uglifyrecursive:dist', 'dependo', 'copy:latest', 'concat']);
+	grunt.registerTask('default', ['jshint:all', 'clean:dist', 'copy:dist', 'uglifyrecursive:dist', 'copy:latest', 'concat']);
 };

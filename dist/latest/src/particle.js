@@ -15,19 +15,9 @@
  * @require ./pool/module
  * @require ./vector/2d
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('particle', pDefinition, arguments);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './emitter', 'pool/module', './vector/2d' ], definition);
-	} else {
-		definition();
-	}
-}(function(modules, dependencies, namespace, window, document, undefined) {
+;(function(definition) {
+	window.qoopido.register('particle', definition, [ './emitter', 'pool/module', './vector/2d' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
@@ -91,4 +81,4 @@
 	});
 
 	return prototype;
-}, window));
+}));

@@ -10,14 +10,8 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 ;(function(definition) {
-	'use strict';
-
-	if(typeof define === 'function' && define.amd) {
-		define(definition);
-	} else {
-		definition();
-	}
-}(function() {
+	window.qoopido.register('polyfill/window/getcomputedstyle', definition);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	if(!window.getComputedStyle) {
@@ -46,4 +40,6 @@
 			return self;
 		};
 	}
+
+	return true;
 }));

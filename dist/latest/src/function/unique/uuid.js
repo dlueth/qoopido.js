@@ -13,19 +13,9 @@
  *
  * @require ../../base
  */
-;(function(pDefinition, window) {
-	'use strict';
-
-	function definition() {
-		return window.qoopido.initialize('function/unique/uuid', pDefinition);
-	}
-
-	if(typeof define === 'function' && define.amd) {
-		define([ './../../base' ], definition);
-	} else {
-		definition();
-	}
-}(function() {
+;(function(definition) {
+	window.qoopido.register('function/unique/uuid', definition);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var lookup     = {},
@@ -51,4 +41,4 @@
 
 		return result;
 	};
-}, window));
+}));

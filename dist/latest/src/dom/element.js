@@ -14,353 +14,340 @@
  * @require ../base
  * @require ../proxy
  */
-;(function(pDefinition, window) {
+;(function(definition) {
+	var dependencies = [ '../proxy' ];
+
+	if(!window.getComputedStyle) {
+		dependencies.push('../polyfill/window/getcomputedstyle');
+	}
+
+	window.qoopido.register('dom/element', definition, dependencies);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	function definition() {
-		return window.qoopido.initialize('dom/element', pDefinition, arguments);
-	}
+	var onMethod, offMethod, emitMethod,
+		stringObject = 'object',
+		stringString = 'string';
 
-	if(typeof define === 'function' && define.amd) {
-		var dependencies = [ '../base', '../proxy' ];
-
-		if(!window.getComputedStyle) {
-			dependencies.push('../polyfill/window/getcomputedstyle');
+	function normalizeEvent(event) {
+		if(!event.target) {
+			event.target = event.srcElement || document;
 		}
 
-		define(dependencies, definition);
-	} else {
-		definition();
-	}
-}(
-	function(modules, dependencies, namespace, window, document, undefined) {
-		'use strict';
-
-		var onMethod, offMethod, emitMethod,
-			stringObject = 'object',
-			stringString = 'string';
-
-		function normalizeEvent(event) {
-			if(!event.target) {
-				event.target = event.srcElement || document;
-			}
-
-			if(event.target.nodeType === 3) {
-				event.target = event.target.parentNode;
-			}
-
-			if(!event.relatedTarget && event.fromElement ) {
-				event.relatedTarget = (event.fromElement === event.target) ? event.toElement : event.fromElement;
-			}
-
-			return event;
+		if(event.target.nodeType === 3) {
+			event.target = event.target.parentNode;
 		}
 
-		onMethod = (window.addEventListener) ?
-			function(name, fn) {
-				var self    = this,
-					element = self.element,
-					luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+		if(!event.relatedTarget && event.fromElement ) {
+			event.relatedTarget = (event.fromElement === event.target) ? event.toElement : event.fromElement;
+		}
 
-				element[luid] = function(event) { fn.call(this, normalizeEvent(event)); };
-				element.addEventListener(name, element[luid], false);
+		return event;
+	}
+
+	onMethod = (window.addEventListener) ?
+		function(name, fn) {
+			var self    = this,
+				element = self.element,
+				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+
+			element[luid] = function(event) { fn.call(this, normalizeEvent(event)); };
+			element.addEventListener(name, element[luid], false);
+		}
+		: function(name, fn) {
+			var self    = this,
+				element = self.element,
+				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+
+			element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+			if(element['on' + name] !== undefined) {
+				element.attachEvent('on' + name, element[luid]);
+			} else {
+				name = ''.concat('fake[', name, ']');
+
+				element[name] = null;
+				element.attachEvent('onpropertychange', function(event) {
+					if(event.propertyName === name) {
+						fn.call(this, normalizeEvent(element[name]));
+					}
+				});
 			}
-			: function(name, fn) {
-				var self    = this,
-					element = self.element,
-					luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+		};
 
-				element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
-				if(element['on' + name] !== undefined) {
-					element.attachEvent('on' + name, element[luid]);
+	offMethod = (window.removeEventListener) ?
+		function(name, fn) {
+			var self    = this,
+				element = self.element,
+				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+
+			element.removeEventListener(name, element[luid], false);
+			delete element[luid];
+		}
+		: function(name, fn) {
+			var self    = this,
+				element = self.element,
+				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+
+			element.detachEvent('on' + name, element[luid]);
+			delete element[luid];
+		};
+
+	emitMethod = (document.createEvent) ?
+		function(type, data) {
+			var self    = this,
+				element = self.element,
+				event   = document.createEvent('HTMLEvents');
+
+			event.initEvent(type, true, true);
+			event.data = data;
+			element.dispatchEvent(event);
+		}
+		: function(type, data) {
+			var self    = this,
+				element = self.element,
+				event   = document.createEventObject();
+
+			event.type = event.eventType = type;
+			event.data = data;
+
+			try{
+				element.fireEvent('on' + event.eventType, event);
+			} catch(exception) {
+				var name = ''.concat('fake[', type, ']');
+
+				if(element[name] !== undefined) {
+					element[name] = event;
+				}
+			}
+		};
+
+	return modules['base'].extend({
+		type:     null,
+		element:  null,
+		listener: null,
+		_constructor: function(element) {
+			var self = this;
+
+			if(!element) {
+				throw new Error('Missing element argument');
+			}
+
+			self.type     = element.tagName;
+			self.element  = element;
+			self.listener = {};
+		},
+		getAttribute: function(attribute) {
+			if(attribute && typeof attribute === stringString) {
+				var self = this;
+
+				attribute = attribute.split(' ');
+
+				if(attribute.length === 1) {
+					return self.element.getAttribute(attribute[0]);
 				} else {
-					name = ''.concat('fake[', name, ']');
-
-					element[name] = null;
-					element.attachEvent('onpropertychange', function(event) {
-						if(event.propertyName === name) {
-							fn.call(this, normalizeEvent(element[name]));
-						}
-					});
+					return self.getAttributes(attribute);
 				}
-			};
-
-		offMethod = (window.removeEventListener) ?
-			function(name, fn) {
-				var self    = this,
-					element = self.element,
-					luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-
-				element.removeEventListener(name, element[luid], false);
-				delete element[luid];
 			}
-			: function(name, fn) {
-				var self    = this,
-					element = self.element,
-					luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+		},
+		getAttributes: function(attributes) {
+			var self   = this,
+				result = {};
 
-				element.detachEvent('on' + name, element[luid]);
-				delete element[luid];
-			};
+			if(attributes) {
+				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
-		emitMethod = (document.createEvent) ?
-			function(type, data) {
-				var self    = this,
-					element = self.element,
-					event   = document.createEvent('HTMLEvents');
+				if(typeof attributes === stringObject && attributes.length) {
+					var i, attribute;
 
-				event.initEvent(type, true, true);
-				event.data = data;
-				element.dispatchEvent(event);
+					for(i = 0; (attribute = attributes[i]) !== undefined; i++) {
+						result[attribute] = self.element.getAttributes(attribute);
+					}
+				}
 			}
-			: function(type, data) {
-				var self    = this,
-					element = self.element,
-					event   = document.createEventObject();
 
-				event.type = event.eventType = type;
-				event.data = data;
+			return result;
+		},
+		setAttribute: function(attribute, value) {
+			var self = this;
 
-				try{
-					element.fireEvent('on' + event.eventType, event);
-				} catch(exception) {
-					var name = ''.concat('fake[', type, ']');
+			if(attribute && typeof attribute === stringString) {
+				self.element.setAttribute(attribute, value);
+			}
 
-					if(element[name] !== undefined) {
-						element[name] = event;
+			return self;
+		},
+		setAttributes: function(attributes) {
+			var self = this;
+
+			if(attributes && typeof attributes === stringObject && !attributes.length) {
+				var attribute;
+
+				for(attribute in attributes) {
+					self.element.setAttribute(attribute, attributes[attribute]);
+				}
+			}
+
+			return self;
+		},
+		removeAttribute: function(attribute) {
+			var self = this;
+
+			if(attribute && typeof attribute === stringString) {
+				attribute = attribute.split(' ');
+
+				if(attribute.length === 1) {
+					self.element.removeAttribute(attribute[0]);
+				} else {
+					self.removeAttributes(attribute);
+				}
+			}
+
+			return self;
+		},
+		removeAttributes: function(attributes) {
+			var self = this;
+
+			if(attributes) {
+				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
+
+				if(typeof attributes === stringObject && attributes.length) {
+					var i, attribute;
+
+					for(i = 0; (attribute = attributes[i]) !== undefined; i++) {
+						self.element.removeAttribute(attribute);
 					}
 				}
-			};
+			}
 
-		return modules['base'].extend({
-			type:     null,
-			element:  null,
-			listener: null,
-			_constructor: function(element) {
+			return self;
+		},
+		getStyle: function(property) {
+			if(property && typeof property === stringString) {
 				var self = this;
 
-				if(!element) {
-					throw new Error('Missing element argument');
+				property = property.split(' ');
+
+				if(property.length === 1) {
+					return window.getComputedStyle(self.element, null).getPropertyValue(property[0]);
+				} else {
+					return self.getStyles(property);
 				}
+			}
+		},
+		getStyles: function(properties) {
+			var self   = this,
+				result = {};
 
-				self.type     = element.tagName;
-				self.element  = element;
-				self.listener = {};
-			},
-			getAttribute: function(attribute) {
-				if(attribute && typeof attribute === stringString) {
-					var self = this;
+			if(properties) {
+				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
 
-					attribute = attribute.split(' ');
+				if(typeof properties === stringObject && properties.length) {
+					var i, property;
 
-					if(attribute.length === 1) {
-						return self.element.getAttribute(attribute[0]);
-					} else {
-						return self.getAttributes(attribute);
+					for(i = 0; (property = properties[i]) !== undefined; i++) {
+						result[property] = window.getComputedStyle(self.element, null).getPropertyValue(property);
 					}
 				}
-			},
-			getAttributes: function(attributes) {
-				var self   = this,
-					result = {};
+			}
 
-				if(attributes) {
-					attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
+			return result;
+		},
+		setStyle: function(property, value) {
+			var self = this;
 
-					if(typeof attributes === stringObject && attributes.length) {
-						var i, attribute;
+			if(property && typeof property === stringString) {
+				self.element.style[property] = value;
+			}
 
-						for(i = 0; (attribute = attributes[i]) !== undefined; i++) {
-							result[attribute] = self.element.getAttributes(attribute);
-						}
-					}
+			return self;
+		},
+		setStyles: function(properties) {
+			var self = this;
+
+			if(properties && typeof properties === stringObject && !properties.length) {
+				var property;
+
+				for(property in properties) {
+					self.element.style[property] = properties[property];
 				}
+			}
 
-				return result;
-			},
-			setAttribute: function(attribute, value) {
-				var self = this;
+			return self;
+		},
+		isVisible: function() {
+			var element = this.element;
 
-				if(attribute && typeof attribute === stringString) {
-					self.element.setAttribute(attribute, value);
-				}
+			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
+		},
+		on: function(events, fn) {
+			var self = this,
+				i, listener;
 
-				return self;
-			},
-			setAttributes: function(attributes) {
-				var self = this;
+			events = events.split(' ');
 
-				if(attributes && typeof attributes === stringObject && !attributes.length) {
-					var attribute;
+			for(i = 0; (listener = events[i]) !== undefined; i++) {
+				(self.listener[listener] = self.listener[listener] || []).push(fn);
 
-					for(attribute in attributes) {
-						self.element.setAttribute(attribute, attributes[attribute]);
-					}
-				}
+				onMethod.call(self, listener, fn);
+			}
 
-				return self;
-			},
-			removeAttribute: function(attribute) {
-				var self = this;
+			return self;
+		},
+		one: function(events, fn, each) {
+			each = (each !== false);
 
-				if(attribute && typeof attribute === stringString) {
-					attribute = attribute.split(' ');
+			var self     = this,
+				listener = modules['proxy'].create(self, function(event) {
+					self.off(((each === true) ? event.type : events), listener);
 
-					if(attribute.length === 1) {
-						self.element.removeAttribute(attribute[0]);
-					} else {
-						self.removeAttributes(attribute);
-					}
-				}
+					fn.call(self, event);
+				});
 
-				return self;
-			},
-			removeAttributes: function(attributes) {
-				var self = this;
+			self.on(events, listener);
 
-				if(attributes) {
-					attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
+			return self;
+		},
+		off: function(events, fn) {
+			var self = this,
+				i, event, j, listener;
 
-					if(typeof attributes === stringObject && attributes.length) {
-						var i, attribute;
-
-						for(i = 0; (attribute = attributes[i]) !== undefined; i++) {
-							self.element.removeAttribute(attribute);
-						}
-					}
-				}
-
-				return self;
-			},
-			getStyle: function(property) {
-				if(property && typeof property === stringString) {
-					var self = this;
-
-					property = property.split(' ');
-
-					if(property.length === 1) {
-						return window.getComputedStyle(self.element, null).getPropertyValue(property[0]);
-					} else {
-						return self.getStyles(property);
-					}
-				}
-			},
-			getStyles: function(properties) {
-				var self   = this,
-					result = {};
-
-				if(properties) {
-					properties = (typeof properties === stringString) ? properties.split(' ') : properties;
-
-					if(typeof properties === stringObject && properties.length) {
-						var i, property;
-
-						for(i = 0; (property = properties[i]) !== undefined; i++) {
-							result[property] = window.getComputedStyle(self.element, null).getPropertyValue(property);
-						}
-					}
-				}
-
-				return result;
-			},
-			setStyle: function(property, value) {
-				var self = this;
-
-				if(property && typeof property === stringString) {
-					self.element.style[property] = value;
-				}
-
-				return self;
-			},
-			setStyles: function(properties) {
-				var self = this;
-
-				if(properties && typeof properties === stringObject && !properties.length) {
-					var property;
-
-					for(property in properties) {
-						self.element.style[property] = properties[property];
-					}
-				}
-
-				return self;
-			},
-			isVisible: function() {
-				var element = this.element;
-
-				return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
-			},
-			on: function(events, fn) {
-				var self = this,
-					i, listener;
-
+			if(events) {
 				events = events.split(' ');
 
-				for(i = 0; (listener = events[i]) !== undefined; i++) {
-					(self.listener[listener] = self.listener[listener] || []).push(fn);
+				for(i = 0; (event = events[i]) !== undefined; i++) {
+					self.listener[event] = self.listener[event] || [];
 
-					onMethod.call(self, listener, fn);
-				}
+					if(fn) {
+						for(j = 0; (listener = self.listener[event][j]) !== undefined; j++) {
+							if(listener === fn) {
+								self.listener[event].splice(j, 1);
+								offMethod.call(self, event, listener);
 
-				return self;
-			},
-			one: function(events, fn, each) {
-				each = (each !== false);
-
-				var self     = this,
-					listener = modules['proxy'].create(self, function(event) {
-						self.off(((each === true) ? event.type : events), listener);
-
-						fn.call(self, event);
-					});
-
-				self.on(events, listener);
-
-				return self;
-			},
-			off: function(events, fn) {
-				var self = this,
-					i, event, j, listener;
-
-				if(events) {
-					events = events.split(' ');
-
-					for(i = 0; (event = events[i]) !== undefined; i++) {
-						self.listener[event] = self.listener[event] || [];
-
-						if(fn) {
-							for(j = 0; (listener = self.listener[event][j]) !== undefined; j++) {
-								if(listener === fn) {
-									self.listener[event].splice(j, 1);
-									offMethod.call(self, event, listener);
-
-									j--;
-								}
-							}
-						} else {
-							while(self.listener[event].length > 0) {
-								offMethod.call(self, event, self.listener[event].pop());
+								j--;
 							}
 						}
-					}
-				} else {
-					for(event in self.listener) {
+					} else {
 						while(self.listener[event].length > 0) {
 							offMethod.call(self, event, self.listener[event].pop());
 						}
 					}
 				}
-
-				return self;
-			},
-			emit: function(event, data) {
-				var self = this;
-
-				emitMethod.call(self, event, data);
-
-				return self;
+			} else {
+				for(event in self.listener) {
+					while(self.listener[event].length > 0) {
+						offMethod.call(self, event, self.listener[event].pop());
+					}
+				}
 			}
-		});
-	},
-	window)
-);
+
+			return self;
+		},
+		emit: function(event, data) {
+			var self = this;
+
+			emitMethod.call(self, event, data);
+
+			return self;
+		}
+	});
+}));
