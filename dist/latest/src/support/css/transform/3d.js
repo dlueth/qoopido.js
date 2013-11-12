@@ -22,13 +22,14 @@
 	return modules['support'].addTest('/css/transform/3d', function(deferred) {
 		modules['support/css/transform']()
 			.then(function() {
-				var sample = shared.pool.dom.obtain('div');
+				var sample   = shared.pool.dom.obtain('div'),
+					property = modules['support'].getCssProperty('transform');
 
 				try {
-					sample.style.property = 'translate3d(0,0,0)';
+					sample.style[property] = 'translate3d(0,0,0)';
 				} catch(exception) { }
 
-				((/translate3d/).test(sample.style.property)) ? deferred.resolve() : deferred.reject();
+				((/translate3d/).test(sample.style[property])) ? deferred.resolve() : deferred.reject();
 
 				sample.dispose();
 			})

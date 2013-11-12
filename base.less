@@ -85,6 +85,10 @@ a {
 #console li > span {
 	float: right;
 	width: 80px;
+	text-align: right;
+}
+
+#console li > span[data-setting] {
 	padding: 0 18px;
 	text-align: center;
 }
@@ -121,7 +125,7 @@ a {
 	background-color: #000;
 }
 
-canvas:before, canvas:after {
+#canvas:before, #canvas:after {
 	z-index: -1;
 	position: absolute;
 	left: 12px;
@@ -145,7 +149,7 @@ canvas:before, canvas:after {
 	box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
 }
 
-canvas:after {
+#canvas:after {
 	left: auto;
 	right: 12px;
 	-webkit-transform-origin: right bottom;

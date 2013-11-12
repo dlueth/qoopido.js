@@ -30,8 +30,8 @@
 	var Q               = modules['q'] || window.Q,
 		regexProperty   = new RegExp('-([a-z])', 'gi'),
 		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
-		callbackUcfirst = function(value) {
-			return value.ucfirst();
+		callbackUcfirst = function() {
+			return arguments[1].ucfirst();
 		},
 		lookup = {
 			prefix:   null,

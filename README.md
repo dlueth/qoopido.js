@@ -86,6 +86,7 @@ Currently contains
 		- transform
 			- 2d
 			- 3d
+		- transition
 	- element
 		- canvas
 			- todataurl
