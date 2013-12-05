@@ -15,13 +15,19 @@
  * @polyfill ./defineproperty
  */
 ;(function(definition) {
-	var dependencies = [];
+	var qoopido = window.qoopido = window.qoopido || {};
 
-	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
-		dependencies.push('./defineproperty');
+	if(qoopido.register) {
+		var dependencies = [];
+
+		if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
+			dependencies.push('./defineproperty');
+		}
+
+		qoopido.register('polyfill/object/defineproperties', definition, dependencies);
+	} else {
+		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/defineproperties'] = definition();
 	}
-
-	window.qoopido.register('polyfill/object/defineproperties', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 

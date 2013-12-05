@@ -35,10 +35,12 @@
 		initialize = function() {
 			if(dependencies) {
 				var path = namespace.slice(0, -1).join('/'),
-					i, dependency;
+					i, dependency, internal;
 
 				for(i = 0; (dependency = dependencies[i]) !== undefined; i++) {
-					if(isInternal.test(dependency)) {
+					internal = isInternal.test(dependency);
+
+					if(internal) {
 						dependency = canonicalize(path + '/' + dependency);
 					}
 
@@ -46,7 +48,7 @@
 						modules[dependency] = arguments[i];
 					}
 
-					if(!modules[dependency] && typeof console !== 'undefined') {
+					if(internal && !modules[dependency] && typeof console !== 'undefined') {
 						console.error(''.concat('[Qoopido.js] ', id, ': Could not load dependency ', dependency));
 					}
 				}
@@ -85,13 +87,16 @@
 	}
 
 	var id                = 'qoopido',
-		root              = window[id] = window[id] || { register: register, registerSingleton: registerSingleton },
+		root              = window[id] = window[id] || {},
 		shared            = root.shared  = root.shared || {},
 		modules           = root.modules = root.modules || {},
 		dependencies      = [],
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
 		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
+
+	root.register          = register;
+	root.registerSingleton = registerSingleton;
 
 	if(!Object.create) {
 		dependencies.push('./polyfill/object/create');

@@ -13,7 +13,13 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 ;(function(definition) {
-	window.qoopido.register('polyfill/object/getownpropertydescriptor', definition);
+	var qoopido = window.qoopido = window.qoopido || {};
+
+	if(qoopido.register) {
+		qoopido.register('polyfill/object/getownpropertydescriptor', definition);
+	} else {
+		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/getownpropertydescriptor'] = definition();
+	}
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
