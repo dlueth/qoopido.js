@@ -13,13 +13,19 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 ;(function(definition) {
-	var dependencies = [];
+	var qoopido = window.qoopido = window.qoopido || {};
 
-	if(!Object.defineProperties) {
-		dependencies.push('./defineproperties');
+	if(qoopido.register) {
+		var dependencies = [];
+
+		if(!Object.defineProperties) {
+			dependencies.push('./defineproperties');
+		}
+
+		qoopido.register('polyfill/object/create', definition, dependencies);
+	} else {
+		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/create'] = definition();
 	}
-
-	window.qoopido.register('polyfill/object/create', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 

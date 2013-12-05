@@ -25,7 +25,7 @@
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var onMethod, offMethod, emitMethod,
+	var attachListener, detachListener, emitEvent,
 		stringObject = 'object',
 		stringString = 'string';
 
@@ -45,21 +45,24 @@
 		return event;
 	}
 
-	onMethod = (window.addEventListener) ?
+	attachListener = (window.addEventListener) ?
 		function(name, fn) {
 			var self    = this,
 				element = self.element,
 				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
 
 			element[luid] = function(event) { fn.call(this, normalizeEvent(event)); };
+
 			element.addEventListener(name, element[luid], false);
 		}
-		: function(name, fn) {
+		:
+		function(name, fn) {
 			var self    = this,
 				element = self.element,
 				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
 
 			element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+
 			if(element['on' + name] !== undefined) {
 				element.attachEvent('on' + name, element[luid]);
 			} else {
@@ -74,7 +77,7 @@
 			}
 		};
 
-	offMethod = (window.removeEventListener) ?
+	detachListener = (window.removeEventListener) ?
 		function(name, fn) {
 			var self    = this,
 				element = self.element,
@@ -83,7 +86,8 @@
 			element.removeEventListener(name, element[luid], false);
 			delete element[luid];
 		}
-		: function(name, fn) {
+		:
+		function(name, fn) {
 			var self    = this,
 				element = self.element,
 				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
@@ -92,7 +96,7 @@
 			delete element[luid];
 		};
 
-	emitMethod = (document.createEvent) ?
+	emitEvent = (document.createEvent) ?
 		function(type, data) {
 			var self    = this,
 				element = self.element,
@@ -102,7 +106,8 @@
 			event.data = data;
 			element.dispatchEvent(event);
 		}
-		: function(type, data) {
+		:
+		function(type, data) {
 			var self    = this,
 				element = self.element,
 				event   = document.createEventObject();
@@ -288,7 +293,7 @@
 			for(i = 0; (listener = events[i]) !== undefined; i++) {
 				(self.listener[listener] = self.listener[listener] || []).push(fn);
 
-				onMethod.call(self, listener, fn);
+				attachListener.call(self, listener, fn);
 			}
 
 			return self;
@@ -321,21 +326,21 @@
 						for(j = 0; (listener = self.listener[event][j]) !== undefined; j++) {
 							if(listener === fn) {
 								self.listener[event].splice(j, 1);
-								offMethod.call(self, event, listener);
+								detachListener.call(self, event, listener);
 
 								j--;
 							}
 						}
 					} else {
 						while(self.listener[event].length > 0) {
-							offMethod.call(self, event, self.listener[event].pop());
+							detachListener.call(self, event, self.listener[event].pop());
 						}
 					}
 				}
 			} else {
 				for(event in self.listener) {
 					while(self.listener[event].length > 0) {
-						offMethod.call(self, event, self.listener[event].pop());
+						detachListener.call(self, event, self.listener[event].pop());
 					}
 				}
 			}
@@ -345,7 +350,7 @@
 		emit: function(event, data) {
 			var self = this;
 
-			emitMethod.call(self, event, data);
+			emitEvent.call(self, event, data);
 
 			return self;
 		}
