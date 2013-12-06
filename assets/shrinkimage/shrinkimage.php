@@ -10,27 +10,27 @@ if(isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['source']) && !e
 	if($jsonp === true && $callback === NULL) {
 		throw new Exception('shrinkimage: Callback must be defined');
 	}
-	
+
 	$targetJson = $base . '/' . $_GET['file'];
 	$targetPath = dirname($targetJson);
 
 	if(!is_file($targetJson)) {
 		$json = NULL;
 
-		$sourceFile = preg_replace('/^(\w+:\/\/' . preg_quote($_SERVER['HTTP_HOST'], '/') . '\/)/i', $_SERVER['DOCUMENT_ROOT'] . '/', $_GET['source']);
+		$sourceFile = $base . '/' . $_GET['source'];
 		$sourceName = basename($_GET['source']);
 
 		if(is_file($sourceFile)) {
 			if(!is_dir($targetPath)) {
 				createDirectory($targetPath);
 			}
-			
+
 			$colorCache = array(127 => rgb2color(0, 0, 0, 0));
-			
+
 			$size   = @getimagesize($sourceFile);
 			$width  = $size[0];
 			$height = $size[1];
-			
+
 			$imageSource = @imagecreatefrompng($sourceFile);
 			$imageJpg    = @imagecreatetruecolor($width, $height);
 			$imagePng    = @imagecreatetruecolor($width, $height);
@@ -43,26 +43,26 @@ if(isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['source']) && !e
 
 				$imageSource = $imageTemp;
 			}
-			
+
 			@imagealphablending($imageSource, false);
 			@imagesavealpha($imageSource, true);
 			@imagealphablending($imagePng, false);
 			@imagesavealpha($imagePng, true);
-				
+
 			@imagefill($imageJpg, 0, 0, rgb2color(127, 127, 127));
 			@imagefill($imagePng, 0, 0, $colorCache[127]);
-			
+
 			for($x = 0; $x < $width; $x++) {
 				for($y = 0; $y < $height; $y++) {
 					$color = color2rgb(imagecolorat($imageSource, $x, $y));
-						
+
 					if($color['a'] < 127) {
 						imagesetpixel($imageJpg, $x, $y, rgb2color($color['r'], $color['g'], $color['b']));
-						
+
 						if(!isset($colorCache[$color['a']])) {
-							$colorCache[$color['a']] = rgb2color(0, 0, 0, 127 - $color['a']); 
+							$colorCache[$color['a']] = rgb2color(0, 0, 0, 127 - $color['a']);
 						}
-						
+
 						imagesetpixel($imagePng, $x, $y, $colorCache[$color['a']]);
 					}
 				}
@@ -70,7 +70,6 @@ if(isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['source']) && !e
 
 			$imageJpg = getImage($imageJpg, 'jpeg', true, $quality);
 			$imagePng = getImage($imagePng, 'png', false, 9, PNG_ALL_FILTERS);
-			$imageGif = getImage($imagePng, 'gif');
 
 			$json         = new stdClass();
 			$json->size   = @filesize($sourceFile);
@@ -78,21 +77,10 @@ if(isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['source']) && !e
 			$json->height = $height;
 			$json->main   = 'data:image/jpeg;base64,' . base64_encode($imageJpg);
 			$json->alpha  = 'data:image/png;base64,' . base64_encode($imagePng);
-			
+
 			$json = json_encode($json);
-			
+
 			@file_put_contents($targetJson, $json, LOCK_EX);
-
-			$json         = new stdClass();
-			$json->size   = @filesize($sourceFile);
-			$json->width  = $width;
-			$json->height = $height;
-			$json->main   = 'data:image/jpeg;base64,' . base64_encode($imageJpg);
-			$json->alpha  = 'data:image/gif;base64,' . base64_encode($imageGif);
-
-			$json = json_encode($json);
-
-			@file_put_contents($targetJson . '.gif', $json, LOCK_EX);
 		} else {
 			throw new Exception('shrinkimage: Source file "' . $_GET['source'] . '" does not exist');
 		}
@@ -120,7 +108,7 @@ if(isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['source']) && !e
 				break;
 		}
 	} else {
-		$headers  = apache_request_headers(); 
+		$headers  = apache_request_headers();
 		$modified = @filemtime($targetJson);
 		$etag     = md5_file($targetJson);
 
@@ -165,7 +153,7 @@ function rgb2color($r, $g, $b, $a = 0) {
 
 function color2rgb($color) {
 	$return = null;
-	
+
 	if(preg_match('/^\d+$/', $color)) {
 		$return = array(
 			'r' => ($color >> 16) & 0xFF,
@@ -174,7 +162,7 @@ function color2rgb($color) {
 			'a' => ($color & 0x7F000000) >> 24,
 		);
 	}
-	
+
 	return $return;
 }
 
@@ -184,20 +172,20 @@ function getImage($resource, $type = 'png', $interlace = false, $quality = NULL,
 	}
 
 	ob_start();
-	
+
 	switch($type) {
 		case 'png':
 			$quality = ($quality === NULL) ? 9 : max(0, min(9, (int) $quality));
-			
+
 			@imagepng($resource, NULL, $quality, $filter);
 			break;
 		case 'jpeg':
 			$quality = ($quality === NULL) ? 100 : max(0, min(100, (int) $quality));
-			
+
 			@imagejpeg($resource, NULL, $quality);
 			break;
 	}
-		
+
 	return trim(ob_get_clean());
 }
 
