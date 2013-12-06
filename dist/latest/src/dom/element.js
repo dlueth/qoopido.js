@@ -13,6 +13,7 @@
  *
  * @require ../base
  * @require ../proxy
+ * @polyfill ./polyfill/window/getcomputedstyle
  */
 ;(function(definition) {
 	var dependencies = [ '../proxy' ];

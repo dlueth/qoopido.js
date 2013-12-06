@@ -1,8 +1,8 @@
 /*!
 * Qoopido.js library package
 *
-* version: 3.1.4
-* date:    2013-12-05
+* version: 3.1.5
+* date:    2013-12-06
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -333,6 +333,40 @@
 	},
 	navigator, window, document
 ));
+;(function(definition) {
+	window.qoopido.register('polyfill/window/getcomputedstyle', definition);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	'use strict';
+
+	if(!window.getComputedStyle) {
+		var getComputedStyleRegex    = new RegExp('(\\-([a-z]){1})', 'g'),
+			getComputedStyleCallback = function() {
+				return arguments[2].toUpperCase();
+			};
+
+		window.getComputedStyle = function(element, pseudo) {
+			var self = this;
+
+			self.element = element;
+
+			self.getPropertyValue = function(property) {
+				if(property === 'float') {
+					property = 'styleFloat';
+				}
+
+				if(getComputedStyleRegex.test(property)) {
+					property = property.replace(getComputedStyleRegex, getComputedStyleCallback);
+				}
+
+				return element.currentStyle[property] ? element.currentStyle[property] : null;
+			};
+
+			return self;
+		};
+	}
+
+	return true;
+}));
 ;(function(definition) {
 	window.qoopido.register('function/unique/uuid', definition);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
