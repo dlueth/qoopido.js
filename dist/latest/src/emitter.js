@@ -39,12 +39,11 @@
 
 	return modules['base'].extend({
 		_mapped:   null,
-		_listener: null,
+		_listener: {},
 		_constructor: function() {
 			var self = this,
 				method;
 
-			self._listener = {};
 			self._mapped = {};
 
 			for(method in self) {

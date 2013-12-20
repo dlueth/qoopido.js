@@ -1,1 +1,0 @@
-(function(t){var e=[];Object.defineProperty||e.push("./queryselectorall"),window.qoopido.register("polyfill/document/getelementsbyclassname",t,e)})(function(t,e,n,i,r,o){"use strict";if(!o.getElementsByClassName){var a=RegExp("^|\\s+","g");o.getElementsByClassName=function(t){return t=(t+"").replace(a,"."),o.querySelectorAll(t)}}});
