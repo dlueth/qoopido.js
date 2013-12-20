@@ -74,6 +74,7 @@ Currently contains
 	- dom (pooling facilities for DOM elements)
 	- module (pooling facilities for Qoopido.js modules or external objects/classes)
 	- object (pooling facilities for objects)
+- renderer (centralized rendering pipeline)
 - support (base for feature detection)
 	- capability
 		- datauri
@@ -113,30 +114,30 @@ There currently are two ways to get Qoopido.js included into your project:
 Just download the current version from GitHub and put all the contents of the directory dist/latest/min into a directory under your project.
 
 ### GitHub way
-Clone the repository into your projects diretory structure and change into this directory. If you have Node, NPM and bower installed typing "bower install" will install eventually required external dependencies into a subdirectory named "vendor".
+Clone the repository into your projects directory structure and change into this directory. If you have Node, NPM and bower installed typing "bower install" will install eventually required external dependencies into a subdirectory named "vendor".
 
 
 Implementation
 ---------------------------
-For whichever installation way you choose you have another two options of how to actually include the modules:
+For whichever way of installation you choose you have another two options of how to actually include the modules:
 
 ### Manual way
 Simply include any required modules and, in addition, eventually required external dependencies (jQuery, Q.js, JSON2) into your HTML.
 
 ### Require.js way
-Alter your require config to include "qoopido" pointing towards the folder where you placed qoopido.js. Do not forget to add optional external dependencies like jQuery, Q.js or JSON2 to your config as wel.
+Alter your require config to include "qoopido" pointing towards the folder where you placed qoopido.js. Do not forget to add optional external dependencies like jQuery, Q.js or JSON2 to your config as well.
 
 Usage
 ---------------------------
 ### base
-Most basic class that every(!) other class extends. It provides the object inheritance/extension mechanism of Qoopido.js and provides and manages the module factory. Every class that extends "base" inherits two methods
+Most basic class that every(!) other class extends either directly or via its inheritance chain. It provides the object inheritance/extension mechanism of Qoopido.js and provides and manages the module factory. Every class that extends "base" inherits two methods
 
 - extend (to extend that particular class)
 - create (to get an instance of that class)
 
 If "create" is called on a class both "extend" and "create" will get undefined to prohibit extension/creation of an already instanciated class.
 
-Calling "create" will pass any arguments given to the class "_constructor" method.
+Calling "create" will pass any arguments given on to the class "_constructor" method.
 
 ---------------------------
 ### element
@@ -255,7 +256,7 @@ instance
 
 ---------------------------
 ### emitter
-Provides functions to emit events and or register listeners to events for a module. Whenever you need this kind of functions for a pure JavaScript module (for DOM elements use "element" instead). It offers the following methods:
+Provides functions to emit events and or register listeners to events for a JavaScript module. For DOM elements use "element" instead. It offers the following methods:
 
 #### function emit(string event)
 > **Description:**

@@ -16,7 +16,7 @@
  * @require ./vector/2d
  */
 ;(function(definition) {
-	window.qoopido.register('particle', definition, [ './emitter', 'pool/module', './vector/2d' ]);
+	window.qoopido.register('particle', definition, [ './emitter', './pool/module', './vector/2d' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
@@ -56,27 +56,14 @@
 
 			var i, acceleration;
 
-			if(factor !== 1) {
-				this._velocity.x = this.velocity.x;
-				this._velocity.y = this.velocity.y;
-				this._velocity   = this._velocity.multiply(factor);
-
-				for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
-					this._acceleration.x = acceleration.x;
-					this._acceleration.y = acceleration.y;
-					this._acceleration   = this._acceleration.multiply(factor);
-
-					this._velocity.add(this._acceleration);
-				}
-
-				this.position.add(this._velocity);
-			} else {
-				for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
-					this.velocity.add(acceleration);
-				}
-
-				this.position.add(this.velocity);
+			for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
+				this.velocity.add(acceleration);
 			}
+
+			this._velocity.x = this.velocity.x * factor;
+			this._velocity.y = this.velocity.y * factor;
+
+			this.position.add(this._velocity);
 		}
 	});
 
