@@ -96,7 +96,7 @@
 				}
 			};
 
-			qDocument.on(''.concat('visibilitychange ', mSupport.getPrefix().properties[0], 'visibilitychange'), function() { onVisibilityChange.call(self); });
+			qDocument.on(''.concat('visibilitychange ', mSupport.getPrefix()[0], 'visibilitychange'), function() { onVisibilityChange.call(self); });
 
 			onVisibilityChange.call(self);
 		}
