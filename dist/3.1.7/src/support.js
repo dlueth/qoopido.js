@@ -28,8 +28,9 @@
 	'use strict';
 
 	var Q               = modules['q'] || window.Q,
-		regexProperty   = new RegExp('-([a-z])', 'gi'),
 		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
+		regexProperty   = new RegExp('-([a-z])', 'gi'),
+		regexCss        = new RegExp('([A-Z])', 'g'),
 		callbackUcfirst = function() {
 			return arguments[1].ucfirst();
 		},
@@ -97,7 +98,7 @@
 					stored =  'Khtml';
 				}
 
-				stored = lookup.prefix = (stored === false)? false : { method: stored, properties: [ stored.toLowerCase(), stored.toLowerCase().ucfirst() ] };
+				stored = lookup.prefix = (stored === false)? false : [ stored.toLowerCase(), stored.toLowerCase().ucfirst(), stored ];
 
 				sample.dispose();
 			}
@@ -120,7 +121,7 @@
 					prefixes   = this.getPrefix();
 
 				if(prefixes !== false) {
-					candidates = (pMethod + ' ' + prefixes.method + uMethod + ' ' + prefixes.properties.join(uMethod + ' ') + uMethod).split(' ');
+					candidates = (pMethod + ' ' + prefixes.join(uMethod + ' ') + uMethod).split(' ');
 				} else {
 					candidates = [ pMethod ];
 				}
@@ -153,7 +154,7 @@
 					prefixes  = this.getPrefix();
 
 				if(prefixes !== false) {
-					candidates = (pProperty + ' ' + prefixes.properties.join(uProperty + ' ') + uProperty).split(' ');
+					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 				} else {
 					candidates = [ pProperty ];
 				}
@@ -182,7 +183,7 @@
 					i          = 0,
 					sample     = shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
-					prefixes   = (this.getPrefix() || { properties: [] }).properties,
+					prefixes   = this.getPrefix() || [],
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 
 				for(i; (candidate = candidates[i]) !== undefined; i++) {
@@ -192,7 +193,7 @@
 					}
 				}
 
-				lookup.css[pProperty] = stored;
+				lookup.css[pProperty] = stored !== false ? ['-' + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
 
 				sample.dispose();
 			}

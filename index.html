@@ -1,47 +1,79 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
+	<title>Qoopido.js example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="./base.css" />
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
-	<script type="text/javascript">
-		require.config({
-			baseUrl: 'dist/latest/min',
-			paths: {
-				jquery: '//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min',
-				q:      '//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.6/q.min',
-				json:   '//cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.min'
-			},
-			shim: {
-				json: {
-					exports: 'JSON'
-				}
-			}
-		});
-	</script>
+	<style type="text/css">
+		body {
+			padding:    20px;
+			text-align: center;
+		}
+
+		#console {
+			display:    inline-block;
+			position:   relative;
+			left:       0;
+			top:        0;
+			width:      520px;
+			text-align: left;
+		}
+
+		.test {
+			padding: 5px 10px;
+		}
+
+		.test + .test {
+			border-top: 1px dotted rgba(255, 255, 255, 0.2);
+		}
+
+		.test b {
+			float:       right;
+			font-weight: normal;
+		}
+	</style>
 </head>
 <body>
-<div id="console">
-	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
-		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
-		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
-	</svg>
 
-	<h3>Settings</h3>
-	<ul>
-		<li>Width:         <span data-setting="width:320,800,8"></span></li>
-		<li>Brightness:    <span data-setting="brightness:-100,100,1"></span></li>
-		<li>Contrast:      <span data-setting="contrast:0,100,1"></span></li>
-		<li>Pixel size:    <span data-setting="size:4,24,1"></span></li>
-		<li>Pixel spacing: <span data-setting="space:0,10,1"></span></li>
-		<li>Pixel alpha:   <span data-setting="alpha:0,100,1"></span></li>
-		<li>Pixel radius:  <span data-setting="radius:0,8,1"></span></li>
-	</ul>
-	<div class="actions">
-		<span data-pause="pause,resume">pause</span>
-		<span data-download><a href="#" download="pixelated_me.png">download</a></span>
-	</div>
+<div id="console">
+	<h3>General</h3>
+	<div class="test">Prefixes: <b id="prefix-property">pending</b></div>
+
+	<h3>DOM method support</h3>
+	<div class="test">window.requestAnimationFrame: <b id="prefix-method-requestanimationframe">pending</b></div>
+	<div class="test">element.matchesSelector: <b id="prefix-method-matchesselector">pending</b></div>
+
+	<h3>DOM property support</h3>
+	<div class="test">document.hidden: <b id="prefix-property-hidden">pending</b></div>
+
+	<h3>CSS-Property support</h3>
+	<div class="test">style.borderRadius: <b id="prefix-css-borderradius">pending</b></div>
+	<div class="test">style.boxSizing: <b id="prefix-css-boxsizing">pending</b></div>
+	<div class="test">style.animation: <b id="prefix-css-animation">pending</b></div>
+
+	<h3>Feature detection</h3>
+	<div class="test">/capability/datauri: <b id="capability-datauri">pending</b></div>
+	<div class="test">/css/borderradius: <b id="css-borderradius">pending</b></div>
+	<div class="test">/css/boxshadow: <b id="css-boxshadow">pending</b></div>
+	<div class="test">/css/rem: <b id="css-rem">pending</b></div>
+	<div class="test">/css/rgba: <b id="css-rgba">pending</b></div>
+	<div class="test">/css/textshadow: <b id="css-textshadow">pending</b></div>
+	<div class="test">/css/transform: <b id="css-transform">pending</b></div>
+	<div class="test">/css/transform/2d: <b id="css-transform-2d">pending</b></div>
+	<div class="test">/css/transform/3d: <b id="css-transform-3d">pending</b></div>
+	<div class="test">/element/canvas: <b id="element-canvas">pending</b></div>
+	<div class="test">/element/canvas/todataurl: <b id="element-canvas-todataurl">pending</b></div>
+	<div class="test">/element/canvas/todataurl/jpeg: <b id="element-canvas-todataurl-jpeg">pending</b></div>
+	<div class="test">/element/canvas/todataurl/png: <b id="element-canvas-todataurl-png">pending</b></div>
+	<div class="test">/element/canvas/todataurl/webp: <b id="element-canvas-todataurl-webp">pending</b></div>
+	<div class="test">/element/video: <b id="element-video">pending</b></div>
+	<div class="test">/element/video/mp4: <b id="element-video-mp4">pending</b></div>
+	<div class="test">/element/video/ogg: <b id="element-video-ogg">pending</b></div>
+	<div class="test">/element/video/webm: <b id="element-video-webm">pending</b></div>
+	<div class="test">/element/svg: <b id="element-svg">pending</b></div>
 </div>
 
-<script type="text/javascript" src="./codepen/zBhwv.js"></script>
+<script type="text/javascript" data-main="./example/main.js" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.9/require.min.js"></script>
+
 </body>
 </html>

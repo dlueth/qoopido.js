@@ -1,12 +1,12 @@
 /*!
 * Qoopido.js library package
 *
-* version: 3.1.6
-* date:    2013-12-21
+* version: 3.1.7
+* date:    2014-01-05
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
-* Copyright (c) 2013 Dirk Lueth
+* Copyright (c) 2014 Dirk Lueth
 *
 * Dual licensed under the MIT and GPL licenses.
 *  - http://www.opensource.org/licenses/mit-license.php

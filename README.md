@@ -1,14 +1,11 @@
 Qoopido.js
 ==========
 
-Qoopido.js is a concept for a modularly built and loadable JavaScript library. Due to its modular structure and the extension/interitance pattern it is based on it is easily extendable as well. Every module supports being loaded via require.js as an AMD module beside including it (and its dependencies) via script tags.
+Qoopido.js is a concept for a modularly built and loadable JavaScript library. Due to its modular structure and the extension/interitance pattern it is based on it is easily extendable as well. So it is both, a library of modules already developed as well as an extendable base for your very own modules. Every module included supports being loaded via require.js as an AMD module or including it (and its dependencies) via script tags.
 
 The idea to build Qoopido.js was born while developing jQuery plugins. Trying to find the best possible plugin skeleton/boilerplate started to show that jQuery has, albeit being a really exceptional library, its limitations. Especially when dealing with more and more complex plugins. Complex, in this case, mainly stands for stateful and programmatically independent via a public API that supports or encourages the use of Vanilla JS.
 
-If you really need to compare Qoopido.js to something: It is a mixture of jQuery, modernizr and standalone JavaScript modules providing more complex functionality together building a highly modular, flexible and extendable foundation. Ir is, so to speak, a collection of concepts and standalone scripts I developed over time.
-
-Using qoopido.js
----------------------------
+If you really want to compare Qoopido.js to something you most likely know: It is a mixture of jQuery, modernizr and standalone JavaScript modules providing more complex functionality together building a highly modular, flexible and extendable foundation. It is, so to speak, a collection of concepts and standalone scripts I developed over time.
 
 Compatibility
 ---------------------------
@@ -16,13 +13,34 @@ Qoopido.js is not meant to support older legacy Internet Explorers but should ru
 
 External dependencies
 ---------------------------
-The library itself does not depend on jQuery but some modules (everything under the jquery folder) are either jQuery specific or provide an abstraction for Qoopido.js modules to function as jQuery plugins in addition.
+The library itself does not depend on jQuery but some modules (everything within the jquery folder) are either jQuery specific or provide an abstraction for Qoopido.js modules to function as jQuery plugins.
 
-To deal with the special challenges of asynchronous tasks some modules (support, transport, worker) of Qoopido.js make use of promises/deferreds. To stay standards conform and open Qoopido.js relies on Q.js a standards based implementation of promises.
+To deal with the special challenges of asynchronous tasks some modules (e.g. support, transport, worker) of Qoopido.js make use of promises/deferreds. To stay standards conform and open Qoopido.js relies on Q.js a standards based implementation of JavaScript promises.
 
-By the time of this writing only one module (shrinkimage) requires support for JSON.parse. JSON should be built-in on all newer Browsers but lacks support in older legacy browsers. For this purpose I greatly recommend JSON2 specifically.
+By the time of this writing only one module (shrinkimage) requires support for JSON.parse. JSON should be built-in on all newer Browsers but lacks support in older legacy browsers. For this purpose I greatly recommend JSON2 specifically (JSON3 does not seem to work reliably yet).
 
-Currently contains
+Installation
+---------------------------
+There currently are two ways to get Qoopido.js included into your project:
+
+### Manual way
+Just download the current version from GitHub and put all the contents of the directory dist/latest/src or dist/latest/min into a directory under your project root.
+
+### GitHub way
+Clone the repository into your projects directory structure and change into this directory. If you have Node, NPM and bower installed typing "bower install" will install eventually required external dependencies into a subdirectory named "vendor".
+
+
+Implementation
+---------------------------
+Whichever way of installation you choose you have another two options of how to actually include your desired modules:
+
+### Manual way
+Simply include any required modules and dependencies as well as eventually required external dependencies (jQuery, Q.js, JSON2) in your HTML.
+
+### Require.js way (prefered)
+Alter your require config to include "qoopido" (or any other name you prefer) pointing towards the folder where you placed Qoopido.js. Do not forget to add optional external dependencies like jQuery, Q.js or JSON2 to your config as well.
+
+Included modules
 ---------------------------
 - [base](#base) (object inheritance)
 - [emitter](#emitter) (event emitter)
@@ -106,34 +124,13 @@ Currently contains
 	- 2d
 - worker (flexible web worker implementation)
 
-Installation
----------------------------
-There currently are two ways to get Qoopido.js included into your project:
-
-### Manual way
-Just download the current version from GitHub and put all the contents of the directory dist/latest/min into a directory under your project.
-
-### GitHub way
-Clone the repository into your projects directory structure and change into this directory. If you have Node, NPM and bower installed typing "bower install" will install eventually required external dependencies into a subdirectory named "vendor".
-
-
-Implementation
----------------------------
-For whichever way of installation you choose you have another two options of how to actually include the modules:
-
-### Manual way
-Simply include any required modules and, in addition, eventually required external dependencies (jQuery, Q.js, JSON2) into your HTML.
-
-### Require.js way
-Alter your require config to include "qoopido" pointing towards the folder where you placed qoopido.js. Do not forget to add optional external dependencies like jQuery, Q.js or JSON2 to your config as well.
-
 Usage
 ---------------------------
 ### base
 Most basic class that every(!) other class extends either directly or via its inheritance chain. It provides the object inheritance/extension mechanism of Qoopido.js and provides and manages the module factory. Every class that extends "base" inherits two methods
 
 - extend (to extend that particular class)
-- create (to get an instance of that class)
+- create (to retrieve an instance of that class)
 
 If "create" is called on a class both "extend" and "create" will get undefined to prohibit extension/creation of an already instanciated class.
 

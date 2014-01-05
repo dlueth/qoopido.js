@@ -1,12 +1,12 @@
 /*!
 * Qoopido.js library package
 *
-* version: 3.1.6
-* date:    2013-12-21
+* version: 3.1.7
+* date:    2014-01-05
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
-* Copyright (c) 2013 Dirk Lueth
+* Copyright (c) 2014 Dirk Lueth
 *
 * Dual licensed under the MIT and GPL licenses.
 *  - http://www.opensource.org/licenses/mit-license.php
@@ -1274,8 +1274,9 @@
 	'use strict';
 
 	var Q               = modules['q'] || window.Q,
-		regexProperty   = new RegExp('-([a-z])', 'gi'),
 		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
+		regexProperty   = new RegExp('-([a-z])', 'gi'),
+		regexCss        = new RegExp('([A-Z])', 'g'),
 		callbackUcfirst = function() {
 			return arguments[1].ucfirst();
 		},
@@ -1343,7 +1344,7 @@
 					stored =  'Khtml';
 				}
 
-				stored = lookup.prefix = (stored === false)? false : { method: stored, properties: [ stored.toLowerCase(), stored.toLowerCase().ucfirst() ] };
+				stored = lookup.prefix = (stored === false)? false : [ stored.toLowerCase(), stored.toLowerCase().ucfirst(), stored ];
 
 				sample.dispose();
 			}
@@ -1366,7 +1367,7 @@
 					prefixes   = this.getPrefix();
 
 				if(prefixes !== false) {
-					candidates = (pMethod + ' ' + prefixes.method + uMethod + ' ' + prefixes.properties.join(uMethod + ' ') + uMethod).split(' ');
+					candidates = (pMethod + ' ' + prefixes.join(uMethod + ' ') + uMethod).split(' ');
 				} else {
 					candidates = [ pMethod ];
 				}
@@ -1399,7 +1400,7 @@
 					prefixes  = this.getPrefix();
 
 				if(prefixes !== false) {
-					candidates = (pProperty + ' ' + prefixes.properties.join(uProperty + ' ') + uProperty).split(' ');
+					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 				} else {
 					candidates = [ pProperty ];
 				}
@@ -1428,7 +1429,7 @@
 					i          = 0,
 					sample     = shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
-					prefixes   = (this.getPrefix() || { properties: [] }).properties,
+					prefixes   = this.getPrefix() || [],
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 
 				for(i; (candidate = candidates[i]) !== undefined; i++) {
@@ -1438,7 +1439,7 @@
 					}
 				}
 
-				lookup.css[pProperty] = stored;
+				lookup.css[pProperty] = stored !== false ? ['-' + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
 
 				sample.dispose();
 			}

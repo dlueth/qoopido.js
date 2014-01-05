@@ -32,7 +32,8 @@ module.exports = function (grunt) {
 		},
 		jshint:{
 			options: {
-				jshintrc: '.jshintrc'
+				jshintrc: '.jshintrc',
+				reporter: require('jshint-stylish')
 			},
 			all:[
 				'./Gruntfile.js',
@@ -226,7 +227,7 @@ module.exports = function (grunt) {
 		}
 	});
 
-	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+	require('load-grunt-tasks')(grunt);
 
 	grunt.registerTask('default', ['jshint:all', 'clean:dist', 'copy:dist', 'uglifyrecursive:dist', 'copy:latest', 'concat']);
 };
