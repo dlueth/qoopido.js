@@ -184,16 +184,22 @@
 					sample     = shared.pool.dom.obtain('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = this.getPrefix() || [],
-					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
+					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' '),
+					prefix     = '';
 
 				for(i; (candidate = candidates[i]) !== undefined; i++) {
 					if(sample.style[candidate] !== undefined) {
 						stored = candidate;
+
+						if(i > 0) {
+							prefix = '-';
+						}
+
 						break;
 					}
 				}
 
-				lookup.css[pProperty] = stored !== false ? ['-' + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
+				lookup.css[pProperty] = stored !== false ? [prefix + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
 
 				sample.dispose();
 			}
