@@ -21,6 +21,9 @@
  * @polyfill ./polyfill/object/getownpropertynames
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
+
+/* global define, require, console */
+
 ;(function(definition, navigator, window, document, undefined) {
 	'use strict';
 
@@ -126,6 +129,12 @@
 			return descriptors;
 		}
 
+		function prohibitCall() {
+			if(typeof console !== 'undefined') {
+				console.error('[Qoopido.js] Operation prohibited on an actual instance');
+			}
+		}
+
 		return {
 			create: function() {
 				var instance = Object.create(this, getOwnPropertyDescriptors(this)),
@@ -135,7 +144,7 @@
 					result = instance._constructor.apply(instance, arguments);
 				}
 
-				instance.create = instance.extend = undefined;
+				instance.create = instance.extend = prohibitCall;
 
 				return result || instance;
 			},
