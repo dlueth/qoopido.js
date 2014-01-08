@@ -22,15 +22,18 @@
 
 	return support.addTest('/element/canvas/todataurl', function(deferred) {
 		modules['support/element/canvas']()
-			.then(function() {
-				var sample = support.pool ? support.pool.obtain('canvas') : document.createElement('canvas');
+			.then(
+				function() {
+					var sample = support.pool ? support.pool.obtain('canvas') : document.createElement('canvas');
 
-				(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
+					(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
 
-				sample.dispose && sample.dispose();
-			})
-			.fail(function() {
-				deferred.reject();
-			});
+					sample.dispose && sample.dispose();
+				},
+				function() {
+					deferred.reject();
+				}
+			)
+			.done();
 	});
 }));

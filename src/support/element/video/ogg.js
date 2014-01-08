@@ -22,15 +22,18 @@
 
 	return support.addTest('/element/video/ogg', function(deferred) {
 		modules['support/element/video']()
-			.then(function() {
-				var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
+			.then(
+				function() {
+					var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
 
-				(sample.canPlayType('video/ogg; codecs="theora, vorbis"')) ? deferred.resolve() : deferred.reject();
+					(sample.canPlayType('video/ogg; codecs="theora, vorbis"')) ? deferred.resolve() : deferred.reject();
 
-				sample.dispose && sample.dispose();
-			})
-			.fail(function() {
-				deferred.reject();
-			});
+					sample.dispose && sample.dispose();
+				},
+				function() {
+					deferred.reject();
+				}
+			)
+			.done();
 	});
 }));
