@@ -60,16 +60,18 @@
 		function(name, fn) {
 			var self    = this,
 				element = self.element,
-				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-
-			element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+				luid;
 
 			if(element['on' + name] !== undefined) {
+				luid          = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+				element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+
 				element.attachEvent('on' + name, element[luid]);
 			} else {
 				name = ''.concat('fake[', name, ']');
 
 				element[name] = null;
+
 				element.attachEvent('onpropertychange', function(event) {
 					if(event.propertyName === name) {
 						fn.call(this, normalizeEvent(element[name]));

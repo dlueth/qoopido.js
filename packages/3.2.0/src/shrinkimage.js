@@ -1,7 +1,7 @@
 /*!
 * Qoopido.js library package
 *
-* version: 3.1.9
+* version: 3.2.0
 * date:    2014-01-08
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
@@ -467,16 +467,18 @@
 		function(name, fn) {
 			var self    = this,
 				element = self.element,
-				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-
-			element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+				luid;
 
 			if(element['on' + name] !== undefined) {
+				luid          = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+				element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+
 				element.attachEvent('on' + name, element[luid]);
 			} else {
 				name = ''.concat('fake[', name, ']');
 
 				element[name] = null;
+
 				element.attachEvent('onpropertychange', function(event) {
 					if(event.propertyName === name) {
 						fn.call(this, normalizeEvent(element[name]));
@@ -878,192 +880,6 @@
 			return regexLocal.test(this.resolve(url));
 		}
 	});
-}));
-;(function(definition) {
-	window.qoopido.register('pool', definition, [ './function/merge', './function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
-	'use strict';
-
-	var prototype,
-		settings = {
-			interval:    1000 / 60,
-			frameBudget: 0.5,
-			maxPoolsize: 1000
-		};
-
-	function processQueue() {
-		var self        = this,
-			metrics     = self.metrics,
-			settings    = self._settings,
-			queue       = self._queue,
-			variables   = self._variables,
-			spliceLimit = 1,
-			spliceLength, elements, durationStart;
-
-		if(queue.length > 0) {
-			if(variables.durationAverage > 0) {
-				spliceLimit = ~~(((spliceLimit = settings.frameBudget / variables.durationAverage) < 1) ? 1 : spliceLimit);
-			}
-
-			if((spliceLength = Math.min(queue.length, (elements = queue.splice(0, spliceLimit)).length)) > 0) {
-				if(metrics.inPool + spliceLength <= settings.maxPoolsize) {
-					durationStart = new Date().getTime();
-
-					for(var i = 0; i < spliceLength; i++) {
-						var element = elements[i],
-							quid    = element._quid,
-							dispose = element.dispose;
-
-						element         = self._dispose(element);
-						element._quid   = quid;
-						element.dispose = dispose;
-
-						self._getPool.call(self, element).push(element);
-					}
-
-					metrics.inPool            += spliceLength;
-					metrics.inQueue           -= spliceLength;
-					variables.durationSamples += spliceLength;
-					variables.durationTotal   += new Date().getTime() - durationStart;
-					variables.durationAverage  = variables.durationTotal / variables.durationSamples;
-				} else {
-					if(typeof self._destroy === 'function') {
-						for(var j = 0; j < spliceLength; j++) {
-							self._destroy(elements[j]);
-						}
-					}
-
-					elements.length    = 0;
-					metrics.inQueue   -= spliceLength;
-					metrics.destroyed += spliceLength;
-				}
-			}
-		}
-	}
-
-	prototype = modules['base'].extend({
-		metrics:    null,
-		_settings:  null,
-		_pool:      null,
-		_queue:     null,
-		_variables: null,
-		_constructor: function(options) {
-			var self = this;
-
-			self.metrics      = { total: 0, inPool: 0, inUse: 0, inQueue: 0, recycled: 0, destroyed: 0 };
-			self._settings    = modules['function/merge']({}, settings, options);
-			self._pool        = self._initPool();
-			self._queue       = [];
-			self._variables   = { durationSamples: 0, durationTotal: 0, durationAverage: 0 };
-
-			setInterval(function() { processQueue.call(self); }, self._settings.interval);
-		},
-		_initPool: function() {
-			return [];
-		},
-		_initElement: function(element) {
-			var self = this;
-
-			element._quid   = modules['function/unique/uuid']();
-			element.dispose = function() { self.dispose(element); };
-
-			self.metrics.total++;
-
-			return element;
-		},
-		_getPool: function() {
-			return this._pool;
-		},
-		obtain: function() {
-			var self    = this,
-				element = self._getPool.apply(self, arguments).pop();
-
-			if(element) {
-				self.metrics.inPool--;
-				self.metrics.recycled++;
-			} else {
-				element = self._initElement(self._obtain.apply(self, arguments));
-			}
-
-			if(typeof element._obtain === 'function') {
-				element._obtain.apply(element, arguments);
-			}
-
-			self.metrics.inUse++;
-
-			return element;
-		},
-		dispose: function(element) {
-			var self  = this,
-				queue = self._queue;
-
-			if(!element._quid) {
-				element = self._initElement(element);
-
-				self.metrics.inUse++;
-			}
-
-			if(typeof element._dispose === 'function') {
-				element._dispose();
-			}
-
-			queue.push(element);
-
-			self.metrics.inUse--;
-			self.metrics.inQueue++;
-
-			return null;
-		}
-	});
-
-	return prototype;
-}));
-;(function(definition) {
-	window.qoopido.register('pool/dom', definition, [ '../pool' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
-	'use strict';
-
-	var prototype = modules['pool'].extend({
-		_initPool: function() {
-			return {};
-		},
-		_getPool: function(type) {
-			var self = this;
-
-			if(typeof type !== 'string') {
-				type = type.tagName.toLowerCase();
-			}
-
-			return (self._pool[type] = self._pool[type] || []);
-		},
-		_dispose: function(element) {
-			var property;
-
-			if(element.parentNode) {
-				element.parentNode.removeChild(element);
-			}
-
-			for(property in element) {
-				if(Object.prototype.hasOwnProperty.call(element, property)) {
-					try {
-						element.removeAttribute(property);
-					} catch(exception) {
-						element.property = null;
-					}
-				}
-			}
-
-			return element;
-		},
-		_obtain: function(type) {
-			return document.createElement(type);
-		}
-	});
-
-	shared.pool     = shared.pool || {};
-	shared.pool.dom = prototype.create();
-
-	return prototype;
 }));
 ;(function(definition) {
 	window.qoopido.register('transport', definition, [ './function/merge' ]);
@@ -1663,6 +1479,7 @@
 		JSON            = modules['json'] || window.JSON,
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
+		pool            = shared.pool && shared.pool.dom,
 		lookup          = {},
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
@@ -1697,46 +1514,46 @@
 		modules['support'].testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
 			.then(settings.debug)
 			.then(
-				function() {
-					switch(typeof lookup[target]) {
-						case 'object':
-							lookup[target].one(EVENT_LOADED, function(event) {
-								assign.call(self, event.data, isBackground);
-							});
+			function() {
+				switch(typeof lookup[target]) {
+					case 'object':
+						lookup[target].one(EVENT_LOADED, function(event) {
+							assign.call(self, event.data, isBackground);
+						});
 
-							self.emit(EVENT_QUEUED);
-							break;
-						case 'string':
-							assign.call(self, lookup[target], isBackground);
-							break;
-						default:
-							lookup[target] = loader
-								.create(target, (!isBackground) ? self._element : null)
-								.one(EVENT_STATE, function(event) {
-									if(event.type === EVENT_LOADED) {
-										lookup[target] = event.data;
+						self.emit(EVENT_QUEUED);
+						break;
+					case 'string':
+						assign.call(self, lookup[target], isBackground);
+						break;
+					default:
+						lookup[target] = loader
+							.create(target, (!isBackground) ? self._element : null)
+							.one(EVENT_STATE, function(event) {
+								if(event.type === EVENT_LOADED) {
+									lookup[target] = event.data;
 
-										self.emit(EVENT_CACHED);
+									self.emit(EVENT_CACHED);
 
-										assign.call(self, event.data, isBackground);
-									} else {
-										lookup[target] = url;
+									assign.call(self, event.data, isBackground);
+								} else {
+									lookup[target] = url;
 
-										assign.call(self, url, isBackground);
-									}
-								}, false);
+									assign.call(self, url, isBackground);
+								}
+							}, false);
 
-							break;
-					}
+						break;
 				}
-			)
+			}
+		)
 			.fail(
-				function() {
-					lookup[target] = url;
+			function() {
+				lookup[target] = url;
 
-					assign.call(self, url, isBackground);
-				}
-			)
+				assign.call(self, url, isBackground);
+			}
+		)
 			.done();
 	}
 
@@ -1760,30 +1577,31 @@
 		var self = this;
 
 		transport.get(self._url)
-			.done(
-				function(response) {
-					try {
-						var data = JSON.parse(response.data);
+			.then(
+			function(response) {
+				try {
+					var data = JSON.parse(response.data);
 
-						data.width  = parseInt(data.width, 10);
-						data.height = parseInt(data.height, 10);
+					data.width  = parseInt(data.width, 10);
+					data.height = parseInt(data.height, 10);
 
-						processData.call(self, data);
-					} catch(exception) {
-						self.emit(EVENT_FAILED);
-					}
-				},
-				function() {
+					processData.call(self, data);
+				} catch(exception) {
 					self.emit(EVENT_FAILED);
 				}
-			);
+			},
+			function() {
+				self.emit(EVENT_FAILED);
+			}
+		)
+			.done();
 	}
 
 	function processData(data) {
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = shared.pool.dom.obtain('canvas');
+				canvas = pool ? shared.pool.dom.obtain('canvas') : document.createElement('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -1813,7 +1631,7 @@
 			},
 			dispose = function() {
 				if(canvas) {
-					canvas.dispose();
+					canvas.dispose && canvas.dispose();
 				}
 
 				if(self.element._quid && self.element.dispose) {
@@ -1875,10 +1693,10 @@
 			var self = this;
 
 			if(!element) {
-				element = shared.pool.dom.obtain('img');
+				element = pool ? shared.pool.dom.obtain('img') : document.createElement('img');
 			}
 
-			prototype._parent._constructor.call(self, element);
+			loader._parent._constructor.call(self, element);
 
 			self._url = url;
 

@@ -23,7 +23,6 @@
  * @require ../../support/capability/datauri
  * @require ../../support/element/canvas/todataurl/png
  * @require ../../transport/xhr
- * @require ../../pool/dom
  * @external JSON
  */
 ;(function(definition) {
@@ -42,6 +41,7 @@
 		JSON            = modules['json'] || window.JSON,
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
+		pool            = shared.pool && shared.pool.dom,
 		lookup          = {},
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
@@ -76,46 +76,46 @@
 		modules['support'].testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
 			.then(settings.debug)
 			.then(
-				function() {
-					switch(typeof lookup[target]) {
-						case 'object':
-							lookup[target].one(EVENT_LOADED, function(event) {
-								assign.call(self, event.data, isBackground);
-							});
+			function() {
+				switch(typeof lookup[target]) {
+					case 'object':
+						lookup[target].one(EVENT_LOADED, function(event) {
+							assign.call(self, event.data, isBackground);
+						});
 
-							self.emit(EVENT_QUEUED);
-							break;
-						case 'string':
-							assign.call(self, lookup[target], isBackground);
-							break;
-						default:
-							lookup[target] = loader
-								.create(target, (!isBackground) ? self._element : null)
-								.one(EVENT_STATE, function(event) {
-									if(event.type === EVENT_LOADED) {
-										lookup[target] = event.data;
+						self.emit(EVENT_QUEUED);
+						break;
+					case 'string':
+						assign.call(self, lookup[target], isBackground);
+						break;
+					default:
+						lookup[target] = loader
+							.create(target, (!isBackground) ? self._element : null)
+							.one(EVENT_STATE, function(event) {
+								if(event.type === EVENT_LOADED) {
+									lookup[target] = event.data;
 
-										self.emit(EVENT_CACHED);
+									self.emit(EVENT_CACHED);
 
-										assign.call(self, event.data, isBackground);
-									} else {
-										lookup[target] = url;
+									assign.call(self, event.data, isBackground);
+								} else {
+									lookup[target] = url;
 
-										assign.call(self, url, isBackground);
-									}
-								}, false);
+									assign.call(self, url, isBackground);
+								}
+							}, false);
 
-							break;
-					}
+						break;
 				}
-			)
+			}
+		)
 			.fail(
-				function() {
-					lookup[target] = url;
+			function() {
+				lookup[target] = url;
 
-					assign.call(self, url, isBackground);
-				}
-			)
+				assign.call(self, url, isBackground);
+			}
+		)
 			.done();
 	}
 
@@ -139,30 +139,31 @@
 		var self = this;
 
 		transport.get(self._url)
-			.done(
-				function(response) {
-					try {
-						var data = JSON.parse(response.data);
+			.then(
+			function(response) {
+				try {
+					var data = JSON.parse(response.data);
 
-						data.width  = parseInt(data.width, 10);
-						data.height = parseInt(data.height, 10);
+					data.width  = parseInt(data.width, 10);
+					data.height = parseInt(data.height, 10);
 
-						processData.call(self, data);
-					} catch(exception) {
-						self.emit(EVENT_FAILED);
-					}
-				},
-				function() {
+					processData.call(self, data);
+				} catch(exception) {
 					self.emit(EVENT_FAILED);
 				}
-			);
+			},
+			function() {
+				self.emit(EVENT_FAILED);
+			}
+		)
+			.done();
 	}
 
 	function processData(data) {
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = shared.pool.dom.obtain('canvas');
+				canvas = pool ? shared.pool.dom.obtain('canvas') : document.createElement('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -192,7 +193,7 @@
 			},
 			dispose = function() {
 				if(canvas) {
-					canvas.dispose();
+					canvas.dispose && canvas.dispose();
 				}
 
 				if(self.element._quid && self.element.dispose) {
@@ -254,10 +255,10 @@
 			var self = this;
 
 			if(!element) {
-				element = shared.pool.dom.obtain('img');
+				element = pool ? shared.pool.dom.obtain('img') : document.createElement('img');
 			}
 
-			prototype._parent._constructor.call(self, element);
+			loader._parent._constructor.call(self, element);
 
 			self._url = url;
 
