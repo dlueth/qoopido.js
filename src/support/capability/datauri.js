@@ -11,16 +11,17 @@
  *
  * @require ../../support
  * @require ../../dom/element
- * @require ../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element', '../../pool/dom' ]);
+	window.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/capability/datauri', function(deferred) {
-		var sample = modules['dom/element'].create(shared.pool.dom.obtain('img'));
+	var support = modules['support'];
+
+	return support.addTest('/capability/datauri', function(deferred) {
+		var sample = modules['dom/element'].create(support.pool ? support.pool.obtain('img') : document.createElement('img'));
 
 		sample
 			.one('error load', function(event) {
@@ -30,7 +31,7 @@
 					deferred.reject();
 				}
 
-				sample.element.dispose();
+				sample.element.dispose && sample.element.dispose();
 			}, false)
 			.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
 	});

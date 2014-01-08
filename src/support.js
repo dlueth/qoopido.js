@@ -12,12 +12,11 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./base
- * @require ./pool/dom
  * @require ./polyfill/string/ucfirst
  * @external Q
  */
 ;(function(definition) {
-	var dependencies = [ './base', './pool/dom', 'q' ];
+	var dependencies = [ './base', 'q' ];
 
 	if(!String.prototype.ucfirst) {
 		dependencies.push('./polyfill/string/ucfirst');
@@ -51,6 +50,7 @@
 
 	return modules['base'].extend({
 		test: { },
+		pool: shared.pool && shared.pool.dom,
 		testMultiple: function() {
 			var test, tests = [], i = 0;
 
@@ -75,11 +75,12 @@
 			return Q.all(tests);
 		},
 		getPrefix: function() {
-			var property,
-				stored = lookup.prefix || null;
+			var self   = this,
+				stored = lookup.prefix || null,
+				property;
 
 			if(stored === null) {
-				var sample = shared.pool.dom.obtain('div'),
+				var sample = self.pool ? self.pool.obtain('div') : document.createElement('div'),
 					styles = sample.style;
 
 				stored = false;
@@ -100,7 +101,7 @@
 
 				stored = lookup.prefix = (stored === false)? false : [ stored.toLowerCase(), stored.toLowerCase().ucfirst(), stored ];
 
-				sample.dispose();
+				sample.dispose && sample.dispose();
 			}
 
 			return stored;
@@ -174,14 +175,15 @@
 		getCssProperty: function(pProperty) {
 			pProperty = pProperty.replace(regexProperty, callbackUcfirst);
 
-			var stored = lookup.css[pProperty] || null;
+			var self   = this,
+				stored = lookup.css[pProperty] || null;
 
 			if(stored === null) {
 				stored = false;
 
 				var candidate,
 					i          = 0,
-					sample     = shared.pool.dom.obtain('div'),
+					sample     = self.pool ? self.pool.obtain('div') : document.createElement('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = this.getPrefix() || [],
 					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' '),
@@ -201,7 +203,7 @@
 
 				lookup.css[pProperty] = stored !== false ? [prefix + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
 
-				sample.dispose();
+				sample.dispose && sample.dispose();
 			}
 
 			return stored;

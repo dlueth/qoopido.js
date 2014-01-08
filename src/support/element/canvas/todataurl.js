@@ -11,22 +11,23 @@
  *
  * @require ../../../support
  * @require ../canvas
- * @require ../../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/element/canvas/todataurl', definition, [ '../../../support', '../canvas', '../../../pool/dom' ]);
+	window.qoopido.register('support/element/canvas/todataurl', definition, [ '../../../support', '../canvas' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/element/canvas/todataurl', function(deferred) {
+	var support = modules['support'];
+
+	return support.addTest('/element/canvas/todataurl', function(deferred) {
 		modules['support/element/canvas']()
 			.then(function() {
-				var sample = shared.pool.dom.obtain('canvas');
+				var sample = support.pool ? support.pool.obtain('canvas') : document.createElement('canvas');
 
 				(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
 
-				sample.dispose();
+				sample.dispose && sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();

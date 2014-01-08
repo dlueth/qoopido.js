@@ -11,18 +11,19 @@
  *
  * @require ../../../support
  * @require ../transform
- * @require ../../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/css/transform/2d', definition, [ '../../../support', '../transform', '../../../pool/dom' ]);
+	window.qoopido.register('support/css/transform/2d', definition, [ '../../../support', '../transform' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/css/transform/2d', function(deferred) {
+	var support = modules['support'];
+
+	return support.addTest('/css/transform/2d', function(deferred) {
 		modules['support/css/transform']()
 			.then(function() {
-				var sample   = shared.pool.dom.obtain('div'),
+				var sample = support.pool ? support.pool.obtain('div') : document.createElement('div'),
 					property = modules['support'].getCssProperty('transform');
 
 				try {
@@ -31,7 +32,7 @@
 
 				((/rotate/).test(sample.style[property])) ? deferred.resolve() : deferred.reject();
 
-				sample.dispose();
+				sample.dispose && sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();

@@ -11,22 +11,23 @@
  *
  * @require ../../../support
  * @require ../video
- * @require ../../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/element/video/webm', definition, [ '../../../support', '../video', '../../../pool/dom' ]);
+	window.qoopido.register('support/element/video/webm', definition, [ '../../../support', '../video' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/element/video/webm', function(deferred) {
+	var support = modules['support'];
+
+	return support.addTest('/element/video/webm', function(deferred) {
 		modules['support/element/video']()
 			.then(function() {
-				var sample = shared.pool.dom.obtain('video');
+				var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
 
 				(sample.canPlayType('video/webm; codecs="vp8, vorbis"')) ? deferred.resolve() : deferred.reject();
 
-				sample.dispose();
+				sample.dispose && sample.dispose();
 			})
 			.fail(function() {
 				deferred.reject();

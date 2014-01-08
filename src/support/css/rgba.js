@@ -10,16 +10,17 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../../support
- * @require ../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/css/rgba', definition, [ '../../support', '../../pool/dom' ]);
+	window.qoopido.register('support/css/rgba', definition, [ '../../support' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/css/rgba', function(deferred) {
-		var sample = shared.pool.dom.obtain('div');
+	var support = modules['support'];
+
+	return support.addTest('/css/rgba', function(deferred) {
+		var sample = support.pool ? support.pool.obtain('div') : document.createElement('div');
 
 		try {
 			sample.style.backgroundColor = 'rgba(0,0,0,.5)';
@@ -27,6 +28,6 @@
 
 		((/rgba/).test(sample.style.backgroundColor)) ? deferred.resolve() : deferred.reject();
 
-		sample.dispose();
+		sample.dispose && sample.dispose();
 	});
 }));
