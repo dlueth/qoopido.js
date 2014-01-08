@@ -1,7 +1,7 @@
 /*!
 * Qoopido.js library package
 *
-* version: 3.1.9
+* version: 3.2.0
 * date:    2014-01-08
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
@@ -12,7 +12,7 @@
 *  - http://www.opensource.org/licenses/mit-license.php
 *  - http://www.gnu.org/copyleft/gpl.html
 */
-(function(t){var e=window.qoopido=window.qoopido||{};e.register?e.register("polyfill/object/defineproperty",t):(window.qoopido.modules=window.qoopido.modules||{})["polyfill/object/defineproperty"]=t()})(function(){"use strict";if(!Object.defineProperty||!function(){try{return Object.defineProperty({},"x",{}),!0}catch(t){return!1}}()){var t=Object.defineProperty,e=Object.prototype.__defineGetter__,n=Object.prototype.__defineSetter__;Object.defineProperty=function(r,i,o){if(t)try{return t(r,i,o)}catch(s){}if(r!==Object(r))throw new TypeError("Object.defineProperty called on non-object");return e&&"get"in o&&e.call(r,i,o.get),n&&"set"in o&&n.call(r,i,o.set),"value"in o&&(r[i]=o.value),r}}return!0});
+(function(t){var e=window.qoopido=window.qoopido||{};e.register?e.register("polyfill/object/defineproperty",t):(window.qoopido.modules=window.qoopido.modules||{})["polyfill/object/defineproperty"]=t()})(function(){"use strict";if(!Object.defineProperty||!function(){try{return Object.defineProperty({},"x",{}),!0}catch(t){return!1}}()){var t=Object.defineProperty,e=Object.prototype.__defineGetter__,n=Object.prototype.__defineSetter__;Object.defineProperty=function(r,o,i){if(t)try{return t(r,o,i)}catch(s){}if(r!==Object(r))throw new TypeError("Object.defineProperty called on non-object");return e&&"get"in i&&e.call(r,o,i.get),n&&"set"in i&&n.call(r,o,i.set),"value"in i&&(r[o]=i.value),r}}return!0});
 (function(t){var e=window.qoopido=window.qoopido||{};if(e.register){var n=[];Object.defineProperty&&function(){try{return Object.defineProperty({},"x",{}),!0}catch(t){return!1}}()||n.push("./defineproperty"),e.register("polyfill/object/defineproperties",t,n)}else(window.qoopido.modules=window.qoopido.modules||{})["polyfill/object/defineproperties"]=t()})(function(){"use strict";return Object.defineProperties||(Object.defineProperties=function(t,e){if(t!==Object(t))throw new TypeError("Object.defineProperties called on non-object");var n;for(n in e)Object.prototype.hasOwnProperty.call(e,n)&&Object.defineProperty(t,n,e[n]);return t}),!0});
 (function(t){var e=window.qoopido=window.qoopido||{};if(e.register){var n=[];Object.defineProperties||n.push("./defineproperties"),e.register("polyfill/object/create",t,n)}else(window.qoopido.modules=window.qoopido.modules||{})["polyfill/object/create"]=t()})(function(){"use strict";return Object.create||(Object.create=function(t,e){function n(){}if("object"!=typeof t)throw new TypeError;n.prototype=t;var r=new n;if(t&&(r.constructor=n),arguments.length>1){if(e!==Object(e))throw new TypeError;Object.defineProperties(r,e)}return r}),!0});
 (function(t){var e=window.qoopido=window.qoopido||{};e.register?e.register("polyfill/object/getownpropertydescriptor",t):(window.qoopido.modules=window.qoopido.modules||{})["polyfill/object/getownpropertydescriptor"]=t()})(function(){"use strict";if(!Object.getOwnPropertyDescriptor||!function(){try{return Object.getOwnPropertyDescriptor({x:0},"x"),!0}catch(t){return!1}}()){var t=Object.getOwnPropertyDescriptor;Object.getOwnPropertyDescriptor=function(e,n){if(e!==Object(e))throw new TypeError;try{return t.call(Object,e,n)}catch(r){}return Object.prototype.hasOwnProperty.call(e,n)?{value:e[n],enumerable:!0,writable:!0,configurable:!0}:undefined}}return!0});

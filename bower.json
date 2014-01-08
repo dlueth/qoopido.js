@@ -1,6 +1,6 @@
 {
   "name": "qoopido.js",
-  "version": "3.1.8",
+  "version": "3.2.0",
   "ignore": [
     "**/.*",
     "node_modules",

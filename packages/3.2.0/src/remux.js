@@ -1,7 +1,7 @@
 /*!
 * Qoopido.js library package
 *
-* version: 3.1.9
+* version: 3.2.0
 * date:    2014-01-08
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
