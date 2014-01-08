@@ -11,25 +11,29 @@
  *
  * @require ../../../support
  * @require ../video
- * @require ../../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/element/video/ogg', definition, [ '../../../support', '../video', '../../../pool/dom' ]);
+	window.qoopido.register('support/element/video/ogg', definition, [ '../../../support', '../video' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/element/video/ogg', function(deferred) {
+	var support = modules['support'];
+
+	return support.addTest('/element/video/ogg', function(deferred) {
 		modules['support/element/video']()
-			.then(function() {
-				var sample = shared.pool.dom.obtain('video');
+			.then(
+				function() {
+					var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
 
-				(sample.canPlayType('video/ogg; codecs="theora, vorbis"')) ? deferred.resolve() : deferred.reject();
+					(sample.canPlayType('video/ogg; codecs="theora, vorbis"')) ? deferred.resolve() : deferred.reject();
 
-				sample.dispose();
-			})
-			.fail(function() {
-				deferred.reject();
-			});
+					sample.dispose && sample.dispose();
+				},
+				function() {
+					deferred.reject();
+				}
+			)
+			.done();
 	});
 }));

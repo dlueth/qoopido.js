@@ -16,16 +16,16 @@
  * @require ../function/merge
  * @require ../function/unique/uuid
  * @require ../dom/element
- * @require ../pool/dom
  * @external Q
  */
 ;(function(definition) {
-	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../pool/dom', 'q' ]);
+	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', 'q' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
 		Q    = modules['q'] || window.Q,
+		pool = shared.pool && shared.pool.dom,
 		head = document.getElementsByTagName('head')[0];
 
 	function sendRequest(url, content) {
@@ -69,7 +69,7 @@
 			dfd  = self.dfd;
 
 		if(!event.readyState || event.readyState === 'loaded' || event.readyState === 'complete') {
-			self.script.off().element.dispose();
+			self.script.off() && self.script.element.dispose && self.script.element.dispose();
 		}
 
 		if(self.timeout) {
@@ -118,7 +118,7 @@
 
 			context.id       = ''.concat('jsonp-', modules['function/unique/string']());
 			context.dfd      = Q.defer();
-			context.script   = modules['dom/element'].create(shared.pool.dom.obtain('script'));
+			context.script   = modules['dom/element'].create(pool ? pool.obtain('script') : document.createElement('script'));
 			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;
 

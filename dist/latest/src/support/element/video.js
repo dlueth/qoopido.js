@@ -10,19 +10,20 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../../support
- * @require ../../pool/dom
  */
 
 ;(function(definition) {
-	window.qoopido.register('support/element/video', definition, [ '../../support', '../../pool/dom' ]);
+	window.qoopido.register('support/element/video', definition, [ '../../support' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/element/video', function(deferred) {
-		var sample = shared.pool.dom.obtain('video');
+	var support = modules['support'];
+
+	return support.addTest('/element/video', function(deferred) {
+		var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
 
 		(sample.canPlayType) ? deferred.resolve() : deferred.reject();
 
-		sample.dispose();
+		sample.dispose && sample.dispose();
 	});
 }));
