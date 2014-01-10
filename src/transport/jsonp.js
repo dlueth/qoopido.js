@@ -102,7 +102,7 @@
 			clearTimeout(self.timeout);
 		}
 
-		self.script.off().element.dispose();
+		self.script.off() && self.script.element.dispose && self.script.element.dispose();
 	}
 
 	prototype = modules['transport'].extend({
