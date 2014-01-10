@@ -12,35 +12,35 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	var qoopido = window.qoopido = window.qoopido || {};
-
+;(function(definition, qoopido) {
 	if(qoopido.register) {
 		qoopido.register('polyfill/object/getownpropertynames', definition);
 	} else {
-		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/getownpropertynames'] = definition();
+		(qoopido.modules = qoopido.modules || {})['polyfill/object/getownpropertynames'] = definition();
 	}
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
-	'use strict';
+		'use strict';
 
-	if(!Object.getOwnPropertyNames) {
-		Object.getOwnPropertyNames = function(obj) {
-			if(obj !== Object(obj)) {
-				throw new TypeError('Object.getOwnPropertyNames called on non-object');
-			}
-
-			var props = [],
-				p;
-
-			for(p in obj) {
-				if(Object.prototype.hasOwnProperty.call(obj, p)) {
-					props.push(p);
+		if(!Object.getOwnPropertyNames) {
+			Object.getOwnPropertyNames = function(obj) {
+				if(obj !== Object(obj)) {
+					throw new TypeError('Object.getOwnPropertyNames called on non-object');
 				}
-			}
 
-			return props;
-		};
-	}
+				var props = [],
+					p;
 
-	return true;
-}));
+				for(p in obj) {
+					if(Object.prototype.hasOwnProperty.call(obj, p)) {
+						props.push(p);
+					}
+				}
+
+				return props;
+			};
+		}
+
+		return true;
+	},
+	window.qoopido = window.qoopido || {}
+));

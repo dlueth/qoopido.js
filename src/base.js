@@ -22,12 +22,18 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
-/* global define, require, console */
-
-;(function(definition, navigator, window, document, undefined) {
+;(function(definition, qoopido, navigator, window, document, undefined) {
 	'use strict';
 
-	function register(id, definition, dependencies, callback) {
+	var shared            = qoopido.shared  = qoopido.shared || {},
+		modules           = qoopido.modules = qoopido.modules || {},
+		dependencies      = [],
+		isInternal        = new RegExp('^\\.+\\/'),
+		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
+		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g'),
+		register, registerSingleton;
+
+	register = qoopido.register = function register(id, definition, dependencies, callback) {
 		var namespace = id.split('/'),
 			initialize;
 
@@ -71,13 +77,13 @@
 		} else {
 			initialize();
 		}
-	}
+	};
 
-	function registerSingleton(id, definition, dependencies) {
+	registerSingleton = qoopido.registerSingleton = function registerSingleton(id, definition, dependencies) {
 		register(id, definition, dependencies, function(module) {
 			modules[id] = module.create();
 		});
-	}
+	};
 
 	function canonicalize(path) {
 		var collapsed;
@@ -88,18 +94,6 @@
 
 		return path.replace(removeNeutral, '');
 	}
-
-	var id                = 'qoopido',
-		root              = window[id] = window[id] || {},
-		shared            = root.shared  = root.shared || {},
-		modules           = root.modules = root.modules || {},
-		dependencies      = [],
-		isInternal        = new RegExp('^\\.+\\/'),
-		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
-		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
-
-	root.register          = register;
-	root.registerSingleton = registerSingleton;
 
 	if(!Object.create) {
 		dependencies.push('./polyfill/object/create');
@@ -135,6 +129,7 @@
 			}
 		}
 
+
 		return {
 			create: function() {
 				var instance = Object.create(this, getOwnPropertyDescriptors(this)),
@@ -156,5 +151,5 @@
 			}
 		};
 	},
-	navigator, window, document
+	window.qoopido = window.qoopido || {}, navigator, window, document
 ));

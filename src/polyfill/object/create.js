@@ -12,9 +12,7 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	var qoopido = window.qoopido = window.qoopido || {};
-
+;(function(definition, qoopido) {
 	if(qoopido.register) {
 		var dependencies = [];
 
@@ -24,37 +22,39 @@
 
 		qoopido.register('polyfill/object/create', definition, dependencies);
 	} else {
-		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/create'] = definition();
+		(qoopido.modules = qoopido.modules || {})['polyfill/object/create'] = definition();
 	}
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
-	'use strict';
+		'use strict';
 
-	if(!Object.create) {
-		Object.create = function(prototype, properties) {
-			if(typeof prototype !== 'object') {
-				throw new TypeError();
-			}
-
-			function Constructor() {}
-			Constructor.prototype = prototype;
-
-			var obj = new Constructor();
-
-			if(prototype) {
-				obj.constructor = Constructor;
-			}
-
-			if(arguments.length > 1) {
-				if(properties !== Object(properties)) {
+		if(!Object.create) {
+			Object.create = function(prototype, properties) {
+				if(typeof prototype !== 'object') {
 					throw new TypeError();
 				}
 
-				Object.defineProperties(obj, properties);
-			}
+				function Constructor() {}
+				Constructor.prototype = prototype;
 
-			return obj;
-		};
-	}
+				var obj = new Constructor();
 
-	return true;
-}));
+				if(prototype) {
+					obj.constructor = Constructor;
+				}
+
+				if(arguments.length > 1) {
+					if(properties !== Object(properties)) {
+						throw new TypeError();
+					}
+
+					Object.defineProperties(obj, properties);
+				}
+
+				return obj;
+			};
+		}
+
+		return true;
+	},
+	window.qoopido = window.qoopido || {}
+));
