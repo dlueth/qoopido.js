@@ -123,7 +123,7 @@
 		var self = this;
 
 		if(isBackground) {
-			self.element.style.backgroundImage = 'url(' + source + ')';
+			self.setStyle('backgroundImage', 'url(' + source + ')');
 			self.emit(EVENT_LOADED);
 			self.off();
 		} else {
@@ -196,9 +196,7 @@
 					canvas.dispose && canvas.dispose();
 				}
 
-				if(self.element._quid && self.element.dispose) {
-					self.element.dispose();
-				}
+				self.element.dispose && self.element.dispose();
 			};
 
 		self
@@ -231,7 +229,7 @@
 			self._settings = settings = modules['function/merge']({}, defaults, settings);
 
 			foreground = self.getAttribute(settings.attribute);
-			background = self.element.style.backgroundImage;
+			background = self.getStyle('backgroundImage');
 
 			if(self.type === 'IMG') {
 				processMain.call(self, foreground);
