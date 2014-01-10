@@ -287,6 +287,39 @@
 
 			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
 		},
+		hasClass: function(name) {
+			return (new RegExp('\\b' + name + '\\b')).test(this.element.className);
+		},
+		addClass: function(name) {
+			var self = this,
+				temp;
+
+			if(!self.hasClass(name)) {
+				temp = self.element.className.split(' ');
+
+				temp.push(name);
+
+				self.element.className = temp.join(' ');
+			}
+
+			return self;
+		},
+		removeClass: function(name) {
+			var self = this;
+
+			if(self.hasClass(name)) {
+				self.element.className = self.element.className.replace(new RegExp('(\\s|\\b)' + name + '(\\s|\\b)'), '');
+			}
+
+			return self;
+		},
+		toggleClass: function(name) {
+			var self = this;
+
+			self.hasClass(name) ? self.removeClass(name) : self.addClass(name);
+
+			return self;
+		},
 		on: function(events, fn) {
 			var self = this,
 				i, listener;
