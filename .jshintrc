@@ -15,7 +15,9 @@
 	"validthis":true,
 	"scripturl":true,
 	"globals":{
-		"jQuery": false,
-		"console": false
+		"define": true,
+		"console": true,
+		"ActiveXObject": true,
+		"jQuery": false
 	}
 }

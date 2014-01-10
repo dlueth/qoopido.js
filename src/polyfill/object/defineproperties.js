@@ -14,9 +14,7 @@
  *
  * @polyfill ./defineproperty
  */
-;(function(definition) {
-	var qoopido = window.qoopido = window.qoopido || {};
-
+;(function(definition, qoopido) {
 	if(qoopido.register) {
 		var dependencies = [];
 
@@ -26,28 +24,30 @@
 
 		qoopido.register('polyfill/object/defineproperties', definition, dependencies);
 	} else {
-		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/defineproperties'] = definition();
+		(qoopido.modules = qoopido.modules || {})['polyfill/object/defineproperties'] = definition();
 	}
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
-	'use strict';
+		'use strict';
 
-	if(!Object.defineProperties) {
-		Object.defineProperties = function(obj, properties) {
-			if(obj !== Object(obj)) {
-				throw new TypeError('Object.defineProperties called on non-object');
-			}
-
-			var name;
-
-			for(name in properties) {
-				if(Object.prototype.hasOwnProperty.call(properties, name)) {
-					Object.defineProperty(obj, name, properties[name]);
+		if(!Object.defineProperties) {
+			Object.defineProperties = function(obj, properties) {
+				if(obj !== Object(obj)) {
+					throw new TypeError('Object.defineProperties called on non-object');
 				}
-			}
 
-			return obj;
-		};
-	}
+				var name;
 
-	return true;
-}));
+				for(name in properties) {
+					if(Object.prototype.hasOwnProperty.call(properties, name)) {
+						Object.defineProperty(obj, name, properties[name]);
+					}
+				}
+
+				return obj;
+			};
+		}
+
+		return true;
+	},
+	window.qoopido = window.qoopido || {}
+));

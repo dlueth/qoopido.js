@@ -18,8 +18,6 @@
  * @external Q
  */
 
-/*global ActiveXObject*/
-
 ;(function(definition) {
 	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', 'q' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {

@@ -12,45 +12,45 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	var qoopido = window.qoopido = window.qoopido || {};
-
+;(function(definition, qoopido) {
 	if(qoopido.register) {
 		qoopido.register('polyfill/object/defineproperty', definition);
 	} else {
-		(window.qoopido.modules = window.qoopido.modules || {})['polyfill/object/defineproperty'] = definition();
+		(qoopido.modules = qoopido.modules || {})['polyfill/object/defineproperty'] = definition();
 	}
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
-	'use strict';
+		'use strict';
 
-	if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
-		var defineProperty = Object.defineProperty,
-			defineGetter   = Object.prototype.__defineGetter__,
-			defineSetter   = Object.prototype.__defineSetter__;
+		if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
+			var defineProperty = Object.defineProperty,
+				defineGetter   = Object.prototype.__defineGetter__,
+				defineSetter   = Object.prototype.__defineSetter__;
 
-		Object.defineProperty = function(obj, prop, desc) {
-			// In IE8 try built-in implementation for defining properties on DOM prototypes.
-			if(defineProperty) { try { return defineProperty(obj, prop, desc); } catch (exception) {} }
+			Object.defineProperty = function(obj, prop, desc) {
+				// In IE8 try built-in implementation for defining properties on DOM prototypes.
+				if(defineProperty) { try { return defineProperty(obj, prop, desc); } catch (exception) {} }
 
-			if(obj !== Object(obj)) {
-				throw new TypeError('Object.defineProperty called on non-object');
-			}
+				if(obj !== Object(obj)) {
+					throw new TypeError('Object.defineProperty called on non-object');
+				}
 
-			if(defineGetter && ('get' in desc)) {
-				defineGetter.call(obj, prop, desc.get);
-			}
+				if(defineGetter && ('get' in desc)) {
+					defineGetter.call(obj, prop, desc.get);
+				}
 
-			if(defineSetter && ('set' in desc)) {
-				defineSetter.call(obj, prop, desc.set);
-			}
+				if(defineSetter && ('set' in desc)) {
+					defineSetter.call(obj, prop, desc.set);
+				}
 
-			if('value' in desc) {
-				obj[prop] = desc.value;
-			}
+				if('value' in desc) {
+					obj[prop] = desc.value;
+				}
 
-			return obj;
-		};
-	}
+				return obj;
+			};
+		}
 
-	return true;
-}));
+		return true;
+	},
+	window.qoopido = window.qoopido || {}
+));

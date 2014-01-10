@@ -1,1 +1,0 @@
-(function(t){window.qoopido.register("support/css/transition",t,["../../support"])})(function(t){"use strict";return t.support.addTest("/css/transition",function(e){t.support.supportsCssProperty("transition")?e.resolve(t.support.getCssProperty("transition")):e.reject()})});
