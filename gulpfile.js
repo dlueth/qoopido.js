@@ -211,6 +211,38 @@ gulp.task('lazyimage', function(){
 	gulp.run('lint:remux', 'build:lazyimage');
 });
 
+gulp.task('all', function(){
+	initialize();
+
+	util.log('--------------------------------');
+	gulp.run('default');
+	util.log('--------------------------------');
+
+	initialize();
+
+	util.log('--------------------------------');
+	gulp.run('base');
+	util.log('--------------------------------');
+
+	initialize();
+
+	util.log('--------------------------------');
+	gulp.run('remux');
+	util.log('--------------------------------');
+
+	initialize();
+
+	util.log('--------------------------------');
+	gulp.run('emerge');
+	util.log('--------------------------------');
+
+	initialize();
+
+	util.log('--------------------------------');
+	gulp.run('lazyimage');
+	util.log('--------------------------------');
+});
+
 gulp.task('watch', function(){
 	gulp.watch(files.watch.concat(files.all), function(){
 		initialize();
