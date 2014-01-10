@@ -1,15 +1,15 @@
 Qoopido.js
 ==========
 
-Qoopido.js is a concept for a modularly built and loadable JavaScript library. Due to its modular structure and the extension/interitance pattern it is based on it is easily extendable as well. So it is both, a library of modules already developed as well as an extendable base for your very own modules. Every module included supports being loaded via require.js as an AMD module or including it (and its dependencies) via script tags.
+Qoopido.js is a concept for a modularly built and loadable JavaScript library. Due to its flexible structure and the extension/interitance pattern it is based on it is easily extendable. So it is both, a library of existing modules as well as an extendable base for your very own modules. Every module included supports being loaded via require.js as an AMD module or manually including it (and its dependencies) via script tags.
 
-The idea to build Qoopido.js was born while developing jQuery plugins. Trying to find the best possible plugin skeleton/boilerplate started to show that jQuery has, albeit being a really exceptional library, its limitations. Especially when dealing with more and more complex plugins. Complex, in this case, mainly stands for stateful and programmatically independent via a public API that supports or encourages the use of Vanilla JS.
 
-If you really want to compare Qoopido.js to something you most likely know: It is a mixture of jQuery, modernizr and standalone JavaScript modules providing more complex functionality together building a highly modular, flexible and extendable foundation. It is, so to speak, a collection of concepts and standalone scripts I developed over time.
 
 Compatibility
 ---------------------------
 Qoopido.js is not meant to support older legacy Internet Explorers but should run (with limitations regarding some of the modules) from IE8 onwards. I test on Chrome, Firefox, Safari for OSX, Safari for iOS and Android as well as IE8 and IE9.
+
+
 
 External dependencies
 ---------------------------
@@ -19,38 +19,287 @@ To deal with the special challenges of asynchronous tasks some modules (e.g. sup
 
 By the time of this writing only one module (shrinkimage) requires support for JSON.parse. JSON should be built-in on all newer Browsers but lacks support in older legacy browsers. For this purpose I greatly recommend JSON2 specifically (JSON3 does not seem to work reliably yet).
 
+
+
 Installation
 ---------------------------
-There currently are two ways to get Qoopido.js included into your project:
+There currently are three ways to get Qoopido.js included into your project:
 
-### Manual way
-Just download the current version from GitHub and put all the contents of the directory dist/latest/src or dist/latest/min into a directory under your project root.
+### Manual
+Download the current version from the following URLGitHub and put all the contents of the directory dist/latest/src and/or dist/latest/min into a directory under your project root.
 
-### GitHub way
-Clone the repository into your projects directory structure and change into this directory. If you have Node, NPM and bower installed typing "bower install" will install eventually required external dependencies into a subdirectory named "vendor".
+```
+https://github.com/dlueth/qoopido.js
+```
+
+### GitHub
+Clone the following repository into your projects directory structure.
+
+```
+git clone https://github.com/dlueth/qoopido.js.git
+```
+
+### Bower
+Change into your project directory and type
+
+```
+bower install qoopido.js
+```
+
+If you have Node, NPM and bower installed typing "bower install" will install eventually required external dependencies into the location you specified in the ***.bowerrc*** file in your users home directory.
 
 
-Implementation
+
+Using the library
 ---------------------------
-Whichever way of installation you choose you have another two options of how to actually include your desired modules:
+Although the library is technically capable of being manually included the prefered way definately is to load it via an AMD loader like require.js. After downloading and placing it in a sane place put the following code snippet into your HTML code to get require.js up & running:
 
-### Manual way
-Simply include any required modules and dependencies as well as eventually required external dependencies (jQuery, Q.js, JSON2) in your HTML.
+```html
+<script type="text/javascript" data-main="./app/main" src="./vendor/require.js/require.min.js"></script>
+```
 
-### Require.js way (prefered)
-Alter your require config to include "qoopido" (or any other name you prefer) pointing towards the folder where you placed Qoopido.js. Do not forget to add optional external dependencies like jQuery, Q.js or JSON2 to your config as well.
+Next create the file ***./app/main.js*** (from the ***data-main*** attribute above), copy & paste the following code snippet and adjust paths and dependencies according to your specific needs and habits:
+
+```javascript
+require.config({
+	baseUrl: 'app/',
+	paths: {
+		qoopido: '../vendor/qoopido.js/dist/latest/min',
+		q:       '../vendor/q.js/q.min'
+	}
+});
+
+require([ 'qoopido/base' ], function() {
+	'use strict';
+
+	require([ 'qoopido/worker' ], function(mWorker) {
+		// put your code here, e.g.
+		var worker = mWorker.create();
+
+		worker.execute(function() {
+				var result;
+				// do something time-consuming here
+
+				return result;
+			})
+			.then(
+				function(result) {
+					// success
+				},
+				function() {
+					// error
+				}
+			);
+	});
+});
+```
+
+This code will set some basic configuration for require.js, load Qoopido.js ***base*** module which is required for the ***worker*** module that finally gets invoked and processes a time-consuming task in the background without blocking the browsers UI.
+
+
+
+Extending the library
+---------------------------
+Put the following code snippet into your HTML code to get require.js up & running - remember to adjust any paths accordingly:
+```html
+<script type="text/javascript" data-main="./app/main" src="./vendor/require.js/require.min.js"></script>
+```
+
+Like in the example above create the file ***./app/main.js*** and copy & paste the following code:
+
+```javascript
+require.config({
+	baseUrl: 'app/',
+	paths: {
+		qoopido: '../vendor/qoopido.js/dist/latest/min',
+		q:       '../vendor/q.js/q.min'
+	}
+});
+
+require([ 'qoopido/base' ], function() {
+	'use strict';
+
+	require('mymodule', function(mymodule) {
+		// put your code here, e.g.
+		var instance = mymodule.create();
+	});
+});
+```
+
+This code will set some basic configuration for require.js, load Qoopido.js ***base*** module which is required for your custom module to be loaded and processed afterwards.
+
+Next create your module file ***app/mymodule.js*** and add the code below:
+
+```javascript
+;(function(definition) {
+	window.qoopido.register('mymodule', definition, [ 'qoopido/emitter' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	'use strict';
+
+	// add private, static(!) properties and variables here
+	// add private, static(!) methods here
+	// add private methods here (use call/apply for invocation)
+
+	var prototype = modules['emitter'].extend({
+		// add pulic properties here
+		_constructor: function() {
+			var self = this;
+
+			// optionally call parent constructor
+			prototype._parent._constructor.call(self);
+		},
+		// add public methods here
+		publicMethod: function() {
+			console.log('public method called');
+
+			return true;
+		}
+	});
+
+	return prototype;
+}));
+```
+
+You just developed your first custom module with only one public method, ***publicMethod***. By defining ***qoopido/emitter*** as a dependency and extending ***modules['emitter']*** your custom module also inherited all of its original methods.
+
+So let us see what happens when you actually call your public method (console openened) by changing your ***./app/main.js*** to:
+
+```javascript
+require.config({
+	baseUrl: 'app/',
+	paths: {
+		qoopido: '../vendor/qoopido.js/dist/latest/min',
+		q:       '../vendor/q.js/q.min'
+	}
+});
+
+require([ 'qoopido/base' ], function() {
+	'use strict';
+
+	require('mymodule', function(mymodule) {
+		var instance = mymodule.create();
+
+		instance.publicMethod();
+	});
+});
+```
+
+OK, so far so good: The module just output the string
+
+```text
+public method called
+```
+
+to your console, correct? Anything more to it, you ask? Sure! Alter your ***./app/main.js*** again to contain the following code:
+
+```javascript
+require.config({
+	baseUrl: 'app/',
+	paths: {
+		qoopido: '../vendor/qoopido.js/dist/latest/min',
+		q:       '../vendor/q.js/q.min'
+	}
+});
+
+require([ 'qoopido/base' ], function() {
+	'use strict';
+
+	require('mymodule', function(mymodule) {
+		var instance = mymodule.create()
+        		.on('prePublicMethod', function(event, originalArguments) {
+        			console.log(arguments);
+        		})
+        		.on('postPublicMethod', function(event, originalArguments, result) {
+        			console.log(arguments);
+        		});
+
+		instance.publicMethod('argument 1', 'argument 2');
+	});
+});
+```
+
+If you run this it should output something like
+
+```text
+["prePublicMethod", Array[2]]
+public method called
+["postPublicMethod", Array[2], true]
+```
+
+to your console. But what exactly happened?
+
+Remember that your module extends ***emitter*** which provides facilities to emit events and register to them. The ***emitter*** module has its own ***_constructor*** which, if invoked like you did, maps all the original methods of the extending module to emit ***pre*** and ***post*** events automatically. Private methods (prefixed with an underscore), methods of the ***emitter*** or ***base*** modules itself as well as any method prefixed with the word ***get*** will not get mapped.
+
+What we did here was to register listeners to these automatically emitted events. You can easily emit your own custom events by changing your ***app/mymodule.js*** to something like:
+
+```javascript
+;(function(definition) {
+	window.qoopido.register(mymodule, definition, [ 'qoopido/emitter' ]);
+}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	'use strict';
+
+	var prototype = modules['emitter'].extend({
+		_constructor: function() {
+			var self = this;
+
+			prototype._parent._constructor.call(self);
+		},
+		_privateMethod: function() {
+			this.emit('privateMethod', 'argument 1', 'argument 2');
+		},
+		publicMethod: function() {
+			this._privateMethod();
+		}
+	});
+
+	return prototype;
+}));
+```
+
+And afterwards register listeners in your ***./app/main.js*** like in the following example:
+
+```javascript
+require.config({
+	baseUrl: 'app/',
+	paths: {
+		qoopido: '../vendor/qoopido.js/dist/latest/min',
+		q:       '../vendor/q.js/q.min'
+	}
+});
+
+require([ 'qoopido/base' ], function() {
+	'use strict';
+
+	require('mymodule', function(mymodule) {
+		var instance = mymodule.create()
+			.on('privateMethod', function() {
+				console.log(arguments);
+			});
+
+		instance.publicMethod();
+	});
+});
+```
+
+Although this example does absolutely not present a practical use case nor anything you would come across in real code it should output something like to your console:
+
+```text
+["privateMethod", "argument 1", "argument 2"]
+```
+
+
 
 Included modules
 ---------------------------
-- [base](#base) (object inheritance)
-- [emitter](#emitter) (event emitter)
+- (object inheritance)
+- (event emitter)
 - proxy (universal proxy method)
 - url (handle URLs, parameter etc.)
 - component
 	- remux (REM based aproach to responsive web design)
 	- pager (flexible and UI/UX independent data pager)
 - dom
-	- [element](#element) (DOM element extension)
+	- (DOM element extension)
 		- emerge (react on elements entering or nearing the visible browser area)
 		- lazyimage (load images when entering or nearing the visible browser area)
 		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
@@ -123,165 +372,3 @@ Included modules
 - vector
 	- 2d
 - worker (flexible web worker implementation)
-
-Usage
----------------------------
-### base
-Most basic class that every(!) other class extends either directly or via its inheritance chain. It provides the object inheritance/extension mechanism of Qoopido.js and provides and manages the module factory. Every class that extends "base" inherits two methods
-
-- extend (to extend that particular class)
-- create (to retrieve an instance of that class)
-
-If "create" is called on a class both "extend" and "create" will get undefined to prohibit extension/creation of an already instanciated class.
-
-Calling "create" will pass any arguments given on to the class "_constructor" method.
-
----------------------------
-### element
-Provides DOM element abstraction, adds some commonly used functionality and extends and unifies processing of DOM events.
-
-#### function getAttribute(string attribute)
-> **Description:**
-Retrieves an attribute from a DOM element. If "attribute" contains several, space delimited attributes it will return an object with the requested attributes as keys.
-
-> **Returns:**
-string | object
-
-#### function getAtrributes(string|array attributes)
-> **Description:**
-Retrieves mutliple attributes from a DOM element. Will always return an object with the requested attributes as keys.
-
-> **Returns:**
-object
-
-#### function setAttribute(string attribute, mixed value)
-> **Description:**
-Sets a single attribute on a DOM element.
-
-> **Returns:**
-instance
-
-#### function setAttributes(object attributes)
-> **Description:**
-Sets multiple attributes on a DOM element.
-
-> **Returns:**
-instance
-
-#### function removeAttribute(string attribute)
-> **Description:**
-Removes an attribute from a DOM element, If "attribute" contains several, space delimited attributes it will remove all of them.
-
-> **Returns:**
-instance
-
-#### function removeAttributes(string|array attribute)
-> **Description:**
-Removes multiple attributes from a DOM element.
-
-> **Returns:**
-instance
-
-#### function getStyle(string property)
-> **Description:**
-Retrieves a style property from a DOM element. If "property" contains several, space delimited properties it will return an object with the requested properties as keys.
-
-> **Returns:**
-string|object
-
-#### function getStyles(string|array properties)
-> **Description:**
-Retrieves mutliple style properties from a DOM element. Will always return an object with the requested properties as keys.
-
-> **Returns:**
-object
-
-#### function setStyle(string property, string value)
-> **Description:**
-Sets a single style property on a DOM element.
-
-> **Returns:**
-instance
-
-#### function setStyles(object properties)
-> **Description:**
-Sets multiple style properties on a DOM element.
-
-> **Returns:**
-instance
-
-#### function isVisible()
-> **Description:**
-Detects if the DOM element is visible or not.
-
-> **Notice:**
-Keep in mind, that "visible" in this case is not related to the CSS property "visibility" (which does not change the element's dimensions) but "display" (which does).
-
-#### function emit(string event, mixed data)
-> **Description:**
-Calls all registered listeners for the given DOM event storing "data" in "event.data".
-
-> **Returns:**
-instance
-
-#### function on(string events, function listener)
-> **Description:**
-Register a listener for a specified DOM event or a list of space separated events.
-
-> **Returns:**
-instance
-
-#### function one(string events, function listener, bool each = true)
-> **Description:**
-Register a once only listener for a specified DOM event or a list of space separated events.
-
-> **Notice:**
-The parameter "each" defines if every listener may be called once (default, "true")  or if only one of all the listeners should be called once.
-
-> **Returns:**
-instance
-
-#### function off(string events[, function listener])
-> **Description:**
-Unregister a listener for a specified DOM event or a list of space separated events.
-
-> **Notice:**
-If no listener is specified any listener for the given events will be removed.
-
-> **Returns:**
-instance
-
----------------------------
-### emitter
-Provides functions to emit events and or register listeners to events for a JavaScript module. For DOM elements use "element" instead. It offers the following methods:
-
-#### function emit(string event)
-> **Description:**
-Calls all registered listeners for the given event.
-
-> **Returns:**
-instance
-
-#### function on(string event, function listener)
-> **Description:**
-Register a listener for a specified event
-
-> **Returns:**
-instance
-
-#### function one(string event, function listener)
-> **Description:**
-Register a once only listener for a specified event
-
-> **Returns:**
-instance
-
-#### function off(string event[, function listener])
-> **Description:**
-Unregister a specific listener or all listeners from an event
-
-> **Notice:**
-If no listener is specified any listener for the given events will be removed.
-
-> **Returns:**
-instance
