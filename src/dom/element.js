@@ -288,7 +288,7 @@
 			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
 		},
 		hasClass: function(name) {
-			return (new RegExp('\\b' + name + '\\b')).test(this.element.className);
+			return (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className);
 		},
 		addClass: function(name) {
 			var self = this,
@@ -308,7 +308,7 @@
 			var self = this;
 
 			if(self.hasClass(name)) {
-				self.element.className = self.element.className.replace(new RegExp('(\\s|\\b)' + name + '(\\s|\\b)'), '');
+				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'), '');
 			}
 
 			return self;
