@@ -287,6 +287,113 @@
 
 			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
 		},
+		hasClass: function(name) {
+			return (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className);
+		},
+		addClass: function(name) {
+			var self = this,
+				temp;
+
+			if(!self.hasClass(name)) {
+				temp = self.element.className.split(' ');
+
+				temp.push(name);
+
+				self.element.className = temp.join(' ');
+			}
+
+			return self;
+		},
+		removeClass: function(name) {
+			var self = this;
+
+			if(self.hasClass(name)) {
+				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'), '');
+			}
+
+			return self;
+		},
+		toggleClass: function(name) {
+			var self = this;
+
+			self.hasClass(name) ? self.removeClass(name) : self.addClass(name);
+
+			return self;
+		},
+		prepend: function(element) {
+			var self    = this,
+				target = self.element;
+
+			element = element.element || element;
+
+			target.firstChild ? target.insertBefore(element, target.firstChild) : self.append(element);
+
+			return self;
+		},
+		append: function(element) {
+			var self = this;
+
+			self.element.appendChild(element.element || element);
+
+			return self;
+		},
+		replaceWith: function(element) {
+			var self    = this,
+				target = self.element;
+
+			element = element.element || element;
+
+			target.parentNode.replaceChild(element, target);
+
+			return self;
+		},
+		prependTo: function(target) {
+			var self    = this,
+				element = self.element;
+
+			(target  = target.element || target).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
+
+			return self;
+		},
+		appendTo: function(target) {
+			var self = this;
+
+			(target.element || target).appendChild(self.element);
+
+			return self;
+		},
+		insertBefore: function(target) {
+			var self    = this,
+				element = self.element;
+
+			(target  = target.element || target).parentNode.insertBefore(element, target);
+
+			return self;
+		},
+		insertAfter: function(target) {
+			var self    = this,
+				element = self.element;
+
+			(target  = target.element || target).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
+
+			return self;
+		},
+		replace: function(target) {
+			var self    = this,
+				element = self.element;
+
+			(target  = target.element || target).parentNode.replaceChild(element, target);
+
+			return self;
+		},
+		remove: function() {
+			var self    = this,
+				element = self.element;
+
+			element.parentNode.removeChild(element);
+
+			return self;
+		},
 		on: function(events, fn) {
 			var self = this,
 				i, listener;
