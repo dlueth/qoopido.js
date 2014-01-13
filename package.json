@@ -2,7 +2,7 @@
   "name": "qoopido.js",
   "title": "Qoopido.js library",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "homepage": "https://github.com/dlueth/qoopido.js",
   "author": {
     "name": "Dirk Lueth",
@@ -29,12 +29,14 @@
   "devDependencies": {
     "gulp": "~3.3.0",
     "gulp-util": "~2.2.9",
-	"gulp-load-tasks": "~0.1.1",
+    "gulp-load-tasks": "~0.1.1",
     "gulp-jshint": "~1.3.4",
     "gulp-concat": "~2.1.7",
     "gulp-uglify": "~0.1.0",
     "gulp-bump": "~0.1.0",
     "gulp-header": "~0.4.0",
-	"jshint-stylish": "~0.1.5"
+    "gulp-rename": "~0.2.1",
+	"gulp-zip": "~0.1.1",
+    "jshint-stylish": "~0.1.5"
   }
 }

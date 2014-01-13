@@ -1,0 +1,53 @@
+{
+	"name": "emerge",
+	"title": "Qoopido Emerge",
+	"description": "jQuery plugin to react on elements entering or nearing the visible area.",
+	"keywords": [
+		"lazy",
+		"lazyload",
+		"load",
+		"loader",
+		"delay",
+		"delayed",
+		"scroll",
+		"view",
+		"emerge",
+		"visible",
+		"viewport",
+		"area",
+		"appear"
+	],
+	"version": "3.2.3",
+	"author": {
+		"name": "Dirk Lüth",
+		"url": "http://www.qoopido.com"
+	},
+	"maintainers": [
+		{
+			"name": "Dirk Lüth",
+			"email": "info@qoopido.com",
+			"url": "http://www.qoopido.com"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dlueth/qoopido.js"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		},
+		{
+			"type": "GPL",
+			"url": "http://www.gnu.org/copyleft/gpl.html"
+		}
+	],
+	"bugs": "https://github.com/dlueth/qoopido.js/issues",
+	"homepage": "https://github.com/dlueth/qoopido.js",
+	"docs": "https://github.com/dlueth/qoopido.js",
+	"download": "https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.emerge.jquery.latest.zip?raw=true",
+	"dependencies": {
+		"jquery": ">=1.7"
+	}
+}

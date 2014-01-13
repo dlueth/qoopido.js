@@ -317,6 +317,7 @@ Included modules
 	- plugin
 		- emerge
 		- lazyimage
+		- shrinkimage
 - particle (still very basic)
 - polyfill
 	- document
