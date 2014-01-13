@@ -51,7 +51,6 @@
 		prototype, loader,
 
 	// events
-		EVENT_REQUESTED = 'requested',
 		EVENT_QUEUED    = 'queued',
 		EVENT_CACHED    = 'cached',
 		EVENT_LOADED    = 'loaded',
@@ -76,46 +75,46 @@
 		modules['support'].testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
 			.then(settings.debug)
 			.then(
-			function() {
-				switch(typeof lookup[target]) {
-					case 'object':
-						lookup[target].one(EVENT_LOADED, function(event) {
-							assign.call(self, event.data, isBackground);
-						});
+				function() {
+					switch(typeof lookup[target]) {
+						case 'object':
+							lookup[target].one(EVENT_LOADED, function(event) {
+								assign.call(self, event.data, isBackground);
+							});
 
-						self.emit(EVENT_QUEUED);
-						break;
-					case 'string':
-						assign.call(self, lookup[target], isBackground);
-						break;
-					default:
-						lookup[target] = loader
-							.create(target, (!isBackground) ? self._element : null)
-							.one(EVENT_STATE, function(event) {
-								if(event.type === EVENT_LOADED) {
-									lookup[target] = event.data;
+							self.emit(EVENT_QUEUED);
+							break;
+						case 'string':
+							assign.call(self, lookup[target], isBackground);
+							break;
+						default:
+							lookup[target] = loader
+								.create(target, (!isBackground) ? self._element : null)
+								.one(EVENT_STATE, function(event) {
+									if(event.type === EVENT_LOADED) {
+										lookup[target] = event.data;
 
-									self.emit(EVENT_CACHED);
+										self.emit(EVENT_CACHED);
 
-									assign.call(self, event.data, isBackground);
-								} else {
-									lookup[target] = url;
+										assign.call(self, event.data, isBackground);
+									} else {
+										lookup[target] = url;
 
-									assign.call(self, url, isBackground);
-								}
-							}, false);
+										assign.call(self, url, isBackground);
+									}
+								}, false);
 
-						break;
+							break;
+					}
 				}
-			}
-		)
+			)
 			.fail(
-			function() {
-				lookup[target] = url;
+				function() {
+					lookup[target] = url;
 
-				assign.call(self, url, isBackground);
-			}
-		)
+					assign.call(self, url, isBackground);
+				}
+			)
 			.done();
 	}
 
@@ -140,22 +139,22 @@
 
 		transport.get(self._url)
 			.then(
-			function(response) {
-				try {
-					var data = JSON.parse(response.data);
+				function(response) {
+					try {
+						var data = JSON.parse(response.data);
 
-					data.width  = parseInt(data.width, 10);
-					data.height = parseInt(data.height, 10);
+						data.width  = parseInt(data.width, 10);
+						data.height = parseInt(data.height, 10);
 
-					processData.call(self, data);
-				} catch(exception) {
+						processData.call(self, data);
+					} catch(exception) {
+						self.emit(EVENT_FAILED);
+					}
+				},
+				function() {
 					self.emit(EVENT_FAILED);
 				}
-			},
-			function() {
-				self.emit(EVENT_FAILED);
-			}
-		)
+			)
 			.done();
 	}
 

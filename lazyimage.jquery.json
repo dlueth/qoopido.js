@@ -1,0 +1,50 @@
+{
+	"name": "lazyimage",
+	"version": "3.2.3",
+	"title": "Qoopido Lazyimage",
+	"description": "jQuery plugin to lazy load images.",
+	"author": {
+		"name": "Dirk Lüth",
+		"url": "http://www.qoopido.com"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		},
+		{
+			"type": "GPL",
+			"url": "http://www.gnu.org/copyleft/gpl.html"
+		}
+	],
+	"dependencies": {
+		"jquery": ">=1.7"
+	},
+	"keywords": [
+		"image",
+		"images",
+		"lazy",
+		"lazyload",
+		"load",
+		"loader",
+		"delay",
+		"delayed",
+		"appear"
+	],
+	"maintainers": [
+		{
+			"name": "Dirk Lüth",
+			"email": "info@qoopido.com",
+			"url": "http://www.qoopido.com"
+		}
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dlueth/qoopido.js"
+	},
+	"bugs": "https://github.com/dlueth/qoopido.js/issues",
+	"homepage": "https://github.com/dlueth/qoopido.js",
+	"docs": "https://github.com/dlueth/qoopido.js",
+	"demo": "http://codepen.io/dlueth/pen/eGulH",
+	"download": "https://github.com/dlueth/qoopido.js/blob/master/packages/qoopido.lazyimage.jquery.latest.zip?raw=true"
+}

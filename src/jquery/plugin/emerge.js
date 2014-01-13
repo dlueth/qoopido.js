@@ -1,7 +1,7 @@
 /*
  * Qoopido jquery/plugin/emerge
  *
- * jQuery plugin for Qoopido module emerge
+ * jQuery plugin for Qoopido module /dom/element/emerge
  *
  * Copyright (c) 2013 Dirk Lueth
  *
@@ -39,7 +39,7 @@
 		});
 	};
 
-	prototype = modules['element/emerge'].extend({
+	prototype = modules['dom/element/emerge'].extend({
 		_constructor: function(element, settings) {
 			var self   = this,
 				object = jQuery(element);
