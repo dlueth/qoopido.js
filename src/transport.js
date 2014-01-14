@@ -15,7 +15,7 @@
  * @require ./function/merge
  */
 ;(function(definition) {
-	window.qoopido.register('transport', definition, [ './function/merge' ]);
+	window.qoopido.register('transport', definition, [ './base', './function/merge' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 

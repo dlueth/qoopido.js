@@ -11,7 +11,7 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @require ../../dom/element/emerge
+ * @require ../../dom/element/lazyimage
  * @external jQuery
  */
 ;(function(definition) {

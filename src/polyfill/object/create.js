@@ -11,6 +11,8 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lueth <info@qoopido.com>
+ *
+ * @polyfill ./polyfill/object/defineproperties
  */
 ;(function(definition, qoopido) {
 	if(qoopido.register) {

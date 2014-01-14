@@ -14,7 +14,7 @@
  * @require ./base
  */
 ;(function(definition) {
-	window.qoopido.registerSingleton('url', definition);
+	window.qoopido.registerSingleton('url', definition, [ './base' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
