@@ -13,6 +13,7 @@
  *
  * @require ./base
  * @require ./polyfill/string/ucfirst
+ * @optional ./pool/dom
  * @external Q
  */
 ;(function(definition) {

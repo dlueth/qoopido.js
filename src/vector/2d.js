@@ -12,6 +12,7 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../base
+ * @optional ./pool/object
  */
 ;(function(definition) {
 	window.qoopido.register('vector/2d', definition, [ '../base' ]);

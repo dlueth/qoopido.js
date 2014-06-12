@@ -47,7 +47,7 @@
 			settings = self.settings,
 			id;
 
-		content = (typeof content === 'object') ? self.serialize(content) : content;
+		content = (content && typeof content === 'object') ? self.serialize(content) : content;
 		url     = (settings.cache === false) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', '_=' + new Date().getTime()) : url;
 		url     = (content && method === 'GET') ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
 

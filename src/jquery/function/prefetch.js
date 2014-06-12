@@ -11,11 +11,10 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @require ../../base
  * @external jQuery
  */
 ;(function(definition) {
-	window.qoopido.register('jquery/function/prefetch', definition, [ '../../base', 'jquery' ]);
+	window.qoopido.register('jquery/function/prefetch', definition, [ 'jquery' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 

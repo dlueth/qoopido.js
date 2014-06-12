@@ -10,8 +10,6 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lueth <info@qoopido.com>
- *
- * @require ../../base
  */
 ;(function(definition) {
 	window.qoopido.register('function/unique/string', definition);

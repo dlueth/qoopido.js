@@ -12,10 +12,11 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./base
+ * @require ./function/merge
  * @require ./function/unique/uuid
  */
 ;(function(definition) {
-	window.qoopido.register('pool', definition, [ './function/merge', './function/unique/uuid' ]);
+	window.qoopido.register('pool', definition, [ './base', './function/merge', './function/unique/uuid' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 

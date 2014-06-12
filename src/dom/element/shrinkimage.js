@@ -23,6 +23,7 @@
  * @require ../../support/capability/datauri
  * @require ../../support/element/canvas/todataurl/png
  * @require ../../transport/xhr
+ * @optional ./pool/dom
  * @external JSON
  */
 ;(function(definition) {

@@ -16,6 +16,7 @@
  * @require ../function/merge
  * @require ../function/unique/uuid
  * @require ../dom/element
+ * @optional ./pool/dom
  * @external Q
  */
 ;(function(definition) {
