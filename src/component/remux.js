@@ -23,13 +23,18 @@
 		base        = 16,
 		state       = { fontsize: null, layout: null, ratio: { } },
 		current     = { fontsize: null, layout: null },
-		delay       = null;
+		delay       = null,
+		regex       = new RegExp('["\']', 'g');
 
 	function updateState() {
 		var self = this;
 
 		state.fontsize = parseInt(window.getComputedStyle(html).getPropertyValue('font-size'), 10);
 		state.layout   = window.getComputedStyle(html, ':after').getPropertyValue('content') || null;
+
+		if(state.layout !== null) {
+			state.layout = state.layout.replace(regex, '');
+		}
 
 		if(state.fontsize !== current.fontsize || state.layout !== current.layout) {
 			current.fontsize     = state.fontsize;
