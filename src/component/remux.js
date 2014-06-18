@@ -83,6 +83,18 @@
 		getState: function() {
 			return state;
 		},
+		getLayout: function() {
+			return state.layout;
+		},
+		setLayout: function(layout) {
+			var self = this;
+
+			window.getComputedStyle(html, ':after').setProperty('content', layout, '');
+
+			updateState.call(self);
+
+			return self;
+		},
 		addLayout: function(pId, pLayout) {
 			var parameter, id, layout, size, breakpoint, query,
 				self = this;
