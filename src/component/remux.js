@@ -26,11 +26,11 @@
 		delay       = null,
 		regex       = new RegExp('["\']', 'g');
 
-	function updateState() {
+	function updateState(fontsize, layout) {
 		var self = this;
 
-		state.fontsize = parseInt(window.getComputedStyle(html).getPropertyValue('font-size'), 10);
-		state.layout   = window.getComputedStyle(html, ':after').getPropertyValue('content') || null;
+		state.fontsize = fontsize || parseInt(window.getComputedStyle(html).getPropertyValue('font-size'), 10);
+		state.layout   = layout || window.getComputedStyle(html, ':after').getPropertyValue('content') || null;
 
 		if(state.layout !== null) {
 			state.layout = state.layout.replace(regex, '');
@@ -86,12 +86,10 @@
 		getLayout: function() {
 			return state.layout;
 		},
-		setLayout: function(layout) {
+		forceLayout: function(fontsize, layout) {
 			var self = this;
 
-			window.getComputedStyle(html, ':after').setProperty('content', layout, '');
-
-			updateState.call(self);
+			updateState.call(self, fontsize, layout);
 
 			return self;
 		},
