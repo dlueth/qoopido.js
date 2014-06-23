@@ -21,6 +21,7 @@ var gulp    = require('gulp'),
 	];
 	files.remux     = files.base.concat([
 		'./src/emitter.js',
+		'./src/dom/element.js',
 		'./src/component/remux.js'
 	]);
 	files.emerge    = files.base.concat([

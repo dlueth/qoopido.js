@@ -12,9 +12,10 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../emitter
+ * @require ../dom/element
  */
 ;(function(definition) {
-	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter' ]);
+	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter', '../dom/element' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
@@ -75,8 +76,9 @@
 
 			document.getElementsByTagName('head')[0].appendChild(style);
 
-			window.addEventListener('resize', delayedUpdate, false);
-			window.addEventListener('orientationchange', delayedUpdate, false);
+			modules['dom/element']
+				.create(window)
+				.on('resize orientationchange', delayedUpdate);
 
 			updateState.call(self);
 		},
