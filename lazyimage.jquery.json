@@ -1,6 +1,6 @@
 {
 	"name": "lazyimage",
-	"version": "3.2.8",
+	"version": "3.2.9",
 	"title": "Qoopido Lazyimage",
 	"description": "jQuery plugin to lazy load images.",
 	"author": {
