@@ -25,6 +25,7 @@
 		state       = { fontsize: null, layout: null, ratio: { } },
 		current     = { fontsize: null, layout: null },
 		delay       = null,
+		index       = 0,
 		regex       = new RegExp('["\']', 'g');
 
 	function updateState(fontsize, layout) {
@@ -74,7 +75,10 @@
 			style      = document.createElement('style');
 			style.type = 'text/css';
 
+			style.appendChild(document.createTextNode(''));
 			document.getElementsByTagName('head')[0].appendChild(style);
+
+			style = style.sheet || style.styleSheet;
 
 			modules['dom/element']
 				.create(window)
@@ -111,13 +115,9 @@
 
 				for(size = layout.min; size <= layout.max; size++) {
 					breakpoint = Math.round(layout.width * (size / base));
-					query      = '@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; } html:after { content: "' + id + '"; display: none; } }';
 
-					if(style.styleSheet){
-						style.styleSheet.cssText += query;
-					} else {
-						style.appendChild(document.createTextNode(query));
-					}
+					style.insertRule('@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; } html:after { content: "' + id + '"; display: none; } }', index);
+					index += 1;
 				}
 			}
 
