@@ -21,6 +21,9 @@ var gulp    = require('gulp'),
 	];
 	files.remux     = files.base.concat([
 		'./src/emitter.js',
+		'./src/function/unique/uuid.js',
+		'./src/proxy.js',
+		'./src/polyfill/window/getcomputedstyle.js',
 		'./src/dom/element.js',
 		'./src/component/remux.js'
 	]);
