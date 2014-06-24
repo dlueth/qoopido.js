@@ -15,7 +15,7 @@ var gulp    = require('gulp'),
 		'./src/polyfill/object/defineproperty.js',
 		'./src/polyfill/object/defineproperties.js',
 		'./src/polyfill/object/create.js',
-		'./src/polyfill/object/getownpropertynames',
+		'./src/polyfill/object/getownpropertynames.js',
 		'./src/polyfill/object/getownpropertydescriptor.js',
 		'./src/base.js'
 	];
