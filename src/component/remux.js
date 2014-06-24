@@ -37,7 +37,7 @@
 			state.layout = state.layout.replace(regex, '');
 		}
 
-		if(state.fontsize !== current.fontsize || state.layout !== current.layout) {
+		if(state.layout !== null && (state.fontsize !== current.fontsize || state.layout !== current.layout)) {
 			current.fontsize     = state.fontsize;
 			current.layout       = state.layout;
 
@@ -80,8 +80,6 @@
 
 			document.getElementsByTagName('head')[0].appendChild(style);
 
-			style = style.sheet || style.styleSheet;
-
 			modules['dom/element']
 				.create(window)
 				.on('resize orientationchange', delayedUpdate);
@@ -102,30 +100,32 @@
 			return self;
 		},
 		addLayout: function(pId, pLayout) {
-			var self = this;
+			var self = this,
+				parameter, id, layout, size, breakpoint, query;
 
-			if(typeof style.insertRule !== 'undefined') {
-				var parameter, id, layout, size, breakpoint;
+			if(arguments.length > 1) {
+				parameter      = { };
+				parameter[pId] = pLayout;
+			} else {
+				parameter = arguments[0];
+			}
 
-				if(arguments.length > 1) {
-					parameter      = { };
-					parameter[pId] = pLayout;
-				} else {
-					parameter = arguments[0];
-				}
+			for(id in parameter) {
+				layout = parameter[id];
 
-				for(id in parameter) {
-					layout = parameter[id];
+				for(size = layout.min; size <= layout.max; size++) {
+					breakpoint = Math.round(layout.width * (size / base));
+					query      = '@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; } html:after { content: "' + id + '"; display: none; } }';
 
-					for(size = layout.min; size <= layout.max; size++) {
-						breakpoint = Math.round(layout.width * (size / base));
-
-						style.insertRule("@media screen and (min-width: " + breakpoint + "px) { html { font-size: " + size + 'px; } html:after { content: "' + id + '"; display: none; } }', style.cssRules.length);
+					if(style.styleSheet && style.styleSheet.insertRule) {
+						style.styleSheet.insertRule(query, style.styleSheet.cssRules.length);
+					} else if(style.sheet) {
+						style.appendChild(document.createTextNode(query));
 					}
 				}
-
-				updateState.call(self);
 			}
+
+			updateState.call(self);
 
 			return self;
 		}
