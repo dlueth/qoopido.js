@@ -56,7 +56,7 @@
 			};
 		}
 
-		return true;
+		return Object.create;
 	},
 	window.qoopido = window.qoopido || {}
 ));

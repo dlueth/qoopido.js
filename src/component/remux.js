@@ -13,25 +13,33 @@
  *
  * @require ../emitter
  * @require ../dom/element
+ * @polyfill ../polyfill/window/getcomputedstyle
  */
 ;(function(definition) {
-	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter', '../dom/element' ]);
+	var dependencies = [ '../emitter', '../dom/element' ];
+
+	if(!window.getComputedStyle) {
+		dependencies.push('../polyfill/window/getcomputedstyle');
+	}
+
+	window.qoopido.registerSingleton('component/remux', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype, style,
-		html        = document.getElementsByTagName('html')[0],
-		base        = 16,
-		state       = { fontsize: null, layout: null, ratio: { } },
-		current     = { fontsize: null, layout: null },
-		delay       = null,
-		regex       = new RegExp('["\']', 'g');
+		html             = document.getElementsByTagName('html')[0],
+		base             = 16,
+		state            = { fontsize: null, layout: null, ratio: { } },
+		current          = { fontsize: null, layout: null },
+		delay            = null,
+		regex            = new RegExp('["\']', 'g'),
+		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'];
 
 	function updateState(fontsize, layout) {
 		var self = this;
 
-		state.fontsize = fontsize || parseInt(window.getComputedStyle(html).getPropertyValue('font-size'), 10);
-		state.layout   = layout || window.getComputedStyle(html, ':after').getPropertyValue('content') || null;
+		state.fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10);
+		state.layout   = layout || getComputedStyle(html, ':after').getPropertyValue('content') || null;
 
 		if(state.layout !== null) {
 			state.layout = state.layout.replace(regex, '');

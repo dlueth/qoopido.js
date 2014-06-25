@@ -26,12 +26,12 @@
 	'use strict';
 
 	if(!document.querySelector) {
-		document.querySelector = function(selector) {
+		return document.querySelector = function(selector) {
 			var elements = document.querySelectorAll(selector);
 
 			return (elements.length) ? elements[0] : null;
 		};
+	} else {
+		return document.querySelector;
 	}
-
-	return true;
 }));

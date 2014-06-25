@@ -27,8 +27,9 @@
 	'use strict';
 
 	var attachListener, detachListener, emitEvent,
-		stringObject = 'object',
-		stringString = 'string';
+		stringObject     = 'object',
+		stringString     = 'string',
+		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'];
 
 	function normalizeEvent(event) {
 		if(!event.target) {
@@ -236,7 +237,7 @@
 				property = property.split(' ');
 
 				if(property.length === 1) {
-					return window.getComputedStyle(self.element, null).getPropertyValue(property[0]);
+					return getComputedStyle(self.element, null).getPropertyValue(property[0]);
 				} else {
 					return self.getStyles(property);
 				}
@@ -253,7 +254,7 @@
 					var i, property;
 
 					for(i = 0; (property = properties[i]) !== undefined; i++) {
-						result[property] = window.getComputedStyle(self.element, null).getPropertyValue(property);
+						result[property] = getComputedStyle(self.element, null).getPropertyValue(property);
 					}
 				}
 			}

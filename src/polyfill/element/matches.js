@@ -40,5 +40,5 @@
 			};
 	}
 
-	return true;
+	return Element.prototype.matches;
 }));

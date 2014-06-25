@@ -36,5 +36,5 @@
 		};
 	}
 
-	return true;
+	return Object.keys;
 }));

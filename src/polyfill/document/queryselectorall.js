@@ -18,7 +18,7 @@
 	'use strict';
 
 	if(!document.querySelectorAll) {
-		document.querySelectorAll = function(selector) {
+		return document.querySelectorAll = function(selector) {
 			var style    = document.createElement('style'),
 				elements = [],
 				element;
@@ -46,7 +46,7 @@
 
 			return elements;
 		};
+	} else {
+		return document.querySelectorAll;
 	}
-
-	return true;
 }));

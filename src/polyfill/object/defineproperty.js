@@ -50,7 +50,7 @@
 			};
 		}
 
-		return true;
+		return Object.defineProperty;
 	},
 	window.qoopido = window.qoopido || {}
 ));
