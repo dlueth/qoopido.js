@@ -32,8 +32,11 @@
 		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'];
 
 	function normalizeEvent(event) {
-		event        = event || window.event;
-		event.target = event.target || event.srcElement || document;
+		event = event || window.event;
+
+		if(!event.target) {
+			event.target = event.srcElement || document;
+		}
 
 		if(event.target.nodeType === 3) {
 			event.target = event.target.parentNode;
