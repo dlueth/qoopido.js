@@ -21,7 +21,7 @@
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 		'use strict';
 
-		if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
+		if(!Object.getOwnPropertyDescriptor || !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
 			var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 			Object.getOwnPropertyDescriptor = function(obj, property) {
@@ -44,7 +44,7 @@
 			};
 		}
 
-		return true;
+		return Object.getOwnPropertyDescriptor;
 	},
 	window.qoopido = window.qoopido || {}
 ));

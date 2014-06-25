@@ -28,10 +28,12 @@
 	if(!document.getElementsByClassName) {
 		var regex = new RegExp('^|\\s+', 'g');
 
-		document.getElementsByClassName = function(classname) {
+		return document.getElementsByClassName = function(classname) {
 			classname = String(classname).replace(regex, '.');
 
 			return document.querySelectorAll(classname);
 		};
+	} else {
+		return document.getElementsByClassName;
 	}
 }));

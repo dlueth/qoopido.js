@@ -47,7 +47,7 @@
 			};
 		}
 
-		return true;
+		return Object.defineProperties;
 	},
 	window.qoopido = window.qoopido || {}
 ));

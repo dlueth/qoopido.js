@@ -20,7 +20,7 @@
 				return arguments[2].toUpperCase();
 			};
 
-		window.getComputedStyle = function(element, pseudo) {
+		return function(element, pseudo) {
 			var self = this;
 
 			self.element = element;
@@ -39,7 +39,7 @@
 
 			return self;
 		};
+	} else {
+		return window.getComputedStyle;
 	}
-
-	return true;
 }));

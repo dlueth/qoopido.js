@@ -40,7 +40,7 @@
 			};
 		}
 
-		return true;
+		return Object.getOwnPropertyNames;
 	},
 	window.qoopido = window.qoopido || {}
 ));
