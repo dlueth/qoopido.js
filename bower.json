@@ -1,6 +1,6 @@
 {
   "name": "qoopido.js",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
   "ignore": [
     "**/.*",
