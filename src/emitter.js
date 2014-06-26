@@ -39,12 +39,13 @@
 
 	return modules['base'].extend({
 		_mapped:   null,
-		_listener: {},
+		_listener: null,
 		_constructor: function() {
 			var self = this,
 				method;
 
-			self._mapped = {};
+			self._mapped   = {};
+			self._listener = {};
 
 			for(method in self) {
 				if(typeof self[method] === 'function' && excludeMethods.test(method) === false) {
