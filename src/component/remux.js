@@ -26,7 +26,7 @@
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var prototype, style,
+	var prototype, style, property,
 		html             = document.getElementsByTagName('html')[0],
 		base             = 16,
 		state            = { fontsize: null, layout: null, ratio: { } },
@@ -35,11 +35,19 @@
 		regex            = new RegExp('["\']', 'g'),
 		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'];
 
+	function insertRule (rule) {
+		if(style.styleSheet && style.styleSheet.insertRule) {
+			style.styleSheet.insertRule(rule, style.styleSheet.cssRules.length);
+		} else if(style.sheet) {
+			style.appendChild(document.createTextNode(rule));
+		}
+	}
+
 	function updateState(fontsize, layout) {
 		var self = this;
 
 		state.fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10);
-		state.layout   = layout || getComputedStyle(html, ':after').getPropertyValue('content') || null;
+		state.layout   = layout || (property === 'font-size') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property) || null;
 
 		if(state.layout !== null) {
 			state.layout = state.layout.replace(regex, '');
@@ -71,7 +79,8 @@
 					delay = window.setTimeout(function() {
 						updateState.call(self);
 					}, 20);
-				};
+				},
+				temp;
 
 			prototype._parent._constructor.call(self);
 
@@ -87,6 +96,16 @@
 			}
 
 			document.getElementsByTagName('head')[0].appendChild(style);
+
+			insertRule('html:before { content: "remux"; display: none; }');
+
+			temp = getComputedStyle(html, ':before').getPropertyValue('content');
+
+			if(temp !== null) {
+				temp = temp.replace(regex, '');
+			}
+
+			property = (temp === 'remux') ? 'content' : 'font-family';
 
 			modules['dom/element']
 				.create(window)
@@ -109,7 +128,7 @@
 		},
 		addLayout: function(pId, pLayout) {
 			var self = this,
-				parameter, id, layout, size, breakpoint, query;
+				parameter, id, layout, size, breakpoint;
 
 			if(arguments.length > 1) {
 				parameter      = { };
@@ -123,12 +142,15 @@
 
 				for(size = layout.min; size <= layout.max; size++) {
 					breakpoint = Math.round(layout.width * (size / base));
-					query      = '@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; } html:after { content: "' + id + '"; display: none; } }';
 
-					if(style.styleSheet && style.styleSheet.insertRule) {
-						style.styleSheet.insertRule(query, style.styleSheet.cssRules.length);
-					} else if(style.sheet) {
-						style.appendChild(document.createTextNode(query));
+					switch(property) {
+						case 'font-family':
+							insertRule('@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; ' + property + ': "' + id + '"; }');
+							break;
+						default:
+							insertRule('@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; } html:after { ' + property + ': "' + id + '"; display: none; } }');
+
+							break;
 					}
 				}
 			}
