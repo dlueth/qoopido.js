@@ -65,21 +65,18 @@
 				element = self.element,
 				luid;
 
+			luid = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+
 			if(element['on' + name] !== undefined) {
-				luid          = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-				element[luid] = function() { fn.call(this, normalizeEvent(window.event)); };
+				element[luid] = function(event) { fn.call(this, normalizeEvent(event || window.event)); };
 
 				element.attachEvent('on' + name, element[luid]);
 			} else {
-				name = ''.concat('fake[', name, ']');
-
+				name          = ''.concat('fake[', name, ']');
 				element[name] = null;
+				element[luid] = function(event) { if(event.propertyName === name) { fn.call(this, normalizeEvent(element[name])); } };
 
-				element.attachEvent('onpropertychange', function(event) {
-					if(event.propertyName === name) {
-						fn.call(this, normalizeEvent(element[name]));
-					}
-				});
+				element.attachEvent('onpropertychange', element[luid]);
 			}
 		};
 
@@ -98,7 +95,12 @@
 				element = self.element,
 				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
 
-			element.detachEvent('on' + name, element[luid]);
+			if(element['on' + name] !== undefined) {
+				element.detachEvent('on' + name, element[luid]);
+			} else {
+				element.detachEvent('onpropertychange', element[luid]);
+			}
+
 			delete element[luid];
 		};
 
