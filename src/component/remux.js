@@ -46,22 +46,31 @@
 	function updateState(fontsize, layout) {
 		var self = this;
 
-		state.fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10);
-		state.layout   = layout || (property === 'font-size') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property) || null;
+		fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10),
+		layout   = layout || ((property === 'font-family') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property)) || null;
 
-		if(state.layout !== null) {
-			state.layout = state.layout.replace(regex, '');
+		if(property === 'font-family' && layout === 'sans-serif') {
+			state.layout = null;
 		}
 
-		if(state.layout !== null && (state.fontsize !== current.fontsize || state.layout !== current.layout)) {
-			current.fontsize     = state.fontsize;
-			current.layout       = state.layout;
+		if(layout) {
+			layout = layout.replace(regex, '');
+		}
 
-			state.ratio.device   = (window.devicePixelRatio || 1);
-			state.ratio.fontsize = state.fontsize / base;
-			state.ratio.total    = state.ratio.device * state.ratio.fontsize;
+		if(fontsize && layout) {
+			state.fontsize = fontsize;
+			state.layout   = layout;
 
-			self.emit('statechange', state);
+			if(state.layout !== null && (state.fontsize !== current.fontsize || state.layout !== current.layout)) {
+				current.fontsize     = state.fontsize;
+				current.layout       = state.layout;
+
+				state.ratio.device   = (window.devicePixelRatio || 1);
+				state.ratio.fontsize = state.fontsize / base;
+				state.ratio.total    = state.ratio.device * state.ratio.fontsize;
+
+				self.emit('statechange', state);
+			}
 		}
 
 		return self;
