@@ -3,13 +3,13 @@
  *
  * Provides the basic object inheritance and extension mechanism
  *
- * Loosely base on proto-js by Axel Rauschmayer
+ * Loosely based on proto-js by Axel Rauschmayer
  * https://github.com/rauschma/proto-js
  *
  * Shims borrowed from es5-shim by Kris Kowal
  * https://github.com/kriskowal/es5-shim
  *
- * Copyright (c) 2013 Dirk Lueth
+ * Copyright (c) 2014 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php

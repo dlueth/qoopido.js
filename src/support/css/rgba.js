@@ -1,7 +1,7 @@
 /*
  * Qoopido support/css/rgba
  *
- * Copyright (c) 2013 Dirk Lueth
+ * Copyright (c) 2014 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php

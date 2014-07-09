@@ -47,10 +47,14 @@
 		var self = this;
 
 		fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10),
-		layout   = layout || ((property === 'font-family') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property)) || null;
+			layout   = layout || ((property === 'font-family') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property)) || null;
 
 		if(property === 'font-family' && layout === 'sans-serif') {
-			state.layout = null;
+			layout = null;
+		}
+
+		if(property === 'content' && layout === 'none') {
+			layout = null;
 		}
 
 		if(layout) {
@@ -164,7 +168,9 @@
 				}
 			}
 
-			updateState.call(self);
+			window.setTimeout(function() {
+				updateState.call(self);
+			}, 0);
 
 			return self;
 		}
