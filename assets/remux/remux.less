@@ -1,18 +1,21 @@
 @remuxFontsize: 16px;
-@remuxFallback: false;
+@remuxMode:     rem;
 
 .remux(font-size, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		font-size: ~"@{value}";
 		font-size: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		font-size: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		font-size: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(line-height, @value) {
@@ -20,359 +23,455 @@
 	// problems in Chrome (at least in version 23.0.1271.91)
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 100000)) / 100000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		line-height: ~"@{value}";
 		line-height: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		line-height: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		line-height: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(left, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		left: ~"@{value}";
 		left: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		left: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		left: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(right, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		right: ~"@{value}";
 		right: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		right: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		right: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(top, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		top: ~"@{value}";
 		top: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		top: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		top: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(bottom, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		bottom: ~"@{value}";
 		bottom: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		bottom: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		bottom: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(width, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		width: ~"@{value}";
 		width: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		width: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		width: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(min-width, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		min-width: ~"@{value}";
 		min-width: ~"@{processingRem}";
 		width: auto !important;
 		width: ~"@{value}";
 		width: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		min-width: ~"@{value}";
+		width: auto !important;
+		width: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		min-width: ~"@{processingRem}";
 		width: auto !important;
 		width: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(height, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		height: ~"@{value}";
 		height: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		height: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		height: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(min-height, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		min-height: ~"@{value}";
 		min-height: ~"@{processingRem}";
 		height: auto !important;
 		height: ~"@{value}";
 		height: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		min-height: ~"@{value}";
+		height: auto !important;
+		height: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		min-height: ~"@{processingRem}";
 		height: auto !important;
 		height: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(margin, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		margin: @value;
 		margin: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		margin: @value;
+	}
+	.result(rem) {
 		margin: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(margin-top, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		margin-top: ~"@{value}";
 		margin-top: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		margin-top: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		margin-top: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(margin-right, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		margin-right: ~"@{value}";
 		margin-right: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		margin-right: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		margin-right: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(margin-bottom, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		margin-bottom: ~"@{value}";
 		margin-bottom: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		margin-bottom: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		margin-bottom: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(margin-left, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		margin-left: ~"@{value}";
 		margin-left: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		margin-left: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		margin-left: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(padding, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		padding: @value;
 		padding: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		padding: @value;
+	}
+	.result(rem) {
 		padding: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(padding-top, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		padding-top: ~"@{value}";
 		padding-top: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		padding-top: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		padding-top: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(padding-right, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		padding-right: ~"@{value}";
 		padding-right: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		padding-right: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		padding-right: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(padding-bottom, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		padding-bottom: ~"@{value}";
 		padding-bottom: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		padding-bottom: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		padding-bottom: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(padding-left, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(@value, @fallback) when (@fallback = true) {
+	.result(@value, @mode) when (@mode = both) {
 		padding-left: ~"@{value}";
 		padding-left: ~"@{processingRem}";
 	}
-	.result(@value, @fallback) when (@fallback = false) {
+	.result(@value, @mode) when (@mode = px) {
+		padding-left: ~"@{value}";
+	}
+	.result(@value, @mode) when (@mode = rem) {
 		padding-left: ~"@{processingRem}";
 	}
 
-	.result(@value, @remuxFallback);
+	.result(@value, @remuxMode);
 }
 
 .remux(border, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		border: @value;
 		border: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		border: @value;
+	}
+	.result(rem) {
 		border: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(border-top, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		border-top: @value;
 		border-top: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		border-top: @value;
+	}
+	.result(rem) {
 		border-top: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(border-right, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		border-right: @value;
 		border-right: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		border-right: @value;
+	}
+	.result(rem) {
 		border-right: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(border-bottom, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		border-bottom: @value;
 		border-bottom: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		border-bottom: @value;
+	}
+	.result(rem) {
 		border-bottom: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(border-left, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		border-left: @value;
 		border-left: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		border-left: @value;
+	}
+	.result(rem) {
 		border-left: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
 }
 
 .remux(text-shadow, @value) {
 	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.round((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
 
-	.result(true) {
+	.result(both) {
 		text-shadow: @value;
 		text-shadow: @processingRem;
 	}
-	.result(false) {
+	.result(px) {
+		text-shadow: @value;
+	}
+	.result(rem) {
 		text-shadow: @processingRem;
 	}
 
-	.result(@remuxFallback);
+	.result(@remuxMode);
+}
+
+.remux(background-position, @value) {
+	@processingRem: ~`(function() { var base = parseFloat("@{remuxFontsize}"); return "@{value}".replace(/[\[\]]/g, '').replace(/([0-9]*[.]{0,1}[0-9]*px)/gi, function() { return ((Math.floor((parseFloat(arguments[0]) / base) * 10000000)) / 10000000) + 'rem'; }); }())`;
+
+	.result(both) {
+		background-position: @value;
+		background-position: @processingRem;
+	}
+	.result(px) {
+		background-position: @value;
+	}
+	.result(rem) {
+		background-position: @processingRem;
+	}
+
+	.result(@remuxMode);
 }
