@@ -46,8 +46,8 @@
 	function updateState(fontsize, layout) {
 		var self = this;
 
-		fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10),
-			layout   = layout || ((property === 'font-family') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property)) || null;
+		fontsize = fontsize || parseInt(getComputedStyle(html).getPropertyValue('font-size'), 10);
+		layout   = layout || ((property === 'font-family') ? getComputedStyle(html).getPropertyValue(property) : getComputedStyle(html, ':after').getPropertyValue(property)) || null;
 
 		if(property === 'font-family' && layout === 'sans-serif') {
 			layout = null;
@@ -111,6 +111,7 @@
 			document.getElementsByTagName('head')[0].appendChild(style);
 
 			insertRule('html:before { content: "remux"; display: none; }');
+			insertRule('html:after { display: none; }');
 
 			temp = getComputedStyle(html, ':before').getPropertyValue('content');
 
@@ -141,7 +142,7 @@
 		},
 		addLayout: function(pId, pLayout) {
 			var self = this,
-				parameter, id, layout, size, breakpoint;
+				parameter, id, layout, size, lMin, lMax;
 
 			if(arguments.length > 1) {
 				parameter      = { };
@@ -152,25 +153,27 @@
 
 			for(id in parameter) {
 				layout = parameter[id];
+				lMin   = Math.round(layout.width * (layout.min / base));
+				lMax   = Math.round(layout.width * (layout.max / base)) - 1;
+
+				switch(property) {
+					case 'font-family':
+						insertRule('@media screen and (min-width: ' + lMin + 'px) and (max-width: ' + lMax + 'px ) { html { ' + property + ': "' + id + '"; } }');
+						break;
+					default:
+						insertRule('@media screen and (min-width: ' + lMin + 'px) and (max-width: ' + lMax + 'px ) { html:after { ' + property + ': "' + id + '"; } }');
+						break;
+				}
 
 				for(size = layout.min; size <= layout.max; size++) {
-					breakpoint = Math.round(layout.width * (size / base));
-
-					switch(property) {
-						case 'font-family':
-							insertRule('@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; ' + property + ': "' + id + '"; }');
-							break;
-						default:
-							insertRule('@media screen and (min-width: ' + breakpoint + 'px) { html { font-size: ' + size + 'px; } html:after { ' + property + ': "' + id + '"; display: none; } }');
-
-							break;
-					}
+					insertRule('@media screen and (min-width: ' + (Math.round(layout.width * (size / base))) + 'px) and (max-width: ' + (Math.round(layout.width * ((size + 1) / base)) - 1) + 'px ) { html { font-size: ' + size + 'px; } }');
 				}
 			}
 
+			updateState.call(self);
 			window.setTimeout(function() {
 				updateState.call(self);
-			}, 0);
+			}, 50);
 
 			return self;
 		}
