@@ -1,16 +1,14 @@
 var gulp    = require('gulp'),
-	util    = require('gulp-util'),
-	tasks   = require('gulp-load-tasks')(),
-	package = require('./package.json'),
+	plugins = require('gulp-load-plugins')(),
 	files   = {},
-	date, banner;
+	package, date, banner;
 
 /**************************************************
  * file configuration
  **************************************************/
 	files.watch     = [ './.jshintrc' ];
-	files.all       = './src/**/*.js';
 	files.bump      = [ './package.json', './bower.json', './emerge.jquery.json', './lazyimage.jquery.json', './shrinkimage.jquery.json' ];
+	files.all       = './src/**/*.js';
 	files.base      = [
 		'./src/polyfill/object/defineproperty.js',
 		'./src/polyfill/object/defineproperties.js',
@@ -75,12 +73,11 @@ var gulp    = require('gulp'),
 		return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
 	}
 
-	function getDatetime() {
-		return getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-	}
-
 	function initialize() {
-		date = new Date();
+		delete require.cache[require.resolve('./package.json')];
+
+		package = require('./package.json');
+		date    = new Date();
 
 		banner  = {
 			src: [
@@ -110,26 +107,28 @@ var gulp    = require('gulp'),
 		}
 	};
 
-	initialize();
+	function onError(err) {
+		console.log(err);
+	};
 
 /**************************************************
  * bump version
  **************************************************/
 	gulp.task('bump:patch', function(){
 		gulp.src(files.bump)
-			.pipe(tasks.bump({type:'patch'}))
+			.pipe(plugins.bump({type:'patch'}))
 			.pipe(gulp.dest('./'));
 	});
-
+	
 	gulp.task('bump:minor', function(){
 		gulp.src(files.bump)
-			.pipe(tasks.bump({type:'minor'}))
+			.pipe(plugins.bump({type:'minor'}))
 			.pipe(gulp.dest('./'));
 	});
-
+	
 	gulp.task('bump:major', function(){
 		gulp.src(files.bump)
-			.pipe(tasks.bump({type:'major'}))
+			.pipe(plugins.bump({type:'major'}))
 			.pipe(gulp.dest('./'));
 	});
 
@@ -138,290 +137,204 @@ var gulp    = require('gulp'),
  **************************************************/
 	gulp.task('lint:dist', function() {
 		gulp.src(files.all)
-			.pipe(tasks.jshint('./.jshintrc'))
-			.pipe(tasks.jshint.reporter('jshint-stylish'));
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
 	gulp.task('lint:base', function() {
 		gulp.src(files.base)
-			.pipe(tasks.jshint('./.jshintrc'))
-			.pipe(tasks.jshint.reporter('jshint-stylish'));
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
 	gulp.task('lint:remux', function() {
 		gulp.src(files.remux)
-			.pipe(tasks.jshint('./.jshintrc'))
-			.pipe(tasks.jshint.reporter('jshint-stylish'));
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
 	gulp.task('lint:emerge', function() {
 		gulp.src(files.jquery.emerge)
-			.pipe(tasks.jshint('./.jshintrc'))
-			.pipe(tasks.jshint.reporter('jshint-stylish'));
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
 	gulp.task('lint:lazyimage', function() {
 		gulp.src(files.jquery.lazyimage)
-			.pipe(tasks.jshint('./.jshintrc'))
-			.pipe(tasks.jshint.reporter('jshint-stylish'));
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
 	gulp.task('lint:shrinkimage', function() {
 		gulp.src(files.jquery.shrinkimage)
-			.pipe(tasks.jshint('./.jshintrc'))
-			.pipe(tasks.jshint.reporter('jshint-stylish'));
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
 /**************************************************
  * build tasks (internal)
  **************************************************/
 	gulp.task('build:dist', function() {
+		initialize();
+		
 		gulp.src(files.all)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./dist/' + package.version + '/src/'))
 			.pipe(gulp.dest('./dist/latest/src/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./dist/' + package.version + '/min/'))
 			.pipe(gulp.dest('./dist/latest/min/'));
 	});
 
 	gulp.task('build:base', function() {
+		initialize();
+		
 		gulp.src(files.base)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.base.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.base.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.base.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.base.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:remux', function() {
+		initialize();
+		
 		gulp.src(files.remux)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.remux.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.remux.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.remux.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.remux.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:emerge', function() {
+		initialize();
+		
 		gulp.src(files.emerge)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.emerge.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.emerge.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.emerge.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.emerge.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:lazyimage', function() {
+		initialize();
+		
 		gulp.src(files.lazyimage)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.lazyimage.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.lazyimage.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.lazyimage.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.lazyimage.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:shrinkimage', function() {
+		initialize();
+		
 		gulp.src(files.shrinkimage)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.shrinkimage.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.shrinkimage.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.shrinkimage.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.shrinkimage.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:jquery:emerge', function() {
+		initialize();
+		
 		gulp.src(files.jquery.emerge)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.emerge.jquery.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.emerge.jquery.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.emerge.jquery.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.emerge.jquery.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 
 		gulp.src([ './packages/qoopido.emerge.jquery.' + package.version + '.js', './packages/qoopido.emerge.jquery.' + package.version + '.min.js' ])
-			.pipe(tasks.zip('qoopido.emerge.jquery.latest.zip'))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.zip('qoopido.emerge.jquery.latest.zip'))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:jquery:lazyimage', function() {
+		initialize();
+		
 		gulp.src(files.jquery.lazyimage)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.lazyimage.jquery.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.lazyimage.jquery.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.lazyimage.jquery.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.lazyimage.jquery.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 
 		gulp.src([ './packages/qoopido.lazyimage.jquery.' + package.version + '.js', './packages/qoopido.lazyimage.jquery.' + package.version + '.min.js' ])
-			.pipe(tasks.zip('qoopido.lazyimage.jquery.latest.zip'))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.zip('qoopido.lazyimage.jquery.latest.zip'))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 	gulp.task('build:jquery:shrinkimage', function() {
+		initialize();
+		
 		gulp.src(files.jquery.shrinkimage)
-			.pipe(tasks.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
-			.pipe(tasks.concat('qoopido.shrinkimage.jquery.' + package.version + '.js'))
-			.pipe(tasks.header(banner.src))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.shrinkimage.jquery.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(tasks.uglify())
-			.pipe(tasks.rename('qoopido.shrinkimage.jquery.' + package.version + '.min.js'))
-			.pipe(tasks.header(banner.min))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.shrinkimage.jquery.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 
 		gulp.src([ './packages/qoopido.shrinkimage.jquery.' + package.version + '.js', './packages/qoopido.shrinkimage.jquery.' + package.version + '.min.js' ])
-			.pipe(tasks.zip('qoopido.shrinkimage.jquery.latest.zip'))
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.zip('qoopido.shrinkimage.jquery.latest.zip'))
 			.pipe(gulp.dest('./packages/'));
 	});
 
 /**************************************************
- * build tasks (public)
+ * tasks (public)
  **************************************************/
-	gulp.task('default', function(){
-		util.log('@' + getDatetime());
-		util.log('--------------------------------');
-		gulp.run('lint:dist', 'build:dist');
+	gulp.task('watch', function() {
+		gulp.watch(files.watch.concat(files.all), [ 'lint:dist', 'build:dist' ]);
+		gulp.watch(files.watch.concat(files.base), [ 'lint:base', 'build:base' ]);
+		gulp.watch(files.watch.concat(files.remux), [ 'lint:remux', 'build:remux' ]);
+		gulp.watch(files.watch.concat(files.jquery.emerge), [ 'lint:emerge', 'build:emerge', 'build:jquery:emerge' ]);
+		gulp.watch(files.watch.concat(files.jquery.lazyimage), [ 'lint:lazyimage', 'build:lazyimage', 'build:jquery:lazyimage' ]);
+		gulp.watch(files.watch.concat(files.jquery.shrinkimage), [ 'lint:shrinkimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
 	});
 
-	gulp.task('base', function(){
-		util.log('@' + getDatetime());
-		util.log('--------------------------------');
-		gulp.run('lint:base', 'build:base');
-	});
-
-	gulp.task('remux', function(){
-		util.log('@' + getDatetime());
-		util.log('--------------------------------');
-		gulp.run('lint:remux', 'build:remux');
-	});
-
-	gulp.task('emerge', function(){
-		util.log('@' + getDatetime());
-		util.log('--------------------------------');
-		gulp.run('lint:remux', 'build:emerge', 'build:jquery:emerge');
-	});
-
-	gulp.task('lazyimage', function(){
-		util.log('@' + getDatetime());
-		util.log('--------------------------------');
-		gulp.run('lint:remux', 'build:lazyimage', 'build:jquery:lazyimage');
-	});
-
-	gulp.task('shrinkimage', function(){
-		util.log('@' + getDatetime());
-		util.log('--------------------------------');
-		gulp.run('lint:shrinkimage', 'build:shrinkimage', 'build:jquery:shrinkimage');
-	});
-
-	gulp.task('all', function(){
-		initialize();
-
-		util.log('--------------------------------');
-		gulp.run('default');
-		util.log('--------------------------------');
-
-		initialize();
-
-		util.log('--------------------------------');
-		gulp.run('base');
-		util.log('--------------------------------');
-
-		initialize();
-
-		util.log('--------------------------------');
-		gulp.run('remux');
-		util.log('--------------------------------');
-
-		initialize();
-
-		util.log('--------------------------------');
-		gulp.run('emerge');
-		util.log('--------------------------------');
-
-		initialize();
-
-		util.log('--------------------------------');
-		gulp.run('lazyimage');
-		util.log('--------------------------------');
-
-		initialize();
-
-		util.log('--------------------------------');
-		gulp.run('shrinkimage');
-		util.log('--------------------------------');
-	});
-
-
-/**************************************************
- * watch task
- **************************************************/
-	gulp.task('watch', function(){
-		gulp.watch(files.watch.concat(files.all), function(){
-			initialize();
-
-			util.log('--------------------------------');
-			gulp.run('default');
-			util.log('--------------------------------');
-		});
-
-		gulp.watch(files.watch.concat(files.base), function() {
-			initialize();
-
-			util.log('--------------------------------');
-			gulp.run('base');
-			util.log('--------------------------------');
-		});
-
-		gulp.watch(files.watch.concat(files.remux), function() {
-			initialize();
-
-			util.log('--------------------------------');
-			gulp.run('remux');
-			util.log('--------------------------------');
-		});
-
-		gulp.watch(files.watch.concat(files.jquery.emerge), function() {
-			initialize();
-
-			util.log('--------------------------------');
-			gulp.run('emerge');
-			util.log('--------------------------------');
-		});
-
-		gulp.watch(files.watch.concat(files.jquery.lazyimage), function() {
-			initialize();
-
-			util.log('--------------------------------');
-			gulp.run('lazyimage');
-			util.log('--------------------------------');
-		});
-
-		gulp.watch(files.watch.concat(files.jquery.shrinkimage), function() {
-			initialize();
-
-			util.log('--------------------------------');
-			gulp.run('shrinkimage');
-			util.log('--------------------------------');
-		});
-	});
+	gulp.task('all', [ 'lint:dist', 'build:dist', 'build:base', 'build:remux', 'build:emerge', 'build:jquery:emerge', 'build:lazyimage', 'build:jquery:lazyimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
+	gulp.task('default', [ 'watch' ]);

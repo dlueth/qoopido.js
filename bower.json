@@ -1,6 +1,6 @@
 {
   "name": "qoopido.js",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
   "ignore": [
     "**/.*",
@@ -14,12 +14,12 @@
     "url": "git://github.com/dlueth/qoopido.js.git"
   },
   "license": [
-	  "http://www.opensource.org/licenses/mit-license.php",
-	  "http://www.gnu.org/copyleft/gpl.html"
+    "http://www.opensource.org/licenses/mit-license.php",
+    "http://www.gnu.org/copyleft/gpl.html"
   ],
   "dependencies": {
-	  "json2": "*",
-	  "q": "~1.0.0"
+    "json2": "*",
+    "q": "~1.0.0"
   },
   "devDependencies": {
     "json2": "*",
