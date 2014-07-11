@@ -19,10 +19,7 @@ var gulp    = require('gulp'),
 	];
 	files.remux     = files.base.concat([
 		'./src/emitter.js',
-		'./src/function/unique/uuid.js',
-		'./src/proxy.js',
-		'./src/polyfill/window/getcomputedstyle.js',
-		'./src/dom/element.js',
+		'./src/polyfill/window/matchmedia.js',
 		'./src/component/remux.js'
 	]);
 	files.emerge    = files.base.concat([
@@ -183,7 +180,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./dist/' + package.version + '/src/'))
 			.pipe(gulp.dest('./dist/latest/src/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./dist/' + package.version + '/min/'))
 			.pipe(gulp.dest('./dist/latest/min/'));
@@ -198,7 +195,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.base.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.base.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -213,7 +210,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.remux.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.remux.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -228,7 +225,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.emerge.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.emerge.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -243,7 +240,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.lazyimage.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.lazyimage.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -258,7 +255,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.shrinkimage.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.shrinkimage.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -273,7 +270,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.emerge.jquery.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.emerge.jquery.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -293,7 +290,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.lazyimage.jquery.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.lazyimage.jquery.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -313,7 +310,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.shrinkimage.jquery.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify())
+			.pipe(plugins.uglify({ preserveComments: 'some' }))
 			.pipe(plugins.rename('qoopido.shrinkimage.jquery.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));

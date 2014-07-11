@@ -15,6 +15,7 @@
 	"validthis":true,
 	"scripturl":true,
 	"globals":{
+		"module": true,
 		"define": true,
 		"console": true,
 		"ActiveXObject": true,

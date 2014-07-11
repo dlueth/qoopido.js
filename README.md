@@ -291,18 +291,17 @@ Although this example does absolutely not present a practical use case nor anyth
 
 Included modules
 ---------------------------
-- (object inheritance)
-- (event emitter)
+- base (object inheritance)
+- emitter (event emitter)
 - proxy (universal proxy method)
 - url (handle URLs, parameter etc.)
 - component
 	- remux (REM based aproach to responsive web design)
 	- pager (flexible and UI/UX independent data pager)
-- dom
-	- (DOM element extension)
-		- emerge (react on elements entering or nearing the visible browser area)
-		- lazyimage (load images when entering or nearing the visible browser area)
-		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
+- dom (DOM element extension)
+	- emerge (react on elements entering or nearing the visible browser area)
+	- lazyimage (load images when entering or nearing the visible browser area)
+	- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
 - function (provides single functions, e.g. helper)
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
@@ -337,6 +336,7 @@ Included modules
 		- ucfirst
 	- window
 		- getcomputedstyle
+		- matchmedia
 - pool (pooling facilities and pool factory)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)

@@ -23,8 +23,6 @@
 		return function(element, pseudo) {
 			var self = this;
 
-			self.element = element;
-
 			self.getPropertyValue = function(property) {
 				if(property === 'float') {
 					property = 'styleFloat';
@@ -34,7 +32,7 @@
 					property = property.replace(getComputedStyleRegex, getComputedStyleCallback);
 				}
 
-				return element.currentStyle[property] ? element.currentStyle[property] : null;
+				return element.currentStyle[property] || null;
 			};
 
 			return self;
