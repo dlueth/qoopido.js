@@ -72,7 +72,9 @@
 			return modules[id];
 		};
 
-		if(typeof define === 'function' && define.amd) {
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = define(initialize);
+		} else if(typeof define === 'function' && define.amd) {
 			dependencies ? define(dependencies, initialize) : define(initialize);
 		} else {
 			initialize();

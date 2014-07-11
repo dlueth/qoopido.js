@@ -40,6 +40,7 @@
 	return modules['base'].extend({
 		_mapped:   null,
 		_listener: null,
+		_temp:     null,
 		_constructor: function() {
 			var self = this,
 				method;
@@ -114,10 +115,13 @@
 
 			if(event !== undefined) {
 				self._listener[event] = self._listener[event] || [];
+				self._temp            = self._listener[event].slice();
 
-				for(i = 0; (listener = self._listener[event][i]) !== undefined; i++) {
+				for(i = 0; (listener = self._temp[i]) !== undefined; i++) {
 					listener.apply(self, arguments);
 				}
+
+				self._temp.length = 0;
 			}
 
 			return self;
