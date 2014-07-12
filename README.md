@@ -7,7 +7,7 @@ Qoopido.js is a concept for a modularly built and loadable JavaScript library. D
 
 Compatibility
 ---------------------------
-Qoopido.js is not meant to support older legacy Internet Explorers but should run (with limitations regarding some of the modules) from IE8 onwards. I test on Chrome, Firefox, Safari for OSX, Safari for iOS and Android as well as IE8 and IE9.
+Qoopido.js is not meant to support older legacy Internet Explorers but should run (with limitations regarding some of the modules) from IE8 onwards. I test on Chrome, Firefox, Safari for OSX, Safari for iOS and Android as well as IE8, IE9, IE10 and IE11.
 
 
 
