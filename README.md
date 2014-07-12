@@ -7,7 +7,7 @@ Qoopido.js is a concept for a modularly built and loadable JavaScript library. D
 
 Compatibility
 ---------------------------
-Qoopido.js is not meant to support older legacy Internet Explorers but should run (with limitations regarding some of the modules) from IE8 onwards. I test on Chrome, Firefox, Safari for OSX, Safari for iOS and Android as well as IE8 and IE9.
+Qoopido.js is not meant to support older legacy Internet Explorers but should run (with limitations regarding some of the modules) from IE8 onwards. I test on Chrome, Firefox, Safari for OSX, Safari for iOS and Android as well as IE8, IE9, IE10 and IE11.
 
 
 
@@ -296,12 +296,13 @@ Included modules
 - proxy (universal proxy method)
 - url (handle URLs, parameter etc.)
 - component
-	- remux (REM based aproach to responsive web design)
+	- remux (REM based aproach to responsive web design, demo: http://codepen.io/dlueth/pen/KGrmf)
 	- pager (flexible and UI/UX independent data pager)
-- dom (DOM element extension)
-	- emerge (react on elements entering or nearing the visible browser area)
-	- lazyimage (load images when entering or nearing the visible browser area)
-	- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
+- dom 
+	- element (DOM element extension)
+		- emerge (react on elements entering or nearing the visible browser area, demo: http://codepen.io/dlueth/pen/mparb)
+		- lazyimage (load images when entering or nearing the visible browser area)
+		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize, demo: http://codepen.io/dlueth/pen/eodEL)
 - function (provides single functions, e.g. helper)
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
@@ -337,13 +338,13 @@ Included modules
 	- window
 		- getcomputedstyle
 		- matchmedia
-- pool (pooling facilities and pool factory)
+- pool (pooling facilities and pool factory, demo: http://codepen.io/dlueth/pen/uydzJ)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
 	- module (pooling facilities for Qoopido.js modules or external objects/classes)
 	- object (pooling facilities for objects)
-- renderer (centralized rendering pipeline)
-- support (base for feature detection)
+- renderer (centralized rendering pipeline, demo: http://codepen.io/dlueth/pen/uydzJ)
+- support (feature detection, demo: http://codepen.io/dlueth/pen/bvFpk)
 	- capability
 		- datauri
 	- css
@@ -372,4 +373,4 @@ Included modules
 	- xhr (AJAX transport)
 - vector
 	- 2d
-- worker (flexible web worker implementation)
+- worker (flexible web worker implementation, demo: http://codepen.io/dlueth/pen/jcvar)
