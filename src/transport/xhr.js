@@ -15,17 +15,17 @@
  * @require ../transport
  * @require ../function/merge
  * @require ../function/unique/string
- * @external Q
+ * @require ../promise/defer
  */
 
 ;(function(definition) {
-	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', 'q' ]);
+	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', '../promise/defer' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
-		Q      = modules['q'] || window.Q,
-		getXhr = (typeof window.XMLHttpRequest !== 'undefined') ?
+		DeferredPromise = modules['promise/defer'],
+		getXhr          = (typeof window.XMLHttpRequest !== 'undefined') ?
 			function(url) {
 				if(modules['url'].isLocal(url)) {
 					return new window.XMLHttpRequest();
@@ -84,8 +84,6 @@
 		}
 
 		self.timeout = setTimeout(function() { onTimeout.call(self); }, self.settings.timeout);
-
-		self.dfd.notify(event);
 	}
 
 	function onReadyStateChange() {
@@ -149,7 +147,7 @@
 
 			context.url      = url;
 			context.id       = ''.concat('xhr-', modules['function/unique/string']());
-			context.dfd      = Q.defer();
+			context.dfd      = new DeferredPromise();
 			context.xhr      = getXhr(url);
 			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;

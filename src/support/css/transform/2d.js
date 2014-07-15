@@ -38,7 +38,6 @@
 				function() {
 					deferred.reject();
 				}
-			)
-			.done();
+			);
 	});
 }));

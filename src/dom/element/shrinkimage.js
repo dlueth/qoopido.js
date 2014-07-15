@@ -24,14 +24,9 @@
  * @require ../../support/element/canvas/todataurl/png
  * @require ../../transport/xhr
  * @optional ./pool/dom
- * @external JSON
  */
 ;(function(definition) {
 	var dependencies = [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr' ];
-
-	if(!window.JSON || !window.JSON.parse) {
-		dependencies.push('json');
-	}
 
 	window.qoopido.register('dom/element/shrinkimage', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
@@ -39,7 +34,7 @@
 
 	var
 	// properties
-		JSON            = modules['json'] || window.JSON,
+		JSON            = window.JSON,
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
 		pool            = shared.pool && shared.pool.dom,
@@ -109,14 +104,13 @@
 					}
 				}
 			)
-			.fail(
+			['catch'](
 				function() {
 					lookup[target] = url;
 
 					assign.call(self, url, isBackground);
 				}
-			)
-			.done();
+			);
 	}
 
 	function assign(source, isBackground) {
@@ -155,8 +149,7 @@
 				function() {
 					self.emit(EVENT_FAILED);
 				}
-			)
-			.done();
+			);
 	}
 
 	function processData(data) {

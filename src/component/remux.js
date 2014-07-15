@@ -123,11 +123,6 @@
 
 			for(id in parameter) {
 				layout = parameter[id];
-				lMin   = Math.round(layout.width * (layout.min / base));
-				lMax   = Math.round(layout.width * (layout.max / base)) - 1;
-				mq     = 'screen and (min-width: ' + lMin + 'px) and (max-width: ' + lMax + 'px )';
-
-				addQuery.call(self, mq, id, null, lMin, lMax);
 
 				for(size = layout.min; size <= layout.max; size++) {
 					lMin = Math.round(layout.width * (size / base));

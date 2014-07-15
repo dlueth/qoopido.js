@@ -15,10 +15,6 @@ External dependencies
 ---------------------------
 The library itself does not depend on jQuery but some modules (everything within the jquery folder) are either jQuery specific or provide an abstraction for Qoopido.js modules to function as jQuery plugins.
 
-To deal with the special challenges of asynchronous tasks some modules (e.g. support, transport, worker) of Qoopido.js make use of promises/deferreds. To stay standards conform and open Qoopido.js relies on Q.js a standards based implementation of JavaScript promises.
-
-By the time of this writing only one module (shrinkimage) requires support for JSON.parse. JSON should be built-in on all newer Browsers but lacks support in older legacy browsers. For this purpose I greatly recommend JSON2 specifically (JSON3 does not seem to work reliably yet).
-
 
 
 Installation
@@ -64,8 +60,7 @@ Next create the file ***./app/main.js*** (from the ***data-main*** attribute abo
 require.config({
 	baseUrl: 'app/',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min',
-		q:       '../vendor/q.js/q.min'
+		qoopido: '../vendor/qoopido.js/dist/latest/min'
 	}
 });
 
@@ -111,8 +106,7 @@ Like in the example above create the file ***./app/main.js*** and copy & paste t
 require.config({
 	baseUrl: 'app/',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min',
-		q:       '../vendor/q.js/q.min'
+		qoopido: '../vendor/qoopido.js/dist/latest/min'
 	}
 });
 
@@ -168,8 +162,7 @@ So let us see what happens when you actually call your public method (console op
 require.config({
 	baseUrl: 'app/',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min',
-		q:       '../vendor/q.js/q.min'
+		qoopido: '../vendor/qoopido.js/dist/latest/min'
 	}
 });
 
@@ -196,8 +189,7 @@ to your console, correct? Anything more to it, you ask? Sure! Alter your ***./ap
 require.config({
 	baseUrl: 'app/',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min',
-		q:       '../vendor/q.js/q.min'
+		qoopido: '../vendor/qoopido.js/dist/latest/min'
 	}
 });
 
@@ -262,8 +254,7 @@ And afterwards register listeners in your ***./app/main.js*** like in the follow
 require.config({
 	baseUrl: 'app/',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min',
-		q:       '../vendor/q.js/q.min'
+		qoopido: '../vendor/qoopido.js/dist/latest/min'
 	}
 });
 
@@ -338,11 +329,16 @@ Included modules
 	- window
 		- getcomputedstyle
 		- matchmedia
+		- promise
 - pool (pooling facilities and pool factory, demo: http://codepen.io/dlueth/pen/uydzJ)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
 	- module (pooling facilities for Qoopido.js modules or external objects/classes)
 	- object (pooling facilities for objects)
+- promise
+	- all
+	- defer
+	- race
 - renderer (centralized rendering pipeline, demo: http://codepen.io/dlueth/pen/uydzJ)
 - support (feature detection, demo: http://codepen.io/dlueth/pen/bvFpk)
 	- capability
