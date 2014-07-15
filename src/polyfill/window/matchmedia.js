@@ -339,7 +339,7 @@
 
 			return mql;
 		};
-
-		return window.matchMedia;
 	}
+
+	return window.matchMedia;
 }));

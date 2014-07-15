@@ -16,18 +16,18 @@
  * @require ../function/merge
  * @require ../function/unique/uuid
  * @require ../dom/element
+ * @require ../promise/defer
  * @optional ./pool/dom
- * @external Q
  */
 ;(function(definition) {
-	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', 'q' ]);
+	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../promise/defer' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
-		Q    = modules['q'] || window.Q,
-		pool = shared.pool && shared.pool.dom,
-		head = document.getElementsByTagName('head')[0];
+		DeferredPromise = modules['promise/defer'],
+		pool            = shared.pool && shared.pool.dom,
+		head            = document.getElementsByTagName('head')[0];
 
 	function sendRequest(url, content) {
 		var self     = this,
@@ -118,7 +118,7 @@
 			url = modules['url'].resolve(url);
 
 			context.id       = ''.concat('jsonp-', modules['function/unique/string']());
-			context.dfd      = Q.defer();
+			context.dfd      = new DeferredPromise();
 			context.script   = modules['dom/element'].create(pool ? pool.obtain('script') : document.createElement('script'));
 			context.settings = modules['function/merge']({}, this._settings, options);
 			context.timeout  = null;

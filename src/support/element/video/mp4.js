@@ -33,7 +33,6 @@
 				function() {
 					deferred.reject();
 				}
-			)
-			.done();
+			);
 	});
 }));
