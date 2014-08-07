@@ -41,26 +41,33 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", regex = new RegExp("^<(\\w+)\\s*/>$"), elements = {};
+    var stringObject = "object", stringString = "string", eventProperties = "type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "), getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", regex = new RegExp("^<(\\w+)\\s*/>$"), elements = {};
+    function QoopidoEvent(event) {
+        this.originalEvent = event;
+    }
+    QoopidoEvent.prototype.preventDefault = function() {
+        var self = this;
+        if (self.originalEvent.cancelable !== false) {
+            self.originalEvent.returnValue = false;
+            self.originalEvent.preventDefault();
+        }
+    };
+    QoopidoEvent.prototype.stopPropagation = function() {
+        var self = this;
+        self.originalEvent.cancelBubble = true;
+        self.originalEvent.stopPropagation();
+    };
+    QoopidoEvent.prototype.stopImmediatePropagation = function() {
+        var self = this;
+        self.originalEvent.cancelBubble = true;
+        self.originalEvent.cancelImmediate = true;
+        self.originalEvent.stopImmediatePropagation();
+    };
     function normalizeEvent(originalEvent) {
-        var event = Object.create(originalEvent);
-        event.originalEvent = originalEvent;
-        event.type = originalEvent.type;
-        event.preventDefault = function() {
-            if (originalEvent.cancelable !== false) {
-                originalEvent.returnValue = false;
-                originalEvent.preventDefault();
-            }
-        };
-        event.stopPropagation = function() {
-            originalEvent.cancelBubble = true;
-            originalEvent.stopPropagation();
-        };
-        event.stopImmediatePropagation = function() {
-            originalEvent.cancelBubble = true;
-            originalEvent.cancelImmediate = true;
-            originalEvent.stopImmediatePropagation();
-        };
+        var event = new QoopidoEvent(originalEvent), i = 0, property;
+        for (;(property = eventProperties[i]) !== undefined; i++) {
+            event[property] = originalEvent[property];
+        }
         if (!event.target) {
             event.target = event.srcElement || document;
         }

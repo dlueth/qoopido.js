@@ -31,6 +31,7 @@
                         }
                         target[property] = merge(tgt, src);
                     } else {
+                        console.log("hier", property, src);
                         target[property] = src;
                     }
                 }
