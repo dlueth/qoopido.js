@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<title>Qoopido.js example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../default.css" />
+	<style type="text/css">
+	</style>
+</head>
+<body>
+
+<div id="console">
+	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
+		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
+	</svg>
+
+	<h3>REMux state</h3>
+	<dl>
+		<dt>Layout:</dt><dd id="layout"></dd>
+		<dt>Fontsize:</dt><dd id="fontsize"></dd>
+	</dl>
+</div>
+
+<!--
+<script type="text/javascript" src="../../packages/qoopido.remux.3.4.5.min.js"></script>
+<script type="text/javascript">
+	var mRemux    = window.qoopido.modules['component/remux'],
+		cLayout   = document.getElementById('layout'),
+		cFontsize = document.getElementById('fontsize');
+
+	mRemux
+		.addLayout({
+			mobile:  { width: 640, min: 8, max: 15 },
+			desktop: { width: 1240, min: 8, max: 25 }
+		})
+		.on('statechanged', function(name, state) {
+			cLayout.textContent   = state.layout;
+			cFontsize.textContent = state.fontsize;
+		});
+</script>
+-->
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+<script type="text/javascript">
+	require.config({
+		baseUrl: "../../dist/latest/min"
+	});
+
+	require([ 'base' ], function() {
+		require([ 'dom/element', 'component/remux' ], function(mDomElement, mRemux) {
+			var cLayout   = mDomElement.create('#layout'),
+				cFontsize = mDomElement.create('#fontsize');
+
+			mRemux
+				.addLayout({
+					mobile:  { width: 640, min: 8, max: 15 },
+					desktop: { width: 1240, min: 8, max: 25 }
+				})
+				.on('statechanged', function(name, state) {
+					cLayout.setContent(state.layout);
+					cFontsize.setContent(state.fontsize);
+				});
+		});
+	});
+</script>
+
+</body>
+</html>

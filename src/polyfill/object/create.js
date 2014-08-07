@@ -12,7 +12,7 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @polyfill ./polyfill/object/defineproperties
+ * @polyfill ./defineproperties
  */
 ;(function(definition, qoopido) {
 	if(qoopido.register) {

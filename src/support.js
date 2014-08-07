@@ -57,7 +57,7 @@
 		testMultiple: function() {
 			var test, tests = [], i = 0;
 
-			for(i; (test = arguments[i]) !== undefined; i++) {
+			for(; (test = arguments[i]) !== undefined; i++) {
 				switch(typeof test) {
 					case 'string':
 						tests.push(this.test[test]());

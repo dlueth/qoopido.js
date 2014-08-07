@@ -56,11 +56,11 @@
 		},
 		on: function(events, fn) {
 			var self = this,
-				i, event;
+				i = 0, event;
 
 			events = events.split(' ');
 
-			for(i = 0; (event = events[i]) !== undefined; i++) {
+			for(; (event = events[i]) !== undefined; i++) {
 				(self._listener[event] = self._listener[event] || []).push(fn);
 			}
 
@@ -81,12 +81,12 @@
 		},
 		off: function(events, fn) {
 			var self = this,
-				i, event, j, listener;
+				i = 0, event, j, listener;
 
 			if(events) {
 				events = events.split(' ');
 
-				for(i = 0; (event = events[i]) !== undefined; i++) {
+				for(; (event = events[i]) !== undefined; i++) {
 					self._listener[event] = self._listener[event] || [];
 
 					if(fn) {
@@ -111,13 +111,13 @@
 		},
 		emit: function(event) {
 			var self = this,
-				i, listener;
+				i = 0, listener;
 
 			if(event !== undefined) {
 				self._listener[event] = self._listener[event] || [];
 				self._temp            = self._listener[event].slice();
 
-				for(i = 0; (listener = self._temp[i]) !== undefined; i++) {
+				for(; (listener = self._temp[i]) !== undefined; i++) {
 					listener.apply(self, arguments);
 				}
 

@@ -54,9 +54,9 @@
 		update: function(factor) {
 			factor = (typeof factor !== 'undefined') ? parseFloat(factor) : 1;
 
-			var i, acceleration;
+			var i = 0, acceleration;
 
-			for(i = 0; (acceleration = this.acceleration[i]) !== undefined; i++) {
+			for(; (acceleration = this.acceleration[i]) !== undefined; i++) {
 				this.velocity.add(acceleration);
 			}
 

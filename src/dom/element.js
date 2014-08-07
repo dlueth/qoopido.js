@@ -12,27 +12,87 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../base
- * @require ../proxy
- * @polyfill ./polyfill/window/getcomputedstyle
+ * @require ../function/unique/uuid
+ * @polyfill ../polyfill/window/customevent
+ * @polyfill ../polyfill/window/addeventlistener
+ * @polyfill ../polyfill/window/removeeventlistener
+ * @polyfill ../polyfill/window/dispatchevent
+ * @polyfill ../polyfill/window/getcomputedstyle
+ * @polyfill ../polyfill/element/matches
+ * @polyfill ../polyfill/document/queryselector
+ * @polyfill ../polyfill/document/queryselectorall
  */
+/* jshint loopfunc: true */
 ;(function(definition) {
-	var dependencies = [ '../proxy' ];
+	var dependencies = [ '../function/unique/uuid' ];
+
+	if(!window.CustomEvent) {
+		dependencies.push('../polyfill/window/customevent');
+	}
+
+	if(!window.addEventListener) {
+		dependencies.push('../polyfill/window/addeventlistener');
+	}
+
+	if(!window.removeEventListener) {
+		dependencies.push('../polyfill/window/removeeventlistener');
+	}
+
+	if(!window.dispatchEvent) {
+		dependencies.push('../polyfill/window/dispatchevent');
+	}
 
 	if(!window.getComputedStyle) {
 		dependencies.push('../polyfill/window/getcomputedstyle');
+	}
+
+	if(!Element.prototype.matches) {
+		dependencies.push('../polyfill/element/matches');
+	}
+
+	if(!document.querySelector) {
+		dependencies.push('../polyfill/document/queryselector');
+	}
+
+	if(!document.querySelectorAll) {
+		dependencies.push('../polyfill/document/queryselectorall');
 	}
 
 	window.qoopido.register('dom/element', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var attachListener, detachListener, emitEvent,
-		stringObject     = 'object',
+	var stringObject     = 'object',
 		stringString     = 'string',
-		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'];
+		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'],
+		generateUuid     = modules['function/unique/uuid'],
+		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
+		regex            = new RegExp('^<(\\w+)\\s*/>$'),
+		elements         = {};
 
-	function normalizeEvent(event) {
-		event = event || window.event;
+	function normalizeEvent(originalEvent) {
+		var event = Object.create(originalEvent);
+
+		event.originalEvent = originalEvent;
+		event.type          = originalEvent.type;
+
+		event.preventDefault = function() {
+			if(originalEvent.cancelable !== false) {
+				originalEvent.returnValue = false;
+				originalEvent.preventDefault();
+			}
+		};
+
+		event.stopPropagation = function() {
+			originalEvent.cancelBubble = true;
+			originalEvent.stopPropagation();
+		};
+
+		event.stopImmediatePropagation = function() {
+			originalEvent.cancelBubble = true;
+			originalEvent.cancelImmediate = true;
+			originalEvent.stopImmediatePropagation();
+		};
 
 		if(!event.target) {
 			event.target = event.srcElement || document;
@@ -49,105 +109,74 @@
 		return event;
 	}
 
-	attachListener = (window.addEventListener) ?
-		function(name, fn) {
-			var self    = this,
-				element = self.element,
-				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
+	function emitEvent(type, detail) {
+		this.element.dispatchEvent(new window.CustomEvent(type, { bubbles: true, cancelable: true, detail: detail }));
+	}
 
-			element[luid] = function(event) { fn.call(this, normalizeEvent(event)); };
-
-			element.addEventListener(name, element[luid], false);
-		}
-		:
-		function(name, fn) {
-			var self    = this,
-				element = self.element,
-				luid;
-
-			luid = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-
-			if(element['on' + name] !== undefined) {
-				element[luid] = function(event) { fn.call(this, normalizeEvent(event || window.event)); };
-
-				element.attachEvent('on' + name, element[luid]);
-			} else {
-				name          = ''.concat('fake[', name, ']');
-				element[name] = null;
-				element[luid] = function(event) { if(event.propertyName === name) { fn.call(this, normalizeEvent(element[name])); } };
-
-				element.attachEvent('onpropertychange', element[luid]);
-			}
-		};
-
-	detachListener = (window.removeEventListener) ?
-		function(name, fn) {
-			var self    = this,
-				element = self.element,
-				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-
-			element.removeEventListener(name, element[luid], false);
-			delete element[luid];
-		}
-		:
-		function(name, fn) {
-			var self    = this,
-				element = self.element,
-				luid    = ''.concat('listener[', name, '][', fn._quid || fn, ']');
-
-			if(element['on' + name] !== undefined) {
-				element.detachEvent('on' + name, element[luid]);
-			} else {
-				element.detachEvent('onpropertychange', element[luid]);
-			}
-
-			delete element[luid];
-		};
-
-	emitEvent = (document.createEvent) ?
-		function(type, data) {
-			var self    = this,
-				element = self.element,
-				event   = document.createEvent('HTMLEvents');
-
-			event.initEvent(type, true, true);
-			event.data = data;
-			element.dispatchEvent(event);
-		}
-		:
-		function(type, data) {
-			var self    = this,
-				element = self.element,
-				event   = document.createEventObject();
-
-			event.type = event.eventType = type;
-			event.data = data;
-
-			try{
-				element.fireEvent('on' + event.eventType, event);
-			} catch(exception) {
-				var name = ''.concat('fake[', type, ']');
-
-				if(element[name] !== undefined) {
-					element[name] = event;
+	function resolveElement(element) {
+		if(typeof element === 'string') {
+			try {
+				if(regex.test(element) === true) {
+					element = document.createElement(element.replace(regex, '$1').toLowerCase());
+				} else {
+					element = document.querySelector(element);
 				}
+			} catch(exception) {
+				element = null;
 			}
-		};
+		}
+
+		if(!element) {
+			throw new Error('Element could not be resolved');
+		}
+
+		return element;
+	}
 
 	return modules['base'].extend({
 		type:     null,
 		element:  null,
-		listener: null,
-		_constructor: function(element) {
-			var self = this;
+		listener: {},
+		_constructor: function(element, attributes, styles) {
+			var self = this,
+				uuid = element.quid || null;
 
-			if(!element) {
-				throw new Error('Missing element argument');
+			element = resolveElement(element);
+
+			if(uuid && elements[uuid]) {
+				return elements[uuid];
+			} else {
+				self.type        = element.tagName;
+				self.element     = element;
+				uuid             = generateUuid();
+				element.quid     = uuid;
+				elements[uuid]   = self;
 			}
 
-			self.type     = element.tagName;
-			self.element  = element;
-			self.listener = {};
+			if(typeof attributes === 'object' && attributes !== null) {
+				self.setAttributes(attributes);
+			}
+
+			if(typeof styles === 'object' && styles !== null) {
+				self.setStyles(styles);
+			}
+		},
+		getContent: function(html) {
+			var element = this.element;
+
+			return (html && html !== false) ? element.innerHTML : element[contentAttribute];
+		},
+		setContent: function(content, html) {
+			var self    = this,
+				element = self.element;
+
+			if(html && html !== false) {
+				element.innerHTML = content;
+			} else {
+				element[contentAttribute] = content;
+			}
+
+			return self;
 		},
 		getAttribute: function(attribute) {
 			if(attribute && typeof attribute === stringString) {
@@ -170,9 +199,9 @@
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
 				if(typeof attributes === stringObject && attributes.length) {
-					var i, attribute;
+					var i = 0, attribute;
 
-					for(i = 0; (attribute = attributes[i]) !== undefined; i++) {
+					for(; (attribute = attributes[i]) !== undefined; i++) {
 						result[attribute] = self.element.getAttributes(attribute);
 					}
 				}
@@ -224,9 +253,9 @@
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
 				if(typeof attributes === stringObject && attributes.length) {
-					var i, attribute;
+					var i = 0, attribute;
 
-					for(i = 0; (attribute = attributes[i]) !== undefined; i++) {
+					for(; (attribute = attributes[i]) !== undefined; i++) {
 						self.element.removeAttribute(attribute);
 					}
 				}
@@ -255,9 +284,9 @@
 				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
 
 				if(typeof properties === stringObject && properties.length) {
-					var i, property;
+					var i = 0, property;
 
-					for(i = 0; (property = properties[i]) !== undefined; i++) {
+					for(0; (property = properties[i]) !== undefined; i++) {
 						result[property] = getComputedStyle(self.element, null).getPropertyValue(property);
 					}
 				}
@@ -287,6 +316,111 @@
 
 			return self;
 		},
+		siblings: function(selector) {
+			var element  = this.element,
+				pointer  = element.parentNode.firstChild,
+				siblings = [];
+
+			for(; pointer; pointer = pointer.nextSibling) {
+				if(pointer.nodeType === 1 && pointer !== element) {
+					if(!selector || pointer.matches(selector)) {
+						siblings.push(pointer);
+					}
+				}
+			}
+
+			return siblings;
+		},
+		siblingsBefore: function(selector) {
+			var pointer  = this.element.previousSibling,
+				siblings = [];
+
+			for(; pointer; pointer = pointer.previousSibling) {
+				if(pointer.nodeType === 1) {
+					if(!selector || pointer.matches(selector)) {
+						siblings.push(pointer);
+					}
+				}
+			}
+
+			return siblings;
+		},
+		siblingsAfter: function(selector) {
+			var pointer  = this.element.nextSibling,
+				siblings = [];
+
+			for(; pointer; pointer = pointer.nextSibling) {
+				if(pointer.nodeType === 1) {
+					if(!selector || pointer.matches(selector)) {
+						siblings.push(pointer);
+					}
+				}
+			}
+
+			return siblings;
+		},
+		previous: function(selector) {
+			var pointer;
+
+			if(!selector) {
+				return this.element.previousSibling;
+			} else {
+				pointer = this.element.previousSibling;
+
+				for(; pointer; pointer = pointer.previousSibling) {
+					if(pointer.nodeType === 1 && pointer.matches(selector)) {
+						return pointer;
+					}
+				}
+			}
+		},
+		next: function(selector) {
+			var pointer;
+
+			if(!selector) {
+				return this.element.nextSibling;
+			} else {
+				pointer = this.element.nextSibling;
+
+				for(; pointer; pointer = pointer.nextSibling) {
+					if(pointer.nodeType === 1 && pointer.matches(selector)) {
+						return pointer;
+					}
+				}
+			}
+		},
+		find: function(selector) {
+			return this.element.querySelectorAll(selector);
+		},
+		parent: function(selector) {
+			var pointer;
+
+			if(!selector) {
+				return this.element.parentNode;
+			} else {
+				pointer = this.element;
+
+				for(; pointer; pointer = pointer.parentNode) {
+					if(pointer.matches(selector)) {
+						return pointer;
+					}
+				}
+			}
+		},
+		parents: function(selector) {
+			var pointer = this.element.parentNode,
+				parents = [];
+
+			for(; pointer; pointer = pointer.parentNode) {
+				if(pointer.nodeType === 9) {
+					return parents;
+				} else if (pointer.nodeType === 1) {
+					if(!selector || pointer.matches(selector)) {
+						parents.push(pointer);
+					}
+				}
+			}
+		},
 		isVisible: function() {
 			var element = this.element;
 
@@ -313,7 +447,7 @@
 			var self = this;
 
 			if(self.hasClass(name)) {
-				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'), '');
+				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'));
 			}
 
 			return self;
@@ -329,7 +463,7 @@
 			var self    = this,
 				target = self.element;
 
-			element = element.element || element;
+			element = element.element || resolveElement(element);
 
 			target.firstChild ? target.insertBefore(element, target.firstChild) : self.append(element);
 
@@ -338,7 +472,7 @@
 		append: function(element) {
 			var self = this;
 
-			self.element.appendChild(element.element || element);
+			self.element.appendChild(element.element || resolveElement(element));
 
 			return self;
 		},
@@ -346,7 +480,7 @@
 			var self    = this,
 				target = self.element;
 
-			element = element.element || element;
+			element = element.element || resolveElement(element);
 
 			target.parentNode.replaceChild(element, target);
 
@@ -356,14 +490,14 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || target).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
+			(target  = target.element || resolveElement(target)).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
 
 			return self;
 		},
 		appendTo: function(target) {
 			var self = this;
 
-			(target.element || target).appendChild(self.element);
+			(target.element || resolveElement(target)).appendChild(self.element);
 
 			return self;
 		},
@@ -371,7 +505,7 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || target).parentNode.insertBefore(element, target);
+			(target  = target.element || resolveElement(target)).parentNode.insertBefore(element, target);
 
 			return self;
 		},
@@ -379,7 +513,7 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || target).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
+			(target = target.element || resolveElement(target)).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
 
 			return self;
 		},
@@ -387,7 +521,7 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || target).parentNode.replaceChild(element, target);
+			(target  = target.element || resolveElement(target)).parentNode.replaceChild(element, target);
 
 			return self;
 		},
@@ -399,64 +533,73 @@
 
 			return self;
 		},
-		on: function(events, fn) {
-			var self = this,
-				i, listener;
+		on: function(events) {
+			var self     = this,
+				element  = self.element,
+				delegate = (arguments.length > 2) ? arguments[1] : null,
+				fn       = (arguments.length > 2) ? arguments[2] : arguments[1],
+				uuid     = fn.quid || (fn.quid = generateUuid()),
+				i = 0, event;
 
-			events = events.split(' ');
+			events  = events.split(' ');
 
-			for(i = 0; (listener = events[i]) !== undefined; i++) {
-				(self.listener[listener] = self.listener[listener] || []).push(fn);
+			for(; (event = events[i]) !== undefined; i++) {
+				var id       = event + '-' + uuid,
+					pointer  = self.listener[id] || (self.listener[id] = []),
+					listener = function(event) {
+						event = normalizeEvent(event);
 
-				attachListener.call(self, listener, fn);
+						if(!delegate || event.target.matches(delegate)) {
+							fn.call(self, event);
+						}
+					};
+
+				pointer.push(listener);
+				element.addEventListener(event, listener);
 			}
 
 			return self;
 		},
-		one: function(events, fn, each) {
-			each = (each !== false);
-
+		one: function(events) {
 			var self     = this,
-				listener = modules['proxy'].create(self, function(event) {
+				delegate = (arguments.length > 2) ? arguments[1] : null,
+				fn       = (arguments.length > 2) ? arguments[2] : arguments[1],
+				each     = ((arguments.length > 2) ? arguments[3] : arguments[2]) !== false,
+				listener = function(event) {
 					self.off(((each === true) ? event.type : events), listener);
 
 					fn.call(self, event);
-				});
+				};
 
-			self.on(events, listener);
+			fn.quid = listener.quid = generateUuid();
+
+			if(delegate) {
+				self.on(events, delegate, listener);
+			} else {
+				self.on(events, listener);
+			}
 
 			return self;
 		},
 		off: function(events, fn) {
-			var self = this,
-				i, event, j, listener;
+			var self    = this,
+				element = self.element,
+				i = 0, event, j = 0, listener;
 
-			if(events) {
-				events = events.split(' ');
+			events = events.split(' ');
 
-				for(i = 0; (event = events[i]) !== undefined; i++) {
-					self.listener[event] = self.listener[event] || [];
+			for(; (event = events[i]) !== undefined; i++) {
+				var id      = fn.quid && event + '-' + fn.quid || null,
+					pointer = id && self.listener[id] || null;
 
-					if(fn) {
-						for(j = 0; (listener = self.listener[event][j]) !== undefined; j++) {
-							if(listener === fn) {
-								self.listener[event].splice(j, 1);
-								detachListener.call(self, event, listener);
-
-								j--;
-							}
-						}
-					} else {
-						while(self.listener[event].length > 0) {
-							detachListener.call(self, event, self.listener[event].pop());
-						}
+				if(pointer) {
+					for(; (listener = pointer[j]) !== undefined; j++) {
+						element.removeEventListener(event, listener);
 					}
-				}
-			} else {
-				for(event in self.listener) {
-					while(self.listener[event].length > 0) {
-						detachListener.call(self, event, self.listener[event].pop());
-					}
+
+					delete self.listener[id];
+				} else {
+					element.removeEventListener(event, fn);
 				}
 			}
 
