@@ -1,5 +1,5 @@
 /*
- * Qoopido pool/dom
+ * Qoopido pool/module
  *
  * Provides module pooling facilities
  *

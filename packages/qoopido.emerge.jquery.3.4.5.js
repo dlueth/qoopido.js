@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-8
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -326,7 +326,6 @@
                         }
                         target[property] = merge(tgt, src);
                     } else {
-                        console.log("hier", property, src);
                         target[property] = src;
                     }
                 }
@@ -356,7 +355,7 @@
     };
 });
 (function(definition) {
-    var dependencies = [ "../function/unique/uuid" ];
+    var dependencies = [ "../base", "../function/unique/uuid", "./event", "../pool/module" ];
     if (!window.CustomEvent) {
         dependencies.push("../polyfill/window/customevent");
     }
@@ -384,56 +383,16 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var stringObject = "object", stringString = "string", eventProperties = "type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "), getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", regex = new RegExp("^<(\\w+)\\s*/>$"), elements = {};
-    function QoopidoEvent(event) {
-        this.originalEvent = event;
-    }
-    QoopidoEvent.prototype.preventDefault = function() {
-        var self = this;
-        if (self.originalEvent.cancelable !== false) {
-            self.originalEvent.returnValue = false;
-            self.originalEvent.preventDefault();
-        }
+    var stringObject = "object", stringString = "string", mPool = modules["pool/module"].create(modules["dom/event"]), getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), storage = {
+        elements: {},
+        events: {}
     };
-    QoopidoEvent.prototype.stopPropagation = function() {
-        var self = this;
-        self.originalEvent.cancelBubble = true;
-        self.originalEvent.stopPropagation();
-    };
-    QoopidoEvent.prototype.stopImmediatePropagation = function() {
-        var self = this;
-        self.originalEvent.cancelBubble = true;
-        self.originalEvent.cancelImmediate = true;
-        self.originalEvent.stopImmediatePropagation();
-    };
-    function normalizeEvent(originalEvent) {
-        var event = new QoopidoEvent(originalEvent), i = 0, property;
-        for (;(property = eventProperties[i]) !== undefined; i++) {
-            event[property] = originalEvent[property];
-        }
-        if (!event.target) {
-            event.target = event.srcElement || document;
-        }
-        if (event.target.nodeType === 3) {
-            event.target = event.target.parentNode;
-        }
-        if (!event.relatedTarget && event.fromElement) {
-            event.relatedTarget = event.fromElement === event.target ? event.toElement : event.fromElement;
-        }
-        return event;
-    }
-    function emitEvent(type, detail) {
-        this.element.dispatchEvent(new window.CustomEvent(type, {
-            bubbles: true,
-            cancelable: true,
-            detail: detail
-        }));
-    }
+    window.mPool = mPool;
     function resolveElement(element) {
         if (typeof element === "string") {
             try {
-                if (regex.test(element) === true) {
-                    element = document.createElement(element.replace(regex, "$1").toLowerCase());
+                if (isTag.test(element) === true) {
+                    element = document.createElement(element.replace(isTag, "$1").toLowerCase());
                 } else {
                     element = document.querySelector(element);
                 }
@@ -446,21 +405,34 @@
         }
         return element;
     }
+    function emitEvent(event, detail, uuid) {
+        var self = this;
+        event = new window.CustomEvent(event, {
+            bubbles: true,
+            cancelable: true,
+            detail: detail
+        });
+        if (uuid) {
+            event._quid = uuid;
+            event.isDelegate = true;
+        }
+        self.element.dispatchEvent(event);
+    }
     return modules["base"].extend({
         type: null,
         element: null,
-        listener: {},
+        _listener: {},
         _constructor: function(element, attributes, styles) {
-            var self = this, uuid = element.quid || null;
+            var self = this, uuid = element._quid || null;
             element = resolveElement(element);
-            if (uuid && elements[uuid]) {
-                return elements[uuid];
+            if (uuid && storage.elements[uuid]) {
+                return storage.elements[uuid];
             } else {
                 self.type = element.tagName;
                 self.element = element;
                 uuid = generateUuid();
-                element.quid = uuid;
-                elements[uuid] = self;
+                element._quid = uuid;
+                storage.elements[uuid] = self;
             }
             if (typeof attributes === "object" && attributes !== null) {
                 self.setAttributes(attributes);
@@ -752,14 +724,28 @@
             return self;
         },
         on: function(events) {
-            var self = this, element = self.element, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], uuid = fn.quid || (fn.quid = generateUuid()), i = 0, event;
+            var self = this, element = self.element, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], uuid = fn._quid || (fn._quid = generateUuid()), i = 0, event;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = event + "-" + uuid, pointer = self.listener[id] || (self.listener[id] = []), listener = function(event) {
-                    event = normalizeEvent(event);
+                var id = event + "-" + uuid, pointer = self._listener[id] || (self._listener[id] = []), listener = function(event) {
+                    var uuid = event._quid || (event._quid = generateUuid()), delegateTo;
+                    if (!storage.events[uuid]) {
+                        storage.events[uuid] = mPool.obtain(event);
+                    }
+                    event = storage.events[uuid];
+                    delegateTo = event.delegate;
+                    window.clearTimeout(event._timeout);
                     if (!delegate || event.target.matches(delegate)) {
                         fn.call(self, event);
                     }
+                    if (delegateTo) {
+                        delete event.delegate;
+                        emitEvent.call(self, delegateTo, null, event._quid);
+                    }
+                    event._timeout = window.setTimeout(function() {
+                        delete storage.events[uuid];
+                        event.dispose();
+                    }, 5e3);
                 };
                 pointer.push(listener);
                 element.addEventListener(event, listener);
@@ -771,7 +757,7 @@
                 self.off(each === true ? event.type : events, listener);
                 fn.call(self, event);
             };
-            fn.quid = listener.quid = generateUuid();
+            fn._quid = listener._quid = generateUuid();
             if (delegate) {
                 self.on(events, delegate, listener);
             } else {
@@ -783,12 +769,12 @@
             var self = this, element = self.element, i = 0, event, j = 0, listener;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = fn.quid && event + "-" + fn.quid || null, pointer = id && self.listener[id] || null;
+                var id = fn._quid && event + "-" + fn._quid || null, pointer = id && self._listener[id] || null;
                 if (pointer) {
                     for (;(listener = pointer[j]) !== undefined; j++) {
                         element.removeEventListener(event, listener);
                     }
-                    delete self.listener[id];
+                    delete self._listener[id];
                 } else {
                     element.removeEventListener(event, fn);
                 }
