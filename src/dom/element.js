@@ -76,8 +76,6 @@
 			events:   {}
 		};
 
-	window.mPool = mPool;
-
 	function resolveElement(element) {
 		if(typeof element === 'string') {
 			try {
@@ -549,6 +547,7 @@
 
 						event._timeout = window.setTimeout(function() {
 							delete storage.events[uuid];
+							delete event._timeout;
 
 							event.dispose();
 						}, 5000);

@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-8
+* date:    2014-7-9
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -387,7 +387,6 @@
         elements: {},
         events: {}
     };
-    window.mPool = mPool;
     function resolveElement(element) {
         if (typeof element === "string") {
             try {
@@ -744,6 +743,7 @@
                     }
                     event._timeout = window.setTimeout(function() {
                         delete storage.events[uuid];
+                        delete event._timeout;
                         event.dispose();
                     }, 5e3);
                 };

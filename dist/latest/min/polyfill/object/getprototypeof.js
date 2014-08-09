@@ -1,5 +1,5 @@
 /*!
-* Qoopido.js library v3.4.5, 2014-7-8
+* Qoopido.js library v3.4.5, 2014-7-9
 * https://github.com/dlueth/qoopido.js
 * (c) 2014 Dirk Lueth
 * Dual licensed under MIT and GPL

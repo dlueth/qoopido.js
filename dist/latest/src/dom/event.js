@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-8
+* date:    2014-7-9
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -22,7 +22,7 @@
         },
         mouse: {
             regex: new RegExp("^(?:mouse|pointer|contextmenu)|click"),
-            properties: "button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement".split(" "),
+            properties: "button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which".split(" "),
             filter: function() {
                 var self = this, original = self.originalEvent, fromElement = original.fromElement, which = original.button, pointer;
                 if (self.pageX == null && original.clientX != null) {
@@ -41,7 +41,7 @@
         },
         key: {
             regex: new RegExp("^key"),
-            properties: "char charCode key keyCode".split(" "),
+            properties: "char charCode key keyCode which".split(" "),
             filter: function() {
                 var self = this, original = self.originalEvent;
                 if (self.which === null) {
@@ -51,18 +51,20 @@
         }
     };
     return modules["base"].extend({
+        originalEvent: null,
         isDelegate: false,
         isDefaultPrevented: false,
         isPropagationStopped: false,
         isImmediatePropagationStopped: false,
+        _properties: [],
         _constructor: function(event) {
-            var self = this, type, key, hook, delegate, transfer = [], filter = [], i = 0, property, fn;
+            var self = this, type, key, hook, delegate, filter = [], i = 0, property, fn;
             type = event.type;
             for (key in hooks) {
                 hook = hooks[key], delegate = hook.delegate;
                 if (!hook.regex || hook.regex && hook.regex.test(type)) {
                     if (hook.properties) {
-                        transfer = transfer.concat(hook.properties);
+                        self._properties = self._properties.concat(hook.properties);
                     }
                     if (hook.filter) {
                         filter.push(hook.filter);
@@ -72,20 +74,36 @@
                     self.delegate = delegate;
                 }
             }
-            for (;(property = transfer[i]) !== undefined; i++) {
+            for (;(property = self._properties[i]) !== undefined; i++) {
                 self[property] = event[property];
             }
-            self.originalEvent = event;
             if (!self.target) {
                 self.target = event.srcElement || document;
             }
             if (self.target.nodeType === 3) {
                 self.target = self.target.parentNode;
             }
+            self.originalEvent = event;
             self.metaKey = event.metaKey && event.metaKey !== false ? true : false;
             for (i = 0; (fn = filter[i]) !== undefined; i++) {
                 fn.call(self);
             }
+        },
+        _obtain: function(event) {
+            this._constructor(event);
+        },
+        _dispose: function() {
+            var self = this, i = 0, property;
+            for (;(property = self._properties[i]) !== undefined; i++) {
+                delete self[property];
+            }
+            delete self.delegate;
+            self.originalEvent = null;
+            self.isDelegate = false;
+            self.isDefaultPrevented = false;
+            self.isPropagationStopped = false;
+            self.isImmediatePropagationStopped = false;
+            self._properties.length = 0;
         },
         preventDefault: function() {
             var self = this, event = self.originalEvent;
