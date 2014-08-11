@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-9
+* date:    2014-7-11
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -13,7 +13,7 @@
 * - http://www.gnu.org/copyleft/gpl.html
 */
 (function(definition) {
-    var dependencies = [ "../base", "../function/unique/uuid", "./event", "../pool/module" ];
+    var dependencies = [ "../base", "../function/unique/uuid", "./event" ];
     if (!window.CustomEvent) {
         dependencies.push("../polyfill/window/customevent");
     }
@@ -41,15 +41,20 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var stringObject = "object", stringString = "string", mPool = modules["pool/module"].create(modules["dom/event"]), getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), storage = {
+    var stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = {
+        module: modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null,
+        dom: shared.pool && shared.pool.dom ? shared.pool.dom : null
+    }, storage = {
         elements: {},
         events: {}
     };
     function resolveElement(element) {
+        var tag;
         if (typeof element === "string") {
             try {
                 if (isTag.test(element) === true) {
-                    element = document.createElement(element.replace(isTag, "$1").toLowerCase());
+                    tag = element.replace(isTag, "$1").toLowerCase();
+                    element = pool.dom && pool.dom.obtain(tag) || document.createElement(tag);
                 } else {
                     element = document.querySelector(element);
                 }
@@ -98,6 +103,22 @@
                 self.setStyles(styles);
             }
         },
+        _obtain: function(element, attributes, styles) {
+            this._constructor(element, attributes, styles);
+        },
+        _dispose: function() {
+            var self = this, element = self.element, uuid = element._quid || null, pointer = self._listener, listener;
+            self.type = null;
+            for (listener in pointer) {
+                listener = pointer[listener];
+                element.removeEventListener(listener.type, listener);
+                delete pointer[listener];
+            }
+            element.dispose && element.dispose();
+            if (uuid && storage.elements[uuid]) {
+                delete storage.elements[uuid];
+            }
+        },
         getContent: function(html) {
             var element = this.element;
             return html && html !== false ? element.innerHTML : element[contentAttribute];
@@ -112,8 +133,8 @@
             return self;
         },
         getAttribute: function(attribute) {
+            var self = this;
             if (attribute && typeof attribute === stringString) {
-                var self = this;
                 attribute = attribute.split(" ");
                 if (attribute.length === 1) {
                     return self.element.getAttribute(attribute[0]);
@@ -143,9 +164,8 @@
             return self;
         },
         setAttributes: function(attributes) {
-            var self = this;
+            var self = this, attribute;
             if (attributes && typeof attributes === stringObject && !attributes.length) {
-                var attribute;
                 for (attribute in attributes) {
                     self.element.setAttribute(attribute, attributes[attribute]);
                 }
@@ -165,11 +185,10 @@
             return self;
         },
         removeAttributes: function(attributes) {
-            var self = this;
+            var self = this, i = 0, attribute;
             if (attributes) {
                 attributes = typeof attributes === stringString ? attributes.split(" ") : attributes;
                 if (typeof attributes === stringObject && attributes.length) {
-                    var i = 0, attribute;
                     for (;(attribute = attributes[i]) !== undefined; i++) {
                         self.element.removeAttribute(attribute);
                     }
@@ -178,8 +197,8 @@
             return self;
         },
         getStyle: function(property) {
+            var self = this;
             if (property && typeof property === stringString) {
-                var self = this;
                 property = property.split(" ");
                 if (property.length === 1) {
                     return getComputedStyle(self.element, null).getPropertyValue(property[0]);
@@ -189,12 +208,11 @@
             }
         },
         getStyles: function(properties) {
-            var self = this, result = {};
+            var self = this, result = {}, i = 0, property;
             if (properties) {
                 properties = typeof properties === stringString ? properties.split(" ") : properties;
                 if (typeof properties === stringObject && properties.length) {
-                    var i = 0, property;
-                    for (0; (property = properties[i]) !== undefined; i++) {
+                    for (;(property = properties[i]) !== undefined; i++) {
                         result[property] = getComputedStyle(self.element, null).getPropertyValue(property);
                     }
                 }
@@ -209,9 +227,8 @@
             return self;
         },
         setStyles: function(properties) {
-            var self = this;
+            var self = this, property;
             if (properties && typeof properties === stringObject && !properties.length) {
-                var property;
                 for (property in properties) {
                     self.element.style[property] = properties[property];
                 }
@@ -387,7 +404,7 @@
                 var id = event + "-" + uuid, pointer = self._listener[id] || (self._listener[id] = []), listener = function(event) {
                     var uuid = event._quid || (event._quid = generateUuid()), delegateTo;
                     if (!storage.events[uuid]) {
-                        storage.events[uuid] = mPool.obtain(event);
+                        storage.events[uuid] = pool.module && pool.module.obtain(event) || modules["dom/event"].create(event);
                     }
                     event = storage.events[uuid];
                     delegateTo = event.delegate;
@@ -402,9 +419,10 @@
                     event._timeout = window.setTimeout(function() {
                         delete storage.events[uuid];
                         delete event._timeout;
-                        event.dispose();
+                        event.dispose && event.dispose();
                     }, 5e3);
                 };
+                listener.type = event;
                 pointer.push(listener);
                 element.addEventListener(event, listener);
             }

@@ -287,13 +287,16 @@ Included modules
 - proxy (universal proxy method)
 - url (handle URLs, parameter etc.)
 - component
-	- remux (REM based aproach to responsive web design, demo: http://codepen.io/dlueth/pen/KGrmf)
 	- pager (flexible and UI/UX independent data pager)
-- dom 
+	- remux (REM based approach to responsive web design, demo: http://codepen.io/dlueth/pen/KGrmf)
+	- sense (react to media queries in JavaScript)
+- dom
+	- collection (DOM element extension)
 	- element (DOM element extension)
 		- emerge (react on elements entering or nearing the visible browser area, demo: http://codepen.io/dlueth/pen/mparb)
 		- lazyimage (load images when entering or nearing the visible browser area)
 		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize, demo: http://codepen.io/dlueth/pen/eodEL)
+	- event (DOM event normalization)
 - function (provides single functions, e.g. helper)
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
@@ -311,6 +314,8 @@ Included modules
 		- shrinkimage
 - particle (still very basic)
 - polyfill
+	- array
+	 	- indexof
 	- document
 		- getelementsbyclassname
 		- queryselector
@@ -321,15 +326,22 @@ Included modules
 		- create
 		- defineproperties
 		- defineproperty
-		- getoqnpropertynames
+		- getownpropertydescriptor
+		- getownpropertynames
+		- getprototypeof
 		- keys
 	- string
 		- trim
 		- ucfirst
 	- window
+		- addeventlistener
+		- customevent
+		- dispatchevent
+		- event
 		- getcomputedstyle
 		- matchmedia
 		- promise
+		- removeeventlistener
 - pool (pooling facilities and pool factory, demo: http://codepen.io/dlueth/pen/uydzJ)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
