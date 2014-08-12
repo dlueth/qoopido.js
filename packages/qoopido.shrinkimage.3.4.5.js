@@ -604,10 +604,7 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = {
-        module: modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null,
-        dom: shared.pool && shared.pool.dom ? shared.pool.dom : null
-    }, storage = {
+    var stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
         elements: {},
         events: {}
     };
@@ -617,7 +614,7 @@
             try {
                 if (isTag.test(element) === true) {
                     tag = element.replace(isTag, "$1").toLowerCase();
-                    element = pool.dom && pool.dom.obtain(tag) || document.createElement(tag);
+                    element = document.createElement(tag);
                 } else {
                     element = document.querySelector(element);
                 }
@@ -953,7 +950,7 @@
                 var id = event + "-" + uuid, listener = function(event) {
                     var uuid = event._quid || (event._quid = generateUuid()), delegateTo;
                     if (!storage.events[uuid]) {
-                        storage.events[uuid] = pool.module && pool.module.obtain(event) || modules["dom/event"].create(event);
+                        storage.events[uuid] = pool && pool.obtain(event) || modules["dom/event"].create(event);
                     }
                     event = storage.events[uuid];
                     delegateTo = event.delegate;

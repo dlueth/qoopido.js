@@ -23,7 +23,6 @@
  * @polyfill ../polyfill/document/queryselector
  * @polyfill ../polyfill/document/queryselectorall
  * @optional ../pool/module
- * @optional ../pool/dom
  */
 /* jshint loopfunc: true */
 ;(function(definition) {
@@ -71,10 +70,7 @@
 		generateUuid     = modules['function/unique/uuid'],
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
-		pool             = {
-			module: modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
-			dom:    (shared.pool && shared.pool.dom) ? shared.pool.dom : null
-		},
+		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
 		storage          = {
 			elements: {},
 			events:   {}
@@ -88,7 +84,7 @@
 				if(isTag.test(element) === true) {
 					tag = element.replace(isTag, '$1').toLowerCase();
 
-					element = pool.dom && pool.dom.obtain(tag) || document.createElement(tag);
+					element = document.createElement(tag);
 				} else {
 					element = document.querySelector(element);
 				}
@@ -533,7 +529,7 @@
 							delegateTo;
 
 						if(!storage.events[uuid]) {
-							storage.events[uuid] = pool.module && pool.module.obtain(event) || modules['dom/event'].create(event);
+							storage.events[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
 						}
 
 						event      = storage.events[uuid];
