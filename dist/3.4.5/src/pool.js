@@ -99,7 +99,7 @@
             return this._pool;
         },
         obtain: function() {
-            var self = this, element = self._getPool.apply(self, arguments).pop();
+            var self = this, element = self._getPool.apply(self, arguments).pop(), result;
             if (element) {
                 self.metrics.inPool--;
                 self.metrics.recycled++;
@@ -107,10 +107,14 @@
                 element = self._initElement(self._obtain.apply(self, arguments));
             }
             if (typeof element._obtain === "function") {
-                element._obtain.apply(element, arguments);
+                result = element._obtain.apply(element, arguments);
             }
-            self.metrics.inUse++;
-            return element;
+            if (result) {
+                return result;
+            } else {
+                self.metrics.inUse++;
+                return element;
+            }
         },
         dispose: function(element) {
             var self = this, queue = self._queue;
