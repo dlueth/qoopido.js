@@ -118,12 +118,14 @@
 	}
 
 	return modules['base'].extend({
-		type:     null,
-		element:  null,
-		_listener: {},
+		type:      null,
+		element:   null,
+		_listener: null,
 		_constructor: function(element, attributes, styles) {
 			var self = this,
 				uuid = element._quid || null;
+
+			self._listener = {};
 
 			element = resolveElement(element);
 
@@ -551,7 +553,7 @@
 
 			for(; (event = events[i]) !== undefined; i++) {
 				var id       = event + '-' + uuid,
-					pointer  = self._listener[id] || (self._listener[id] = []),
+					//pointer  = self._listener[id] || (self._listener[id] = []),
 					listener = function(event) {
 						var uuid = event._quid || (event._quid = generateUuid()),
 							delegateTo;
@@ -583,9 +585,9 @@
 						}, 5000);
 					};
 
-				listener.type = event;
+				listener.type      = event;
+				self._listener[id] = listener;
 
-				pointer.push(listener);
 				element.addEventListener(event, listener);
 			}
 
@@ -621,13 +623,10 @@
 
 			for(; (event = events[i]) !== undefined; i++) {
 				var id      = fn._quid && event + '-' + fn._quid || null,
-					pointer = id && self._listener[id] || null;
+					listener = id && self._listener[id] || null;
 
-				if(pointer) {
-					for(; (listener = pointer[j]) !== undefined; j++) {
-						element.removeEventListener(event, listener);
-					}
-
+				if(listener) {
+					element.removeEventListener(event, listener);
 					delete self._listener[id];
 				} else {
 					element.removeEventListener(event, fn);

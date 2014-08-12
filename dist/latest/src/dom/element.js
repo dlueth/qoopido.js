@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-11
+* date:    2014-7-12
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -83,9 +83,10 @@
     return modules["base"].extend({
         type: null,
         element: null,
-        _listener: {},
+        _listener: null,
         _constructor: function(element, attributes, styles) {
             var self = this, uuid = element._quid || null;
+            self._listener = {};
             element = resolveElement(element);
             if (uuid && storage.elements[uuid]) {
                 return storage.elements[uuid];
@@ -401,7 +402,7 @@
             var self = this, element = self.element, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], uuid = fn._quid || (fn._quid = generateUuid()), i = 0, event;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = event + "-" + uuid, pointer = self._listener[id] || (self._listener[id] = []), listener = function(event) {
+                var id = event + "-" + uuid, listener = function(event) {
                     var uuid = event._quid || (event._quid = generateUuid()), delegateTo;
                     if (!storage.events[uuid]) {
                         storage.events[uuid] = pool.module && pool.module.obtain(event) || modules["dom/event"].create(event);
@@ -423,7 +424,7 @@
                     }, 5e3);
                 };
                 listener.type = event;
-                pointer.push(listener);
+                self._listener[id] = listener;
                 element.addEventListener(event, listener);
             }
             return self;
@@ -445,11 +446,9 @@
             var self = this, element = self.element, i = 0, event, j = 0, listener;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = fn._quid && event + "-" + fn._quid || null, pointer = id && self._listener[id] || null;
-                if (pointer) {
-                    for (;(listener = pointer[j]) !== undefined; j++) {
-                        element.removeEventListener(event, listener);
-                    }
+                var id = fn._quid && event + "-" + fn._quid || null, listener = id && self._listener[id] || null;
+                if (listener) {
+                    element.removeEventListener(event, listener);
                     delete self._listener[id];
                 } else {
                     element.removeEventListener(event, fn);
