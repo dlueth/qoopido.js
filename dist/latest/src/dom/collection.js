@@ -16,7 +16,7 @@
     window.qoopido.register("dom/collection", definition, [ "../base", "./element" ]);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/element"]) || null;
+    var mDomElement = modules["dom/element"];
     function map(method) {
         var self = this, elements = self.elements, parameter = Array.prototype.slice.call(arguments, 1), i = 0, element;
         for (;(element = elements[i]) !== undefined; i++) {
@@ -36,8 +36,9 @@
         _constructor: function(elements, attributes, styles) {
             var self = this, i = 0, element;
             self.elements = [];
+            elements = typeof elements === "string" ? document.querySelectorAll(elements) : elements;
             for (;(element = elements[i]) !== undefined; i++) {
-                self.elements.push(pool ? pool.obtain(element) : modules["dom/element"].create(element));
+                self.elements.push(mDomElement.create(element));
             }
             if (typeof attributes === "object" && attributes !== null) {
                 self.setAttributes(attributes);
@@ -106,12 +107,20 @@
             }
             return self;
         },
-        remove: function() {
-            var self = this, elements = self.elements, i = elements.length - 1, element;
-            for (;(element = elements[i]) !== undefined; i--) {
-                element.remove();
-                element.dispose && element.dispose();
-                elements.pop();
+        remove: function(index) {
+            var self = this, elements = self.elements, i, element;
+            if (index || index === 0) {
+                element = self.elements[index];
+                if (element) {
+                    element.remove();
+                    elements.splice(index, 1);
+                }
+            } else {
+                i = elements.length - 1;
+                for (;(element = elements[i]) !== undefined; i--) {
+                    element.remove();
+                    elements.pop();
+                }
             }
             return self;
         },

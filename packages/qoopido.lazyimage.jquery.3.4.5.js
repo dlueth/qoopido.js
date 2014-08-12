@@ -427,12 +427,8 @@
         element: null,
         _listener: null,
         _constructor: function(element, attributes, styles) {
-            var self = this;
-            self._listener = {};
-            return self._obtain(element, attributes, styles);
-        },
-        _obtain: function(element, attributes, styles) {
             var self = this, uuid;
+            self._listener = {};
             element = resolveElement(element);
             uuid = element._quid || null;
             if (uuid && storage.elements[uuid]) {
@@ -449,19 +445,6 @@
             }
             if (typeof styles === "object" && styles !== null) {
                 self.setStyles(styles);
-            }
-        },
-        _dispose: function() {
-            var self = this, element = self.element, uuid = element._quid || null, pointer = self._listener, listener;
-            self.type = null;
-            for (listener in pointer) {
-                listener = pointer[listener];
-                element.removeEventListener(listener.type, listener);
-                delete pointer[listener];
-            }
-            element.dispose && element.dispose();
-            if (uuid && storage.elements[uuid]) {
-                delete storage.elements[uuid];
             }
         },
         getContent: function(html) {
