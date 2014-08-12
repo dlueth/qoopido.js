@@ -337,7 +337,6 @@ Included modules
 		- addeventlistener
 		- customevent
 		- dispatchevent
-		- event
 		- getcomputedstyle
 		- matchmedia
 		- promise

@@ -28,6 +28,7 @@
             event.cancelable = eventInitDict && eventInitDict.cancelable !== undefined ? eventInitDict.cancelable : true;
             return event;
         };
+        console.log("hier");
         window.Event = Window.prototype.Event = function Event(type, eventInitDict) {
             if (!type) {
                 throw new Error("Not enough arguments");

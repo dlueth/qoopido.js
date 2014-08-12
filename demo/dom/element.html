@@ -30,14 +30,7 @@
 
 	require([ 'base' ], function() {
 		require([ 'pool/dom', 'pool/module' ], function() {
-			require([ 'dom/element', 'dom/collection' ], function(mDomElement, mDomCollection) {
-				function onClickLi(event) {
-					event.preventDefault();
-					event.stopPropagation();
-
-					console.log(event.type, this.element);
-				}
-
+			require([ 'dom/element' ], function(mDomElement) {
 				var eBody = mDomElement
 						.create('body')
 						.on('click', function(event) {
@@ -62,10 +55,7 @@
 						.setContent('click me more often!', true),
 					eDiv = mDomElement
 						.create('<div />', { 'class': 'test' }, { width: '100px' })
-						.appendTo('body'),
-					cP = mDomCollection
-						.create(eBody.find('p'))
-						.on('click', onClickLi);
+						.appendTo('body');
 			});
 		});
 	});

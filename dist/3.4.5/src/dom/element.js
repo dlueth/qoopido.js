@@ -70,7 +70,7 @@
     function emitEvent(event, detail, uuid) {
         var self = this;
         event = new window.CustomEvent(event, {
-            bubbles: true,
+            bubbles: event === "load" ? false : true,
             cancelable: true,
             detail: detail
         });
@@ -443,10 +443,11 @@
             return self;
         },
         off: function(events, fn) {
-            var self = this, element = self.element, i = 0, event, j = 0, listener;
+            var self = this, element = self.element, i = 0, event, id, listener;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = fn._quid && event + "-" + fn._quid || null, listener = id && self._listener[id] || null;
+                id = fn._quid && event + "-" + fn._quid || null;
+                listener = id && self._listener[id] || null;
                 if (listener) {
                     element.removeEventListener(event, listener);
                     delete self._listener[id];
