@@ -69,15 +69,19 @@
 		isDefaultPrevented:            false,
 		isPropagationStopped:          false,
 		isImmediatePropagationStopped: false,
-		_properties:                   [],
+		_properties:                   null,
 		_constructor: function(event) {
-			var self = this,
-				type, key, hook, delegate, filter = [], i = 0, property, fn;
+			var self = this;
 
-			type = event.type;
+			self._properties = [];
+			self._obtain(event);
+		},
+		_obtain: function(event) {
+			var self = this,
+				type = event.type, key, hook, delegate, filter = [], i = 0, property, fn;
 
 			for(key in hooks) {
-				hook     = hooks[key],
+				hook     = hooks[key];
 				delegate = hook.delegate;
 
 				if(!hook.regex || (hook.regex && hook.regex.test(type))) {
@@ -113,9 +117,6 @@
 			for(i = 0; (fn = filter[i]) !== undefined; i++) {
 				fn.call(self);
 			}
-		},
-		_obtain: function(event) {
-			this._constructor(event);
 		},
 		_dispose: function() {
 			var self = this,

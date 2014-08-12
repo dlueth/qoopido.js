@@ -85,9 +85,14 @@
         element: null,
         _listener: null,
         _constructor: function(element, attributes, styles) {
-            var self = this, uuid = element._quid || null;
+            var self = this;
             self._listener = {};
+            return self._obtain(element, attributes, styles);
+        },
+        _obtain: function(element, attributes, styles) {
+            var self = this, uuid;
             element = resolveElement(element);
+            uuid = element._quid || null;
             if (uuid && storage.elements[uuid]) {
                 return storage.elements[uuid];
             } else {
@@ -103,9 +108,6 @@
             if (typeof styles === "object" && styles !== null) {
                 self.setStyles(styles);
             }
-        },
-        _obtain: function(element, attributes, styles) {
-            this._constructor(element, attributes, styles);
         },
         _dispose: function() {
             var self = this, element = self.element, uuid = element._quid || null, pointer = self._listener, listener;

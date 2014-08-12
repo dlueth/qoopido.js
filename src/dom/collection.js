@@ -50,10 +50,12 @@
 	}
 
 	return modules['base'].extend({
-		elements: [],
+		elements: null,
 		_constructor: function(elements, attributes, styles) {
 			var self = this,
 				i = 0, element;
+
+			self.elements = [];
 
 			for(; (element = elements[i]) !== undefined; i++) {
 				self.elements.push((pool) ? pool.obtain(element) : modules['dom/element'].create(element));
