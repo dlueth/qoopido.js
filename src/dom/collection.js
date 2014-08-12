@@ -14,7 +14,6 @@
  * @require ../base
  * @require ./element
  */
-/* jshint loopfunc: true */
 ;(function(definition) {
 	window.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
