@@ -41,9 +41,43 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
+    var IE = function() {
+        if (document.documentMode) {
+            return document.documentMode;
+        } else {
+            for (var i = 7; i > 0; i--) {
+                var div = document.createElement("div");
+                div.innerHTML = "<!--[if IE " + i + "]><span></span><![endif]-->";
+                if (div.getElementsByTagName("span").length) {
+                    return i;
+                }
+            }
+        }
+        return undefined;
+    }(), stringObject = "object", stringString = "string", stringNumber = "number", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
         elements: {},
         events: {}
+    }, styleHooks = {
+        opacity: IE <= 8 ? {
+            map: "filter",
+            regex: new RegExp("alpha\\(opacity=(.*)\\)", "i"),
+            getValue: function(value) {
+                value = value.toString().match(this.regex);
+                if (value) {
+                    value = value[1] / 100;
+                } else {
+                    value = 1;
+                }
+                return value;
+            },
+            setValue: function(value) {
+                return {
+                    zoom: 1,
+                    opacity: value,
+                    filter: "alpha(opacity=" + (value * 100 + .5 >> 0) + ")"
+                };
+            }
+        } : null
     };
     function resolveElement(element) {
         var tag;
@@ -180,23 +214,28 @@
             return self;
         },
         getStyle: function(property) {
-            var self = this;
+            var self = this, map, value;
             if (property && typeof property === stringString) {
                 property = property.split(" ");
                 if (property.length === 1) {
-                    return getComputedStyle(self.element, null).getPropertyValue(property[0]);
+                    property = property[0];
+                    map = styleHooks[property] && styleHooks[property].map || property;
+                    value = getComputedStyle(self.element, null).getPropertyValue(map);
+                    return styleHooks[property] && styleHooks[property].getValue && styleHooks[property].getValue(value) || value;
                 } else {
                     return self.getStyles(property);
                 }
             }
         },
         getStyles: function(properties) {
-            var self = this, result = {}, i = 0, property;
+            var self = this, result = {}, i = 0, property, map, value;
             if (properties) {
                 properties = typeof properties === stringString ? properties.split(" ") : properties;
                 if (typeof properties === stringObject && properties.length) {
                     for (;(property = properties[i]) !== undefined; i++) {
-                        result[property] = getComputedStyle(self.element, null).getPropertyValue(property);
+                        map = styleHooks[property] && styleHooks[property].map || property;
+                        value = getComputedStyle(self.element, null).getPropertyValue(map);
+                        return styleHooks[property] && styleHooks[property].getValue && styleHooks[property].getValue(value) || value;
                     }
                 }
             }
@@ -205,15 +244,29 @@
         setStyle: function(property, value) {
             var self = this;
             if (property && typeof property === stringString) {
-                self.element.style[property] = value;
+                value = styleHooks[property] && styleHooks[property].setValue && styleHooks[property].setValue(value) || value;
+                if (typeof value === stringString || typeof value === stringNumber) {
+                    self.element.style[property] = value;
+                } else {
+                    for (property in value) {
+                        self.element.style[property] = value[property];
+                    }
+                }
             }
             return self;
         },
         setStyles: function(properties) {
-            var self = this, property;
+            var self = this, property, value;
             if (properties && typeof properties === stringObject && !properties.length) {
                 for (property in properties) {
-                    self.element.style[property] = properties[property];
+                    value = styleHooks[property] && styleHooks[property].setValue && styleHooks[property].setValue(properties[property]) || properties[property];
+                    if (typeof value === stringString || typeof value === stringNumber) {
+                        self.element.style[property] = properties[property];
+                    } else {
+                        for (property in value) {
+                            self.element.style[property] = value[property];
+                        }
+                    }
                 }
             }
             return self;

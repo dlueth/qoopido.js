@@ -37,7 +37,7 @@
 							console.log('[on] event "click" was captured on', event.target);
 						})
 						.one('click', 'button.once', function(event) {
-							console.log('[one] event "click" was captured on', event.target);
+							console.log('[one] event "' + event.type + '" was captured on', event.target);
 						}),
 					eButton1 = mDomElement
 						.create('<button />', { type: 'submit', 'class': 'once' })
