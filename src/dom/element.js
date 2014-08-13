@@ -538,7 +538,7 @@
 						window.clearTimeout(event._timeout);
 
 						if(!delegate || event.target.matches(delegate)) {
-							fn.call(self, event);
+							fn.call(self, event, event.originalEvent.detail);
 						}
 
 						if(delegateTo) {
@@ -565,13 +565,13 @@
 		},
 		one: function(events) {
 			var self     = this,
-				delegate = (arguments.length > 2) ? arguments[1] : null,
-				fn       = (arguments.length > 2) ? arguments[2] : arguments[1],
-				each     = ((arguments.length > 2) ? arguments[3] : arguments[2]) !== false,
+				delegate = (arguments.length > 3 || typeof arguments[1] === 'string') ? arguments[1] : null,
+				fn       = (arguments.length > 3 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
+				each     = ((arguments.length > 3) ? arguments[3] : arguments[2]) !== false,
 				listener = function(event) {
 					self.off(((each === true) ? event.type : events), listener);
 
-					fn.call(self, event);
+					fn.call(self, event, event.originalEvent.detail);
 				};
 
 			fn._quid = listener._quid = generateUuid();

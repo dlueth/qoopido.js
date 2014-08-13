@@ -37,11 +37,12 @@
 		JSON            = window.JSON,
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
-		pool            = shared.pool && shared.pool.dom,
+		pool            = shared.pool && shared.pool.dom || null,
 		lookup          = {},
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
 		regexSuffix     = new RegExp('\\.png$', 'i'),
+		supported       = modules['support'].testMultiple('/capability/datauri', '/element/canvas/todataurl/png'),
 
 	// methods / classes
 		prototype, loader,
@@ -68,10 +69,13 @@
 			self.removeAttribute(self._settings.attribute).hide();
 		}
 
-		modules['support'].testMultiple('/capability/datauri', '/element/canvas/todataurl/png')
-			.then(settings.debug)
+		supported
 			.then(
 				function() {
+					if(settings.debug === true) {
+						throw new Error('debug enabled');
+					}
+
 					switch(typeof lookup[target]) {
 						case 'object':
 							lookup[target].one(EVENT_LOADED, function(event) {
@@ -86,13 +90,13 @@
 						default:
 							lookup[target] = loader
 								.create(target, (!isBackground) ? self._element : null)
-								.one(EVENT_STATE, function(event) {
+								.one(EVENT_STATE, function(event, data) {
 									if(event.type === EVENT_LOADED) {
-										lookup[target] = event.data;
+										lookup[target] = data;
 
 										self.emit(EVENT_CACHED);
 
-										assign.call(self, event.data, isBackground);
+										assign.call(self, data, isBackground);
 									} else {
 										lookup[target] = url;
 
@@ -119,12 +123,10 @@
 		if(isBackground) {
 			self.setStyle('backgroundImage', 'url(' + source + ')');
 			self.emit(EVENT_LOADED);
-			self.off();
 		} else {
 			self.one(DOM_LOAD, function() {
 				self.show();
 				self.emit(EVENT_LOADED);
-				self.off();
 			}).setAttribute('src', source);
 		}
 	}
@@ -156,7 +158,7 @@
 		var canvas, context,
 			self = this,
 			onLoadMain = function(event) {
-				canvas = pool ? shared.pool.dom.obtain('canvas') : document.createElement('canvas');
+				canvas = pool && pool.obtain('canvas') || document.createElement('canvas');
 
 				canvas.style.display = 'none';
 				canvas.width         = data.width;
@@ -246,7 +248,7 @@
 			var self = this;
 
 			if(!element) {
-				element = pool ? shared.pool.dom.obtain('img') : document.createElement('img');
+				element = pool && pool.obtain('img') || document.createElement('img');
 			}
 
 			loader._parent._constructor.call(self, element);

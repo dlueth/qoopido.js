@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-12
+* date:    2014-7-13
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -956,7 +956,7 @@
                     delegateTo = event.delegate;
                     window.clearTimeout(event._timeout);
                     if (!delegate || event.target.matches(delegate)) {
-                        fn.call(self, event);
+                        fn.call(self, event, event.originalEvent.detail);
                     }
                     if (delegateTo) {
                         delete event.delegate;
@@ -975,9 +975,9 @@
             return self;
         },
         one: function(events) {
-            var self = this, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], each = (arguments.length > 2 ? arguments[3] : arguments[2]) !== false, listener = function(event) {
+            var self = this, delegate = arguments.length > 3 || typeof arguments[1] === "string" ? arguments[1] : null, fn = arguments.length > 3 || typeof arguments[2] === "function" ? arguments[2] : arguments[1], each = (arguments.length > 3 ? arguments[3] : arguments[2]) !== false, listener = function(event) {
                 self.off(each === true ? event.type : events, listener);
-                fn.call(self, event);
+                fn.call(self, event, event.originalEvent.detail);
             };
             fn._quid = listener._quid = generateUuid();
             if (delegate) {
@@ -1179,7 +1179,7 @@
                 } else {
                     candidates = [ pMethod ];
                 }
-                for (i; (candidate = candidates[i]) !== undefined; i++) {
+                for (;(candidate = candidates[i]) !== undefined; i++) {
                     if (pElement[candidate] !== undefined && (typeof pElement[candidate] === "function" || typeof pElement[candidate] === "object")) {
                         stored = candidate;
                         break;
@@ -1520,7 +1520,7 @@
         attribute: "data-" + name,
         quality: 80,
         debug: false
-    }, pool = shared.pool && shared.pool.dom, lookup = {}, regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', "i"), regexPath = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', "i"), regexSuffix = new RegExp("\\.png$", "i"), prototype, loader, EVENT_QUEUED = "queued", EVENT_CACHED = "cached", EVENT_LOADED = "loaded", EVENT_FAILED = "failed", EVENT_STATE = "".concat(EVENT_LOADED, " ", EVENT_FAILED), DOM_LOAD = "load", DOM_ERROR = "error", DOM_STATE = "".concat(DOM_LOAD, " ", DOM_ERROR);
+    }, pool = shared.pool && shared.pool.dom || null, lookup = {}, regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', "i"), regexPath = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', "i"), regexSuffix = new RegExp("\\.png$", "i"), supported = modules["support"].testMultiple("/capability/datauri", "/element/canvas/todataurl/png"), prototype, loader, EVENT_QUEUED = "queued", EVENT_CACHED = "cached", EVENT_LOADED = "loaded", EVENT_FAILED = "failed", EVENT_STATE = "".concat(EVENT_LOADED, " ", EVENT_FAILED), DOM_LOAD = "load", DOM_ERROR = "error", DOM_STATE = "".concat(DOM_LOAD, " ", DOM_ERROR);
     function processMain(url, isBackground) {
         url = modules["url"].resolve(regexPath.exec(url)[1]);
         isBackground = isBackground ? true : false;
@@ -1528,7 +1528,10 @@
         if (!isBackground) {
             self.removeAttribute(self._settings.attribute).hide();
         }
-        modules["support"].testMultiple("/capability/datauri", "/element/canvas/todataurl/png").then(settings.debug).then(function() {
+        supported.then(function() {
+            if (settings.debug === true) {
+                throw new Error("debug enabled");
+            }
             switch (typeof lookup[target]) {
               case "object":
                 lookup[target].one(EVENT_LOADED, function(event) {
@@ -1542,11 +1545,11 @@
                 break;
 
               default:
-                lookup[target] = loader.create(target, !isBackground ? self._element : null).one(EVENT_STATE, function(event) {
+                lookup[target] = loader.create(target, !isBackground ? self._element : null).one(EVENT_STATE, function(event, data) {
                     if (event.type === EVENT_LOADED) {
-                        lookup[target] = event.data;
+                        lookup[target] = data;
                         self.emit(EVENT_CACHED);
-                        assign.call(self, event.data, isBackground);
+                        assign.call(self, data, isBackground);
                     } else {
                         lookup[target] = url;
                         assign.call(self, url, isBackground);
@@ -1564,12 +1567,10 @@
         if (isBackground) {
             self.setStyle("backgroundImage", "url(" + source + ")");
             self.emit(EVENT_LOADED);
-            self.off();
         } else {
             self.one(DOM_LOAD, function() {
                 self.show();
                 self.emit(EVENT_LOADED);
-                self.off();
             }).setAttribute("src", source);
         }
     }
@@ -1590,7 +1591,7 @@
     }
     function processData(data) {
         var canvas, context, self = this, onLoadMain = function(event) {
-            canvas = pool ? shared.pool.dom.obtain("canvas") : document.createElement("canvas");
+            canvas = pool && pool.obtain("canvas") || document.createElement("canvas");
             canvas.style.display = "none";
             canvas.width = data.width;
             canvas.height = data.height;
@@ -1659,7 +1660,7 @@
         _constructor: function(url, element) {
             var self = this;
             if (!element) {
-                element = pool ? shared.pool.dom.obtain("img") : document.createElement("img");
+                element = pool && pool.obtain("img") || document.createElement("img");
             }
             loader._parent._constructor.call(self, element);
             self._url = url;

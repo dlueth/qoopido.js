@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<title>Qoopido.js example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="./default.css" />
+	<style type="text/css">
+	</style>
+</head>
+<body>
+
+<div id="console">
+	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
+		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
+	</svg>
+
+	<h3>Pool state</h3>
+	<dl>
+		<dt>FPS:</dt><dd id="fps">-</dd>
+		<dt>Generated:</dt><dd id="total"></dd>
+		<dt>Recycled:</dt><dd id="recycled"></dd>
+		<dt>Destroyed:</dt><dd id="destroyed"></dd>
+		<dt>In pool:</dt><dd id="inpool"></dd>
+		<dt>In use:</dt><dd id="inuse"></dd>
+		<dt>In queue:</dt><dd id="inqueue"></dd>
+	</dl>
+</div>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+<script type="text/javascript">
+	var randomTime               = 1000, // max time in ms between random Fireworks
+		particlesPerFireworkBase = 80,    // min number of particles per Firework
+		particlesPerFireworkRnd  = 20,    // max number of additional random particles per firework
+		particleSizeBase         = 8,     // min size of particles
+		particleSizeRnd          = 10,    // max additional random size
+		particleVelocityBase     = 4,     // min velocity of particles
+		particleVelocityRnd      = 4,     // max additional random velocity
+		particleLifetimeBase     = 800,  // min lifetime of particle
+		particleLifetimeRnd      = 400,   // max additional random lifetime
+		particleGravity          = 0.06,  // gravity of particles
+		particleColors           = [ '33,141,166', '149,186,0', '255,180,0', '166,60,148', '255,255,51', '255,0,102', '255,140,0' ],
+		particlesAlphaEasings    = [ easeInSine, easeInQuad, easeInCubic ];
+
+	var MATH_PI_TIMES_TWO = 2 * Math.PI,
+		MATH_PI_DIV_TWO   = Math.PI / 2;
+
+	function easeInSine(t, d) {
+		return 1 * Math.cos(t / d * MATH_PI_DIV_TWO) -1 + 1;
+	}
+
+	function easeInQuad(t, d) {
+		return -1 * (t /= d) * t + 1;
+	}
+
+	function easeInCubic(t, d) {
+		return -1 * (t /= d) * t * t + 1;
+	}
+
+	require.config({
+		baseUrl: "../dist/latest/min"
+	});
+
+	require([ 'base' ], function() {
+		require([ 'pool/module', 'pool/dom' ], function(mPoolModule, mPoolDom) {
+			require([ 'support', 'renderer', 'particle', 'dom/element', 'vector/2d' ], function(mSupport, mRenderer, mParticle, mDomElement, mVector) {
+				var qWindow           = mDomElement.create(window),
+					qCanvas           = mDomElement.create('<canvas />').insertBefore('#console'),
+					qCanvasElement    = qCanvas.element,
+					qCanvasContext    = qCanvasElement.getContext('2d'),
+					renderer          = mRenderer,
+					poolModule        = mPoolModule.create(mParticle),
+					poolDom           = mPoolDom.create(),
+					poolVector        = mPoolModule.create(mVector),
+					poolMetrics       = poolModule.metrics,
+					consoleFps        = mDomElement.create('#fps'),
+					consoleTotal      = mDomElement.create('#total'),
+					consoleRecycled   = mDomElement.create('#recycled'),
+					consoleDestroyed  = mDomElement.create('#destroyed'),
+					consoleInPool     = mDomElement.create('#inpool'),
+					consoleInUse      = mDomElement.create('#inuse'),
+					consoleInQueue    = mDomElement.create('#inqueue'),
+					width = 0, height = 0, now = new Date().getTime(), last = now, delta = 0, fps = 60, ratio = 1, particles = [], paused = false;
+
+				function generateRandomFirework() {
+					if(paused === false) {
+						addFirework();
+					}
+
+					setTimeout(generateRandomFirework, Math.random() * randomTime);
+				}
+
+				function addFirework(event) {
+					var count        = ((Math.random() * particlesPerFireworkRnd + particlesPerFireworkBase) / ratio) >> 0,
+						x            = event ? parseInt(event.clientX || event.pageX, 10) : (Math.random() * width) >> 0,
+						y            = event ? parseInt(event.clientY || event.pageY, 10) : (Math.random() * height) >> 0,
+						angle        = MATH_PI_TIMES_TWO / count,
+						color        = ''.concat('rgba(', particleColors[((Math.random() * (particleColors.length - 1)) + 0.5) >> 0], ','),
+						size         = (size = ((Math.random() * particleSizeRnd) >> 0) + particleSizeBase) + (size % 2),
+						canvas       = poolDom.obtain('canvas'),
+						acceleration = poolVector.obtain(0, particleGravity),
+						hSize, context, fill;
+
+					canvas.width       = canvas.height = size;
+					canvas.usage       = count;
+					acceleration.usage = count;
+
+					hSize     = size / 2;
+					context   = canvas.getContext('2d');
+					fill      = context.createRadialGradient(hSize, hSize, 0, hSize, hSize, hSize);
+
+					fill.addColorStop(0, ''.concat(color, '1)'));
+					fill.addColorStop(1, ''.concat(color, '0)'));
+
+					context.arc(hSize, hSize, hSize, 0, MATH_PI_TIMES_TWO, false);
+					context.fillStyle = fill;
+					context.fill();
+
+					while(count--) {
+						var randomVelocity = particleVelocityBase + Math.random() * particleVelocityRnd,
+								particleAngle  = count * angle,
+								particle       = poolModule.obtain(x, y);
+
+						particle.velocity.x = Math.cos(particleAngle) * randomVelocity;
+						particle.velocity.y = Math.sin(particleAngle) * randomVelocity;
+
+						particle.acceleration.push(acceleration);
+
+						particle.canvas     = canvas;
+						particle.size       = size;
+						particle.easing     = particle.easing ? particle.easing : particlesAlphaEasings[(Math.random() * (particlesAlphaEasings.length - 1) + 0.5) >> 0];
+						particle.birthtime  = now;
+						particle.lifetime   = particle.lifetime? particle.lifetime : (particleLifetimeBase + Math.random() * particleLifetimeRnd) >> 0;
+						particle.deathtime  = now + particle.lifetime;
+
+						particles.push(particle);
+					}
+
+					if(event) {
+						event.preventDefault();
+						event.stopPropagation();
+
+						return false;
+					}
+				}
+
+				function renderParticle(particle) {
+					qCanvasContext.save();
+					qCanvasContext.globalCompositeOperation = 'lighter';
+					qCanvasContext.globalAlpha = Math.random() * particle.easing(now - particle.birthtime, particle.lifetime);
+					qCanvasContext.drawImage(particle.canvas, particle.position.x >> 0, particle.position.y >> 0);
+					qCanvasContext.restore();
+				}
+
+				function onResize() {
+					width  = qCanvasElement.width  = window.innerWidth;
+					height = qCanvasElement.height = window.innerHeight;
+				}
+
+				function onTick(type, lFps, lRatio) {
+					var i = 0, particle, position, size, canvas, acceleration;
+
+					now    = new Date().getTime();
+					fps    = (fps + lFps) / 2;
+					ratio  = lRatio;
+					delta  = now - last;
+
+					qCanvasContext.fillStyle = 'rgba(0,0,0,0.15)';
+					qCanvasContext.fillRect(0, 0, width, height);
+
+					for(; (particle = particles[i]) !== undefined; i++) {
+						particle.update();
+
+						position = particle.position;
+						size     = particle.size;
+
+						if(now > particle.deathtime || position.x < -size || position.y < -size || position.x > width + size || position.y > height + size) {
+							particles.splice(i, 1);
+
+							canvas       = particle.canvas,
+							acceleration = particle.acceleration[0];
+
+							particle.dispose();
+
+							canvas.usage       -= 1;
+							acceleration.usage -= 1;
+
+							if(canvas.usage <= 0) {
+								canvas = particle.canvas = canvas.dispose();
+							}
+
+							if(acceleration.usage <= 0) {
+								acceleration = acceleration.dispose();
+							}
+
+							i -= 1;
+						} else {
+							renderParticle(particle);
+						}
+					}
+
+
+					if(delta > 1000) {
+						consoleFps.setContent(fps >> 0);
+
+						last = now;
+						fps  = lFps;
+					}
+
+					consoleTotal.setContent(poolMetrics.total);
+					consoleRecycled.setContent(poolMetrics.recycled);
+					consoleDestroyed.setContent(poolMetrics.destroyed);
+					consoleInPool.setContent(poolMetrics.inPool);
+					consoleInUse.setContent(poolMetrics.inUse);
+					consoleInQueue.setContent(poolMetrics.inQueue);
+				}
+
+				function onSuspend() {
+					paused = true;
+				}
+
+				function onResume(type, delta) {
+					var i = 0, particle;
+
+					for(; (particle = particles[i]) !== undefined; i++) {
+						particle.birthtime += delta;
+						particle.deathtime += delta;
+					}
+
+					paused = false;
+				}
+
+				qWindow.on('resize orientationchange', onResize);
+				qCanvas.on('touchstart click', addFirework);
+				renderer.on('tick', onTick);
+				renderer.on('suspend', onSuspend);
+				renderer.on('resume', onResume);
+
+				onResize();
+				generateRandomFirework();
+			});
+		});
+	});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<title>Qoopido.js example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="./default.css" />
+	<style type="text/css">
+		#console {
+			width: 520px;
+		}
+
+		#console dt {
+			width: 40%;
+		}
+
+		#console dd {
+			width: 60%;
+		}
+	</style>
+</head>
+<body>
+
+<div id="console">
+	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
+		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
+	</svg>
+
+	<h3>General</h3>
+	<dl>
+		<dt>Prefixes:</dt><dd data-test="support.supportsPrefix;support.getPrefix">pending</dd>
+	</dl>
+
+	<h3>DOM method support</h3>
+	<dl>
+		<dt>window.requestAnimationFrame:</dt><dd data-test="support.supportsMethod:requestAnimationFrame;support.getMethod:requestAnimationFrame">pending</dd>
+		<dt>element.matchesSelector:</dt><dd data-test="support.supportsMethod:matchesSelector,div;support.getMethod:matchesSelector,div">pending</dd>
+	</dl>
+
+	<h3>DOM property support</h3>
+	<dl>
+		<dt>document.hidden:</dt><dd data-test="support.supportsProperty:hidden,document;support.getProperty:hidden,document">pending</dd>
+	</dl>
+
+	<h3>CSS-Property support</h3>
+	<dl>
+		<dt>style.borderRadius</dt><dd data-test="support.supportsCssProperty:borderRadius;support.getCssProperty:borderRadius">pending</dd>
+		<dt>style.boxSizing</dt><dd data-test="support.supportsCssProperty:boxSizing;support.getCssProperty:boxSizing">pending</dd>
+		<dt>style.animation</dt><dd data-test="support.supportsCssProperty:animation;support.getCssProperty:animation">pending</dd>
+	</dl>
+
+	<h3>Modular feature detection</h3>
+	<dl>
+		<dt>/capability/datauri:</dt><dd data-test="support/capability/datauri">pending</dd>
+		<dt>/css/borderradius:</dt><dd data-test="support/css/borderradius">pending</dd>
+		<dt>/css/boxshadow:</dt><dd data-test="support/css/boxshadow">pending</dd>
+		<dt>/css/rem:</dt><dd data-test="support/css/rem">pending</dd>
+		<dt>/css/rgba:</dt><dd data-test="support/css/rgba">pending</dd>
+		<dt>/css/textshadow:</dt><dd data-test="support/css/textshadow">pending</dd>
+		<dt>/css/transform:</dt><dd data-test="support/css/transform">pending</dd>
+		<dt>/css/transform/2d:</dt><dd data-test="support/css/transform/2d">pending</dd>
+		<dt>/css/transform/3d:</dt><dd data-test="support/css/transform/3d">pending</dd>
+		<dt>/css/transition:</dt><dd data-test="support/css/transition">pending</dd>
+		<dt>/element/canvas:</dt><dd data-test="support/element/canvas">pending</dd>
+		<dt>/element/canvas/todataurl:</dt><dd data-test="support/element/canvas/todataurl">pending</dd>
+		<dt>/element/canvas/todataurl/jpeg:</dt><dd data-test="support/element/canvas/todataurl/jpeg">pending</dd>
+		<dt>/element/canvas/todataurl/png:</dt><dd data-test="support/element/canvas/todataurl/png">pending</dd>
+		<dt>/element/canvas/todataurl/webp:</dt><dd data-test="support/element/canvas/todataurl/webp">pending</dd>
+		<dt>/element/video:</dt><dd data-test="support/element/video">pending</dd>
+		<dt>/element/video/mp4:</dt><dd data-test="support/element/video/mp4">pending</dd>
+		<dt>/element/video/ogg:</dt><dd data-test="support/element/video/ogg">pending</dd>
+		<dt>/element/video/webm:</dt><dd data-test="support/element/video/webm">pending</dd>
+		<dt>/element/svg:</dt><dd data-test="support/element/svg">pending</dd>
+	</dl>
+</div>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+<script type="text/javascript">
+	require.config({
+		baseUrl: "../dist/latest/min"
+	});
+
+	require([ 'base' ], function() {
+		require([ 'dom/collection' ], function(mDomCollection) {
+			mDomCollection
+				.create('[data-test]')
+				.each(function() {
+					var self  = this,
+						items = self.getAttribute('data-test').split(';'),
+						i = 0, test, module, method, parameter, dependencies = [], tests = [];
+
+					for(; (test = items[i]) !== undefined; i++) {
+						parameter = test.split(':');
+						test      = parameter.shift().split('.');
+						parameter = (parameter.shift() || '').split(',');
+						module    = test.shift();
+						method    = test.shift();
+
+						if(parameter.length === 2) {
+							parameter[1] = document.createElement(parameter[1]);
+						}
+
+						dependencies.push(module);
+						tests.push({ method: method, parameter: parameter });
+					}
+
+					require(dependencies, function() {
+						var i = 0, module, results = [];
+
+						for(; (module = arguments[i]) !== undefined; i++) {
+							var method    = tests[i].method,
+								parameter = tests[i].parameter,
+								test      = (method) ? module[method] : module,
+								result    = test.apply(module, parameter);
+
+							if(method) {
+								switch(typeof result) {
+									case 'boolean':
+										results.push((result === true) ? 'yes' : 'no');
+
+										break;
+									case 'object':
+										if(result.length) {
+											results.push('(' + result.join(', ') + ')');
+										}
+
+										break;
+									default:
+										results.push('(' + result + ')');
+
+										break;
+								}
+							} else {
+								result
+									.then(
+										function() {
+											self.setContent('yes');
+										},
+										function() {
+											self.setContent('no');
+										}
+								);
+							}
+						}
+
+						if(results.length > 0) {
+							self.setContent(results.join(' '));
+						}
+					})
+				});
+		});
+	});
+</script>
+
+</body>
+</html>

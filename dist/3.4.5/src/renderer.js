@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-12
+* date:    2014-7-13
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -37,7 +37,7 @@
                     pausedDuration = new Date().getTime() - pausedAt;
                     timeLast = timeLast + pausedDuration;
                     timeStart = timeStart + pausedDuration;
-                    self.emit("resume", new Date().getTime() - pausedDuration);
+                    self.emit("resume", pausedDuration);
                 }
                 self._tick();
             }
@@ -50,6 +50,7 @@
         _tick: null,
         _constructor: function() {
             var self = this;
+            prototype._parent._constructor.call(self);
             timeStart = timeLast = new Date().getTime();
             self._tick = function() {
                 if (self.paused === false) {

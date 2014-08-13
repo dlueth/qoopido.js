@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-12
+* date:    2014-7-13
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -92,7 +92,7 @@
                 } else {
                     candidates = [ pMethod ];
                 }
-                for (i; (candidate = candidates[i]) !== undefined; i++) {
+                for (;(candidate = candidates[i]) !== undefined; i++) {
                     if (pElement[candidate] !== undefined && (typeof pElement[candidate] === "function" || typeof pElement[candidate] === "object")) {
                         stored = candidate;
                         break;
