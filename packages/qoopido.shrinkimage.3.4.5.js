@@ -604,7 +604,7 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var IE = function() {
+    var prototype, IE = function() {
         if (document.documentMode) {
             return document.documentMode;
         } else {
@@ -683,7 +683,7 @@
             break;
         }
     }
-    return modules["base"].extend({
+    prototype = modules["base"].extend({
         type: null,
         element: null,
         _listener: null,
@@ -999,7 +999,7 @@
                     delegateTo = event.delegate;
                     window.clearTimeout(event._timeout);
                     if (!delegate || event.target.matches(delegate)) {
-                        fn.call(self, event, event.originalEvent.detail);
+                        fn.call(prototype.create(event.target), event, event.originalEvent.detail);
                     }
                     if (delegateTo) {
                         delete event.delegate;
@@ -1051,6 +1051,7 @@
             return self;
         }
     });
+    return prototype;
 });
 (function(definition) {
     window.qoopido.registerSingleton("url", definition, [ "./base" ]);

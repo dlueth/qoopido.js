@@ -5,10 +5,6 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../../default.css" />
 	<style type="text/css">
-		body {
-			padding:    20px;
-			text-align: center;
-		}
 	</style>
 </head>
 <body>
@@ -17,8 +13,9 @@
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
+;(function(require, window, document, undefined) {
 	require.config({
-		baseUrl: "../../../dist/latest/min"
+		baseUrl: '../../../dist/latest/min'
 	});
 
 	require([ 'base' ], function() {
@@ -28,6 +25,7 @@
 			});
 		});
 	});
+}(require, window, document));
 </script>
 
 </body>

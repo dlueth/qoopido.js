@@ -76,8 +76,9 @@
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
+;(function(require, window, document, undefined) {
 	require.config({
-		baseUrl: "../dist/latest/min"
+		baseUrl: '../dist/latest/min'
 	});
 
 	require([ 'base' ], function() {
@@ -150,6 +151,7 @@
 				});
 		});
 	});
+}(require, window, document));
 </script>
 
 </body>

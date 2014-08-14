@@ -34,40 +34,41 @@
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
-	var randomTime               = 1000, // max time in ms between random Fireworks
-		particlesPerFireworkBase = 80,    // min number of particles per Firework
-		particlesPerFireworkRnd  = 20,    // max number of additional random particles per firework
-		particleSizeBase         = 8,     // min size of particles
-		particleSizeRnd          = 10,    // max additional random size
-		particleVelocityBase     = 4,     // min velocity of particles
-		particleVelocityRnd      = 4,     // max additional random velocity
-		particleLifetimeBase     = 800,  // min lifetime of particle
-		particleLifetimeRnd      = 400,   // max additional random lifetime
-		particleGravity          = 0.06,  // gravity of particles
-		particleColors           = [ '33,141,166', '149,186,0', '255,180,0', '166,60,148', '255,255,51', '255,0,102', '255,140,0' ],
-		particlesAlphaEasings    = [ easeInSine, easeInQuad, easeInCubic ];
+var randomTime               = 1000, // max time in ms between random Fireworks
+	particlesPerFireworkBase = 80,    // min number of particles per Firework
+	particlesPerFireworkRnd  = 20,    // max number of additional random particles per firework
+	particleSizeBase         = 8,     // min size of particles
+	particleSizeRnd          = 10,    // max additional random size
+	particleVelocityBase     = 4,     // min velocity of particles
+	particleVelocityRnd      = 4,     // max additional random velocity
+	particleLifetimeBase     = 800,  // min lifetime of particle
+	particleLifetimeRnd      = 400,   // max additional random lifetime
+	particleGravity          = 0.06,  // gravity of particles
+	particleColors           = [ '33,141,166', '149,186,0', '255,180,0', '166,60,148', '255,255,51', '255,0,102', '255,140,0' ],
+	particlesAlphaEasings    = [ easeInSine, easeInQuad, easeInCubic ];
 
-	var MATH_PI_TIMES_TWO = 2 * Math.PI,
-		MATH_PI_DIV_TWO   = Math.PI / 2;
+var MATH_PI_TIMES_TWO = 2 * Math.PI,
+	MATH_PI_DIV_TWO   = Math.PI / 2;
 
-	function easeInSine(t, d) {
-		return 1 * Math.cos(t / d * MATH_PI_DIV_TWO) -1 + 1;
-	}
+function easeInSine(t, d) {
+	return 1 * Math.cos(t / d * MATH_PI_DIV_TWO) -1 + 1;
+}
 
-	function easeInQuad(t, d) {
-		return -1 * (t /= d) * t + 1;
-	}
+function easeInQuad(t, d) {
+	return -1 * (t /= d) * t + 1;
+}
 
-	function easeInCubic(t, d) {
-		return -1 * (t /= d) * t * t + 1;
-	}
+function easeInCubic(t, d) {
+	return -1 * (t /= d) * t * t + 1;
+}
 
+;(function(require, window, document, undefined) {
 	require.config({
-		baseUrl: "../../dist/latest/min"
+		baseUrl: '../../dist/latest/min'
 	});
 
 	require([ 'base' ], function() {
-		require([ 'pool/module', 'pool/dom' ], function(mPoolModule, mPoolDom) {
+		require([ 'pool/module', 'pool/dom', 'pool/array', 'pool/object' ], function(mPoolModule, mPoolDom) {
 			require([ 'support', 'renderer', 'particle', 'dom/element', 'vector/2d' ], function(mSupport, mRenderer, mParticle, mDomElement, mVector) {
 				var qWindow           = mDomElement.create(window),
 					qCanvas           = mDomElement.create('<canvas />').insertBefore('#console'),
@@ -246,6 +247,7 @@
 			});
 		});
 	});
+}(require, window, document));
 </script>
 
 </body>
