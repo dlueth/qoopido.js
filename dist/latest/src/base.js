@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-13
+* date:    2014-7-14
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -12,9 +12,9 @@
 * - http://www.opensource.org/licenses/mit-license.php
 * - http://www.gnu.org/copyleft/gpl.html
 */
-(function(definition, qoopido, navigator, window, document, undefined) {
+(function(definition, global, navigator, window, document, undefined) {
     "use strict";
-    var shared = qoopido.shared = qoopido.shared || {}, modules = qoopido.modules = qoopido.modules || {}, dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
+    var qoopido = global.qoopido || (global.qoopido = {}), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
     register = qoopido.register = function register(id, definition, dependencies, callback) {
         var namespace = id.split("/"), initialize;
         if (modules[id]) {
@@ -110,4 +110,4 @@
             return Object.create(this, getOwnPropertyDescriptors(properties));
         }
     };
-}, window.qoopido = window.qoopido || {}, navigator, window, document);
+}, this, navigator, window, document);

@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-13
+* date:    2014-7-14
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -183,9 +183,9 @@
     }
     return Object.getOwnPropertyDescriptor;
 }, window.qoopido = window.qoopido || {});
-(function(definition, qoopido, navigator, window, document, undefined) {
+(function(definition, global, navigator, window, document, undefined) {
     "use strict";
-    var shared = qoopido.shared = qoopido.shared || {}, modules = qoopido.modules = qoopido.modules || {}, dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
+    var qoopido = global.qoopido || (global.qoopido = {}), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
     register = qoopido.register = function register(id, definition, dependencies, callback) {
         var namespace = id.split("/"), initialize;
         if (modules[id]) {
@@ -281,7 +281,7 @@
             return Object.create(this, getOwnPropertyDescriptors(properties));
         }
     };
-}, window.qoopido = window.qoopido || {}, navigator, window, document);
+}, this, navigator, window, document);
 (function(definition) {
     window.qoopido.register("polyfill/string/ucfirst", definition);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
@@ -617,15 +617,14 @@
             }
         }
         return undefined;
-    }(), stringObject = "object", stringString = "string", stringNumber = "number", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
+    }(), stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
         elements: {},
         events: {}
     }, styleHooks = {
-        opacity: IE <= 8 ? {
-            map: "filter",
+        opacity: {
             regex: new RegExp("alpha\\(opacity=(.*)\\)", "i"),
-            getValue: function(value) {
-                value = value.toString().match(this.regex);
+            getValue: function(element) {
+                var value = getComputedStyle(element, null).getPropertyValue("filter").toString().match(this.regex);
                 if (value) {
                     value = value[1] / 100;
                 } else {
@@ -633,14 +632,13 @@
                 }
                 return value;
             },
-            setValue: function(value) {
-                return {
-                    zoom: 1,
-                    opacity: value,
-                    filter: "alpha(opacity=" + (value * 100 + .5 >> 0) + ")"
-                };
+            setValue: function(element, value) {
+                var style = element.style;
+                style.zoom = 1;
+                style.opacity = value;
+                style.filter = "alpha(opacity=" + (value * 100 + .5 >> 0) + ")";
             }
-        } : null
+        }
     };
     function resolveElement(element) {
         var tag;
@@ -673,6 +671,18 @@
             event.isDelegate = true;
         }
         self.element.dispatchEvent(event);
+    }
+    function resolveStyleHook(method, element, property, value) {
+        var hook = styleHooks[property];
+        switch (method) {
+          case "get":
+            return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
+            break;
+
+          case "set":
+            hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
+            break;
+        }
     }
     return modules["base"].extend({
         type: null,
@@ -777,28 +787,23 @@
             return self;
         },
         getStyle: function(property) {
-            var self = this, map, value;
+            var self = this;
             if (property && typeof property === stringString) {
                 property = property.split(" ");
                 if (property.length === 1) {
-                    property = property[0];
-                    map = styleHooks[property] && styleHooks[property].map || property;
-                    value = getComputedStyle(self.element, null).getPropertyValue(map);
-                    return styleHooks[property] && styleHooks[property].getValue && styleHooks[property].getValue(value) || value;
+                    return resolveStyleHook("get", self.element, property[0]);
                 } else {
                     return self.getStyles(property);
                 }
             }
         },
         getStyles: function(properties) {
-            var self = this, result = {}, i = 0, property, map, value;
+            var self = this, result = {}, i = 0, property;
             if (properties) {
                 properties = typeof properties === stringString ? properties.split(" ") : properties;
                 if (typeof properties === stringObject && properties.length) {
                     for (;(property = properties[i]) !== undefined; i++) {
-                        map = styleHooks[property] && styleHooks[property].map || property;
-                        value = getComputedStyle(self.element, null).getPropertyValue(map);
-                        return styleHooks[property] && styleHooks[property].getValue && styleHooks[property].getValue(value) || value;
+                        result[property] = resolveStyleHook("get", self.element, property);
                     }
                 }
             }
@@ -807,14 +812,7 @@
         setStyle: function(property, value) {
             var self = this;
             if (property && typeof property === stringString) {
-                value = styleHooks[property] && styleHooks[property].setValue && styleHooks[property].setValue(value) || value;
-                if (typeof value === stringString || typeof value === stringNumber) {
-                    self.element.style[property] = value;
-                } else {
-                    for (property in value) {
-                        self.element.style[property] = value[property];
-                    }
-                }
+                resolveStyleHook("set", self.element, property, value);
             }
             return self;
         },
@@ -822,14 +820,7 @@
             var self = this, property, value;
             if (properties && typeof properties === stringObject && !properties.length) {
                 for (property in properties) {
-                    value = styleHooks[property] && styleHooks[property].setValue && styleHooks[property].setValue(properties[property]) || properties[property];
-                    if (typeof value === stringString || typeof value === stringNumber) {
-                        self.element.style[property] = properties[property];
-                    } else {
-                        for (property in value) {
-                            self.element.style[property] = value[property];
-                        }
-                    }
+                    resolveStyleHook("set", self.element, property, properties[property]);
                 }
             }
             return self;

@@ -112,8 +112,7 @@
 		},
 		obtain: function() {
 			var self    = this,
-				element = self._getPool.apply(self, arguments).pop(),
-				result;
+				element = self._getPool.apply(self, arguments).pop();
 
 			if(element) {
 				self.metrics.inPool--;
@@ -123,16 +122,12 @@
 			}
 
 			if(typeof element._obtain === 'function') {
-				result = element._obtain.apply(element, arguments);
+				element._obtain.apply(element, arguments);
 			}
 
-			if(result) {
-				return result;
-			} else {
-				self.metrics.inUse++;
+			self.metrics.inUse++;
 
-				return element;
-			}
+			return element;
 		},
 		dispose: function(element) {
 			var self  = this,

@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-13
+* date:    2014-7-14
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -99,7 +99,7 @@
             return this._pool;
         },
         obtain: function() {
-            var self = this, element = self._getPool.apply(self, arguments).pop(), result;
+            var self = this, element = self._getPool.apply(self, arguments).pop();
             if (element) {
                 self.metrics.inPool--;
                 self.metrics.recycled++;
@@ -107,14 +107,10 @@
                 element = self._initElement(self._obtain.apply(self, arguments));
             }
             if (typeof element._obtain === "function") {
-                result = element._obtain.apply(element, arguments);
+                element._obtain.apply(element, arguments);
             }
-            if (result) {
-                return result;
-            } else {
-                self.metrics.inUse++;
-                return element;
-            }
+            self.metrics.inUse++;
+            return element;
         },
         dispose: function(element) {
             var self = this, queue = self._queue;

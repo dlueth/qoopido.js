@@ -22,8 +22,10 @@
 	});
 
 	require([ 'base' ], function() {
-		require([ 'dom/element/shrinkimage' ], function(mShrinkimage) {
-			mShrinkimage.create(document.getElementById('shrinkimage'));
+		require([ 'pool/dom', 'pool/module' ], function() {
+			require([ 'dom/element/shrinkimage' ], function(mShrinkimage) {
+				mShrinkimage.create(document.getElementById('shrinkimage'));
+			});
 		});
 	});
 </script>
