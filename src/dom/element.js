@@ -159,8 +159,6 @@
 		switch(method) {
 			case 'get':
 				return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
-
-				break;
 			case 'set':
 				hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
 
