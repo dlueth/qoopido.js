@@ -3,6 +3,8 @@ var gulp    = require('gulp'),
 	files   = {},
 	package, date, banner;
 
+module.exports = gulp;
+
 /**************************************************
  * file configuration
  **************************************************/
@@ -17,16 +19,19 @@ var gulp    = require('gulp'),
 		'./src/polyfill/object/getownpropertydescriptor.js',
 		'./src/base.js'
 	];
-	files.remux     = files.base.concat([
-		'./src/emitter.js',
+	files.sense     = files.base.concat([
+		'./src/polyfill/window/getcomputedstyle.js',
 		'./src/polyfill/window/matchmedia.js',
+		'./src/emitter.js',
+		'./src/component/sense.js'
+	]);
+	files.remux     = files.sense.concat([
 		'./src/component/remux.js'
 	]);
 	files.emerge    = files.base.concat([
 		'./src/polyfill/window/getcomputedstyle.js',
 		'./src/function/merge.js',
 		'./src/function/unique/uuid.js',
-		'./src/proxy.js',
 		'./src/dom/element.js',
 		'./src/dom/element/emerge.js'
 	]);
@@ -94,7 +99,8 @@ var gulp    = require('gulp'),
 				'* Dual licensed under the MIT and GPL licenses.',
 				'* - http://www.opensource.org/licenses/mit-license.php',
 				'* - http://www.gnu.org/copyleft/gpl.html',
-				'*/'
+				'*/',
+				''
 			].join('\n'),
 			min: [
 				'/*!',
@@ -102,7 +108,8 @@ var gulp    = require('gulp'),
 				'* ' + package.homepage,
 				'* (c) ' + date.getFullYear() + ' ' + package.author.name,
 				'* Dual licensed under MIT and GPL',
-				'*/'
+				'*/',
+				''
 			].join('\n')
 		}
 	};
@@ -147,6 +154,12 @@ var gulp    = require('gulp'),
 			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 
+	gulp.task('lint:sense', function() {
+		gulp.src(files.sense)
+			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint.reporter('jshint-stylish'));
+	});
+
 	gulp.task('lint:remux', function() {
 		gulp.src(files.remux)
 			.pipe(plugins.jshint('./.jshintrc'))
@@ -183,7 +196,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./dist/' + package.version + '/src/'))
 			.pipe(gulp.dest('./dist/latest/src/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./dist/' + package.version + '/min/'))
 			.pipe(gulp.dest('./dist/latest/min/'));
@@ -198,8 +211,23 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.base.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.base.' + package.version + '.min.js'))
+			.pipe(plugins.header(banner.min))
+			.pipe(gulp.dest('./packages/'));
+	});
+
+	gulp.task('build:sense', function() {
+		initialize();
+
+		gulp.src(files.remux)
+			.pipe(plugins.plumber({ errorHandler: onError}))
+			.pipe(plugins.uglify({ mangle: false, compress: false, output: { beautify: true, comments: false } }))
+			.pipe(plugins.concat('qoopido.sense.' + package.version + '.js'))
+			.pipe(plugins.header(banner.src))
+			.pipe(gulp.dest('./packages/'))
+			.pipe(plugins.uglify())
+			.pipe(plugins.rename('qoopido.sense.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
 	});
@@ -213,7 +241,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.remux.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.remux.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -228,7 +256,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.emerge.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.emerge.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -243,7 +271,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.lazyimage.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.lazyimage.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -258,7 +286,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.shrinkimage.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.shrinkimage.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -273,7 +301,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.emerge.jquery.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.emerge.jquery.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -293,7 +321,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.lazyimage.jquery.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.lazyimage.jquery.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -313,7 +341,7 @@ var gulp    = require('gulp'),
 			.pipe(plugins.concat('qoopido.shrinkimage.jquery.' + package.version + '.js'))
 			.pipe(plugins.header(banner.src))
 			.pipe(gulp.dest('./packages/'))
-			.pipe(plugins.uglify({ preserveComments: 'some' }))
+			.pipe(plugins.uglify())
 			.pipe(plugins.rename('qoopido.shrinkimage.jquery.' + package.version + '.min.js'))
 			.pipe(plugins.header(banner.min))
 			.pipe(gulp.dest('./packages/'));
@@ -329,12 +357,13 @@ var gulp    = require('gulp'),
  **************************************************/
 	gulp.task('watch', function() {
 		gulp.watch(files.watch.concat(files.all), [ 'lint:dist', 'build:dist' ]);
-		gulp.watch(files.watch.concat(files.base), [ 'lint:base', 'build:base' ]);
-		gulp.watch(files.watch.concat(files.remux), [ 'lint:remux', 'build:remux' ]);
-		gulp.watch(files.watch.concat(files.jquery.emerge), [ 'lint:emerge', 'build:emerge', 'build:jquery:emerge' ]);
-		gulp.watch(files.watch.concat(files.jquery.lazyimage), [ 'lint:lazyimage', 'build:lazyimage', 'build:jquery:lazyimage' ]);
-		gulp.watch(files.watch.concat(files.jquery.shrinkimage), [ 'lint:shrinkimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
+		gulp.watch(files.watch.concat(files.base), [ 'build:base' ]);
+		gulp.watch(files.watch.concat(files.sense), [ 'build:sense' ]);
+		gulp.watch(files.watch.concat(files.remux), [ 'build:remux' ]);
+		gulp.watch(files.watch.concat(files.jquery.emerge), [ 'build:emerge', 'build:jquery:emerge' ]);
+		gulp.watch(files.watch.concat(files.jquery.lazyimage), [ 'build:lazyimage', 'build:jquery:lazyimage' ]);
+		gulp.watch(files.watch.concat(files.jquery.shrinkimage), [ 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
 	});
 
-	gulp.task('all', [ 'lint:dist', 'build:dist', 'build:base', 'build:remux', 'build:emerge', 'build:jquery:emerge', 'build:lazyimage', 'build:jquery:lazyimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
+	gulp.task('all', [ 'lint:dist', 'build:dist', 'build:base', 'build:sense', 'build:remux', 'build:emerge', 'build:jquery:emerge', 'build:lazyimage', 'build:jquery:lazyimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
 	gulp.task('default', [ 'watch' ]);

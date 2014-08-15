@@ -57,7 +57,7 @@
 		testMultiple: function() {
 			var test, tests = [], i = 0;
 
-			for(i; (test = arguments[i]) !== undefined; i++) {
+			for(; (test = arguments[i]) !== undefined; i++) {
 				switch(typeof test) {
 					case 'string':
 						tests.push(this.test[test]());
@@ -130,7 +130,7 @@
 					candidates = [ pMethod ];
 				}
 
-				for(i; (candidate = candidates[i]) !== undefined; i++) {
+				for(; (candidate = candidates[i]) !== undefined; i++) {
 					if(pElement[candidate] !== undefined && (typeof pElement[candidate] === 'function' || typeof pElement[candidate] === 'object')) {
 						stored = candidate;
 						break;

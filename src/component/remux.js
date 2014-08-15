@@ -12,25 +12,18 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../emitter
- * @polyfill ../polyfill/window/matchmedia
+ * @require ./sense
  */
 ;(function(definition) {
-	var dependencies = [ '../emitter' ];
-
-	if(!window.matchMedia) {
-		dependencies.push('../polyfill/window/matchmedia');
-	}
-
-	window.qoopido.registerSingleton('component/remux', definition, dependencies);
+	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter', './sense' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
 	var prototype,
-		html             = document.getElementsByTagName('html')[0],
-		base             = 16,
-		state            = { fontsize: null, layout: null, ratio: { } },
-		current          = { fontsize: null, layout: null },
-		queries          = [];
+		html    = document.getElementsByTagName('html')[0],
+		base    = 16,
+		state   = { fontsize: null, layout: null, ratio: { } },
+		current = { fontsize: null, layout: null };
 
 	function updateState(layout, fontsize) {
 		var self = this;
@@ -65,28 +58,22 @@
 		return self;
 	}
 
-	function addQuery(query, layout, fontsize, min, max) {
-		var self = this,
-			mql  = window.matchMedia(query);
+	function addQuery(query, layout, fontsize) {
+		var self = this;
 
-		mql.layout   = layout;
-		mql.fontsize = fontsize;
-		mql.min      = min;
-		mql.max      = max;
-
-		queries.push(mql);
-
-		mql.addListener(function(mql) {
-			if(mql.matches === true) {
-				updateState.call(self, mql.layout, mql.fontsize);
-			}
-		});
+		window.setTimeout(function() {
+			modules['component/sense']
+				.create(query)
+				.on('matched', function() {
+					updateState.call(self, layout, fontsize);
+				});
+		}, 0);
 	}
 
 	prototype = modules['emitter'].extend({
 		_constructor: function() {
-			var self          = this,
-				pBase         = parseInt(html.getAttribute('data-base'), 10);
+			var self  = this,
+				pBase = parseInt(html.getAttribute('data-base'), 10);
 
 			prototype._parent._constructor.call(self);
 
@@ -112,7 +99,7 @@
 		},
 		addLayout: function(pId, pLayout) {
 			var self = this,
-				parameter, id, layout, size, min, max, lMin, lMax, mq, mql;
+				parameter, id, layout, size, min, max, lMin, lMax;
 
 			if(arguments.length > 1) {
 				parameter      = { };
@@ -128,25 +115,15 @@
 					lMin = Math.round(layout.width * (size / base));
 					lMax = Math.round(layout.width * ((size + 1) / base)) - 1;
 
-					mq  = 'screen and (min-width: ' + lMin + 'px) and (max-width: ' + lMax + 'px )';
+					addQuery.call(self, 'screen and (min-width: ' + lMin + 'px) and (max-width: ' + lMax + 'px )', id, size);
 
-					addQuery.call(self, mq, id, size, lMin, lMax);
-
-					min = (!min || lMin <= min.min) ? queries[queries.length - 1] : min;
-					max = (!max || lMax >= max.max) ? queries[queries.length - 1] : max;
+					min = (!min || lMin < min.width) ? { width: lMin, fontsize: size, layout: id } : min;
+					max = (!max || lMax >= max.width) ? { width: lMax, fontsize: size, layout: id } : max;
 				}
 			}
 
-			addQuery.call(self, 'screen and (max-width: ' + (min.min - 1) + 'px)', min.layout, min.fontsize, min.min, min.max);
-			addQuery.call(self, 'screen and (min-width: ' + (max.max + 1) + 'px)', max.layout, max.fontsize, max.min, max.max);
-
-			for(var index in queries) {
-				mql = queries[index];
-
-				if(mql.matches === true) {
-					updateState.call(self, mql.layout, mql.fontsize);
-				}
-			}
+			addQuery.call(self, 'screen and (max-width: ' + (min.width - 1) + 'px)', min.layout, min.fontsize);
+			addQuery.call(self, 'screen and (min-width: ' + (max.width + 1) + 'px)', max.layout, max.fontsize);
 
 			return self;
 		}

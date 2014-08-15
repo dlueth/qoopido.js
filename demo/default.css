@@ -1,0 +1,234 @@
+* {
+	-webkit-user-select: none;
+	-moz-user-select:    none;
+	-ms-user-select:     none;
+	-o-user-select:      none;
+	user-select:         none;
+}
+
+html {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	-ms-box-sizing:     border-box;
+	-o-box-sizing:      border-box;
+	box-sizing:         border-box;
+}
+
+*, *:before, *:after {
+	-webkit-box-sizing: inherit;
+	-moz-box-sizing:    inherit;
+	-ms-box-sizing:     inherit;
+	-o-box-sizing:      inherit;
+	box-sizing:         inherit;
+}
+
+body {
+	overflow-x:       hidden;
+	margin:           0;
+	padding:          0;
+	background-color: #333;
+	font-family:      Tahoma,Verdana,Segoe,sans-serif;
+	font-size:        14px;
+	line-height:      18px;
+	color:            #ddd;
+	text-align:       center;
+}
+
+a {
+	color:           #95ba00;
+	text-decoration: none;
+}
+
+button {
+	margin:           0;
+	padding:          0 8px;
+	border:           0 none;
+	color:            #fff;
+	background-color: #95ba00;
+	font-size:        16px;
+	line-height:      32px;
+}
+
+button + button {
+	margin-left: 16px;
+}
+
+section {
+	display:          inline-block;
+	position:         relative;
+	margin:           20px;
+	background-color: #595551;
+	vertical-align:   top;
+}
+
+#console {
+	z-index: 999;
+	position:         absolute;
+	left:             20px;
+	top:              20px;
+	overflow:         visible;
+	width:            250px;
+	background-color: #595551;
+	text-align:       left;
+
+	-webkit-user-select: none;
+	-khtml-user-select:  none;
+	-moz-user-select:    none;
+	-ms-user-select:     none;
+	-o-user-select:      none;
+	user-select:         none;
+}
+
+#console svg {
+	position: absolute;
+	right:    8px;
+	top:      8px;
+}
+
+#console h3 {
+	margin:           0;
+	padding:          10px;
+	background-color: #95ba00;
+	font-family:     "Trebuchet MS",Tahoma,Arial,sans-serif;
+	color:           #fff;
+}
+
+#console p {
+	padding: 5px 10px;
+}
+
+#console dl {
+	text-align: right;
+}
+
+#console dt {
+	display:    inline-block;
+	width:      67%;
+	padding:    5px 10px;
+	text-align: left;
+}
+
+#console dd {
+	display: inline-block;
+	width:   33%;
+	margin:  0;
+	padding: 5px 10px;
+}
+
+#console dd[data-setting] span {
+	cursor:      pointer;
+	display:     inline-block;
+	width:       15%;
+	margin:      0;
+	font-weight: bold;
+}
+
+#console dd[data-setting] span.value {
+	width:       70%;
+	text-align:  center;
+	font-weight: normal;
+}
+
+#console .actions {
+	position:  absolute;
+	width:     100%;
+	margin:    5px 0 0 0;
+	font-size: 0;
+}
+
+#console .actions span {
+	cursor:           pointer;
+	display:          inline-block;
+	padding:          0 10px;
+	font-size:        14px;
+	line-height:      28px;
+	background-color: #95ba00;
+	color:            #fff;
+}
+
+#console .actions span + span {
+	margin-left: 5px;
+}
+
+#console .actions span a {
+	color: #fff;
+}
+
+#canvas {
+	z-index:          1;
+	position:         absolute;
+	left:             0;
+	top:              0;
+	right:            0;
+	bottom:           0;
+	width:            640px;
+	height:           480px;
+	margin:           auto;
+	border:           20px solid #000;
+	background-color: #000;
+}
+
+.curl:before, .curl:after {
+	z-index:    -1;
+	position:   absolute;
+	left:       12px;
+	bottom:     12px;
+	width:      40%;
+	height:     10px;
+	background: transparent;
+	content:    '';
+
+	-webkit-transform-origin: left bottom;
+	-moz-transform-origin:    left bottom;
+	-ms-transform-origin:     left bottom;
+	-o-transform-origin:      left bottom;
+	transform-origin:         left bottom;
+
+	-webkit-transform: skew(-3deg) rotate(-3deg);
+	-moz-transform:    skew(-3deg) rotate(-3deg);
+	-ms-transform:     skew(-3deg) rotate(-3deg);
+	-o-transform:      skew(-3deg) rotate(-3deg);
+	transform:         skew(-3deg) rotate(-3deg);
+
+	-webkit-box-shadow: 0 14px 14px rgba(0, 0, 0, .4);
+	-moz-box-shadow:    0 14px 14px rgba(0, 0, 0, .4);
+	box-shadow:         0 14px 14px rgba(0, 0, 0, .4);
+}
+
+.curl:after {
+	left:  auto;
+	right: 12px;
+
+	-webkit-transform-origin: right bottom;
+	-moz-transform-origin:    right bottom;
+	-ms-transform-origin:     right bottom;
+	-o-transform-origin:      right bottom;
+	transform-origin:         right bottom;
+
+	-webkit-transform: skew(3deg) rotate(3deg);
+	-moz-transform:    skew(3deg) rotate(3deg);
+	-ms-transform:     skew(3deg) rotate(3deg);
+	-o-transform:      skew(3deg) rotate(3deg);
+	transform:         skew(3deg) rotate(3deg);
+}
+
+.hint {
+	z-index:          1000;
+	position:         absolute;
+	left:             0;
+	top:              0;
+	right:            0;
+	bottom:           0;
+	width:            150px;
+	height:           56px;
+	margin:           auto;
+	padding:          10px;
+	background-color: rgba(255, 255, 255, 0.2);
+	border-radius:    6px;
+	text-align:       center;
+}
+
+.hint.big {
+	width:  400px;
+	height: 114px;
+}

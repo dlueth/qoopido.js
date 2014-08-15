@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<title>Qoopido.js example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../../default.css" />
+	<style type="text/css">
+		body {
+			padding: 20px;
+		}
+	</style>
+</head>
+<body>
+
+<img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" title="" width="320" height="650" id="shrinkimage" data-shrinkimage="http://www.qoopido.com/assets/example.png" />
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+<script type="text/javascript">
+;(function(require, window, document, undefined) {
+	require.config({
+		baseUrl: '../../../dist/latest/min'
+	});
+
+	require([ 'base' ], function() {
+		require([ 'pool/dom', 'pool/module' ], function() {
+			require([ 'dom/element/shrinkimage' ], function(mShrinkimage) {
+				mShrinkimage.create(document.getElementById('shrinkimage'));
+			});
+		});
+	});
+}(require, window, document));
+</script>
+
+</body>
+</html>

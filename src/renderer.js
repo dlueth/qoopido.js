@@ -56,7 +56,7 @@
 					timeLast       = timeLast + pausedDuration;
 					timeStart      = timeStart + pausedDuration;
 
-					self.emit('resume', new Date().getTime() - pausedDuration);
+					self.emit('resume', pausedDuration);
 				}
 
 				self._tick();
@@ -71,6 +71,8 @@
 		_tick:     null,
 		_constructor: function() {
 			var self = this;
+
+			prototype._parent._constructor.call(self);
 
 			timeStart = timeLast = new Date().getTime();
 

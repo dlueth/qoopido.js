@@ -17,7 +17,7 @@
 ;(function(definition) {
 	var dependencies = [];
 
-	if(!Object.defineProperty) {
+	if(!document.querySelectorAll) {
 		dependencies.push('./queryselectorall');
 	}
 
@@ -26,12 +26,12 @@
 	'use strict';
 
 	if(!document.querySelector) {
-		return document.querySelector = function(selector) {
+		document.querySelector = function(selector) {
 			var elements = document.querySelectorAll(selector);
 
 			return (elements.length) ? elements[0] : null;
 		};
-	} else {
-		return document.querySelector;
 	}
+
+	return document.querySelector;
 }));

@@ -22,11 +22,12 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
-;(function(definition, qoopido, navigator, window, document, undefined) {
+;(function(definition, global, navigator, window, document, undefined) {
 	'use strict';
 
-	var shared            = qoopido.shared  = qoopido.shared || {},
-		modules           = qoopido.modules = qoopido.modules || {},
+	var qoopido           = global.qoopido || (global.qoopido = {}),
+		shared            = qoopido.shared || (qoopido.shared = {}),
+		modules           = qoopido.modules|| (qoopido.modules = {}),
 		dependencies      = [],
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
@@ -44,9 +45,9 @@
 		initialize = function() {
 			if(dependencies) {
 				var path = namespace.slice(0, -1).join('/'),
-					i, dependency, internal;
+					i = 0, dependency, internal;
 
-				for(i = 0; (dependency = dependencies[i]) !== undefined; i++) {
+				for(; (dependency = dependencies[i]) !== undefined; i++) {
 					internal = isInternal.test(dependency);
 
 					if(internal) {
@@ -105,7 +106,7 @@
 		dependencies.push('./polyfill/object/getownpropertynames');
 	}
 
-	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
+	if(!Object.getOwnPropertyDescriptor || !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
 		dependencies.push('./polyfill/object/getownpropertydescriptor');
 	}
 
@@ -116,9 +117,9 @@
 		function getOwnPropertyDescriptors(object) {
 			var descriptors = {},
 				properties  = Object.getOwnPropertyNames(object),
-				i, property;
+				i = 0, property;
 
-			for(i = 0; (property = properties[i]) !== undefined; i++) {
+			for(; (property = properties[i]) !== undefined; i++) {
 				descriptors[property] = Object.getOwnPropertyDescriptor(object, property);
 			}
 
@@ -130,7 +131,6 @@
 				console.error('[Qoopido.js] Operation prohibited on an actual instance');
 			}
 		}
-
 
 		return {
 			create: function() {
@@ -153,5 +153,5 @@
 			}
 		};
 	},
-	window.qoopido = window.qoopido || {}, navigator, window, document
+	this, navigator, window, document
 ));

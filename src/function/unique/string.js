@@ -21,11 +21,11 @@
 
 	function generateString(length) {
 		var result = '',
-			i;
+			i = 0;
 
 		length = parseInt(length, 10) || 12;
 
-		for(i = 0; i < length; i++) {
+		for(; i < length; i++) {
 			result += characters[parseInt(Math.random() * (characters.length - 1), 10)];
 		}
 
