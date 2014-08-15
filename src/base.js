@@ -22,11 +22,12 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
-;(function(definition, qoopido, navigator, window, document, undefined) {
+;(function(definition, global, navigator, window, document, undefined) {
 	'use strict';
 
-	var shared            = qoopido.shared  = qoopido.shared || {},
-		modules           = qoopido.modules = qoopido.modules || {},
+	var qoopido           = global.qoopido || (global.qoopido = {}),
+		shared            = qoopido.shared || (qoopido.shared = {}),
+		modules           = qoopido.modules|| (qoopido.modules = {}),
 		dependencies      = [],
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
@@ -105,7 +106,7 @@
 		dependencies.push('./polyfill/object/getownpropertynames');
 	}
 
-	if(!Object.getOwnPropertyDescriptor|| !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
+	if(!Object.getOwnPropertyDescriptor || !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
 		dependencies.push('./polyfill/object/getownpropertydescriptor');
 	}
 
@@ -152,5 +153,5 @@
 			}
 		};
 	},
-	window.qoopido = window.qoopido || {}, navigator, window, document
+	this, navigator, window, document
 ));

@@ -357,12 +357,12 @@ module.exports = gulp;
  **************************************************/
 	gulp.task('watch', function() {
 		gulp.watch(files.watch.concat(files.all), [ 'lint:dist', 'build:dist' ]);
-		gulp.watch(files.watch.concat(files.base), [ 'lint:base', 'build:base' ]);
-		gulp.watch(files.watch.concat(files.sense), [ 'lint:sense', 'build:sense' ]);
-		gulp.watch(files.watch.concat(files.remux), [ 'lint:remux', 'build:remux' ]);
-		gulp.watch(files.watch.concat(files.jquery.emerge), [ 'lint:emerge', 'build:emerge', 'build:jquery:emerge' ]);
-		gulp.watch(files.watch.concat(files.jquery.lazyimage), [ 'lint:lazyimage', 'build:lazyimage', 'build:jquery:lazyimage' ]);
-		gulp.watch(files.watch.concat(files.jquery.shrinkimage), [ 'lint:shrinkimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
+		gulp.watch(files.watch.concat(files.base), [ 'build:base' ]);
+		gulp.watch(files.watch.concat(files.sense), [ 'build:sense' ]);
+		gulp.watch(files.watch.concat(files.remux), [ 'build:remux' ]);
+		gulp.watch(files.watch.concat(files.jquery.emerge), [ 'build:emerge', 'build:jquery:emerge' ]);
+		gulp.watch(files.watch.concat(files.jquery.lazyimage), [ 'build:lazyimage', 'build:jquery:lazyimage' ]);
+		gulp.watch(files.watch.concat(files.jquery.shrinkimage), [ 'build:shrinkimage', 'build:jquery:shrinkimage' ]);
 	});
 
 	gulp.task('all', [ 'lint:dist', 'build:dist', 'build:base', 'build:sense', 'build:remux', 'build:emerge', 'build:jquery:emerge', 'build:lazyimage', 'build:jquery:lazyimage', 'build:shrinkimage', 'build:jquery:shrinkimage' ]);

@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -31,7 +31,6 @@
                         }
                         target[property] = merge(tgt, src);
                     } else {
-                        console.log("hier", property, src);
                         target[property] = src;
                     }
                 }

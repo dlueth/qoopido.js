@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -13,7 +13,7 @@
 * - http://www.gnu.org/copyleft/gpl.html
 */
 (function(definition) {
-    var dependencies = [ "../function/unique/uuid" ];
+    var dependencies = [ "../base", "../function/unique/uuid", "./event" ];
     if (!window.CustomEvent) {
         dependencies.push("../polyfill/window/customevent");
     }
@@ -41,56 +41,49 @@
     window.qoopido.register("dom/element", definition, dependencies);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
-    var stringObject = "object", stringString = "string", eventProperties = "type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "), getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", regex = new RegExp("^<(\\w+)\\s*/>$"), elements = {};
-    function QoopidoEvent(event) {
-        this.originalEvent = event;
-    }
-    QoopidoEvent.prototype.preventDefault = function() {
-        var self = this;
-        if (self.originalEvent.cancelable !== false) {
-            self.originalEvent.returnValue = false;
-            self.originalEvent.preventDefault();
+    var prototype, IE = function() {
+        if (document.documentMode) {
+            return document.documentMode;
+        } else {
+            for (var i = 7; i > 0; i--) {
+                var div = document.createElement("div");
+                div.innerHTML = "<!--[if IE " + i + "]><span></span><![endif]-->";
+                if (div.getElementsByTagName("span").length) {
+                    return i;
+                }
+            }
+        }
+        return undefined;
+    }(), stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
+        elements: {},
+        events: {}
+    }, styleHooks = {
+        opacity: {
+            regex: new RegExp("alpha\\(opacity=(.*)\\)", "i"),
+            getValue: function(element) {
+                var value = getComputedStyle(element, null).getPropertyValue("filter").toString().match(this.regex);
+                if (value) {
+                    value = value[1] / 100;
+                } else {
+                    value = 1;
+                }
+                return value;
+            },
+            setValue: function(element, value) {
+                var style = element.style;
+                style.zoom = 1;
+                style.opacity = value;
+                style.filter = "alpha(opacity=" + (value * 100 + .5 >> 0) + ")";
+            }
         }
     };
-    QoopidoEvent.prototype.stopPropagation = function() {
-        var self = this;
-        self.originalEvent.cancelBubble = true;
-        self.originalEvent.stopPropagation();
-    };
-    QoopidoEvent.prototype.stopImmediatePropagation = function() {
-        var self = this;
-        self.originalEvent.cancelBubble = true;
-        self.originalEvent.cancelImmediate = true;
-        self.originalEvent.stopImmediatePropagation();
-    };
-    function normalizeEvent(originalEvent) {
-        var event = new QoopidoEvent(originalEvent), i = 0, property;
-        for (;(property = eventProperties[i]) !== undefined; i++) {
-            event[property] = originalEvent[property];
-        }
-        if (!event.target) {
-            event.target = event.srcElement || document;
-        }
-        if (event.target.nodeType === 3) {
-            event.target = event.target.parentNode;
-        }
-        if (!event.relatedTarget && event.fromElement) {
-            event.relatedTarget = event.fromElement === event.target ? event.toElement : event.fromElement;
-        }
-        return event;
-    }
-    function emitEvent(type, detail) {
-        this.element.dispatchEvent(new window.CustomEvent(type, {
-            bubbles: true,
-            cancelable: true,
-            detail: detail
-        }));
-    }
     function resolveElement(element) {
+        var tag;
         if (typeof element === "string") {
             try {
-                if (regex.test(element) === true) {
-                    element = document.createElement(element.replace(regex, "$1").toLowerCase());
+                if (isTag.test(element) === true) {
+                    tag = element.replace(isTag, "$1").toLowerCase();
+                    element = document.createElement(tag);
                 } else {
                     element = document.querySelector(element);
                 }
@@ -103,21 +96,47 @@
         }
         return element;
     }
-    return modules["base"].extend({
+    function emitEvent(event, detail, uuid) {
+        var self = this;
+        event = new window.CustomEvent(event, {
+            bubbles: event === "load" ? false : true,
+            cancelable: true,
+            detail: detail
+        });
+        if (uuid) {
+            event._quid = uuid;
+            event.isDelegate = true;
+        }
+        self.element.dispatchEvent(event);
+    }
+    function resolveStyleHook(method, element, property, value) {
+        var hook = styleHooks[property];
+        switch (method) {
+          case "get":
+            return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
+
+          case "set":
+            hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
+            break;
+        }
+    }
+    prototype = modules["base"].extend({
         type: null,
         element: null,
-        listener: {},
+        _listener: null,
         _constructor: function(element, attributes, styles) {
-            var self = this, uuid = element.quid || null;
+            var self = this, uuid;
+            self._listener = {};
             element = resolveElement(element);
-            if (uuid && elements[uuid]) {
-                return elements[uuid];
+            uuid = element._quid || null;
+            if (uuid && storage.elements[uuid]) {
+                return storage.elements[uuid];
             } else {
                 self.type = element.tagName;
                 self.element = element;
                 uuid = generateUuid();
-                element.quid = uuid;
-                elements[uuid] = self;
+                element._quid = uuid;
+                storage.elements[uuid] = self;
             }
             if (typeof attributes === "object" && attributes !== null) {
                 self.setAttributes(attributes);
@@ -140,8 +159,8 @@
             return self;
         },
         getAttribute: function(attribute) {
+            var self = this;
             if (attribute && typeof attribute === stringString) {
-                var self = this;
                 attribute = attribute.split(" ");
                 if (attribute.length === 1) {
                     return self.element.getAttribute(attribute[0]);
@@ -171,9 +190,8 @@
             return self;
         },
         setAttributes: function(attributes) {
-            var self = this;
+            var self = this, attribute;
             if (attributes && typeof attributes === stringObject && !attributes.length) {
-                var attribute;
                 for (attribute in attributes) {
                     self.element.setAttribute(attribute, attributes[attribute]);
                 }
@@ -193,11 +211,10 @@
             return self;
         },
         removeAttributes: function(attributes) {
-            var self = this;
+            var self = this, i = 0, attribute;
             if (attributes) {
                 attributes = typeof attributes === stringString ? attributes.split(" ") : attributes;
                 if (typeof attributes === stringObject && attributes.length) {
-                    var i = 0, attribute;
                     for (;(attribute = attributes[i]) !== undefined; i++) {
                         self.element.removeAttribute(attribute);
                     }
@@ -206,24 +223,23 @@
             return self;
         },
         getStyle: function(property) {
+            var self = this;
             if (property && typeof property === stringString) {
-                var self = this;
                 property = property.split(" ");
                 if (property.length === 1) {
-                    return getComputedStyle(self.element, null).getPropertyValue(property[0]);
+                    return resolveStyleHook("get", self.element, property[0]);
                 } else {
                     return self.getStyles(property);
                 }
             }
         },
         getStyles: function(properties) {
-            var self = this, result = {};
+            var self = this, result = {}, i = 0, property;
             if (properties) {
                 properties = typeof properties === stringString ? properties.split(" ") : properties;
                 if (typeof properties === stringObject && properties.length) {
-                    var i = 0, property;
-                    for (0; (property = properties[i]) !== undefined; i++) {
-                        result[property] = getComputedStyle(self.element, null).getPropertyValue(property);
+                    for (;(property = properties[i]) !== undefined; i++) {
+                        result[property] = resolveStyleHook("get", self.element, property);
                     }
                 }
             }
@@ -232,16 +248,15 @@
         setStyle: function(property, value) {
             var self = this;
             if (property && typeof property === stringString) {
-                self.element.style[property] = value;
+                resolveStyleHook("set", self.element, property, value);
             }
             return self;
         },
         setStyles: function(properties) {
-            var self = this;
+            var self = this, property, value;
             if (properties && typeof properties === stringObject && !properties.length) {
-                var property;
                 for (property in properties) {
-                    self.element.style[property] = properties[property];
+                    resolveStyleHook("set", self.element, property, properties[property]);
                 }
             }
             return self;
@@ -409,26 +424,42 @@
             return self;
         },
         on: function(events) {
-            var self = this, element = self.element, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], uuid = fn.quid || (fn.quid = generateUuid()), i = 0, event;
+            var self = this, element = self.element, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], uuid = fn._quid || (fn._quid = generateUuid()), i = 0, event;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = event + "-" + uuid, pointer = self.listener[id] || (self.listener[id] = []), listener = function(event) {
-                    event = normalizeEvent(event);
-                    if (!delegate || event.target.matches(delegate)) {
-                        fn.call(self, event);
+                var id = event + "-" + uuid, listener = function(event) {
+                    var uuid = event._quid || (event._quid = generateUuid()), delegateTo;
+                    if (!storage.events[uuid]) {
+                        storage.events[uuid] = pool && pool.obtain(event) || modules["dom/event"].create(event);
                     }
+                    event = storage.events[uuid];
+                    delegateTo = event.delegate;
+                    window.clearTimeout(event._timeout);
+                    if (!delegate || event.target.matches(delegate)) {
+                        fn.call(prototype.create(event.target), event, event.originalEvent.detail);
+                    }
+                    if (delegateTo) {
+                        delete event.delegate;
+                        emitEvent.call(self, delegateTo, null, event._quid);
+                    }
+                    event._timeout = window.setTimeout(function() {
+                        delete storage.events[uuid];
+                        delete event._timeout;
+                        event.dispose && event.dispose();
+                    }, 5e3);
                 };
-                pointer.push(listener);
+                listener.type = event;
+                self._listener[id] = listener;
                 element.addEventListener(event, listener);
             }
             return self;
         },
         one: function(events) {
-            var self = this, delegate = arguments.length > 2 ? arguments[1] : null, fn = arguments.length > 2 ? arguments[2] : arguments[1], each = (arguments.length > 2 ? arguments[3] : arguments[2]) !== false, listener = function(event) {
+            var self = this, delegate = arguments.length > 3 || typeof arguments[1] === "string" ? arguments[1] : null, fn = arguments.length > 3 || typeof arguments[2] === "function" ? arguments[2] : arguments[1], each = (arguments.length > 3 ? arguments[3] : arguments[2]) !== false, listener = function(event) {
                 self.off(each === true ? event.type : events, listener);
-                fn.call(self, event);
+                fn.call(self, event, event.originalEvent.detail);
             };
-            fn.quid = listener.quid = generateUuid();
+            fn._quid = listener._quid = generateUuid();
             if (delegate) {
                 self.on(events, delegate, listener);
             } else {
@@ -437,15 +468,14 @@
             return self;
         },
         off: function(events, fn) {
-            var self = this, element = self.element, i = 0, event, j = 0, listener;
+            var self = this, element = self.element, i = 0, event, id, listener;
             events = events.split(" ");
             for (;(event = events[i]) !== undefined; i++) {
-                var id = fn.quid && event + "-" + fn.quid || null, pointer = id && self.listener[id] || null;
-                if (pointer) {
-                    for (;(listener = pointer[j]) !== undefined; j++) {
-                        element.removeEventListener(event, listener);
-                    }
-                    delete self.listener[id];
+                id = fn._quid && event + "-" + fn._quid || null;
+                listener = id && self._listener[id] || null;
+                if (listener) {
+                    element.removeEventListener(event, listener);
+                    delete self._listener[id];
                 } else {
                     element.removeEventListener(event, fn);
                 }
@@ -458,4 +488,5 @@
             return self;
         }
     });
+    return prototype;
 });

@@ -5,10 +5,6 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../default.css" />
 	<style type="text/css">
-		body {
-			padding:    20px;
-			text-align: center;
-		}
 	</style>
 </head>
 <body>
@@ -24,42 +20,43 @@
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
+;(function(require, window, document, undefined) {
 	require.config({
-		baseUrl: "../../src"
+		baseUrl: '../../dist/latest/min'
 	});
 
 	require([ 'base' ], function() {
-		require([ 'dom/element' ], function(mDomElement) {
-			var eBody = mDomElement
-					.create('body')
-					.on('click', function(event) {
-						console.log('[on] event "click" was captured on', event.target);
-					})
-					.one('click', 'button.once', function(event) {
-						console.log('[one] event "click" was captured on', event.target);
-					}),
-				eButton1 = mDomElement
-					.create('<button />', { type: 'submit', 'class': 'once' })
-					.on('click', function(event) {
-						event.preventDefault();
-					})
-					.appendTo(eBody)
-					.setContent('click me once!'),
-				eButton2 = mDomElement
-					.create('<button />', { type: 'submit'})
-					.on('click', function(event) {
-						event.preventDefault();
-					})
-					.appendTo(document.getElementsByTagName('body')[0])
-					.setContent('click me more often!', true),
-				eDiv = mDomElement
-					.create('<div />', { 'class': 'test' }, { width: '100px' })
-					.appendTo('body'),
-				eButtons = eBody.find('button');
-
-			console.log('Number of buttons:', eButtons.length);
+		require([ 'pool/dom', 'pool/module' ], function() {
+			require([ 'dom/element' ], function(mDomElement) {
+				var eBody = mDomElement
+						.create('body')
+						.on('click', function(event) {
+							console.log('[on] event "click" was captured on', event.target);
+						})
+						.one('click', 'button.once', function(event) {
+							console.log('[one] event "' + event.type + '" was captured on', event.target);
+						}),
+					eButton1 = mDomElement
+						.create('<button />', { type: 'submit', 'class': 'once' })
+						.on('click', function(event) {
+							event.preventDefault();
+						})
+						.appendTo(eBody)
+						.setContent('click me once!'),
+					eButton2 = mDomElement
+						.create('<button />', { type: 'submit'})
+						.on('click', function(event) {
+							event.preventDefault();
+						})
+						.appendTo(document.getElementsByTagName('body')[0])
+						.setContent('click me more often!', true),
+					eDiv = mDomElement
+						.create('<div />', { 'class': 'test' }, { width: '100px' })
+						.appendTo('body');
+			});
 		});
 	});
+}(require, window, document));
 </script>
 
 </body>

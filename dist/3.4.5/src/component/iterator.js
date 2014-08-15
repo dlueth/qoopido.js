@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -13,7 +13,7 @@
 * - http://www.gnu.org/copyleft/gpl.html
 */
 (function(definition) {
-    window.qoopido.register("component/pager", definition, [ "../emitter", "../function/merge" ]);
+    window.qoopido.register("component/iterator", definition, [ "../emitter", "../function/merge" ]);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
     var prototype, defaultSettings = {
@@ -43,7 +43,7 @@
         },
         setData: function(data) {
             var self = this;
-            if (typeof data === "object") {
+            if (typeof data === "object" && data.length) {
                 self._state.data = data;
                 self._state.length = data.length;
                 if (self._settings.initial !== null) {
@@ -64,12 +64,13 @@
             var self = this;
             return self._state.index;
         },
+        getCurrent: function() {
+            var self = this;
+            return self._state.data[self._state.index] || null;
+        },
         getItem: function(index) {
             var self = this;
-            if (self._state.data[index] !== undefined) {
-                return self._state.data[index];
-            }
-            return null;
+            return self._state.data[index] || null;
         },
         first: function() {
             var self = this;

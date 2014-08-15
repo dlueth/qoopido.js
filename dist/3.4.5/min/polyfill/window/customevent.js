@@ -1,7 +1,7 @@
 /*!
-* Qoopido.js library v3.4.5, 2014-7-7
+* Qoopido.js library v3.4.5, 2014-7-15
 * https://github.com/dlueth/qoopido.js
 * (c) 2014 Dirk Lueth
 * Dual licensed under MIT and GPL
 */
-!function(t){var n=[];window.Event||n.push("./event"),window.qoopido.register("polyfill/window/customevent",t,n)}(function(t,n,e,o,i){"use strict";return i.CustomEvent||(i.CustomEvent=Window.prototype.CustomEvent=function(t,n){var e=new i.Event(t,n);return e.detail=n&&n.detail,e}),i.CustomEvent});
+!function(e){window.qoopido.register("polyfill/window/customevent",e)}(function(e,t,n,o,r,u,b){"use strict";if(!r.CustomEvent){var c=u.createEvent?function(e,t,n){var o=u.createEvent("Event"),r=t&&t.bubbles!==b?t.bubbles:!1,c=t&&t.cancelable!==b?t.cancelable:!0;return o.initEvent(e,r,c),o.detail=n,o}:function(e,t,n){var o=u.createEventObject();return o.type=e,o.bubbles=t&&t.bubbles!==b?t.bubbles:!1,o.cancelable=t&&t.cancelable!==b?t.cancelable:!0,o.detail=n,o};r.CustomEvent=Window.prototype.CustomEvent=function(e,t,n){if(!e)throw new Error("Not enough arguments");return c(e,t,n)}}return r.CustomEvent});

@@ -22,29 +22,11 @@
 	</dl>
 </div>
 
-<!--
-<script type="text/javascript" src="../../packages/qoopido.remux.3.4.5.min.js"></script>
-<script type="text/javascript">
-	var mRemux    = window.qoopido.modules['component/remux'],
-		cLayout   = document.getElementById('layout'),
-		cFontsize = document.getElementById('fontsize');
-
-	mRemux
-		.addLayout({
-			mobile:  { width: 640, min: 8, max: 15 },
-			desktop: { width: 1240, min: 8, max: 25 }
-		})
-		.on('statechanged', function(name, state) {
-			cLayout.textContent   = state.layout;
-			cFontsize.textContent = state.fontsize;
-		});
-</script>
--->
-
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
+;(function(require, window, document, undefined) {
 	require.config({
-		baseUrl: "../../dist/latest/min"
+		baseUrl: '../../dist/latest/min'
 	});
 
 	require([ 'base' ], function() {
@@ -63,6 +45,7 @@
 				});
 		});
 	});
+}(require, window, document));
 </script>
 
 </body>

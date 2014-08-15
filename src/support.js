@@ -130,7 +130,7 @@
 					candidates = [ pMethod ];
 				}
 
-				for(i; (candidate = candidates[i]) !== undefined; i++) {
+				for(; (candidate = candidates[i]) !== undefined; i++) {
 					if(pElement[candidate] !== undefined && (typeof pElement[candidate] === 'function' || typeof pElement[candidate] === 'object')) {
 						stored = candidate;
 						break;

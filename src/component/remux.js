@@ -59,13 +59,15 @@
 	}
 
 	function addQuery(query, layout, fontsize) {
-		var self  = this;
+		var self = this;
 
-		modules['component/sense']
-			.create(query)
-			.on('matched', function() {
-				updateState.call(self, layout, fontsize);
-			});
+		window.setTimeout(function() {
+			modules['component/sense']
+				.create(query)
+				.on('matched', function() {
+					updateState.call(self, layout, fontsize);
+				});
+		}, 0);
 	}
 
 	prototype = modules['emitter'].extend({

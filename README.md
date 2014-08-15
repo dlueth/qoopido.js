@@ -287,13 +287,16 @@ Included modules
 - proxy (universal proxy method)
 - url (handle URLs, parameter etc.)
 - component
-	- remux (REM based aproach to responsive web design, demo: http://codepen.io/dlueth/pen/KGrmf)
-	- pager (flexible and UI/UX independent data pager)
-- dom 
+	- iterator (flexible and UI/UX independent iterator for e.g. paging)
+	- remux (REM based approach to responsive web design)
+	- sense (react to media queries in JavaScript)
+- dom
+	- collection (DOM element extension)
 	- element (DOM element extension)
-		- emerge (react on elements entering or nearing the visible browser area, demo: http://codepen.io/dlueth/pen/mparb)
+		- emerge (react on elements entering or nearing the visible browser area)
 		- lazyimage (load images when entering or nearing the visible browser area)
-		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize, demo: http://codepen.io/dlueth/pen/eodEL)
+		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
+	- event (DOM event normalization)
 - function (provides single functions, e.g. helper)
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
@@ -311,6 +314,8 @@ Included modules
 		- shrinkimage
 - particle (still very basic)
 - polyfill
+	- array
+	 	- indexof
 	- document
 		- getelementsbyclassname
 		- queryselector
@@ -321,16 +326,22 @@ Included modules
 		- create
 		- defineproperties
 		- defineproperty
-		- getoqnpropertynames
+		- getownpropertydescriptor
+		- getownpropertynames
+		- getprototypeof
 		- keys
 	- string
 		- trim
 		- ucfirst
 	- window
+		- addeventlistener
+		- customevent
+		- dispatchevent
 		- getcomputedstyle
 		- matchmedia
 		- promise
-- pool (pooling facilities and pool factory, demo: http://codepen.io/dlueth/pen/uydzJ)
+		- removeeventlistener
+- pool (pooling facilities and pool factory)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
 	- module (pooling facilities for Qoopido.js modules or external objects/classes)
@@ -339,8 +350,8 @@ Included modules
 	- all
 	- defer
 	- race
-- renderer (centralized rendering pipeline, demo: http://codepen.io/dlueth/pen/uydzJ)
-- support (feature detection, demo: http://codepen.io/dlueth/pen/bvFpk)
+- renderer (centralized rendering pipeline)
+- support (feature detection)
 	- capability
 		- datauri
 	- css
@@ -369,4 +380,14 @@ Included modules
 	- xhr (AJAX transport)
 - vector
 	- 2d
-- worker (flexible web worker implementation, demo: http://codepen.io/dlueth/pen/jcvar)
+- worker (flexible web worker implementation
+
+
+
+CodePen demos
+---------------------------
+Beside the demos within this repositories demo directory I have also done some pens on CodePen that demonstrate combined features:
+- [Particle fireworks](http://codepen.io/dlueth/pen/uydzJ)
+- [Webcam pixelation](http://codepen.io/dlueth/pen/zBhwv)
+- [Image pixelation](http://codepen.io/dlueth/pen/jcvar)
+- [Modular feature detection](http://codepen.io/dlueth/pen/bvFpk)

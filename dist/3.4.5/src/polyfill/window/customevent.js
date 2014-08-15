@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -13,18 +13,28 @@
 * - http://www.gnu.org/copyleft/gpl.html
 */
 (function(definition) {
-    var dependencies = [];
-    if (!window.Event) {
-        dependencies.push("./event");
-    }
-    window.qoopido.register("polyfill/window/customevent", definition, dependencies);
+    window.qoopido.register("polyfill/window/customevent", definition);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
     if (!window.CustomEvent) {
-        window.CustomEvent = Window.prototype.CustomEvent = function CustomEvent(type, eventInitDict) {
-            var event = new window.Event(type, eventInitDict);
-            event.detail = eventInitDict && eventInitDict.detail;
+        var createEvent = document.createEvent ? function(type, eventInitDict, detail) {
+            var event = document.createEvent("Event"), bubbles = eventInitDict && eventInitDict.bubbles !== undefined ? eventInitDict.bubbles : false, cancelable = eventInitDict && eventInitDict.cancelable !== undefined ? eventInitDict.cancelable : true;
+            event.initEvent(type, bubbles, cancelable);
+            event.detail = detail;
             return event;
+        } : function(type, eventInitDict, detail) {
+            var event = document.createEventObject();
+            event.type = type;
+            event.bubbles = eventInitDict && eventInitDict.bubbles !== undefined ? eventInitDict.bubbles : false;
+            event.cancelable = eventInitDict && eventInitDict.cancelable !== undefined ? eventInitDict.cancelable : true;
+            event.detail = detail;
+            return event;
+        };
+        window.CustomEvent = Window.prototype.CustomEvent = function CustomEvent(type, eventInitDict, detail) {
+            if (!type) {
+                throw new Error("Not enough arguments");
+            }
+            return createEvent(type, eventInitDict, detail);
         };
     }
     return window.CustomEvent;

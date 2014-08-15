@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -50,9 +50,11 @@
     }
     function addQuery(query, layout, fontsize) {
         var self = this;
-        modules["component/sense"].create(query).on("matched", function() {
-            updateState.call(self, layout, fontsize);
-        });
+        window.setTimeout(function() {
+            modules["component/sense"].create(query).on("matched", function() {
+                updateState.call(self, layout, fontsize);
+            });
+        }, 0);
     }
     prototype = modules["emitter"].extend({
         _constructor: function() {

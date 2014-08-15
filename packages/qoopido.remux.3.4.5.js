@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-7
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -183,9 +183,9 @@
     }
     return Object.getOwnPropertyDescriptor;
 }, window.qoopido = window.qoopido || {});
-(function(definition, qoopido, navigator, window, document, undefined) {
+(function(definition, global, navigator, window, document, undefined) {
     "use strict";
-    var shared = qoopido.shared = qoopido.shared || {}, modules = qoopido.modules = qoopido.modules || {}, dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
+    var qoopido = global.qoopido || (global.qoopido = {}), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
     register = qoopido.register = function register(id, definition, dependencies, callback) {
         var namespace = id.split("/"), initialize;
         if (modules[id]) {
@@ -281,7 +281,7 @@
             return Object.create(this, getOwnPropertyDescriptors(properties));
         }
     };
-}, window.qoopido = window.qoopido || {}, navigator, window, document);
+}, this, navigator, window, document);
 (function(definition) {
     window.qoopido.register("polyfill/window/getcomputedstyle", definition);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
@@ -647,9 +647,11 @@
     }
     function addQuery(query, layout, fontsize) {
         var self = this;
-        modules["component/sense"].create(query).on("matched", function() {
-            updateState.call(self, layout, fontsize);
-        });
+        window.setTimeout(function() {
+            modules["component/sense"].create(query).on("matched", function() {
+                updateState.call(self, layout, fontsize);
+            });
+        }, 0);
     }
     prototype = modules["emitter"].extend({
         _constructor: function() {
