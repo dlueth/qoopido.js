@@ -23,7 +23,7 @@
 				properties: 'type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which'.split(' ')
 			},
 			mouse: {
-				regex:      new RegExp('^(?:mouse|pointer|contextmenu)|click'),
+				regex:      new RegExp('^(?:mouse|pointer|contextmenu|touch)|click'),
 				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which'.split(' '),
 				filter:     function() {
 					var self        = this,

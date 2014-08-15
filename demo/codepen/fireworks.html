@@ -5,6 +5,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../default.css" />
 	<style type="text/css">
+		body {
+			padding: 0;
+		}
 	</style>
 </head>
 <body>
@@ -17,8 +20,21 @@
 
 	<h3>Particle fireworks</h3>
 	<p>
-		This demo mainly shows the capabilities of the pooling modules as well as the renderer module.
+		Demonstrates the capabilities of the pooling and renderer module(s).
 	</p>
+
+	<h3>Settings</h3>
+	<dl>
+		<dt>Time (random):</dt><dd data-setting="timeRandom:200,2000,50"></dd>
+		<dt>Particles (base):</dt><dd data-setting="particlesBase:20,200,5"></dd>
+		<dt>Particles (random):</dt><dd data-setting="particlesRandom:20,200,5"></dd>
+		<dt>Size (base):</dt><dd data-setting="sizeBase:2,20,1"></dd>
+		<dt>Size (random):</dt><dd data-setting="sizeRandom:2,20,1"></dd>
+		<dt>Velocity (base):</dt><dd data-setting="velocityBase:2,20,1"></dd>
+		<dt>Velocity (random):</dt><dd data-setting="velocityRandom:2,20,1"></dd>
+		<dt>Lifetime (base):</dt><dd data-setting="lifetimeBase:400,1200,50"></dd>
+		<dt>Lifetime (random):</dt><dd data-setting="lifetimeRandom:200,800,50"></dd>
+	</dl>
 
 	<h3>Pool state</h3>
 	<dl>
@@ -34,32 +50,17 @@
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
-var randomTime               = 1000, // max time in ms between random Fireworks
-	particlesPerFireworkBase = 80,    // min number of particles per Firework
-	particlesPerFireworkRnd  = 20,    // max number of additional random particles per firework
-	particleSizeBase         = 8,     // min size of particles
-	particleSizeRnd          = 10,    // max additional random size
-	particleVelocityBase     = 4,     // min velocity of particles
-	particleVelocityRnd      = 4,     // max additional random velocity
-	particleLifetimeBase     = 800,  // min lifetime of particle
-	particleLifetimeRnd      = 400,   // max additional random lifetime
-	particleGravity          = 0.06,  // gravity of particles
-	particleColors           = [ '33,141,166', '149,186,0', '255,180,0', '166,60,148', '255,255,51', '255,0,102', '255,140,0' ],
-	particlesAlphaEasings    = [ easeInSine, easeInQuad, easeInCubic ];
-
-var MATH_PI_TIMES_TWO = 2 * Math.PI,
-	MATH_PI_DIV_TWO   = Math.PI / 2;
-
-function easeInSine(t, d) {
-	return 1 * Math.cos(t / d * MATH_PI_DIV_TWO) -1 + 1;
-}
-
-function easeInQuad(t, d) {
-	return -1 * (t /= d) * t + 1;
-}
-
-function easeInCubic(t, d) {
-	return -1 * (t /= d) * t * t + 1;
+var settings = {
+	timeRandom:      1000, // max time in ms between random Fireworks
+	particlesBase:   80,   // min number of particles per Firework
+	particlesRandom: 20,   // max number of additional random particles per firework
+	sizeBase:        8,    // min size of particles
+	sizeRandom:      10,   // max additional random size
+	velocityBase:    4,    // min velocity of particles
+	velocityRandom:  4,    // max additional random velocity
+	lifetimeBase:    800,  // min lifetime of particle
+	lifetimeRandom:  400,  // max additional random lifetime
+	gravity:         0.06  // gravity of particles
 }
 
 ;(function(require, window, document, undefined) {
@@ -67,9 +68,26 @@ function easeInCubic(t, d) {
 		baseUrl: '../../dist/latest/min'
 	});
 
+	var MATH_PI_TIMES_TWO = 2 * Math.PI,
+		MATH_PI_DIV_TWO   = Math.PI / 2,
+		COLORS            = [ '33,141,166', '149,186,0', '255,180,0', '166,60,148', '255,255,51', '255,0,102', '255,140,0' ],
+		EASINGS           = [ easeInSine, easeInQuad, easeInCubic ];
+
+	function easeInSine(t, d) {
+		return 1 * Math.cos(t / d * MATH_PI_DIV_TWO) -1 + 1;
+	}
+
+	function easeInQuad(t, d) {
+		return -1 * (t /= d) * t + 1;
+	}
+
+	function easeInCubic(t, d) {
+		return -1 * (t /= d) * t * t + 1;
+	}
+
 	require([ 'base' ], function() {
 		require([ 'pool/module', 'pool/dom', 'pool/array', 'pool/object' ], function(mPoolModule, mPoolDom) {
-			require([ 'support', 'renderer', 'particle', 'dom/element', 'vector/2d' ], function(mSupport, mRenderer, mParticle, mDomElement, mVector) {
+			require([ 'support', 'renderer', 'particle', 'dom/element', 'dom/collection', 'vector/2d' ], function(mSupport, mRenderer, mParticle, mDomElement, mDomCollection, mVector) {
 				var qWindow           = mDomElement.create(window),
 					qCanvas           = mDomElement.create('<canvas />').insertBefore('#console'),
 					qCanvasElement    = qCanvas.element,
@@ -93,19 +111,21 @@ function easeInCubic(t, d) {
 						addFirework();
 					}
 
-					setTimeout(generateRandomFirework, Math.random() * randomTime);
+					setTimeout(generateRandomFirework, Math.random() * settings.timeRandom);
 				}
 
 				function addFirework(event) {
-					var count        = ((Math.random() * particlesPerFireworkRnd + particlesPerFireworkBase) / ratio) >> 0,
+					var count        = ((Math.random() * settings.particlesRandom + settings.particlesBase) / ratio) >> 0,
 						x            = event ? parseInt(event.clientX || event.pageX, 10) : (Math.random() * width) >> 0,
 						y            = event ? parseInt(event.clientY || event.pageY, 10) : (Math.random() * height) >> 0,
 						angle        = MATH_PI_TIMES_TWO / count,
-						color        = ''.concat('rgba(', particleColors[((Math.random() * (particleColors.length - 1)) + 0.5) >> 0], ','),
-						size         = (size = ((Math.random() * particleSizeRnd) >> 0) + particleSizeBase) + (size % 2),
+						color        = ''.concat('rgba(', COLORS[((Math.random() * (COLORS.length - 1)) + 0.5) >> 0], ','),
+						size         = (size = ((Math.random() * settings.sizeRandom) >> 0) + settings.sizeBase) + (size % 2),
 						canvas       = poolDom.obtain('canvas'),
-						acceleration = poolVector.obtain(0, particleGravity),
+						acceleration = poolVector.obtain(0, settings.gravity),
 						hSize, context, fill;
+
+					console.log(event);
 
 					canvas.width       = canvas.height = size;
 					canvas.usage       = count;
@@ -123,7 +143,7 @@ function easeInCubic(t, d) {
 					context.fill();
 
 					while(count--) {
-						var randomVelocity = particleVelocityBase + Math.random() * particleVelocityRnd,
+						var randomVelocity = settings.velocityBase + Math.random() * settings.velocityRandom,
 								particleAngle  = count * angle,
 								particle       = poolModule.obtain(x, y);
 
@@ -134,9 +154,9 @@ function easeInCubic(t, d) {
 
 						particle.canvas     = canvas;
 						particle.size       = size;
-						particle.easing     = particle.easing ? particle.easing : particlesAlphaEasings[(Math.random() * (particlesAlphaEasings.length - 1) + 0.5) >> 0];
+						particle.easing     = particle.easing ? particle.easing : EASINGS[(Math.random() * (EASINGS.length - 1) + 0.5) >> 0];
 						particle.birthtime  = now;
-						particle.lifetime   = particle.lifetime? particle.lifetime : (particleLifetimeBase + Math.random() * particleLifetimeRnd) >> 0;
+						particle.lifetime   = particle.lifetime? particle.lifetime : (settings.lifetimeBase + Math.random() * settings.lifetimeRandom) >> 0;
 						particle.deathtime  = now + particle.lifetime;
 
 						particles.push(particle);
@@ -156,6 +176,48 @@ function easeInCubic(t, d) {
 					qCanvasContext.globalAlpha = Math.random() * particle.easing(now - particle.birthtime, particle.lifetime);
 					qCanvasContext.drawImage(particle.canvas, particle.position.x >> 0, particle.position.y >> 0);
 					qCanvasContext.restore();
+				}
+
+				function initializeSettings() {
+					var definitions = {};
+
+					mDomCollection
+						.create('#console [data-setting]')
+						.each(function() {
+							var self      = this,
+								parameter = self.getAttribute('data-setting').split(':'),
+								setting   = parameter[0],
+								range     = parameter[1].split(','),
+								stepping  = parseFloat(range.pop()),
+								previous  = mDomElement.create('<span />', { 'data-control': setting }).addClass('previous').setContent('-').appendTo(self),
+								value     = mDomElement.create('<span />').addClass('value').setContent(settings[setting]).appendTo(self),
+								next      = mDomElement.create('<span />', { 'data-control': setting }).addClass('next').setContent('+').appendTo(self);
+
+							definitions[setting] = {
+								value:    value,
+								range:    range,
+								stepping: stepping
+							}
+						});
+
+					mDomElement
+						.create('#console')
+						.on('click', '[data-control]', function(event) {
+							var self       = this,
+								setting    = self.getAttribute('data-control'),
+								definition = definitions[setting];
+
+							event.preventDefault();
+							event.stopPropagation();
+
+							if(self.hasClass('previous')) {
+								definition.value.setContent(settings[setting] = Math.max(definition.range[0], Math.min(definition.range[1], settings[setting] - definition.stepping)));
+							} else if(self.hasClass('next')) {
+								definition.value.setContent(settings[setting] = Math.max(definition.range[0], Math.min(definition.range[1], settings[setting] + definition.stepping)));
+							}
+
+							return false;
+						});
 				}
 
 				function onResize() {
@@ -242,6 +304,7 @@ function easeInCubic(t, d) {
 				renderer.on('suspend', onSuspend);
 				renderer.on('resume', onResume);
 
+				initializeSettings();
 				onResize();
 				generateRandomFirework();
 			});

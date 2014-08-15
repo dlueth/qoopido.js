@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.5
-* date:    2014-7-14
+* date:    2014-7-15
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -21,7 +21,7 @@
             properties: "type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" ")
         },
         mouse: {
-            regex: new RegExp("^(?:mouse|pointer|contextmenu)|click"),
+            regex: new RegExp("^(?:mouse|pointer|contextmenu|touch)|click"),
             properties: "button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which".split(" "),
             filter: function() {
                 var self = this, original = self.originalEvent, fromElement = original.fromElement, which = original.button, pointer;

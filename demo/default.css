@@ -25,7 +25,7 @@ html {
 body {
 	overflow-x:       hidden;
 	margin:           0;
-	padding:          20px;
+	padding:          0;
 	background-color: #333;
 	font-family:      Tahoma,Verdana,Segoe,sans-serif;
 	font-size:        14px;
@@ -118,13 +118,13 @@ section {
 #console dd[data-setting] span {
 	cursor:      pointer;
 	display:     inline-block;
-	width:       20%;
+	width:       15%;
 	margin:      0;
 	font-weight: bold;
 }
 
 #console dd[data-setting] span.value {
-	width:       50%;
+	width:       70%;
 	text-align:  center;
 	font-weight: normal;
 }
@@ -218,11 +218,16 @@ section {
 	top:              0;
 	right:            0;
 	bottom:           0;
-	width:            400px;
-	height:           114px;
+	width:            150px;
+	height:           56px;
 	margin:           auto;
 	padding:          10px;
 	background-color: rgba(255, 255, 255, 0.2);
 	border-radius:    6px;
 	text-align:       center;
+}
+
+.hint.big {
+	width:  400px;
+	height: 114px;
 }
