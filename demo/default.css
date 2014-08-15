@@ -135,9 +135,10 @@ section {
 	margin:    5px 0 0 0;
 	font-size: 0;
 }
+
 #console .actions span {
 	cursor:           pointer;
-	display:          none;
+	display:          inline-block;
 	padding:          0 10px;
 	font-size:        14px;
 	line-height:      28px;

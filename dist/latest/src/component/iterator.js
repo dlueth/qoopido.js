@@ -13,7 +13,7 @@
 * - http://www.gnu.org/copyleft/gpl.html
 */
 (function(definition) {
-    window.qoopido.register("component/pager", definition, [ "../emitter", "../function/merge" ]);
+    window.qoopido.register("component/iterator", definition, [ "../emitter", "../function/merge" ]);
 })(function(modules, shared, namespace, navigator, window, document, undefined) {
     "use strict";
     var prototype, defaultSettings = {

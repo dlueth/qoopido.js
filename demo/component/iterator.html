@@ -5,15 +5,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="../default.css" />
 	<style type="text/css">
-		#controls {
+		#console .actions span {
+			width:      49%;
 			text-align: center;
 		}
-
-		#controls a {
-			margin-right: 20px;
-		}
-
-		#pager {
+		#iterator {
 			position:         absolute;
 			left:             50%;
 			top:              50%;
@@ -25,7 +21,7 @@
 			color:            #fff;
 		}
 
-		#pager > section {
+		#iterator > section {
 			display: none;
 			width:   200px;
 			height:  200px;
@@ -40,19 +36,19 @@
 		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
 	</svg>
 
-	<h3>Pager state</h3>
+	<h3>Iterator state</h3>
 	<dl>
 		<dt>Previous index:</dt><dd id="previous"></dd>
 		<dt>Current index:</dt><dd id="current"></dd>
 	</dl>
 
-	<div id="controls">
-		<a href="#" data-action="previous">&lsaquo; previous</a>
-		<a href="#" data-action="next">next &rsaquo;</a>
+	<div class="actions">
+		<span data-action="previous">previous</span>
+		<span data-action="next">next</span>
 	</div>
 </div>
 
-<div id="pager" role="listbox">
+<div id="iterator" role="listbox">
 	<section role="option" tabindex="-1" aria-selected="false">1</section>
 	<section role="option" tabindex="-1" aria-selected="false">2</section>
 	<section role="option" tabindex="-1" aria-selected="false">3</section>
@@ -71,14 +67,14 @@
 	});
 
 	require([ 'base' ], function() {
-		require([ 'dom/element', 'dom/collection', 'component/pager' ], function(mDomElement, mDomCollection, mPager) {
+		require([ 'dom/element', 'dom/collection', 'component/iterator' ], function(mDomElement, mDomCollection, mIterator) {
 			var previous = mDomElement.create('#previous'),
 				current  = mDomElement.create('#current'),
-				pager    = mPager
-					.create(mDomCollection.create('#pager > section').elements)
+				iterator = mIterator
+					.create(mDomCollection.create('#iterator > section').elements)
 					.on('preSeek postSeek', function(type) {
-						var index = pager.getIndex(),
-							item  = pager.getState().item;
+						var index = iterator.getIndex(),
+							item  = iterator.getCurrent();
 
 						switch(type) {
 							case 'preSeek':
@@ -91,9 +87,9 @@
 								break;
 						}
 					}),
-				interval = window.setInterval(pager.next, 5000);
+				interval = window.setInterval(iterator.next, 5000);
 
-			pager.seek(0);
+			iterator.seek(0);
 
 			mDomElement
 				.create('#console')
@@ -102,8 +98,8 @@
 					event.stopPropagation();
 
 					window.clearInterval(interval);
-					interval = window.setInterval(pager.next, 5000)
-					pager[mDomElement.create(event.target).getAttribute('data-action')]();
+					interval = window.setInterval(iterator.next, 5000)
+					iterator[mDomElement.create(event.target).getAttribute('data-action')]();
 				});
 		});
 	});
