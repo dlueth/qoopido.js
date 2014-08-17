@@ -64,8 +64,7 @@
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var prototype,
-		IE = (function() {
+	var IE = (function() {
 			if(document.documentMode) {
 				return document.documentMode;
 			} else {
@@ -167,7 +166,7 @@
 		}
 	}
 
-	prototype = modules['base'].extend({
+	return modules['base'].extend({
 		type:      null,
 		element:   null,
 		_listener: null,
@@ -592,7 +591,7 @@
 						window.clearTimeout(event._timeout);
 
 						if(!delegate || event.target.matches(delegate)) {
-							fn.call(prototype.create(event.target), event, event.originalEvent.detail);
+							fn.call(event.target, event, event.originalEvent.detail);
 						}
 
 						if(delegateTo) {
@@ -667,6 +666,4 @@
 			return self;
 		}
 	});
-
-	return prototype;
 }));

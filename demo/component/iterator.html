@@ -99,7 +99,7 @@
 
 					window.clearInterval(interval);
 					interval = window.setInterval(iterator.next, 5000)
-					iterator[mDomElement.create(event.target).getAttribute('data-action')]();
+					iterator[mDomElement.create(this).getAttribute('data-action')]();
 				});
 		});
 	});
