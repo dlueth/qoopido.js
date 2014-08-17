@@ -93,7 +93,7 @@
 			events:   {}
 		},
 		styleHooks       = {
-			opacity: { //(IE <= 8) ? {
+			opacity: (IE <= 8) ? {
 				regex:    new RegExp('alpha\\(opacity=(.*)\\)', 'i'),
 				getValue: function(element) {
 					var value = getComputedStyle(element, null).getPropertyValue('filter').toString().match(this.regex);
@@ -113,7 +113,7 @@
 					style.opacity = value;
 					style.filter  = 'alpha(opacity=' + (value * 100 + 0.5 >> 0) + ')';
 				}
-			} // : null
+			} : null
 		};
 
 	function resolveElement(element) {
