@@ -172,7 +172,7 @@ var settings = {
 							mDomElement
 								.create('#console')
 								.on('click', '[data-control]', function(event) {
-									var self       = this,
+									var self       = mDomElement.create(this),
 										setting    = self.getAttribute('data-control'),
 										definition = definitions[setting];
 

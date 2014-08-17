@@ -125,8 +125,6 @@ var settings = {
 						acceleration = poolVector.obtain(0, settings.gravity),
 						hSize, context, fill;
 
-					console.log(event);
-
 					canvas.width       = canvas.height = size;
 					canvas.usage       = count;
 					acceleration.usage = count;
@@ -203,7 +201,7 @@ var settings = {
 					mDomElement
 						.create('#console')
 						.on('click', '[data-control]', function(event) {
-							var self       = this,
+							var self       = mDomElement.create(this),
 								setting    = self.getAttribute('data-control'),
 								definition = definitions[setting];
 
