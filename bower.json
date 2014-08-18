@@ -2,6 +2,7 @@
   "name": "qoopido.js",
   "version": "3.4.7",
   "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
+  "main": "dist/latest/min/base.js",
   "ignore": [
     "**/.*",
     "node_modules",
