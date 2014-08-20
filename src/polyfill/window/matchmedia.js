@@ -14,6 +14,8 @@
  *
  * @polyfill ./getcomputedstyle
  * @polyfill ../array/indexof
+ *
+ * @browsers Chrome < 9, Firefox < 6, Internet Explorer < 10, Opera < 12.1, Safari < 5.1
  */
 ;(function(definition) {
 	var dependencies = [  ];

@@ -11,6 +11,8 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lueth <info@qoopido.com>
+ *
+ * @browsers Firefox < 1.5, Internet Explorer < 9
  */
 /* global Window, HTMLDocument, Element */
 ;(function(definition) {
