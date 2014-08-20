@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-17
+* date:    2014-7-20
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *

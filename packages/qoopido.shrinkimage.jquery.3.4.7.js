@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-17
+* date:    2014-7-20
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -1268,7 +1268,7 @@
                         break;
                     }
                 }
-                lookup.css[pProperty] = stored !== false ? [ prefix + stored.replace(regexCss, "-$1").toLowerCase(), stored ] : false;
+                stored = lookup.css[pProperty] = stored !== false ? [ prefix + stored.replace(regexCss, "-$1").toLowerCase(), stored ] : false;
                 sample.dispose && sample.dispose();
             }
             return stored;

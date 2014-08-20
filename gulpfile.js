@@ -20,9 +20,10 @@ module.exports = gulp;
 		'./src/base.js'
 	];
 	files.sense     = files.base.concat([
-		'./src/polyfill/window/getcomputedstyle.js',
-		'./src/polyfill/window/matchmedia.js',
 		'./src/emitter.js',
+		'./src/polyfill/window/getcomputedstyle.js',
+		'./src/polyfill/array/indexof',
+		'./src/polyfill/window/matchmedia.js',
 		'./src/component/sense.js'
 	]);
 	files.remux     = files.sense.concat([
