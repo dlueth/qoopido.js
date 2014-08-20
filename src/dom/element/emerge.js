@@ -120,7 +120,6 @@
 	prototype = modules['dom/element'].extend({
 		_quid:     null,
 		_viewport: null,
-		_element:  null,
 		_settings: null,
 		_state:    null,
 		_priority: null,
