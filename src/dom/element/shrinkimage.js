@@ -89,7 +89,7 @@
 							break;
 						default:
 							lookup[target] = loader
-								.create(target, (!isBackground) ? self._element : null)
+								.create(target, (!isBackground) ? self.element : null)
 								.one(EVENT_STATE, function(event, data) {
 									if(event.type === EVENT_LOADED) {
 										lookup[target] = data;
