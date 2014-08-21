@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-20
+* date:    2014-7-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -185,8 +185,7 @@
 }, window.qoopido = window.qoopido || {});
 (function(definition, global, navigator, window, document, undefined) {
     "use strict";
-    var qoopido = global.qoopido || (global.qoopido = {}), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
-    register = qoopido.register = function register(id, definition, dependencies, callback) {
+    function register(id, definition, dependencies, callback) {
         var namespace = id.split("/"), initialize;
         if (modules[id]) {
             return modules[id];
@@ -220,12 +219,16 @@
         } else {
             initialize();
         }
-    };
-    registerSingleton = qoopido.registerSingleton = function registerSingleton(id, definition, dependencies) {
+    }
+    function registerSingleton(id, definition, dependencies) {
         register(id, definition, dependencies, function(module) {
             modules[id] = module.create();
         });
-    };
+    }
+    var qoopido = global.qoopido || (global.qoopido = {
+        register: register,
+        registerSingleton: registerSingleton
+    }), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g");
     function canonicalize(path) {
         var collapsed;
         while ((collapsed = path.replace(regexCanonicalize, "")) !== path) {
@@ -262,9 +265,7 @@
         return descriptors;
     }
     function prohibitCall() {
-        if (typeof console !== "undefined") {
-            console.error("[Qoopido.js] Operation prohibited on an actual instance");
-        }
+        throw new Error("[Qoopido.js] Operation prohibited");
     }
     return {
         create: function() {
@@ -275,10 +276,16 @@
             instance.create = instance.extend = prohibitCall;
             return result || instance;
         },
-        extend: function(properties) {
+        extend: function(properties, final) {
+            var instance;
             properties = properties || {};
+            final = final === true;
             properties._parent = this;
-            return Object.create(this, getOwnPropertyDescriptors(properties));
+            instance = Object.create(this, getOwnPropertyDescriptors(properties));
+            if (final === true) {
+                instance.extend = prohibitCall;
+            }
+            return instance;
         }
     };
 }, this, navigator, window, document);
@@ -396,10 +403,7 @@
             }
         }
         return undefined;
-    }(), stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storage = {
-        elements: {},
-        events: {}
-    }, styleHooks = {
+    }(), stringObject = "object", stringString = "string", getComputedStyle = window.getComputedStyle || modules["polyfill/window/getcomputedstyle"], generateUuid = modules["function/unique/uuid"], contentAttribute = "textContent" in document.createElement("a") ? "textContent" : "innerText", isTag = new RegExp("^<(\\w+)\\s*/>$"), pool = modules["pool/module"] && modules["pool/module"].create(modules["dom/event"]) || null, storageEvents = {}, styleHooks = {
         opacity: IE <= 8 ? {
             regex: new RegExp("alpha\\(opacity=(.*)\\)", "i"),
             getValue: function(element) {
@@ -467,19 +471,11 @@
         element: null,
         _listener: null,
         _constructor: function(element, attributes, styles) {
-            var self = this, uuid;
-            self._listener = {};
+            var self = this;
             element = resolveElement(element);
-            uuid = element._quid || null;
-            if (uuid && storage.elements[uuid]) {
-                return storage.elements[uuid];
-            } else {
-                self.type = element.tagName;
-                self.element = element;
-                uuid = generateUuid();
-                element._quid = uuid;
-                storage.elements[uuid] = self;
-            }
+            self.type = element.tagName;
+            self.element = element;
+            self._listener = {};
             if (typeof attributes === "object" && attributes !== null) {
                 self.setAttributes(attributes);
             }
@@ -771,10 +767,10 @@
             for (;(event = events[i]) !== undefined; i++) {
                 var id = event + "-" + uuid, listener = function(event) {
                     var uuid = event._quid || (event._quid = generateUuid()), delegateTo;
-                    if (!storage.events[uuid]) {
-                        storage.events[uuid] = pool && pool.obtain(event) || modules["dom/event"].create(event);
+                    if (!storageEvents[uuid]) {
+                        storageEvents[uuid] = pool && pool.obtain(event) || modules["dom/event"].create(event);
                     }
-                    event = storage.events[uuid];
+                    event = storageEvents[uuid];
                     delegateTo = event.delegate;
                     window.clearTimeout(event._timeout);
                     if (!delegate || event.target.matches(delegate)) {
@@ -785,7 +781,7 @@
                         emitEvent.call(self, delegateTo, null, event._quid);
                     }
                     event._timeout = window.setTimeout(function() {
-                        delete storage.events[uuid];
+                        delete storageEvents[uuid];
                         delete event._timeout;
                         event.dispose && event.dispose();
                     }, 5e3);
@@ -844,7 +840,7 @@
     }, documentElement = window.document.documentElement, viewport = {}, intervals = {}, elements = {}, prototype, EVENT_EMERGED = "emerged", EVENT_DEMERGED = "demerged", DOM_RESIZE = "resize orientationchange";
     window = modules["dom/element"].create(window);
     if (document.compatMode !== "CSS1Compat") {
-        throw "This script requires your browser to work in standards mode";
+        throw "[Qoopido.js] Not in standards mode";
     }
     function tick(interval) {
         var index, pointer = elements[interval];
@@ -902,7 +898,6 @@
     prototype = modules["dom/element"].extend({
         _quid: null,
         _viewport: null,
-        _element: null,
         _settings: null,
         _state: null,
         _priority: null,

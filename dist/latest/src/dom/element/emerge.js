@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-20
+* date:    2014-7-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -25,7 +25,7 @@
     }, documentElement = window.document.documentElement, viewport = {}, intervals = {}, elements = {}, prototype, EVENT_EMERGED = "emerged", EVENT_DEMERGED = "demerged", DOM_RESIZE = "resize orientationchange";
     window = modules["dom/element"].create(window);
     if (document.compatMode !== "CSS1Compat") {
-        throw "This script requires your browser to work in standards mode";
+        throw "[Qoopido.js] Not in standards mode";
     }
     function tick(interval) {
         var index, pointer = elements[interval];
@@ -83,7 +83,6 @@
     prototype = modules["dom/element"].extend({
         _quid: null,
         _viewport: null,
-        _element: null,
         _settings: null,
         _state: null,
         _priority: null,

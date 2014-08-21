@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-20
+* date:    2014-7-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -185,8 +185,7 @@
 }, window.qoopido = window.qoopido || {});
 (function(definition, global, navigator, window, document, undefined) {
     "use strict";
-    var qoopido = global.qoopido || (global.qoopido = {}), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g"), register, registerSingleton;
-    register = qoopido.register = function register(id, definition, dependencies, callback) {
+    function register(id, definition, dependencies, callback) {
         var namespace = id.split("/"), initialize;
         if (modules[id]) {
             return modules[id];
@@ -220,12 +219,16 @@
         } else {
             initialize();
         }
-    };
-    registerSingleton = qoopido.registerSingleton = function registerSingleton(id, definition, dependencies) {
+    }
+    function registerSingleton(id, definition, dependencies) {
         register(id, definition, dependencies, function(module) {
             modules[id] = module.create();
         });
-    };
+    }
+    var qoopido = global.qoopido || (global.qoopido = {
+        register: register,
+        registerSingleton: registerSingleton
+    }), shared = qoopido.shared || (qoopido.shared = {}), modules = qoopido.modules || (qoopido.modules = {}), dependencies = [], isInternal = new RegExp("^\\.+\\/"), regexCanonicalize = new RegExp("(?:\\/|)[^\\/]*\\/\\.\\."), removeNeutral = new RegExp("(^\\/)|\\.\\/", "g");
     function canonicalize(path) {
         var collapsed;
         while ((collapsed = path.replace(regexCanonicalize, "")) !== path) {
@@ -262,9 +265,7 @@
         return descriptors;
     }
     function prohibitCall() {
-        if (typeof console !== "undefined") {
-            console.error("[Qoopido.js] Operation prohibited on an actual instance");
-        }
+        throw new Error("[Qoopido.js] Operation prohibited");
     }
     return {
         create: function() {
@@ -275,10 +276,16 @@
             instance.create = instance.extend = prohibitCall;
             return result || instance;
         },
-        extend: function(properties) {
+        extend: function(properties, final) {
+            var instance;
             properties = properties || {};
+            final = final === true;
             properties._parent = this;
-            return Object.create(this, getOwnPropertyDescriptors(properties));
+            instance = Object.create(this, getOwnPropertyDescriptors(properties));
+            if (final === true) {
+                instance.extend = prohibitCall;
+            }
+            return instance;
         }
     };
 }, this, navigator, window, document);

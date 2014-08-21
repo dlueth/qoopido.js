@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-20
+* date:    2014-7-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -24,14 +24,14 @@
     }, pool = shared.pool && shared.pool.dom || null, lookup = {}, regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', "i"), regexPath = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', "i"), regexSuffix = new RegExp("\\.png$", "i"), supported = modules["support"].testMultiple("/capability/datauri", "/element/canvas/todataurl/png"), prototype, loader, EVENT_QUEUED = "queued", EVENT_CACHED = "cached", EVENT_LOADED = "loaded", EVENT_FAILED = "failed", EVENT_STATE = "".concat(EVENT_LOADED, " ", EVENT_FAILED), DOM_LOAD = "load", DOM_ERROR = "error", DOM_STATE = "".concat(DOM_LOAD, " ", DOM_ERROR);
     function processMain(url, isBackground) {
         url = modules["url"].resolve(regexPath.exec(url)[1]);
-        isBackground = isBackground ? true : false;
+        isBackground = isBackground === true;
         var self = this, settings = modules["function/merge"]({}, self._settings, modules["url"].getParameter(url)), target = settings.target || (url = url.split("?")[0]).replace(regexSuffix, "".concat(".q", settings.quality, ".shrunk"));
         if (!isBackground) {
             self.removeAttribute(self._settings.attribute).hide();
         }
         supported.then(function() {
             if (settings.debug === true) {
-                throw new Error("debug enabled");
+                throw new Error("[Qoopido.js] Debug enabled");
             }
             switch (typeof lookup[target]) {
               case "object":
@@ -46,7 +46,7 @@
                 break;
 
               default:
-                lookup[target] = loader.create(target, !isBackground ? self._element : null).one(EVENT_STATE, function(event, data) {
+                lookup[target] = loader.create(target, !isBackground ? self.element : null).one(EVENT_STATE, function(event, data) {
                     if (event.type === EVENT_LOADED) {
                         lookup[target] = data;
                         self.emit(EVENT_CACHED);

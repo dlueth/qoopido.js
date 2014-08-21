@@ -88,10 +88,7 @@
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
-		storage          = {
-			elements: {},
-			events:   {}
-		},
+		storageEvents    = {}, 
 		styleHooks       = {
 			opacity: (IE <= 8) ? {
 				regex:    new RegExp('alpha\\(opacity=(.*)\\)', 'i'),
@@ -171,23 +168,13 @@
 		element:   null,
 		_listener: null,
 		_constructor: function(element, attributes, styles) {
-			var self = this,
-				uuid;
-
-			self._listener = {};
+			var self = this;
 
 			element = resolveElement(element);
-			uuid    = element._quid || null;
 
-			if(uuid && storage.elements[uuid]) {
-				return storage.elements[uuid];
-			} else {
-				self.type      = element.tagName;
-				self.element   = element;
-				uuid           = generateUuid();
-				element._quid  = uuid;
-				storage.elements[uuid] = self;
-			}
+			self.type      = element.tagName;
+			self.element   = element;
+			self._listener = {};
 
 			if(typeof attributes === 'object' && attributes !== null) {
 				self.setAttributes(attributes);
@@ -581,11 +568,11 @@
 						var uuid = event._quid || (event._quid = generateUuid()),
 							delegateTo;
 
-						if(!storage.events[uuid]) {
-							storage.events[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
+						if(!storageEvents[uuid]) {
+							storageEvents[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
 						}
 
-						event      = storage.events[uuid];
+						event      = storageEvents[uuid];
 						delegateTo = event.delegate;
 
 						window.clearTimeout(event._timeout);
@@ -601,7 +588,7 @@
 						}
 
 						event._timeout = window.setTimeout(function() {
-							delete storage.events[uuid];
+							delete storageEvents[uuid];
 							delete event._timeout;
 
 							event.dispose && event.dispose();

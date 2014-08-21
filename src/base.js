@@ -25,14 +25,6 @@
 ;(function(definition, global, navigator, window, document, undefined) {
 	'use strict';
 
-	var qoopido           = global.qoopido  || (global.qoopido = { register: register, registerSingleton: registerSingleton }),
-		shared            = qoopido.shared  || (qoopido.shared = {}),
-		modules           = qoopido.modules || (qoopido.modules = {}),
-		dependencies      = [],
-		isInternal        = new RegExp('^\\.+\\/'),
-		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
-		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
-
 	function register(id, definition, dependencies, callback) {
 		var namespace = id.split('/'),
 			initialize;
@@ -86,6 +78,14 @@
 			modules[id] = module.create();
 		});
 	}
+
+	var qoopido           = global.qoopido  || (global.qoopido = { register: register, registerSingleton: registerSingleton }),
+		shared            = qoopido.shared  || (qoopido.shared = {}),
+		modules           = qoopido.modules || (qoopido.modules = {}),
+		dependencies      = [],
+		isInternal        = new RegExp('^\\.+\\/'),
+		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
+		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
 
 	function canonicalize(path) {
 		var collapsed;

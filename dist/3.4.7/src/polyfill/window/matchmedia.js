@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-20
+* date:    2014-7-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -167,10 +167,10 @@
         timeout = window.setTimeout(delayedOnResize, 10);
     }
     function initialize() {
-        var head = document.getElementsByTagName("head")[0], style = document.createElement("style"), types = [ "screen", "print", "speech", "projection", "handheld", "tv", "braille", "embossed", "tty" ], cssText = "#" + identifier + " { position: relative; z-index: 0; }", prefix = "", addListener = window.addEventListener || (prefix = "on") && window.attachEvent, i = 0, pointer;
+        var target = window.document.getElementsByTagName("script")[0], style = document.createElement("style"), types = [ "screen", "print", "speech", "projection", "handheld", "tv", "braille", "embossed", "tty" ], cssText = "#" + identifier + " { position: relative; z-index: 0; }", prefix = "", addListener = window.addEventListener || (prefix = "on") && window.attachEvent, i = 0, pointer;
         style.type = "text/css";
         style.id = identifier;
-        head.appendChild(style);
+        target.parentNode.insertBefore(style, target);
         for (;(pointer = types[i]) !== undefined; i++) {
             cssText += "@media " + pointer + " { #" + identifier + " { position: relative; z-index: " + i + " } }";
         }
@@ -180,7 +180,7 @@
             style.textContent = cssText;
         }
         features.type = types[(window.getComputedStyle || modules["polyfill/window/getcomputedstyle"])(style).zIndex * 1 || 0];
-        head.removeChild(style);
+        style.parentNode.removeChild(style);
         addListener(prefix + "resize", delayOnResize);
         addListener(prefix + "orientationchange", delayOnResize);
     }

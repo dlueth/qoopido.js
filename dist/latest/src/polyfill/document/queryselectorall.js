@@ -2,7 +2,7 @@
 * Qoopido.js library
 *
 * version: 3.4.7
-* date:    2014-7-20
+* date:    2014-7-21
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -18,8 +18,8 @@
     "use strict";
     if (!document.querySelectorAll) {
         document.querySelectorAll = function(selector) {
-            var style = document.createElement("style"), elements = [], element;
-            document.documentElement.firstChild.appendChild(style);
+            var target = window.document.getElementsByTagName("script")[0], style = document.createElement("style"), elements = [], element;
+            target.parentNode.insertBefore(style, target);
             document._qsa = [];
             style.styleSheet.cssText = selector + "{x-qsa:expression(document._qsa && document._qsa.push(this))}";
             window.scrollBy(0, 0);
