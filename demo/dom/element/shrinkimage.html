@@ -8,11 +8,47 @@
 		body {
 			padding: 20px;
 		}
+
+		figure {
+			display: inline-block;
+		}
+
+		figcaption {
+			padding:          20px;
+			background-color: rgba(255, 255, 255, .2);
+		}
+
+		figcaption header {
+			margin-bottom: 10px;
+			font-weight:   bold;
+		}
 	</style>
 </head>
 <body>
 
-<img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" title="" width="320" height="650" id="shrinkimage" data-shrinkimage="http://www.qoopido.com/assets/example.png" />
+<figure>
+	<img src="http://www.qoopido.com/assets/example.png" alt="" title="" width="320" height="650" />
+	<figcaption>
+		<header>
+			Original PNG image<br />
+			(24bit, interlaced, alpha-transparent)
+		</header>
+		206.93KB uncompressed<br />
+		207.17KB gzip compressed
+	</figcaption>
+</figure>
+
+<figure>
+	<img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" title="" width="320" height="650" id="shrinkimage" data-shrinkimage="http://www.qoopido.com/assets/example.png" />
+	<figcaption>
+		<header>
+			Shrunk image<br />
+			(24bit, alpha-transparent)
+		</header>
+		40.51KB uncompressed (approx. 20%)<br />
+		29.06KB gzip compressed (approx. 14%)
+	</figcaption>
+</figure>
 
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">

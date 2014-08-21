@@ -14,6 +14,8 @@
  *
  * @polyfill ./getcomputedstyle
  * @polyfill ../array/indexof
+ * 
+ * @browsers Chrome < 9, Firefox < 6, Internet Explorer < 10, Opera < 12.1, Safari < 5.1
  */
 ;(function(definition) {
 	var dependencies = [  ];
@@ -239,7 +241,7 @@
 	}
 
 	function initialize() {
-		var head        = document.getElementsByTagName('head')[0],
+		var target      = window.document.getElementsByTagName('script')[0],
 			style       = document.createElement('style'),
 			types       = ['screen', 'print', 'speech', 'projection', 'handheld', 'tv', 'braille', 'embossed', 'tty'],
 			cssText     = '#' + identifier + ' { position: relative; z-index: 0; }',
@@ -251,7 +253,7 @@
 		style.type  = 'text/css';
 		style.id    = identifier;
 
-		head.appendChild(style);
+		target.parentNode.insertBefore(style, target);
 
 		for(; (pointer = types[i]) !== undefined; i++) {
 			cssText += '@media ' + pointer + ' { #' + identifier + ' { position: relative; z-index: ' + i + ' } }';
@@ -265,7 +267,7 @@
 
 		features.type = types[((window.getComputedStyle || modules['polyfill/window/getcomputedstyle'])(style).zIndex * 1) || 0];
 
-		head.removeChild(style);
+		style.parentNode.removeChild(style);
 
 		addListener(prefix + 'resize', delayOnResize);
 		addListener(prefix + 'orientationchange', delayOnResize);

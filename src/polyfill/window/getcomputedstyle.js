@@ -8,6 +8,8 @@
  *  - http://www.gnu.org/copyleft/gpl.html
  *
  * @author Dirk Lueth <info@qoopido.com>
+ *
+ * @browsers Internet Explorer < 9
  */
 ;(function(definition) {
 	window.qoopido.register('polyfill/window/getcomputedstyle', definition);
