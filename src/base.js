@@ -17,9 +17,6 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @todo implement "final" modules
- * @todo check ability to unset "create" and "extend" on prototype of already created instances
- *
  * @polyfill ./polyfill/object/create
  * @polyfill ./polyfill/object/getownpropertynames
  * @polyfill ./polyfill/object/getownpropertydescriptor
@@ -28,16 +25,15 @@
 ;(function(definition, global, navigator, window, document, undefined) {
 	'use strict';
 
-	var qoopido           = global.qoopido  || (global.qoopido = {}),
+	var qoopido           = global.qoopido  || (global.qoopido = { register: register, registerSingleton: registerSingleton }),
 		shared            = qoopido.shared  || (qoopido.shared = {}),
 		modules           = qoopido.modules || (qoopido.modules = {}),
 		dependencies      = [],
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
-		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g'),
-		register, registerSingleton;
+		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
 
-	register = qoopido.register = function register(id, definition, dependencies, callback) {
+	function register(id, definition, dependencies, callback) {
 		var namespace = id.split('/'),
 			initialize;
 
@@ -83,13 +79,13 @@
 		} else {
 			initialize();
 		}
-	};
+	}
 
-	registerSingleton = qoopido.registerSingleton = function registerSingleton(id, definition, dependencies) {
+	function registerSingleton(id, definition, dependencies) {
 		register(id, definition, dependencies, function(module) {
 			modules[id] = module.create();
 		});
-	};
+	}
 
 	function canonicalize(path) {
 		var collapsed;
@@ -130,7 +126,7 @@
 		}
 
 		function prohibitCall() {
-			throw new Error('[Qoopido.js] Operation prohibited on an actual instance');
+			throw new Error('[Qoopido.js] Operation prohibited');
 		}
 
 		return {
@@ -146,11 +142,19 @@
 
 				return result || instance;
 			},
-			extend: function(properties) {
-				properties         = properties || {};
-				properties._parent = this;
+			extend: function(properties, final) {
+				var instance;
 
-				return Object.create(this, getOwnPropertyDescriptors(properties));
+				properties         = properties || {};
+				final              = (final === true);
+				properties._parent = this;
+				instance           = Object.create(this, getOwnPropertyDescriptors(properties));
+
+				if(final === true) {
+					instance.extend = prohibitCall;
+				}
+
+				return instance;
 			}
 		};
 	},
