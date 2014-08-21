@@ -204,7 +204,7 @@
 					}
 				}
 
-				lookup.css[pProperty] = stored !== false ? [prefix + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
+				stored = lookup.css[pProperty] = (stored !== false) ? [prefix + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
 
 				sample.dispose && sample.dispose();
 			}

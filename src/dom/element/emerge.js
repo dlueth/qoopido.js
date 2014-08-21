@@ -39,7 +39,7 @@
 	window = modules['dom/element'].create(window);
 
 	if(document.compatMode !== 'CSS1Compat') {
-		throw('This script requires your browser to work in standards mode');
+		throw('[Qoopido.js] Not in standards mode');
 	}
 
 	function tick(interval) {
@@ -120,7 +120,6 @@
 	prototype = modules['dom/element'].extend({
 		_quid:     null,
 		_viewport: null,
-		_element:  null,
 		_settings: null,
 		_state:    null,
 		_priority: null,

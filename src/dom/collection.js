@@ -11,6 +11,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
+ * @todo check http://davidwalsh.name/insertadjacenthtml-beforeend
+ * @todo add possibility to pass multiple selectors to create
+ *
  * @require ../base
  * @require ./element
  */

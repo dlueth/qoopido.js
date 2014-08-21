@@ -13,6 +13,8 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @polyfill ./defineproperty
+ *
+ * @browsers Chrome < 5, Firefox < 4, Internet Explorer < 9, Opera < 11.60, Safari < 5
  */
 ;(function(definition, qoopido) {
 	if(qoopido.register) {

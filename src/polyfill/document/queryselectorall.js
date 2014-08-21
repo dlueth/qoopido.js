@@ -19,11 +19,12 @@
 
 	if(!document.querySelectorAll) {
 		document.querySelectorAll = function(selector) {
-			var style    = document.createElement('style'),
+			var target   = window.document.getElementsByTagName('script')[0],
+				style    = document.createElement('style'),
 				elements = [],
 				element;
 
-			document.documentElement.firstChild.appendChild(style);
+			target.parentNode.insertBefore(style, target);
 			document._qsa = [];
 
 			style.styleSheet.cssText = selector + '{x-qsa:expression(document._qsa && document._qsa.push(this))}';

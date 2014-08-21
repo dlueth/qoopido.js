@@ -37,7 +37,7 @@
 		JSON            = window.JSON,
 		name            = namespace.pop(),
 		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
-		pool            = shared.pool && shared.pool.dom || null,
+		pool            = shared.pool && shared.pool.dom || null,
 		lookup          = {},
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
@@ -59,62 +59,65 @@
 
 	function processMain(url, isBackground) {
 		url          = modules['url'].resolve(regexPath.exec(url)[1]);
-		isBackground = (isBackground) ? true : false;
+		isBackground = (isBackground === true);
 
 		var self     = this,
 			settings = modules['function/merge']({}, self._settings, modules['url'].getParameter(url)),
 			target   = settings.target || (url = url.split('?')[0]).replace(regexSuffix, ''.concat('.q', settings.quality, '.shrunk'));
 
 		if(!isBackground) {
-			self.removeAttribute(self._settings.attribute).hide();
+			self
+				.removeAttribute(self._settings.attribute)
+				.hide();
 		}
 
 		supported
 			.then(
-				function() {
-					if(settings.debug === true) {
-						throw new Error('debug enabled');
-					}
+			function() {
+				if(settings.debug === true) {
+					throw new Error('[Qoopido.js] Debug enabled');
+				}
 
-					switch(typeof lookup[target]) {
-						case 'object':
-							lookup[target].one(EVENT_LOADED, function(event) {
+				switch(typeof lookup[target]) {
+					case 'object':
+						lookup[target]
+							.one(EVENT_LOADED, function(event) {
 								assign.call(self, event.data, isBackground);
 							});
 
-							self.emit(EVENT_QUEUED);
-							break;
-						case 'string':
-							assign.call(self, lookup[target], isBackground);
-							break;
-						default:
-							lookup[target] = loader
-								.create(target, (!isBackground) ? self._element : null)
-								.one(EVENT_STATE, function(event, data) {
-									if(event.type === EVENT_LOADED) {
-										lookup[target] = data;
+						self.emit(EVENT_QUEUED);
+						break;
+					case 'string':
+						assign.call(self, lookup[target], isBackground);
+						break;
+					default:
+						lookup[target] = loader
+							.create(target, (!isBackground) ? self.element : null)
+							.one(EVENT_STATE, function(event, data) {
+								if(event.type === EVENT_LOADED) {
+									lookup[target] = data;
 
-										self.emit(EVENT_CACHED);
+									self.emit(EVENT_CACHED);
 
-										assign.call(self, data, isBackground);
-									} else {
-										lookup[target] = url;
+									assign.call(self, data, isBackground);
+								} else {
+									lookup[target] = url;
 
-										assign.call(self, url, isBackground);
-									}
-								}, false);
+									assign.call(self, url, isBackground);
+								}
+							}, false);
 
-							break;
-					}
+						break;
 				}
-			)
+			}
+		)
 			['catch'](
-				function() {
-					lookup[target] = url;
+			function() {
+				lookup[target] = url;
 
-					assign.call(self, url, isBackground);
-				}
-			);
+				assign.call(self, url, isBackground);
+			}
+		);
 	}
 
 	function assign(source, isBackground) {
@@ -124,10 +127,12 @@
 			self.setStyle('backgroundImage', 'url(' + source + ')');
 			self.emit(EVENT_LOADED);
 		} else {
-			self.one(DOM_LOAD, function() {
-				self.show();
-				self.emit(EVENT_LOADED);
-			}).setAttribute('src', source);
+			self
+				.one(DOM_LOAD, function() {
+					self.show();
+					self.emit(EVENT_LOADED);
+				})
+				.setAttribute('src', source);
 		}
 	}
 
@@ -136,22 +141,22 @@
 
 		transport.get(self._url)
 			.then(
-				function(response) {
-					try {
-						var data = JSON.parse(response.data);
+			function(response) {
+				try {
+					var data = JSON.parse(response.data);
 
-						data.width  = parseInt(data.width, 10);
-						data.height = parseInt(data.height, 10);
+					data.width  = parseInt(data.width, 10);
+					data.height = parseInt(data.height, 10);
 
-						processData.call(self, data);
-					} catch(exception) {
-						self.emit(EVENT_FAILED);
-					}
-				},
-				function() {
+					processData.call(self, data);
+				} catch(exception) {
 					self.emit(EVENT_FAILED);
 				}
-			);
+			},
+			function() {
+				self.emit(EVENT_FAILED);
+			}
+		);
 	}
 
 	function processData(data) {
