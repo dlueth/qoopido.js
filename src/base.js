@@ -17,7 +17,8 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @todo implement "final" classes
+ * @todo implement "final" modules
+ * @todo check ability to unset "create" and "extend" on prototype of already created instances
  *
  * @polyfill ./polyfill/object/create
  * @polyfill ./polyfill/object/getownpropertynames
@@ -27,9 +28,9 @@
 ;(function(definition, global, navigator, window, document, undefined) {
 	'use strict';
 
-	var qoopido           = global.qoopido || (global.qoopido = {}),
-		shared            = qoopido.shared || (qoopido.shared = {}),
-		modules           = qoopido.modules|| (qoopido.modules = {}),
+	var qoopido           = global.qoopido  || (global.qoopido = {}),
+		shared            = qoopido.shared  || (qoopido.shared = {}),
+		modules           = qoopido.modules || (qoopido.modules = {}),
 		dependencies      = [],
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
