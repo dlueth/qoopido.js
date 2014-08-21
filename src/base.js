@@ -17,6 +17,8 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
+ * @todo implement "final" classes
+ *
  * @polyfill ./polyfill/object/create
  * @polyfill ./polyfill/object/getownpropertynames
  * @polyfill ./polyfill/object/getownpropertydescriptor
@@ -127,9 +129,7 @@
 		}
 
 		function prohibitCall() {
-			if(typeof console !== 'undefined') {
-				console.error('[Qoopido.js] Operation prohibited on an actual instance');
-			}
+			throw new Error('[Qoopido.js] Operation prohibited on an actual instance');
 		}
 
 		return {
