@@ -248,7 +248,7 @@
 			var self = this;
 
 			if(attribute && typeof attribute === stringString) {
-				self.element.removeAttribute(attribute)
+				self.element.removeAttribute(attribute);
 			}
 
 			return self;
