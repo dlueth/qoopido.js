@@ -205,28 +205,19 @@
 			var self = this;
 
 			if(attribute && typeof attribute === stringString) {
-				attribute = attribute.split(' ');
-
-				if(attribute.length === 1) {
-					return self.element.getAttribute(attribute[0]);
-				} else {
-					return self.getAttributes(attribute);
-				}
+				return self.element.getAttribute(attribute[0]);
 			}
 		},
 		getAttributes: function(attributes) {
 			var self   = this,
-				result = {};
+				result = {},
+				i = 0, attribute;
 
 			if(attributes) {
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
-				if(typeof attributes === stringObject && attributes.length) {
-					var i = 0, attribute;
-
-					for(; (attribute = attributes[i]) !== undefined; i++) {
-						result[attribute] = self.element.getAttributes(attribute);
-					}
+				for(; (attribute = attributes[i]) !== undefined; i++) {
+					result[attribute] = self.element.getAttributes(attribute);
 				}
 			}
 
@@ -257,13 +248,7 @@
 			var self = this;
 
 			if(attribute && typeof attribute === stringString) {
-				attribute = attribute.split(' ');
-
-				if(attribute.length === 1) {
-					self.element.removeAttribute(attribute[0]);
-				} else {
-					self.removeAttributes(attribute);
-				}
+				self.element.removeAttribute(attribute)
 			}
 
 			return self;
@@ -275,10 +260,8 @@
 			if(attributes) {
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
-				if(typeof attributes === stringObject && attributes.length) {
-					for(; (attribute = attributes[i]) !== undefined; i++) {
-						self.element.removeAttribute(attribute);
-					}
+				for(; (attribute = attributes[i]) !== undefined; i++) {
+					self.element.removeAttribute(attribute);
 				}
 			}
 
@@ -288,13 +271,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				property = property.split(' ');
-
-				if(property.length === 1) {
-					return resolveStyleHook('get', self.element, property[0]);
-				} else {
-					return self.getStyles(property);
-				}
+				return resolveStyleHook('get', self.element, property);
 			}
 		},
 		getStyles: function(properties) {
@@ -305,10 +282,8 @@
 			if(properties) {
 				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
 
-				if(typeof properties === stringObject && properties.length) {
-					for(; (property = properties[i]) !== undefined; i++) {
-						result[property] = resolveStyleHook('get', self.element, property);
-					}
+				for(; (property = properties[i]) !== undefined; i++) {
+					result[property] = resolveStyleHook('get', self.element, property);
 				}
 			}
 
@@ -325,11 +300,34 @@
 		},
 		setStyles: function(properties) {
 			var self = this,
-				property, value;
+				property;
 
 			if(properties && typeof properties === stringObject && !properties.length) {
 				for(property in properties) {
 					resolveStyleHook('set', self.element, property, properties[property]);
+				}
+			}
+
+			return self;
+		},
+		removeStyle: function(property) {
+			var self = this;
+
+			if(property && typeof property === stringString) {
+				self.setStyle(property, '');
+			}
+
+			return self;
+		},
+		removeStyles: function(properties) {
+			var self = this,
+				i = 0, property;
+
+			if(properties) {
+				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
+
+				for(; (property = properties[i]) !== undefined; i++) {
+					self.setStyle(property, '');
 				}
 			}
 
@@ -495,16 +493,6 @@
 
 			return self;
 		},
-		replaceWith: function(element) {
-			var self    = this,
-				target = self.element;
-
-			element = element.element || resolveElement(element);
-
-			target.parentNode.replaceChild(element, target);
-
-			return self;
-		},
 		prependTo: function(target) {
 			var self    = this,
 				element = self.element;
@@ -543,6 +531,22 @@
 			(target  = target.element || resolveElement(target)).parentNode.replaceChild(element, target);
 
 			return self;
+		},
+		replaceWith: function(element) {
+			var self    = this,
+				target = self.element;
+
+			element = element.element || resolveElement(element);
+
+			target.parentNode.replaceChild(element, target);
+
+			return self;
+		},
+		hide: function() {
+			return this.setStyle('display', 'none');
+		},
+		show: function() {
+			return this.removeStyle('display');
 		},
 		remove: function() {
 			var self    = this,
