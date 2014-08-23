@@ -12,7 +12,9 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @todo check http://davidwalsh.name/insertadjacenthtml-beforeend
+ * @todo check createDocumentFragment for prependTo, appendTo, insertBefore, insertAfter and replace
  * @todo add possibility to pass multiple selectors to create
+ * @todo check pooling for dom/element
  *
  * @require ../base
  * @require ./element
@@ -54,13 +56,22 @@
 		elements: null,
 		_constructor: function(elements, attributes, styles) {
 			var self = this,
-				i = 0, element;
+				selectors, selector, i, element;
 
 			self.elements = [];
 
-			elements = (typeof elements === 'string') ? document.querySelectorAll(elements) : elements;
+			if(elements && typeof elements === 'string') {
+				selectors = elements.split(',');
+				elements  = [];
 
-			for(; (element = elements[i]) !== undefined; i++) {
+				for(i = 0; (selector = selectors[i]) !== undefined; i++) {
+					try {
+						elements = elements.concat(Array.prototype.slice.call(document.querySelectorAll(selector)));
+					} catch(exception) {}
+				}
+			}
+
+			for(i = 0; (element = elements[i]) !== undefined; i++) {
 				self.elements.push(mDomElement.create(element));
 			}
 
@@ -104,6 +115,12 @@
 		setStyles: function(properties) {
 			return map.call(this, 'setStyles', properties);
 		},
+		removeStyle: function(property) {
+			return map.call(this, 'removeStyle', property);
+		},
+		removeStyles: function(properties) {
+			return map.call(this, 'removeStyles', properties);
+		},
 		addClass: function(name) {
 			return map.call(this, 'addClass', name);
 		},
@@ -139,6 +156,12 @@
 			}
 
 			return self;
+		},
+		hide: function() {
+			return map.call(this, 'hide');
+		},
+		show: function() {
+			return map.call(this, 'show');
 		},
 		remove: function(index) {
 			var self     = this,
