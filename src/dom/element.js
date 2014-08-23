@@ -131,7 +131,7 @@
 		}
 
 		if(!element) {
-			throw new Error('Element could not be resolved');
+			throw new Error('[Qoopido.js] Element could not be resolved');
 		}
 
 		return element;
@@ -444,13 +444,13 @@
 			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
 		},
 		hasClass: function(name) {
-			return (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className);
+			return (name) ? (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className) : false;
 		},
 		addClass: function(name) {
 			var self = this,
 				temp;
 
-			if(!self.hasClass(name)) {
+			if(name && !self.hasClass(name)) {
 				temp = self.element.className.split(' ');
 
 				temp.push(name);
@@ -463,7 +463,7 @@
 		removeClass: function(name) {
 			var self = this;
 
-			if(self.hasClass(name)) {
+			if(name && self.hasClass(name)) {
 				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'));
 			}
 
@@ -472,7 +472,9 @@
 		toggleClass: function(name) {
 			var self = this;
 
-			self.hasClass(name) ? self.removeClass(name) : self.addClass(name);
+			if(name) {
+				self.hasClass(name) ? self.removeClass(name) : self.addClass(name);
+			}
 
 			return self;
 		},
@@ -480,16 +482,29 @@
 			var self    = this,
 				target = self.element;
 
-			element = element.element || resolveElement(element);
+			if(element) {
+				try {
+					element = element.element || resolveElement(element);
 
-			target.firstChild ? target.insertBefore(element, target.firstChild) : self.append(element);
+					target.firstChild ? target.insertBefore(element, target.firstChild) : self.append(element);
+				} catch(exception) {
+					target.insertAdjacentHTML('afterBegin', element);
+				}
+			}
 
 			return self;
 		},
 		append: function(element) {
-			var self = this;
+			var self   = this,
+				target = self.element;
 
-			self.element.appendChild(element.element || resolveElement(element));
+			if(element) {
+				try {
+					target.appendChild(element.element || resolveElement(element));
+				} catch(exception) {
+					target.insertAdjacentHTML('beforeEnd', element);
+				}
+			}
 
 			return self;
 		},
@@ -497,14 +512,18 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || resolveElement(target)).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
+			if(target) {
+				(target  = target.element || resolveElement(target)).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
+			}
 
 			return self;
 		},
 		appendTo: function(target) {
 			var self = this;
 
-			(target.element || resolveElement(target)).appendChild(self.element);
+			if(target) {
+				(target.element || resolveElement(target)).appendChild(self.element);
+			}
 
 			return self;
 		},
@@ -512,7 +531,9 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || resolveElement(target)).parentNode.insertBefore(element, target);
+			if(target) {
+				(target  = target.element || resolveElement(target)).parentNode.insertBefore(element, target);
+			}
 
 			return self;
 		},
@@ -520,7 +541,9 @@
 			var self    = this,
 				element = self.element;
 
-			(target = target.element || resolveElement(target)).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
+			if(target) {
+				(target = target.element || resolveElement(target)).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
+			}
 
 			return self;
 		},
@@ -528,7 +551,9 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || resolveElement(target)).parentNode.replaceChild(element, target);
+			if(target) {
+				(target  = target.element || resolveElement(target)).parentNode.replaceChild(element, target);
+			}
 
 			return self;
 		},
@@ -536,9 +561,11 @@
 			var self    = this,
 				target = self.element;
 
-			element = element.element || resolveElement(element);
+			if(element) {
+				element = element.element || resolveElement(element);
 
-			target.parentNode.replaceChild(element, target);
+				target.parentNode.replaceChild(element, target);
+			}
 
 			return self;
 		},
