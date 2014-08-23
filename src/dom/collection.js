@@ -187,16 +187,16 @@
 			return self;
 		},
 		on: function() {
-			return map.apply(this, [ 'on' ].concat(Array.prototype.slice.call(arguments, 0)));
+			return map.apply(this, [ 'on' ].concat(Array.prototype.slice.call(arguments)));
 		},
 		one: function(events) {
-			return map.apply(this, [ 'one' ].concat(Array.prototype.slice.call(arguments, 0)));
+			return map.apply(this, [ 'one' ].concat(Array.prototype.slice.call(arguments)));
 		},
 		off: function(events, fn) {
-			return map.apply(this, [ 'off' ].concat(Array.prototype.slice.call(arguments, 0)));
+			return map.apply(this, [ 'off' ].concat(Array.prototype.slice.call(arguments)));
 		},
 		emit: function(event, data) {
-			return map.apply(this, [ 'emit' ].concat(Array.prototype.slice.call(arguments, 0)));
+			return map.apply(this, [ 'emit' ].concat(Array.prototype.slice.call(arguments)));
 		}
 	});
 
