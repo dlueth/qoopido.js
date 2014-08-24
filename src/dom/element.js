@@ -14,6 +14,7 @@
  * @todo check hook implementation (see filter in dom/event)
  *
  * @require ../base
+ * @require ../support
  * @require ../function/unique/uuid
  * @require ./event
  * @polyfill ../polyfill/window/customevent
@@ -28,7 +29,7 @@
  */
 /* jshint loopfunc: true */
 ;(function(definition) {
-	var dependencies = [ '../base', '../function/unique/uuid', './event' ];
+	var dependencies = [ '../base', '../support', '../function/unique/uuid', './event' ];
 
 	if(!window.CustomEvent) {
 		dependencies.push('../polyfill/window/customevent');
@@ -91,6 +92,7 @@
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
+		mSupport         = modules['support'],
 		storage          = {}, 
 		styleHooks       = {
 			opacity: (IE <= 8) ? {
@@ -116,6 +118,19 @@
 			} : null
 		};
 
+	function emitEvent(event, detail, uuid) {
+		var self = this;
+
+		event = new window.CustomEvent(event, { bubbles: (event === 'load') ? false : true, cancelable: true, detail: detail });
+
+		if(uuid) {
+			event._quid      = uuid;
+			event.isDelegate = true;
+		}
+
+		self.element.dispatchEvent(event);
+	}
+
 	function resolveElement(element) {
 		var tag;
 
@@ -140,29 +155,22 @@
 		return element;
 	}
 
-	function emitEvent(event, detail, uuid) {
-		var self = this;
-
-		event = new window.CustomEvent(event, { bubbles: (event === 'load') ? false : true, cancelable: true, detail: detail });
-
-		if(uuid) {
-			event._quid      = uuid;
-			event.isDelegate = true;
-		}
-
-		self.element.dispatchEvent(event);
-	}
-
 	function resolveStyleHook(method, element, property, value) {
-		var hook = styleHooks[property];
+		var hook;
 
-		switch(method) {
-			case 'get':
-				return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
-			case 'set':
-				hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
+		property = mSupport.getCssProperty(property, element)[0] || null;
 
-				break;
+		if(property) {
+			hook = styleHooks[property];
+
+			switch(method) {
+				case 'get':
+					return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
+				case 'set':
+					hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
+
+					break;
+			}
 		}
 	}
 
