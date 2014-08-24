@@ -15,6 +15,7 @@
  * @require ./promise/all
  * @require ./promise/defer
  * @polyfill ./polyfill/string/ucfirst
+ * @polyfill ./polyfill/string/lcfirst
  * @optional ./pool/dom
  */
 ;(function(definition) {
@@ -24,16 +25,22 @@
 		dependencies.push('./polyfill/string/ucfirst');
 	}
 
+	if(!String.prototype.lcfirst) {
+		dependencies.push('./polyfill/string/lcfirst');
+	}
+
 	window.qoopido.registerSingleton('support', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var CombinedPromise = modules['promise/all'],
-		DeferredPromise = modules['promise/defer'],
-		regexPrefix     = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
-		regexProperty   = new RegExp('-([a-z])', 'gi'),
-		regexCss        = new RegExp('([A-Z])', 'g'),
-		callbackUcfirst = function() {
+	var CombinedPromise    = modules['promise/all'],
+		DeferredPromise    = modules['promise/defer'],
+		matchPrefix        = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
+		removeJsPrefix     = new RegExp('^(?:webkit|khtml|icab|moz|ms|o)([A-Z])'),
+		removeCssPrefix    = new RegExp('^-(?:webkit|khtml|icab|moz|ms|o)-'),
+		convertToCamelCase = new RegExp('-([a-z])', 'gi'),
+		convertToHyphens   = new RegExp('([A-Z])', 'g'),
+		callbackUcfirst    = function() {
 			return arguments[1].ucfirst();
 		},
 		lookup = {
@@ -41,7 +48,6 @@
 			method:   { },
 			property: { },
 			css:      { },
-			element:  { },
 			promises: {
 				prefix:   null,
 				method:   { },
@@ -50,6 +56,14 @@
 				test:     { }
 			}
 		};
+
+	function normalize(value) {
+		return value
+					.replace(removeJsPrefix, '$1')
+					.lcfirst()
+					.replace(removeCssPrefix, '')
+					.replace(convertToCamelCase, callbackUcfirst);
+	}
 
 	return modules['base'].extend({
 		test: { },
@@ -89,8 +103,8 @@
 				stored = false;
 
 				for(property in styles) {
-					if(regexPrefix.test(property)) {
-						stored = property.match(regexPrefix)[0];
+					if(matchPrefix.test(property)) {
+						stored = property.match(matchPrefix)[0];
 					}
 				}
 
@@ -110,6 +124,7 @@
 			return stored;
 		},
 		getMethod: function(pMethod, pElement) {
+			pMethod  = normalize(pMethod);
 			pElement = pElement || window;
 
 			var type    = pElement.tagName,
@@ -143,7 +158,8 @@
 			return stored;
 		},
 		getProperty: function(pProperty, pElement) {
-			pElement = pElement || window;
+			pProperty = normalize(pProperty);
+			pElement  = pElement || window;
 
 			var type    = pElement.tagName,
 				pointer = lookup.property[type] = lookup.property[type] || { },
@@ -176,7 +192,7 @@
 			return stored;
 		},
 		getCssProperty: function(pProperty) {
-			pProperty = pProperty.replace(regexProperty, callbackUcfirst);
+			pProperty = normalize(pProperty);
 
 			var self   = this,
 				stored = lookup.css[pProperty] || null;
@@ -204,7 +220,7 @@
 					}
 				}
 
-				stored = lookup.css[pProperty] = (stored !== false) ? [prefix + stored.replace(regexCss, '-$1').toLowerCase(), stored] : false;
+				stored = lookup.css[pProperty] = (stored !== false) ? [prefix + stored.replace(convertToHyphens, '-$1').toLowerCase(), stored] : false;
 
 				sample.dispose && sample.dispose();
 			}

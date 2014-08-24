@@ -21,7 +21,7 @@
 	'use strict';
 
 	var prototype,
-		poolVector = modules['pool/module'].create(modules['vector/2d']);
+		poolVector = modules['pool/module'].create(modules['vector/2d'], null, true);
 
 	prototype = modules['emitter'].extend({
 		_velocity:     null,

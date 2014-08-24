@@ -9,6 +9,7 @@
 </head>
 <body>
 
+
 <p>
 	Please open your browsers javascript console :)
 </p>
@@ -46,7 +47,7 @@
 	});
 
 	require([ 'base' ], function() {
-		require([ 'pool/module', 'pool/dom' ], function() {
+		require([ 'pool/array', 'pool/object', 'pool/module', 'pool/dom' ], function() {
 			require([ 'dom/element', 'dom/collection' ], function(mDomElement, mDomCollection) {
 				var eDiv = mDomElement
 						.create('<div />', { id: 'container' })

@@ -21,7 +21,7 @@
 		_constructor: function(context, fn) {
 			var args  = Array.prototype.splice.call(arguments, 2),
 				proxy = function() {
-					return fn.apply(context, Array.prototype.slice.call(arguments, 0).concat(args));
+					return fn.apply(context, Array.prototype.slice.call(arguments).concat(args));
 				};
 
 			proxy._quid = modules['function/unique/uuid']();

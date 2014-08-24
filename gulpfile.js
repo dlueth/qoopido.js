@@ -31,6 +31,7 @@ module.exports = gulp;
 	]);
 	files.emerge    = files.base.concat([
 		'./src/polyfill/window/getcomputedstyle.js',
+		'./src/support.js',
 		'./src/function/merge.js',
 		'./src/function/unique/uuid.js',
 		'./src/dom/element.js',
@@ -47,15 +48,15 @@ module.exports = gulp;
 		'./src/function/unique/string.js',
 		'./src/function/unique/uuid.js',
 		'./src/proxy.js',
-		'./src/dom/element.js',
-		'./src/url.js',
-		'./src/promise/all.js',
-		'./src/promise/defer.js',
 		'./src/support.js',
 		'./src/support/capability/datauri.js',
 		'./src/support/element/canvas.js',
 		'./src/support/element/canvas/todataurl.js',
 		'./src/support/element/canvas/todataurl/png.js',
+		'./src/dom/element.js',
+		'./src/url.js',
+		'./src/promise/all.js',
+		'./src/promise/defer.js',
 		'./src/transport.js',
 		'./src/transport/xhr.js',
 		'./src/dom/element/shrinkimage.js'
