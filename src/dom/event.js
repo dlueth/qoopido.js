@@ -11,6 +11,8 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
+ * @todo check filter implementation (see hook in dom/element)
+ *
  * @require ../base
  */
 ;(function(definition) {

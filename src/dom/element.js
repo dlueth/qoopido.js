@@ -11,7 +11,10 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
+ * @todo check hook implementation (see filter in dom/event)
+ *
  * @require ../base
+ * @require ../support
  * @require ../function/unique/uuid
  * @require ./event
  * @polyfill ../polyfill/window/customevent
@@ -26,7 +29,7 @@
  */
 /* jshint loopfunc: true */
 ;(function(definition) {
-	var dependencies = [ '../base', '../function/unique/uuid', './event' ];
+	var dependencies = [ '../base', '../support', '../function/unique/uuid', './event' ];
 
 	if(!window.CustomEvent) {
 		dependencies.push('../polyfill/window/customevent');
@@ -87,8 +90,10 @@
 		generateUuid     = modules['function/unique/uuid'],
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
-		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
-		storageEvents    = {}, 
+		matchEvent       = new RegExp('^[^-]+'),
+		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
+		mSupport         = modules['support'],
+		storage          = {}, 
 		styleHooks       = {
 			opacity: (IE <= 8) ? {
 				regex:    new RegExp('alpha\\(opacity=(.*)\\)', 'i'),
@@ -113,6 +118,19 @@
 			} : null
 		};
 
+	function emitEvent(event, detail, uuid) {
+		var self = this;
+
+		event = new window.CustomEvent(event, { bubbles: (event === 'load') ? false : true, cancelable: true, detail: detail });
+
+		if(uuid) {
+			event._quid      = uuid;
+			event.isDelegate = true;
+		}
+
+		self.element.dispatchEvent(event);
+	}
+
 	function resolveElement(element) {
 		var tag;
 
@@ -131,35 +149,28 @@
 		}
 
 		if(!element) {
-			throw new Error('Element could not be resolved');
+			throw new Error('[Qoopido.js] Element could not be resolved');
 		}
 
 		return element;
 	}
 
-	function emitEvent(event, detail, uuid) {
-		var self = this;
-
-		event = new window.CustomEvent(event, { bubbles: (event === 'load') ? false : true, cancelable: true, detail: detail });
-
-		if(uuid) {
-			event._quid      = uuid;
-			event.isDelegate = true;
-		}
-
-		self.element.dispatchEvent(event);
-	}
-
 	function resolveStyleHook(method, element, property, value) {
-		var hook = styleHooks[property];
+		var hook;
 
-		switch(method) {
-			case 'get':
-				return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
-			case 'set':
-				hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
+		property = mSupport.getCssProperty(property, element)[0] || null;
 
-				break;
+		if(property) {
+			hook = styleHooks[property];
+
+			switch(method) {
+				case 'get':
+					return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
+				case 'set':
+					hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
+
+					break;
+			}
 		}
 	}
 
@@ -174,7 +185,7 @@
 
 			self.type      = element.tagName;
 			self.element   = element;
-			self._listener = {};
+			self._listener = self._listener || {};
 
 			if(typeof attributes === 'object' && attributes !== null) {
 				self.setAttributes(attributes);
@@ -183,6 +194,23 @@
 			if(typeof styles === 'object' && styles !== null) {
 				self.setStyles(styles);
 			}
+		},
+		_obtain: function(element, attributes, styles) {
+			this._constructor(element, attributes, styles);
+		},
+		_dispose: function() {
+			var self = this,
+				id, event;
+
+			for(id in self._listener) {
+				event = id.match(matchEvent);
+
+				self.element.removeEventListener(event, self._listener[id]);
+				delete self._listener[id];
+			}
+
+			self.type    = null;
+			self.element = null;
 		},
 		getContent: function(html) {
 			var element = this.element;
@@ -205,28 +233,19 @@
 			var self = this;
 
 			if(attribute && typeof attribute === stringString) {
-				attribute = attribute.split(' ');
-
-				if(attribute.length === 1) {
-					return self.element.getAttribute(attribute[0]);
-				} else {
-					return self.getAttributes(attribute);
-				}
+				return self.element.getAttribute(attribute);
 			}
 		},
 		getAttributes: function(attributes) {
 			var self   = this,
-				result = {};
+				result = {},
+				i = 0, attribute;
 
 			if(attributes) {
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
-				if(typeof attributes === stringObject && attributes.length) {
-					var i = 0, attribute;
-
-					for(; (attribute = attributes[i]) !== undefined; i++) {
-						result[attribute] = self.element.getAttributes(attribute);
-					}
+				for(; (attribute = attributes[i]) !== undefined; i++) {
+					result[attribute] = self.element.getAttributes(attribute);
 				}
 			}
 
@@ -257,13 +276,7 @@
 			var self = this;
 
 			if(attribute && typeof attribute === stringString) {
-				attribute = attribute.split(' ');
-
-				if(attribute.length === 1) {
-					self.element.removeAttribute(attribute[0]);
-				} else {
-					self.removeAttributes(attribute);
-				}
+				self.element.removeAttribute(attribute);
 			}
 
 			return self;
@@ -275,10 +288,8 @@
 			if(attributes) {
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
-				if(typeof attributes === stringObject && attributes.length) {
-					for(; (attribute = attributes[i]) !== undefined; i++) {
-						self.element.removeAttribute(attribute);
-					}
+				for(; (attribute = attributes[i]) !== undefined; i++) {
+					self.element.removeAttribute(attribute);
 				}
 			}
 
@@ -288,13 +299,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				property = property.split(' ');
-
-				if(property.length === 1) {
-					return resolveStyleHook('get', self.element, property[0]);
-				} else {
-					return self.getStyles(property);
-				}
+				return resolveStyleHook('get', self.element, property);
 			}
 		},
 		getStyles: function(properties) {
@@ -305,10 +310,8 @@
 			if(properties) {
 				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
 
-				if(typeof properties === stringObject && properties.length) {
-					for(; (property = properties[i]) !== undefined; i++) {
-						result[property] = resolveStyleHook('get', self.element, property);
-					}
+				for(; (property = properties[i]) !== undefined; i++) {
+					result[property] = resolveStyleHook('get', self.element, property);
 				}
 			}
 
@@ -325,11 +328,34 @@
 		},
 		setStyles: function(properties) {
 			var self = this,
-				property, value;
+				property;
 
 			if(properties && typeof properties === stringObject && !properties.length) {
 				for(property in properties) {
 					resolveStyleHook('set', self.element, property, properties[property]);
+				}
+			}
+
+			return self;
+		},
+		removeStyle: function(property) {
+			var self = this;
+
+			if(property && typeof property === stringString) {
+				self.setStyle(property, '');
+			}
+
+			return self;
+		},
+		removeStyles: function(properties) {
+			var self = this,
+				i = 0, property;
+
+			if(properties) {
+				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
+
+				for(; (property = properties[i]) !== undefined; i++) {
+					self.setStyle(property, '');
 				}
 			}
 
@@ -446,13 +472,13 @@
 			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
 		},
 		hasClass: function(name) {
-			return (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className);
+			return (name) ? (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className) : false;
 		},
 		addClass: function(name) {
 			var self = this,
 				temp;
 
-			if(!self.hasClass(name)) {
+			if(name && !self.hasClass(name)) {
 				temp = self.element.className.split(' ');
 
 				temp.push(name);
@@ -465,7 +491,7 @@
 		removeClass: function(name) {
 			var self = this;
 
-			if(self.hasClass(name)) {
+			if(name && self.hasClass(name)) {
 				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'));
 			}
 
@@ -474,7 +500,9 @@
 		toggleClass: function(name) {
 			var self = this;
 
-			self.hasClass(name) ? self.removeClass(name) : self.addClass(name);
+			if(name) {
+				self.hasClass(name) ? self.removeClass(name) : self.addClass(name);
+			}
 
 			return self;
 		},
@@ -482,26 +510,29 @@
 			var self    = this,
 				target = self.element;
 
-			element = element.element || resolveElement(element);
+			if(element) {
+				try {
+					element = element.element || resolveElement(element);
 
-			target.firstChild ? target.insertBefore(element, target.firstChild) : self.append(element);
+					target.firstChild ? target.insertBefore(element, target.firstChild) : self.append(element);
+				} catch(exception) {
+					target.insertAdjacentHTML('afterBegin', element);
+				}
+			}
 
 			return self;
 		},
 		append: function(element) {
-			var self = this;
-
-			self.element.appendChild(element.element || resolveElement(element));
-
-			return self;
-		},
-		replaceWith: function(element) {
-			var self    = this,
+			var self   = this,
 				target = self.element;
 
-			element = element.element || resolveElement(element);
-
-			target.parentNode.replaceChild(element, target);
+			if(element) {
+				try {
+					target.appendChild(element.element || resolveElement(element));
+				} catch(exception) {
+					target.insertAdjacentHTML('beforeEnd', element);
+				}
+			}
 
 			return self;
 		},
@@ -509,14 +540,18 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || resolveElement(target)).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
+			if(target) {
+				(target  = target.element || resolveElement(target)).firstChild ? target.insertBefore(element, target.firstChild) : self.appendTo(target);
+			}
 
 			return self;
 		},
 		appendTo: function(target) {
 			var self = this;
 
-			(target.element || resolveElement(target)).appendChild(self.element);
+			if(target) {
+				(target.element || resolveElement(target)).appendChild(self.element);
+			}
 
 			return self;
 		},
@@ -524,7 +559,9 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || resolveElement(target)).parentNode.insertBefore(element, target);
+			if(target) {
+				(target  = target.element || resolveElement(target)).parentNode.insertBefore(element, target);
+			}
 
 			return self;
 		},
@@ -532,7 +569,9 @@
 			var self    = this,
 				element = self.element;
 
-			(target = target.element || resolveElement(target)).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
+			if(target) {
+				(target = target.element || resolveElement(target)).nextSibling ? target.parentNode.insertBefore(element, target.nextSibling) : self.appendTo(target.parentNode);
+			}
 
 			return self;
 		},
@@ -540,9 +579,29 @@
 			var self    = this,
 				element = self.element;
 
-			(target  = target.element || resolveElement(target)).parentNode.replaceChild(element, target);
+			if(target) {
+				(target  = target.element || resolveElement(target)).parentNode.replaceChild(element, target);
+			}
 
 			return self;
+		},
+		replaceWith: function(element) {
+			var self    = this,
+				target = self.element;
+
+			if(element) {
+				element = element.element || resolveElement(element);
+
+				target.parentNode.replaceChild(element, target);
+			}
+
+			return self;
+		},
+		hide: function() {
+			return this.setStyle('display', 'none');
+		},
+		show: function() {
+			return this.removeStyle('display');
 		},
 		remove: function() {
 			var self    = this,
@@ -568,11 +627,11 @@
 						var uuid = event._quid || (event._quid = generateUuid()),
 							delegateTo;
 
-						if(!storageEvents[uuid]) {
-							storageEvents[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
+						if(!storage[uuid]) {
+							storage[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
 						}
 
-						event      = storageEvents[uuid];
+						event      = storage[uuid];
 						delegateTo = event.delegate;
 
 						window.clearTimeout(event._timeout);
@@ -588,7 +647,7 @@
 						}
 
 						event._timeout = window.setTimeout(function() {
-							delete storageEvents[uuid];
+							delete storage[uuid];
 							delete event._timeout;
 
 							event.dispose && event.dispose();
