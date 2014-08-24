@@ -11,20 +11,19 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @todo check http://davidwalsh.name/insertadjacenthtml-beforeend
- * @todo check createDocumentFragment for prependTo, appendTo, insertBefore, insertAfter and replace
- * @todo add possibility to pass multiple selectors to create
  * @todo check pooling for dom/element
  *
  * @require ../base
  * @require ./element
+ * @optional ../pool/module
  */
 ;(function(definition) {
 	window.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var mDomElement = modules['dom/element'];
+	var mDomElement = modules['dom/element'],
+		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement) || null;
 
 	function map(method) {
 		var self      = this,
@@ -72,7 +71,7 @@
 			}
 
 			for(i = 0; (element = elements[i]) !== undefined; i++) {
-				self.elements.push(mDomElement.create(element));
+				self.elements.push(pool && pool.obtain(element) || mDomElement.create(element));
 			}
 
 			if(typeof attributes === 'object' && attributes !== null) {
@@ -168,18 +167,16 @@
 				elements = self.elements,
 				i, element;
 
-			if(index || index === 0) {
-				element = self.elements[index];
-
-				if(element) {
-					element.remove();
-					elements.splice(index, 1);
-				}
+			if((index || index === 0) && (element = self.elements[index]) !== undefined) {
+				element.remove();
+				element.dispose && element.dispose();
+				elements.splice(index, 1);
 			} else {
 				i = elements.length - 1;
 
 				for(; (element = elements[i]) !== undefined; i--) {
 					element.remove();
+					element.dispose && element.dispose();
 					elements.pop();
 				}
 			}

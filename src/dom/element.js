@@ -87,8 +87,9 @@
 		generateUuid     = modules['function/unique/uuid'],
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
+		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
-		storageEvents    = {}, 
+		storage          = {}, 
 		styleHooks       = {
 			opacity: (IE <= 8) ? {
 				regex:    new RegExp('alpha\\(opacity=(.*)\\)', 'i'),
@@ -174,7 +175,7 @@
 
 			self.type      = element.tagName;
 			self.element   = element;
-			self._listener = {};
+			self._listener = self._listener || {};
 
 			if(typeof attributes === 'object' && attributes !== null) {
 				self.setAttributes(attributes);
@@ -183,6 +184,23 @@
 			if(typeof styles === 'object' && styles !== null) {
 				self.setStyles(styles);
 			}
+		},
+		_obtain: function(element, attributes, styles) {
+			this._constructor(element, attributes, styles);
+		},
+		_dispose: function() {
+			var self = this,
+				id, event;
+
+			for(id in self._listener) {
+				event = id.match(matchEvent);
+
+				self.element.removeEventListener(event, self._listener[id]);
+				delete self._listener[id];
+			}
+
+			self.type    = null;
+			self.element = null;
 		},
 		getContent: function(html) {
 			var element = this.element;
@@ -599,11 +617,11 @@
 						var uuid = event._quid || (event._quid = generateUuid()),
 							delegateTo;
 
-						if(!storageEvents[uuid]) {
-							storageEvents[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
+						if(!storage[uuid]) {
+							storage[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
 						}
 
-						event      = storageEvents[uuid];
+						event      = storage[uuid];
 						delegateTo = event.delegate;
 
 						window.clearTimeout(event._timeout);
@@ -619,7 +637,7 @@
 						}
 
 						event._timeout = window.setTimeout(function() {
-							delete storageEvents[uuid];
+							delete storage[uuid];
 							delete event._timeout;
 
 							event.dispose && event.dispose();
