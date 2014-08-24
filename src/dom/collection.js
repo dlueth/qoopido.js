@@ -11,8 +11,6 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @todo check pooling for dom/element
- *
  * @require ../base
  * @require ./element
  * @optional ../pool/module
