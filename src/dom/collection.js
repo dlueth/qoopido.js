@@ -23,6 +23,19 @@
 	var mDomElement = modules['dom/element'],
 		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement) || null;
 
+	function buildFragment() {
+		var self      = this,
+			elements  = self.elements,
+			fragment  = document.createDocumentFragment(),
+			i = 0, element;
+
+		for(; (element = elements[i]) !== undefined; i++) {
+			fragment.appendChild(element.element)
+		}
+
+		return fragment;
+	}
+
 	function map(method) {
 		var self      = this,
 			elements  = self.elements,
@@ -36,14 +49,14 @@
 		return self;
 	}
 
-	function reverseMap(method) {
+	function mapFragment(target, method) {
 		var self      = this,
-			elements  = self.elements,
-			parameter = Array.prototype.slice.call(arguments, 1),
-			i = elements.length - 1, element;
+			target    = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
 
-		for(; (element = elements[i]) !== undefined; i--) {
-			element[method].apply(element, parameter);
+		if(target) {
+			target[method].call(target, buildFragment.call(self));
+
+			target.dispose && target.dispose();
 		}
 
 		return self;
@@ -128,16 +141,34 @@
 			return map.call(this, 'toggleClass', name);
 		},
 		prependTo: function(target) {
-			return reverseMap.call(this, 'prependTo', target);
+			return mapFragment.call(this, target, 'prepend');
 		},
 		appendTo: function(target) {
-			return map.call(this, 'appendTo', target);
+			return mapFragment.call(this, target, 'append');
 		},
 		insertBefore: function(target) {
-			return map.call(this, 'insertBefore', target);
+			var self   = this,
+				target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+
+			if(target) {
+				target.element.parentNode.insertBefore(buildFragment.call(self), target.element);
+
+				target.dispose && target.dispose();
+			}
+
+			return self;
 		},
 		insertAfter: function(target) {
-			return reverseMap.call(this, 'insertAfter', target);
+			var self   = this,
+				target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+
+			if(target) {
+				target.element.nextSibling ? target.element.parentNode.insertBefore(buildFragment.call(self), target.element.nextSibling) : target.element.appendChild(buildFragment.call(self));
+
+				target.dispose && target.dispose();
+			}
+
+			return self;
 		},
 		replace: function(target) {
 			var self     = this,
