@@ -30,7 +30,12 @@ module.exports = gulp;
 		'./src/component/remux.js'
 	]);
 	files.emerge    = files.base.concat([
+		'./src/polyfill/string/ucfirst.js',
+		'./src/polyfill/string/lcfirst.js',
 		'./src/polyfill/window/getcomputedstyle.js',
+		'./src/polyfill/window/promise.js',
+		'./src/promise/all.js',
+		'./src/promise/defer.js',
 		'./src/support.js',
 		'./src/function/merge.js',
 		'./src/function/unique/uuid.js',
@@ -42,8 +47,11 @@ module.exports = gulp;
 	]);
 	files.shrinkimage = files.base.concat([
 		'./src/polyfill/string/ucfirst.js',
+		'./src/polyfill/string/lcfirst.js',
 		'./src/polyfill/window/getcomputedstyle.js',
 		'./src/polyfill/window/promise.js',
+		'./src/promise/all.js',
+		'./src/promise/defer.js',
 		'./src/function/merge.js',
 		'./src/function/unique/string.js',
 		'./src/function/unique/uuid.js',
@@ -55,8 +63,6 @@ module.exports = gulp;
 		'./src/support/element/canvas/todataurl/png.js',
 		'./src/dom/element.js',
 		'./src/url.js',
-		'./src/promise/all.js',
-		'./src/promise/defer.js',
 		'./src/transport.js',
 		'./src/transport/xhr.js',
 		'./src/dom/element/shrinkimage.js'
