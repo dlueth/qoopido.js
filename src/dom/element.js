@@ -91,7 +91,7 @@
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
-		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event']) || null,
+		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
 		mSupport         = modules['support'],
 		storage          = {}, 
 		styleHooks       = {

@@ -21,7 +21,7 @@
 	'use strict';
 
 	var mDomElement = modules['dom/element'],
-		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement) || null;
+		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement, null, true) || null;
 
 	function buildFragment() {
 		var self      = this,
@@ -30,7 +30,7 @@
 			i = 0, element;
 
 		for(; (element = elements[i]) !== undefined; i++) {
-			fragment.appendChild(element.element)
+			fragment.appendChild(element.element);
 		}
 
 		return fragment;
@@ -50,8 +50,9 @@
 	}
 
 	function mapFragment(target, method) {
-		var self      = this,
-			target    = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+		var self = this;
+
+		target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
 
 		if(target) {
 			target[method].call(target, buildFragment.call(self));
@@ -147,8 +148,9 @@
 			return mapFragment.call(this, target, 'append');
 		},
 		insertBefore: function(target) {
-			var self   = this,
-				target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+			var self = this;
+
+			target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
 
 			if(target) {
 				target.element.parentNode.insertBefore(buildFragment.call(self), target.element);
@@ -159,8 +161,9 @@
 			return self;
 		},
 		insertAfter: function(target) {
-			var self   = this,
-				target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+			var self = this;
+
+			target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
 
 			if(target) {
 				target.element.nextSibling ? target.element.parentNode.insertBefore(buildFragment.call(self), target.element.nextSibling) : target.element.appendChild(buildFragment.call(self));

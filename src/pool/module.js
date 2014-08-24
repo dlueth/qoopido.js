@@ -12,27 +12,42 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../pool
+ * @require ../function/unique/uuid
  */
 ;(function(definition) {
-	window.qoopido.register('pool/module', definition, [ '../pool' ]);
+	window.qoopido.register('pool/module', definition, [ '../pool', '../function/unique/uuid' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
+
+	var generateUuid = modules['function/unique/uuid'];
 
 	var prototype = modules['pool'].extend({
 		_module:  null,
 		_destroy: null,
-		_constructor: function(module, options) {
-			var self = this;
+		_constructor: function(module, options, useShared) {
+			var self    = this,
+				uuid    = module._quid || (module._quid = generateUuid()),
+				pointer = useShared && (shared.pool || (shared.pool = {})) && (shared.pool.module || (shared.pool.module = {}));
 
-			self._module = module;
+			if(useShared === true && pointer[uuid]) {
+				return pointer[uuid];
+			} else {
+				prototype._parent._constructor.call(self, options);
 
-			if(typeof module._destroy === 'function') {
-				self._destroy = function(element) {
-					element._destroy();
-				};
+				self._module = module;
+
+				if(typeof module._destroy === 'function') {
+					self._destroy = function(element) {
+						element._destroy();
+					};
+				}
+
+				if(useShared === true) {
+					pointer[uuid] = self;
+
+					//console.log(shared);
+				}
 			}
-
-			prototype._parent._constructor.call(self, options);
 		},
 		_dispose: function(element) {
 			return element;
