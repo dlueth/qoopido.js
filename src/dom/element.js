@@ -11,6 +11,8 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
+ * @todo check hook implementation (see filter in dom/event)
+ *
  * @require ../base
  * @require ../function/unique/uuid
  * @require ./event
@@ -223,7 +225,7 @@
 			var self = this;
 
 			if(attribute && typeof attribute === stringString) {
-				return self.element.getAttribute(attribute[0]);
+				return self.element.getAttribute(attribute);
 			}
 		},
 		getAttributes: function(attributes) {
