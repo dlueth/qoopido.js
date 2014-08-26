@@ -86,17 +86,18 @@ var settings = {
 	}
 
 	require([ 'base' ], function() {
-		require([ 'pool/module', 'pool/dom', 'pool/array', 'pool/object' ], function(mPoolModule, mPoolDom) {
+		require([ 'pool/module', 'pool/dom', 'pool/array', 'pool/object' ], function(mPoolModule, mPoolDom, mPoolArray, mPoolObject) {
 			require([ 'support', 'renderer', 'particle', 'dom/element', 'dom/collection', 'vector/2d' ], function(mSupport, mRenderer, mParticle, mDomElement, mDomCollection, mVector) {
+				//var mPoolModule = mPoolDom = null;
 				var qWindow           = mDomElement.create(window),
 					qCanvas           = mDomElement.create('<canvas />').insertBefore('#console'),
 					qCanvasElement    = qCanvas.element,
 					qCanvasContext    = qCanvasElement.getContext('2d'),
 					renderer          = mRenderer,
-					poolModule        = mPoolModule.create(mParticle),
-					poolDom           = mPoolDom.create(),
-					poolVector        = mPoolModule.create(mVector),
-					poolMetrics       = poolModule.metrics,
+					poolModule        = (mPoolModule && mPoolModule.create(mParticle)) || null,
+					poolDom           = (mPoolDom && mPoolDom.create()) || null,
+					poolVector        = (mPoolModule && mPoolModule.create(mVector)) || null,
+					poolMetrics       = (poolModule && poolModule.metrics) || null,
 					consoleFps        = mDomElement.create('#fps'),
 					consoleTotal      = mDomElement.create('#total'),
 					consoleRecycled   = mDomElement.create('#recycled'),
@@ -121,8 +122,8 @@ var settings = {
 						angle        = MATH_PI_TIMES_TWO / count,
 						color        = ''.concat('rgba(', COLORS[((Math.random() * (COLORS.length - 1)) + 0.5) >> 0], ','),
 						size         = (size = ((Math.random() * settings.sizeRandom) >> 0) + settings.sizeBase) + (size % 2),
-						canvas       = poolDom.obtain('canvas'),
-						acceleration = poolVector.obtain(0, settings.gravity),
+						canvas       = poolDom && poolDom.obtain('canvas') || document.createElement('canvas'),
+						acceleration = poolVector && poolVector.obtain(0, settings.gravity) || mVector.create(0, settings.gravity),
 						hSize, context, fill;
 
 					canvas.width       = canvas.height = size;
@@ -142,8 +143,8 @@ var settings = {
 
 					while(count--) {
 						var randomVelocity = settings.velocityBase + Math.random() * settings.velocityRandom,
-								particleAngle  = count * angle,
-								particle       = poolModule.obtain(x, y);
+							particleAngle  = count * angle,
+							particle       = poolModule && poolModule.obtain(x, y) || mParticle.create(x, y);
 
 						particle.velocity.x = Math.cos(particleAngle) * randomVelocity;
 						particle.velocity.y = Math.sin(particleAngle) * randomVelocity;
@@ -246,17 +247,17 @@ var settings = {
 							canvas       = particle.canvas,
 							acceleration = particle.acceleration[0];
 
-							particle.dispose();
+							particle.dispose && particle.dispose();
 
 							canvas.usage       -= 1;
 							acceleration.usage -= 1;
 
 							if(canvas.usage <= 0) {
-								canvas = particle.canvas = canvas.dispose();
+								canvas = particle.canvas = canvas.dispose && canvas.dispose();
 							}
 
 							if(acceleration.usage <= 0) {
-								acceleration = acceleration.dispose();
+								acceleration = acceleration.dispose && acceleration.dispose();
 							}
 
 							i -= 1;
@@ -273,12 +274,12 @@ var settings = {
 						fps  = lFps;
 					}
 
-					consoleTotal.setContent(poolMetrics.total);
-					consoleRecycled.setContent(poolMetrics.recycled);
-					consoleDestroyed.setContent(poolMetrics.destroyed);
-					consoleInPool.setContent(poolMetrics.inPool);
-					consoleInUse.setContent(poolMetrics.inUse);
-					consoleInQueue.setContent(poolMetrics.inQueue);
+					consoleTotal.setContent(poolMetrics && poolMetrics.total || '-');
+					consoleRecycled.setContent(poolMetrics && poolMetrics.recycled || '-');
+					consoleDestroyed.setContent(poolMetrics && poolMetrics.destroyed || '-');
+					consoleInPool.setContent(poolMetrics && poolMetrics.inPool || '-');
+					consoleInUse.setContent(poolMetrics && poolMetrics.inUse || '-');
+					consoleInQueue.setContent(poolMetrics && poolMetrics.inQueue || '-');
 				}
 
 				function onSuspend() {
@@ -304,7 +305,14 @@ var settings = {
 
 				initializeSettings();
 				onResize();
+				//console.timeline('benchmark');
 				generateRandomFirework();
+
+				/*
+				window.setTimeout(function() {
+					console.timelineEnd('benchmark');
+				}, 30000);
+				*/
 			});
 		});
 	});
