@@ -11,59 +11,15 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @todo check filter implementation (see hook in dom/element)
- *
  * @require ../base
+ * @require ../hook/event
  */
 ;(function(definition) {
-	window.qoopido.register('dom/event', definition, [ '../base' ]);
+	window.qoopido.register('dom/event', definition, [ '../base', '../hook/event' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var hooks        = {
-			general: {
-				properties: 'type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which'.split(' ')
-			},
-			mouse: {
-				regex:      new RegExp('^(?:mouse|pointer|contextmenu|touch)|click'),
-				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which'.split(' '),
-				filter:     function() {
-					var self        = this,
-						original    = self.originalEvent,
-						fromElement = original.fromElement,
-						which       = original.button,
-						pointer;
-
-					if(self.pageX == null && original.clientX != null) {
-						pointer   = event.target.ownerDocument || document;
-						pointer   = pointer.documentElement || pointer.body;
-
-						self.pageX = original.clientX + (pointer.scrollLeft || 0) - (pointer.clientLeft || 0);
-						self.pageY = original.clientY + (pointer.scrollTop  || 0) - (pointer.clientTop  || 0);
-					}
-
-					if(!self.relatedTarget && fromElement) {
-						self.relatedTarget = (fromElement === self.target) ? original.toElement : fromElement;
-					}
-
-					if(!self.which && which !== undefined) {
-						self.which = (which & 1 ? 1 : (which & 2 ? 3 : (which & 4 ? 2 : 0)));
-					}
-				}
-			},
-			key: {
-				regex:      new RegExp('^key'),
-				properties: 'char charCode key keyCode which'.split(' '),
-				filter:     function() {
-					var self     = this,
-						original = self.originalEvent;
-
-					if(self.which === null) {
-						self.which = (original.charCode !== null) ? original.charCode : original.keyCode;
-					}
-				}
-			}
-		};
+	var hooks = modules['hook/event'];
 
 	return modules['base'].extend({
 		originalEvent:                 null,
@@ -79,46 +35,7 @@
 			self._obtain(event);
 		},
 		_obtain: function(event) {
-			var self = this,
-				type = event.type, key, hook, delegate, filter = [], i = 0, property, fn;
-
-			for(key in hooks) {
-				hook     = hooks[key];
-				delegate = hook.delegate;
-
-				if(!hook.regex || (hook.regex && hook.regex.test(type))) {
-					if(hook.properties) {
-						self._properties = self._properties.concat(hook.properties);
-					}
-
-					if(hook.filter) {
-						filter.push(hook.filter);
-					}
-				}
-
-				if(delegate) {
-					self.delegate = delegate;
-				}
-			}
-
-			for(; (property = self._properties[i]) !== undefined; i++) {
-				self[property] = event[property];
-			}
-
-			if(!self.target) {
-				self.target = event.srcElement || document;
-			}
-
-			if(self.target.nodeType === 3) {
-				self.target = self.target.parentNode;
-			}
-
-			self.originalEvent = event;
-			self.metaKey       = (event.metaKey && event.metaKey !== false) ? true : false;
-
-			for(i = 0; (fn = filter[i]) !== undefined; i++) {
-				fn.call(self);
-			}
+			hooks.process(this, event);
 		},
 		_dispose: function() {
 			var self = this,

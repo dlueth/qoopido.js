@@ -11,11 +11,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @todo check hook implementation (see filter in dom/event)
- *
  * @require ../base
- * @require ../support
  * @require ../function/unique/uuid
+ * @require ../hook/css
  * @require ./event
  * @polyfill ../polyfill/window/customevent
  * @polyfill ../polyfill/window/addeventlistener
@@ -29,7 +27,7 @@
  */
 /* jshint loopfunc: true */
 ;(function(definition) {
-	var dependencies = [ '../base', '../support', '../function/unique/uuid', './event' ];
+	var dependencies = [ '../base', '../function/unique/uuid', '../hook/css', './event' ];
 
 	if(!window.CustomEvent) {
 		dependencies.push('../polyfill/window/customevent');
@@ -45,10 +43,6 @@
 
 	if(!window.dispatchEvent) {
 		dependencies.push('../polyfill/window/dispatchevent');
-	}
-
-	if(!window.getComputedStyle) {
-		dependencies.push('../polyfill/window/getcomputedstyle');
 	}
 
 	if(!Element.prototype.matches) {
@@ -67,56 +61,15 @@
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
-	var IE = (function() {
-			if(document.documentMode) {
-				return document.documentMode;
-			} else {
-				for(var i = 7; i > 0; i--) {
-					var div = document.createElement('div');
-
-					div.innerHTML = '<!--[if IE ' + i + ']><span></span><![endif]-->';
-
-					if(div.getElementsByTagName('span').length) {
-						return i;
-					}
-				}
-			}
-
-			return undefined;
-		})(),
-		stringObject     = 'object',
+	var stringObject     = 'object',
 		stringString     = 'string',
-		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'],
 		generateUuid     = modules['function/unique/uuid'],
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
-		mSupport         = modules['support'],
-		storage          = {}, 
-		styleHooks       = {
-			opacity: (IE <= 8) ? {
-				regex:    new RegExp('alpha\\(opacity=(.*)\\)', 'i'),
-				getValue: function(element) {
-					var value = getComputedStyle(element, null).getPropertyValue('filter').toString().match(this.regex);
-
-					if(value) {
-						value = value[1] / 100;
-					} else {
-						value = 1;
-					}
-
-					return value;
-				},
-				setValue: function(element, value) {
-					var style = element.style;
-
-					style.zoom    = 1;
-					style.opacity = value;
-					style.filter  = 'alpha(opacity=' + (value * 100 + 0.5 >> 0) + ')';
-				}
-			} : null
-		};
+		storage          = {},
+		hooks            = modules['hook/css'];
 
 	function emitEvent(event, detail, uuid) {
 		var self = this;
@@ -153,25 +106,6 @@
 		}
 
 		return element;
-	}
-
-	function resolveStyleHook(method, element, property, value) {
-		var hook;
-
-		property = mSupport.getCssProperty(property, element)[0] || null;
-
-		if(property) {
-			hook = styleHooks[property];
-
-			switch(method) {
-				case 'get':
-					return hook && hook.getValue && hook.getValue(element) || getComputedStyle(element, null).getPropertyValue(property);
-				case 'set':
-					hook && hook.setValue && hook.setValue(element, value) || (element.style[property] = value);
-
-					break;
-			}
-		}
 	}
 
 	return modules['base'].extend({
@@ -299,7 +233,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				return resolveStyleHook('get', self.element, property);
+				return hooks.process('get', self.element, property);
 			}
 		},
 		getStyles: function(properties) {
@@ -311,7 +245,7 @@
 				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
 
 				for(; (property = properties[i]) !== undefined; i++) {
-					result[property] = resolveStyleHook('get', self.element, property);
+					result[property] = hooks.process('get', self.element, property);
 				}
 			}
 
@@ -321,7 +255,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				resolveStyleHook('set', self.element, property, value);
+				hooks.process('set', self.element, property, value);
 			}
 
 			return self;
@@ -332,7 +266,7 @@
 
 			if(properties && typeof properties === stringObject && !properties.length) {
 				for(property in properties) {
-					resolveStyleHook('set', self.element, property, properties[property]);
+					hooks.process('set', self.element, property, properties[property]);
 				}
 			}
 

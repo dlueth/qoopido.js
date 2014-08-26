@@ -39,6 +39,9 @@ module.exports = gulp;
 		'./src/support.js',
 		'./src/function/merge.js',
 		'./src/function/unique/uuid.js',
+		'./src/hook/event.js',
+		'./src/hook/css.js',
+		'./src/dom/event.js',
 		'./src/dom/element.js',
 		'./src/dom/element/emerge.js'
 	]);
@@ -61,6 +64,9 @@ module.exports = gulp;
 		'./src/support/element/canvas.js',
 		'./src/support/element/canvas/todataurl.js',
 		'./src/support/element/canvas/todataurl/png.js',
+		'./src/hook/event.js',
+		'./src/hook/css.js',
+		'./src/dom/event.js',
 		'./src/dom/element.js',
 		'./src/url.js',
 		'./src/transport.js',
