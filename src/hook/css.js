@@ -75,6 +75,15 @@
 			}
 
 			return null;
+		},
+		process: function(method, element, property, value) {
+			var hook;
+
+			property = mSupport.getCssProperty(property, element)[0] || null;
+
+			if(property) {
+				return ((hook = this.get(property)) && hook[method] || this.get('general')[method])(element, property, value);
+			}
 		}
 	});
 }));

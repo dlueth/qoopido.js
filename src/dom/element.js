@@ -12,7 +12,6 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ../base
- * @require ../support
  * @require ../function/unique/uuid
  * @require ../hook/css
  * @require ./event
@@ -28,7 +27,7 @@
  */
 /* jshint loopfunc: true */
 ;(function(definition) {
-	var dependencies = [ '../base', '../support', '../function/unique/uuid', '../hook/css', './event' ];
+	var dependencies = [ '../base', '../function/unique/uuid', '../hook/css', './event' ];
 
 	if(!window.CustomEvent) {
 		dependencies.push('../polyfill/window/customevent');
@@ -69,8 +68,7 @@
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
-		mSupport         = modules['support'],
-		storage          = {}, 
+		storage          = {},
 		hooks            = modules['hook/css'];
 
 	function emitEvent(event, detail, uuid) {
@@ -108,16 +106,6 @@
 		}
 
 		return element;
-	}
-
-	function resolveHook(method, element, property, value) {
-		var hook;
-
-		property = mSupport.getCssProperty(property, element)[0] || null;
-
-		if(property) {
-			((hook = hooks.get(property)) && hook[method] || hooks.get('general')[method])(element, property, value);
-		}
 	}
 
 	return modules['base'].extend({
@@ -245,7 +233,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				return resolveHook('get', self.element, property);
+				return hooks.process('get', self.element, property);
 			}
 		},
 		getStyles: function(properties) {
@@ -257,7 +245,7 @@
 				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
 
 				for(; (property = properties[i]) !== undefined; i++) {
-					result[property] = resolveHook('get', self.element, property);
+					result[property] = hooks.process('get', self.element, property);
 				}
 			}
 
@@ -267,7 +255,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				resolveHook('set', self.element, property, value);
+				hooks.process('set', self.element, property, value);
 			}
 
 			return self;
@@ -278,7 +266,7 @@
 
 			if(properties && typeof properties === stringObject && !properties.length) {
 				for(property in properties) {
-					resolveHook('set', self.element, property, properties[property]);
+					hooks.process('set', self.element, property, properties[property]);
 				}
 			}
 
