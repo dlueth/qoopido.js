@@ -64,8 +64,6 @@
 		viewport.top    = 0;
 		viewport.right  = window.innerWidth || documentElement.clientWidth;
 		viewport.bottom = window.innerHeight || documentElement.clientHeight;
-		//viewport.width  = viewport.right;
-		//viewport.height = viewport.bottom;
 	}
 
 	function instanceOnResize() {
