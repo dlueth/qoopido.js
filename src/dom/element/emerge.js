@@ -87,54 +87,8 @@
 		if(self.isVisible() && (self.getStyle('visibility') !== 'hidden' || self._settings.visibility === false)) {
 			boundaries = self.element.getBoundingClientRect();
 
-			if(
-				// check if either bottom or top element boundaries are within viewport or viewports bottom or top boundaries are within element
-			(
-			(boundaries.bottom >= self._viewport.top && boundaries.bottom <= self._viewport.bottom)
-			||
-			(boundaries.top >= self._viewport.top && boundaries.top <= self._viewport.bottom)
-			||
-			(self._viewport.bottom >= boundaries.top && self._viewport.bottom <= boundaries.bottom)
-			||
-			(self._viewport.top >= boundaries.top && self._viewport.top <= boundaries.bottom)
-			)
-			&&
-				// check if either left or right element boundaries are within viewport or viewports left or right boundaries are within element
-			(
-			(boundaries.left >= self._viewport.left && boundaries.left <= self._viewport.right)
-			||
-			(boundaries.right >= self._viewport.left && boundaries.right <= self._viewport.right)
-			||
-			(self._viewport.left >= boundaries.left && self._viewport.left <= boundaries.right)
-			||
-			(self._viewport.right >= boundaries.left && self._viewport.right <= boundaries.right)
-			)
-			) {
-				if(
-					self._settings.threshold === 0
-					||
-					(
-					(
-					(boundaries.bottom >= viewport.top && boundaries.bottom <= viewport.bottom)
-					||
-					(boundaries.top >= viewport.top && boundaries.top <= viewport.bottom)
-					||
-					(viewport.bottom >= boundaries.top && viewport.bottom <= boundaries.bottom)
-					||
-					(viewport.top >= boundaries.top && viewport.top <= boundaries.bottom)
-					)
-					&&
-					(
-					(boundaries.left >= viewport.left && boundaries.left <= viewport.right)
-					||
-					(boundaries.right >= viewport.left && boundaries.right <= viewport.right)
-					||
-					(viewport.left >= boundaries.left && viewport.left <= boundaries.right)
-					||
-					(viewport.right >= boundaries.left && viewport.right <= boundaries.right)
-					)
-					)
-				) {
+			if(((boundaries.bottom >= self._viewport.top && boundaries.bottom <= self._viewport.bottom) || (boundaries.top >= self._viewport.top && boundaries.top <= self._viewport.bottom) || (self._viewport.bottom >= boundaries.top && self._viewport.bottom <= boundaries.bottom) || (self._viewport.top >= boundaries.top && self._viewport.top <= boundaries.bottom)) && ((boundaries.left >= self._viewport.left && boundaries.left <= self._viewport.right) || (boundaries.right >= self._viewport.left && boundaries.right <= self._viewport.right) || (self._viewport.left >= boundaries.left && self._viewport.left <= boundaries.right) || (self._viewport.right >= boundaries.left && self._viewport.right <= boundaries.right))) {
+				if(self._settings.threshold === 0 || (((boundaries.bottom >= viewport.top && boundaries.bottom <= viewport.bottom) || (boundaries.top >= viewport.top && boundaries.top <= viewport.bottom) || (viewport.bottom >= boundaries.top && viewport.bottom <= boundaries.bottom) || (viewport.top >= boundaries.top && viewport.top <= boundaries.bottom)) && ((boundaries.left >= viewport.left && boundaries.left <= viewport.right) || (boundaries.right >= viewport.left && boundaries.right <= viewport.right) || (viewport.left >= boundaries.left && viewport.left <= boundaries.right) || (viewport.right >= boundaries.left && viewport.right <= boundaries.right)))) {
 					priority = 1;
 				}
 
