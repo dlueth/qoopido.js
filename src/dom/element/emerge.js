@@ -14,7 +14,7 @@
  * @require ../element
  * @require ../../function/merge
  * @require ../../function/unique/uuid
-  */
+ */
 ;(function(definition) {
 	window.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
@@ -22,7 +22,7 @@
 
 	var
 	// variables
-		defaults        = { interval: 50, threshold: 'auto', recur: true, auto: 0.5, visibility: true },
+		defaults        = { interval: 50, threshold: 'auto', recur: true, auto: 1, visibility: true },
 		documentElement = window.document.documentElement,
 		viewport        = {},
 		intervals       = {},
@@ -62,14 +62,17 @@
 	function globalOnResize() {
 		viewport.left   = 0;
 		viewport.top    = 0;
-		viewport.right  = documentElement.clientWidth;
-		viewport.bottom = documentElement.clientHeight;
+		viewport.right  = window.innerWidth || documentElement.clientWidth;
+		viewport.bottom = window.innerHeight || documentElement.clientHeight;
+		//viewport.width  = viewport.right;
+		//viewport.height = viewport.bottom;
 	}
 
 	function instanceOnResize() {
-		var self = this,
-			x    = self._settings.threshold || documentElement.clientWidth * self._settings.auto,
-			y    = self._settings.threshold || documentElement.clientHeight * self._settings.auto;
+		var self     = this,
+			treshold = self._settings.threshold,
+			x        = (treshold !== undefined) ? treshold : documentElement.clientWidth * self._settings.auto,
+			y        = (treshold !== undefined) ? treshold : documentElement.clientHeight * self._settings.auto;
 
 		self._viewport.left   = viewport.left - x;
 		self._viewport.top    = viewport.top - y;
@@ -86,8 +89,54 @@
 		if(self.isVisible() && (self.getStyle('visibility') !== 'hidden' || self._settings.visibility === false)) {
 			boundaries = self.element.getBoundingClientRect();
 
-			if((boundaries.left >= self._viewport.left && boundaries.top >= self._viewport.top && boundaries.left <= self._viewport.right && boundaries.top <= self._viewport.bottom) || (boundaries.right >= self._viewport.left && boundaries.bottom >= self._viewport.top && boundaries.right <= self._viewport.right && boundaries.bottom <= self._viewport.bottom)) {
-				if((boundaries.left >= viewport.left && boundaries.top >= viewport.top && boundaries.left <= viewport.right && boundaries.top <= viewport.bottom) || (boundaries.right >= viewport.left && boundaries.bottom >= viewport.top && boundaries.right <= viewport.right && boundaries.bottom <= viewport.bottom)) {
+			if(
+				// check if either bottom or top element boundaries are within viewport or viewports bottom or top boundaries are within element
+			(
+			(boundaries.bottom >= self._viewport.top && boundaries.bottom <= self._viewport.bottom)
+			||
+			(boundaries.top >= self._viewport.top && boundaries.top <= self._viewport.bottom)
+			||
+			(self._viewport.bottom >= boundaries.top && self._viewport.bottom <= boundaries.bottom)
+			||
+			(self._viewport.top >= boundaries.top && self._viewport.top <= boundaries.bottom)
+			)
+			&&
+				// check if either left or right element boundaries are within viewport or viewports left or right boundaries are within element
+			(
+			(boundaries.left >= self._viewport.left && boundaries.left <= self._viewport.right)
+			||
+			(boundaries.right >= self._viewport.left && boundaries.right <= self._viewport.right)
+			||
+			(self._viewport.left >= boundaries.left && self._viewport.left <= boundaries.right)
+			||
+			(self._viewport.right >= boundaries.left && self._viewport.right <= boundaries.right)
+			)
+			) {
+				if(
+					self._settings.threshold === 0
+					||
+					(
+					(
+					(boundaries.bottom >= viewport.top && boundaries.bottom <= viewport.bottom)
+					||
+					(boundaries.top >= viewport.top && boundaries.top <= viewport.bottom)
+					||
+					(viewport.bottom >= boundaries.top && viewport.bottom <= boundaries.bottom)
+					||
+					(viewport.top >= boundaries.top && viewport.top <= boundaries.bottom)
+					)
+					&&
+					(
+					(boundaries.left >= viewport.left && boundaries.left <= viewport.right)
+					||
+					(boundaries.right >= viewport.left && boundaries.right <= viewport.right)
+					||
+					(viewport.left >= boundaries.left && viewport.left <= boundaries.right)
+					||
+					(viewport.right >= boundaries.left && viewport.right <= boundaries.right)
+					)
+					)
+				) {
 					priority = 1;
 				}
 
