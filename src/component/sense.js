@@ -28,8 +28,9 @@
 	var prototype,
 		queries = {};
 
-	function onQueryStateChange(mql) {
-		var self = this;
+	function onQueryStateChange() {
+		var self = this,
+			mql  = self.mql;
 
 		if(mql.matches === true) {
 			self.emit('matched');
@@ -39,18 +40,21 @@
 	}
 
 	prototype = modules['emitter'].extend({
+		mql: null,
 		_constructor: function(query) {
-			var self = this;
+			var self     = this,
+				mql      = self.mql = queries[query] || (queries[query] = window.matchMedia(query)),
+				listener = function() {
+					onQueryStateChange.call(self);
+				};
 
 			prototype._parent._constructor.call(self);
 
-			(queries[query] || (queries[query] = window.matchMedia(query))).addListener(function(mql) {
-				onQueryStateChange.call(self, mql);
-			});
-
-			window.setTimeout(function() {
-				onQueryStateChange.call(self, queries[query]);
-			}, 0);
+			mql.addListener(listener);
+			window.setTimeout(listener, 0);
+		},
+		matches: function() {
+			return this.mql.matches;
 		}
 	});
 
