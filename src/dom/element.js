@@ -71,10 +71,11 @@
 		storage          = {},
 		hooks            = modules['hook/css'];
 
-	function emitEvent(event, detail, uuid) {
-		var self = this;
+	function emitEvent(type, detail, uuid) {
+		var self  = this,
+			event = document.createEvent('CustomEvent');
 
-		event = new window.CustomEvent(event, { bubbles: (event === 'load') ? false : true, cancelable: true, detail: detail });
+		event.initCustomEvent(type, (type === 'load') ? false : true, true, detail);
 
 		if(uuid) {
 			event._quid      = uuid;
