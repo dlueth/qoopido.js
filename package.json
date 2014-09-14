@@ -1,7 +1,7 @@
 {
   "name": "qoopido.js",
   "title": "Qoopido.js library",
-  "description": "Collection of classes, plugins, functions and extensions for Javascript and jQuery.",
+  "description": "Modular library of dry, extendable and AMD compatible JavaScript modules",
   "version": "3.5.3",
   "homepage": "https://github.com/dlueth/qoopido.js",
   "author": {
