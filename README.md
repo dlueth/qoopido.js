@@ -380,6 +380,8 @@ Included modules
 	- xhr (AJAX transport)
 - vector
 	- 2d
+- widget
+	- adapt (adaptive & lazy-loadable images embracing microdata)
 - worker (flexible web worker implementation
 
 
