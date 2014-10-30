@@ -1,7 +1,7 @@
 /*
  * Qoopido component/iterator
  *
- * Proves UI independent iterator mechanics
+ * Provides UI independent iterator mechanics
  *
  * Copyright (c) 2014 Dirk Lueth
  *
