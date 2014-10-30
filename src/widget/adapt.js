@@ -25,7 +25,8 @@
 		regex           = new RegExp('(.+?).(jpg|jpeg|png|gif|webp)$'),
 		mDomElement     = modules['dom/element'],
 		mComponentSense = modules['component/sense'],
-		storage         = [];
+		storage         = [],
+		timeout;
 
 	function setRatio(ratio) {
 		return this.setStyle('paddingBottom', (ratio * 100) + '%');
@@ -62,6 +63,20 @@
 				break;
 			}
 		}
+	}
+
+	function delayedOnResize() {
+		var i = 0, instance;
+
+		for(; (instance = storage[i]) !== undefined; i++) {
+			checkCandidates.call(instance);
+		}
+	}
+
+	function delayOnResize() {
+		window.clearTimeout(timeout);
+
+		timeout = window.setTimeout(delayedOnResize, 200);
 	}
 
 	prototype = modules['dom/element/emerge'].extend({
@@ -113,13 +128,7 @@
 
 	mDomElement
 		.create(window)
-		.on('resize orientationchange', function() {
-			var i = 0, instance;
-
-			for(; (instance = storage[i]) !== undefined; i++) {
-				checkCandidates.call(instance);
-			}
-		});
+		.on('resize orientationchange', delayOnResize);
 
 	return prototype;
 }));
