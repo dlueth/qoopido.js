@@ -42,7 +42,7 @@ var settings = {
 
 ;(function(require, window, document, undefined) {
 	require.config({
-		baseUrl: '../../src'
+		baseUrl: '../../dist/latest/min'
 	});
 
 	require([ 'base' ], function() {
@@ -100,12 +100,12 @@ var settings = {
 
 							sourceContainer.append(hint);
 
-							source
+							sourceContainer
 								.on('dragover dragend drop', function(event) {
 									event.stopPropagation();
 									event.preventDefault();
 
-									if(regex.test(event.dataTransfer.types.join(',')) === true) {
+									if(event.type === 'drop' && regex.test(event.dataTransfer.types.join(',')) === true) {
 										event.dataTransfer.effectAllowed = 'copyMove';
 										event.dataTransfer.dropEffect    = 'move';
 
@@ -119,6 +119,10 @@ var settings = {
 
 											reader.readAsDataURL(file);
 										}
+
+										try {
+											hint.remove();
+										} catch(e) {}
 									}
 
 									return false;
