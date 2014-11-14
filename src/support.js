@@ -140,7 +140,7 @@
 					prefixes   = this.getPrefix();
 
 				if(prefixes !== false) {
-					candidates = (pMethod + ' ' + prefixes.join(uMethod + ' ') + uMethod).split(' ');
+					candidates = (pMethod  + ' ' + uMethod + ' ' + prefixes.join(uMethod + ' ') + uMethod).split(' ');
 				} else {
 					candidates = [ pMethod ];
 				}
@@ -174,7 +174,7 @@
 					prefixes  = this.getPrefix();
 
 				if(prefixes !== false) {
-					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
+					candidates = (pProperty + ' ' + uProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' ');
 				} else {
 					candidates = [ pProperty ];
 				}
@@ -205,7 +205,7 @@
 					sample     = self.pool ? self.pool.obtain('div') : document.createElement('div'),
 					uProperty  = pProperty.ucfirst(),
 					prefixes   = this.getPrefix() || [],
-					candidates = (pProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' '),
+					candidates = (pProperty + ' ' + uProperty + ' ' + prefixes.join(uProperty + ' ') + uProperty).split(' '),
 					prefix     = '';
 
 				for(i; (candidate = candidates[i]) !== undefined; i++) {
