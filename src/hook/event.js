@@ -46,8 +46,8 @@
 				}
 			},
 			mouse: {
-				regex:      new RegExp('^(?:mouse|pointer|contextmenu|touch)|click'),
-				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which'.split(' '),
+				regex:      new RegExp('^mouse|pointer|contextmenu|touch|click|drag|drop'),
+				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which dataTransfer'.split(' '),
 				process:    function(event, originalEvent) {
 					var pointer, fromElement, which;
 
