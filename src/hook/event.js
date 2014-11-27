@@ -46,7 +46,7 @@
 				}
 			},
 			mouse: {
-				regex:      new RegExp('^mouse|pointer|contextmenu|touch|click|dblclick|drag|drop'),
+				regex:      new RegExp('^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop)'),
 				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which dataTransfer'.split(' '),
 				process:    function(event, originalEvent) {
 					var pointer, fromElement, which;
@@ -72,7 +72,7 @@
 				}
 			},
 			key: {
-				regex:      new RegExp('^key'),
+				regex:      new RegExp('^(?:key)'),
 				properties: 'char charCode key keyCode which'.split(' '),
 				process:    function(event, originalEvent) {
 					if(event.which === null) {
