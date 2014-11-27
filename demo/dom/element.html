@@ -18,6 +18,8 @@
 	<strong>See /src/dom/element.js for all possible methods and their arguments!</strong>
 </p>
 
+<input id="checkbox" type="checkbox" />
+
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 <script type="text/javascript">
 ;(function(require, window, document, undefined) {
@@ -28,22 +30,33 @@
 	require([ 'base' ], function() {
 		require([ 'pool/dom', 'pool/module' ], function() {
 			require([ 'dom/element' ], function(mDomElement) {
-				var eBody = mDomElement
+				var eCheckbox = mDomElement.create('#checkbox'),
+					eBody = mDomElement
 						.create('body')
 						.on('click', function(event) {
 							console.log('[on] event "click" was captured on', event.target);
+						})
+						.on('click', 'button.checkbox', function(event) {
+							eCheckbox.emit('click');
 						})
 						.one('click', 'button.once', function(event) {
 							console.log('[one] event "' + event.type + '" was captured on', event.target);
 						}),
 					eButton1 = mDomElement
+						.create('<button />', { type: 'submit', 'class': 'checkbox' })
+						.on('click', function(event) {
+							event.preventDefault();
+						})
+						.appendTo(eBody)
+						.setContent('click on checkbox!'),
+					eButton2 = mDomElement
 						.create('<button />', { type: 'submit', 'class': 'once' })
 						.on('click', function(event) {
 							event.preventDefault();
 						})
 						.appendTo(eBody)
 						.setContent('click me once!'),
-					eButton2 = mDomElement
+					eButton3 = mDomElement
 						.create('<button />', { type: 'submit'})
 						.on('click', function(event) {
 							event.preventDefault();

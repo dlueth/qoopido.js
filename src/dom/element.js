@@ -69,13 +69,44 @@
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
 		storage          = {},
-		hooks            = modules['hook/css'];
+		hooks            = modules['hook/css'],
+		events           = {
+			custom: {
+				type:   'CustomEvent',
+				method: 'initCustomEvent'
+			},
+			html: {
+				regex:  new RegExp('^load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll'),
+				type:   'HTMLEvents',
+				method: 'initEvent'
+			},
+			mouse: {
+				regex:  new RegExp('^mouse|pointer|contextmenu|touch|click|dblclick|drag|drop'),
+				type:   'MouseEvents',
+				method: 'initMouseEvent'
+			}
+		};
+
+	function resolveEvent(type) {
+		var id, prototype, candidate;
+
+		for(id in events) {
+			prototype = events[id];
+
+			if(!prototype.regex || prototype.regex.test(type)) {
+				candidate = prototype;
+			}
+		}
+
+		return candidate;
+	}
 
 	function emitEvent(type, detail, uuid) {
-		var self  = this,
-			event = document.createEvent('CustomEvent');
+		var self      = this,
+			prototype = resolveEvent(type),
+			event     = document.createEvent(prototype.type);
 
-		event.initCustomEvent(type, (type === 'load') ? false : true, true, detail);
+		event[prototype.method](type, (type === 'load') ? false : true, true, detail);
 
 		if(uuid) {
 			event._quid      = uuid;
