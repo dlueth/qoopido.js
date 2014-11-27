@@ -76,12 +76,12 @@
 				method: 'initCustomEvent'
 			},
 			html: {
-				regex:  new RegExp('^load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll'),
+				regex:  new RegExp('^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$'),
 				type:   'HTMLEvents',
 				method: 'initEvent'
 			},
 			mouse: {
-				regex:  new RegExp('^mouse|pointer|contextmenu|touch|click|dblclick|drag|drop'),
+				regex:  new RegExp('^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop)'),
 				type:   'MouseEvents',
 				method: 'initMouseEvent'
 			}
