@@ -25,7 +25,7 @@
 		lookup         = {},
 		xhrTransport   = modules['transport/xhr'],
 		xhrOptions     = { cache: true },
-		deferedPromise = modules['promise/defer'],
+		DeferedPromise = modules['promise/defer'],
 		generateUuid   = modules['function/unique/uuid'],
 		regex          = new RegExp('/', 'g'),
 		queue          = [];
@@ -85,7 +85,7 @@
 		_constructor: function(url, id, version) {
 			var self       = this,
 				uuid       = generateUuid(),
-				properties = lookup[uuid] = { dfd: new deferedPromise(), url: url };
+				properties = lookup[uuid] = { dfd: new DeferedPromise(), url: url };
 
 			prototype._parent._constructor.call(self);
 
@@ -135,7 +135,7 @@
 				delete localStorage[storage.version];
 				delete localStorage[storage.value];
 
-				self.emit('cleared', properties.url, properties.id, properties.version)
+				self.emit('cleared', properties.url, properties.id, properties.version);
 			}
 
 			return self;

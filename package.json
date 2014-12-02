@@ -2,7 +2,7 @@
   "name": "qoopido.js",
   "title": "Qoopido.js library",
   "description": "Modular library of dry, extendable and AMD compatible JavaScript modules",
-  "version": "3.5.9",
+  "version": "3.6.0",
   "homepage": "https://github.com/dlueth/qoopido.js",
   "author": {
     "name": "Dirk Lueth",
@@ -26,12 +26,14 @@
     }
   ],
   "npmName": "qoopido.js",
-  "npmFileMap": [{
-    "basePath": "/dist/latest/min/",
-    "files": [
-      "*.js"
-    ]
-  }],
+  "npmFileMap": [
+    {
+      "basePath": "/dist/latest/min/",
+      "files": [
+        "*.js"
+      ]
+    }
+  ],
   "keywords": [],
   "devDependencies": {
     "gulp": "^3.8.8",
