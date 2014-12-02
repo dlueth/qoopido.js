@@ -282,6 +282,7 @@ Although this example does absolutely not present a practical use case nor anyth
 
 Included modules
 ---------------------------
+- asset (XHR asset loading with localStorage caching)
 - base (object inheritance)
 - emitter (event emitter)
 - proxy (universal proxy method)
@@ -298,6 +299,8 @@ Included modules
 		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
 	- event (DOM event normalization)
 - function (provides single functions, e.g. helper)
+	- load
+		- css (inject a stylesheet into document)
    	- merge (function to deep merge objects)
    	- proximity (calculate px distance between two positions)
    	- unique (generate unique identifiers)
