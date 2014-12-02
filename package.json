@@ -25,6 +25,13 @@
       "url": "http://www.gnu.org/copyleft/gpl.html"
     }
   ],
+  "npmName": "qoopido.js",
+  "npmFileMap": [{
+    "basePath": "/dist/latest/min/",
+    "files": [
+      "*.js"
+    ]
+  }],
   "keywords": [],
   "devDependencies": {
     "gulp": "^3.8.8",
