@@ -89,7 +89,7 @@ module.exports = gulp;
  * helper & initialization
  **************************************************/
 	function getDate() {
-		return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+		return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
 	}
 
 	function initialize() {
@@ -104,7 +104,7 @@ module.exports = gulp;
 				'* ' + package.title,
 				'*',
 				'* version: ' + package.version,
-				'* date:    ' + date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate(),
+				'* date:    ' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
 				'* author:  ' + package.author.name + ' <' + package.author.email + '>',
 				'* website: ' + package.homepage,
 				'*',
@@ -118,7 +118,7 @@ module.exports = gulp;
 			].join('\n'),
 			min: [
 				'/*!',
-				'* ' + package.title + ' v' + package.version + ', ' + date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate(),
+				'* ' + package.title + ' v' + package.version + ', ' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
 				'* ' + package.homepage,
 				'* (c) ' + date.getFullYear() + ' ' + package.author.name,
 				'* Dual licensed under MIT and GPL',
