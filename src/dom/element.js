@@ -441,15 +441,10 @@
 			return (name) ? (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className) : false;
 		},
 		addClass: function(name) {
-			var self = this,
-				temp;
+			var self = this;
 
 			if(name && !self.hasClass(name)) {
-				temp = self.element.className.split(' ');
-
-				temp.push(name);
-
-				self.element.className = temp.join(' ');
+				self.element.className += (self.element.className) ? ' ' + name : name;
 			}
 
 			return self;
@@ -458,7 +453,7 @@
 			var self = this;
 
 			if(name && self.hasClass(name)) {
-				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'));
+				self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'), '');
 			}
 
 			return self;
