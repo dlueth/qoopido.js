@@ -1,5 +1,5 @@
 /*
- * Qoopido widget/adapt
+ * Qoopido widget/image/adapt
  *
  * Responsive image solution embracing microdata capable of lazy-loading
  *
@@ -11,13 +11,13 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @require ../dom/element
- * @require ../dom/element/emerge
- * @require ../component/sense
+ * @require ../../dom/element
+ * @require ../../dom/element/emerge
+ * @require ../../component/sense
  */
 
 ;(function(definition) {
-	window.qoopido.register('widget/adapt', definition, [ '../dom/element', '../dom/element/emerge', '../component/sense' ]);
+	window.qoopido.register('widget/image/adapt', definition, [ '../../dom/element', '../../dom/element/emerge', '../../component/sense' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
@@ -29,7 +29,11 @@
 		timeout;
 
 	function setRatio(ratio) {
-		return this.setStyle('paddingBottom', (ratio * 100) + '%');
+		var self = this;
+
+		self._container.setStyle('paddingBottom', (ratio * 100) + '%');
+
+		return self;
 	}
 
 	function processMedia(pointer, media) {
@@ -51,7 +55,7 @@
 				setRatio.call(self, candidate.ratio);
 
 				if(self._visible === true) {
-					image       = self._image || (self._image = mDomElement.create('<img />', { src: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', alt: self._caption }, { position: 'absolute', display: 'block', width: '100%', height: '100%', top: '0', left: '0', margin: '0', padding: '0' }).appendTo(self));
+					image       = self._image || (self._image = mDomElement.create('<img />', { src: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', alt: self._caption }, { position: 'absolute', display: 'block', width: '100%', height: '100%', top: '0', left: '0', margin: '0', padding: '0' }).appendTo(self._container));
 					boundingbox = image.element.getBoundingClientRect();
 					width       = Math.round(boundingbox.width);
 					height      = Math.round(boundingbox.width * candidate.ratio);
@@ -82,6 +86,7 @@
 	prototype = modules['dom/element/emerge'].extend({
 		_visible:    false,
 		_candidates: null,
+		_container:  null,
 		_image:      null,
 		_caption:    null,
 		_constructor: function(element, settings) {
@@ -90,12 +95,11 @@
 
 			prototype._parent._constructor.call(self, element, settings);
 
-			self.setStyles({ position: 'relative', display: 'block', width: '100%', height: 0, padding: 0 });
-
 			defaultRatio = parseFloat(self.getAttribute('data-ratio') || 1);
 			sources      = self.find('[itemprop="source"],[itemprop="contentUrl"]');
 
 			self._candidates = [];
+			self._container  = mDomElement.create('<div />').setStyles({ position: 'relative', display: 'block', width: '100%', height: 0, padding: 0 }).appendTo(self);
 			self._caption    = (caption = self.find('[itemprop="caption"]')[0]) ? caption.getAttribute('content') : null;
 
 			setRatio.call(self, defaultRatio);
