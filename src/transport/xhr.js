@@ -47,9 +47,8 @@
 			settings = self.settings,
 			id;
 
-		content = (content && typeof content === 'object') ? self.serialize(content) : content;
-		url     = (settings.cache === false) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', '_=' + new Date().getTime()) : url;
-		url     = (content && method === 'GET') ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
+		url = (settings.cache === false) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', '_=' + new Date().getTime()) : url;
+		url = (content && method === 'GET') ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
 
 		for(id in settings.xhrOptions) {
 			xhr[id] = settings.xhrOptions[id];
