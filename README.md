@@ -357,6 +357,7 @@ Included modules
 - support (feature detection)
 	- capability
 		- datauri
+		- touch
 	- css
 		- borderradius
 		- boxshadow
@@ -384,7 +385,8 @@ Included modules
 - vector
 	- 2d
 - widget
-	- adapt (adaptive & lazy-loadable images embracing microdata)
+	- image
+		- adapt (adaptive & lazy-loadable images embracing microdata)
 - worker (flexible web worker implementation
 
 
