@@ -19,6 +19,7 @@
 		"define": true,
 		"console": true,
 		"ActiveXObject": true,
-		"jQuery": false
+		"jQuery": false,
+	  	"DocumentTouch": true
 	}
 }

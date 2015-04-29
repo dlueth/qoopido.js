@@ -72,7 +72,7 @@
 						asset.emit('stored', url, id, version, value, storage.version, storage.value);
 					}
 
-					defered.resolve(value);
+					defered.resolve(localStorage[storage.value]);
 				},
 				function() {
 					defered.reject();
