@@ -68,7 +68,6 @@
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
-		storage          = {},
 		hooks            = modules['hook/css'],
 		events           = {
 			custom: {
@@ -138,6 +137,24 @@
 		}
 
 		return element;
+	}
+
+	function matchesDelegate(event, delegate) {
+		var i = 0, pointer;
+
+		for(; (pointer = event.path[i]) !== undefined; i++) {
+			if(pointer.matches(delegate)) {
+				event.currentTarget = pointer;
+
+				return true;
+			}
+
+			if(pointer === event.currentTarget) {
+				break;
+			}
+		}
+
+		return false;
 	}
 
 	return modules['base'].extend({
@@ -585,34 +602,23 @@
 			for(; (event = events[i]) !== undefined; i++) {
 				var id       = event + '-' + uuid,
 					listener = function(event) {
-						var uuid = event._quid || (event._quid = generateUuid()),
-							delegateTo;
+						var delegateTo;
 
-						if(!storage[uuid]) {
-							storage[uuid] = pool && pool.obtain(event) || modules['dom/event'].create(event);
-						}
+						event       = pool && pool.obtain(event) || modules['dom/event'].create(event);
+						delegateTo  = event.delegate;
+						event._quid = generateUuid();
 
-						event      = storage[uuid];
-						delegateTo = event.delegate;
-
-						window.clearTimeout(event._timeout);
-
-						if(!delegate || event.target.matches(delegate)) {
-							fn.call(event.target, event, event.originalEvent.detail);
+						if(!delegate || matchesDelegate(event, delegate)) {
+							fn.call(event.currentTarget, event, event.originalEvent.detail);
 						}
 
 						if(delegateTo) {
 							delete event.delegate;
 
-							emitEvent.call(self, delegateTo, null, event._quid);
+							emitEvent.call(self, delegateTo);
 						}
 
-						event._timeout = window.setTimeout(function() {
-							delete storage[uuid];
-							delete event._timeout;
-
-							event.dispose && event.dispose();
-						}, 5000);
+						event.dispose && event.dispose();
 					};
 
 				listener.type      = event;
