@@ -31,8 +31,9 @@
 
 	var hooks = {
 			general: {
-				properties: 'type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which'.split(' '),
+				properties: 'type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which path'.split(' '),
 				process:    function(event, originalEvent) {
+					var pointer;
 					event.originalEvent = originalEvent;
 					event.metaKey       = (originalEvent.metaKey && originalEvent.metaKey !== false) ? true : false;
 
@@ -43,11 +44,22 @@
 					if(event.target.nodeType === 3) {
 						event.target = event.target.parentNode;
 					}
+
+					if(!event.path) {
+						event.path = [];
+						pointer    = event.target;
+
+						do {
+							event.path.push(pointer);
+						} while(pointer = pointer.parentNode);
+
+						event.path.push(window);
+					}
 				}
 			},
 			mouse: {
 				regex:      new RegExp('^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop)'),
-				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement relatedTarget which dataTransfer'.split(' '),
+				properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement dataTransfer'.split(' '),
 				process:    function(event, originalEvent) {
 					var pointer, fromElement, which;
 
@@ -73,7 +85,7 @@
 			},
 			key: {
 				regex:      new RegExp('^(?:key)'),
-				properties: 'char charCode key keyCode which'.split(' '),
+				properties: 'char charCode key keyCode'.split(' '),
 				process:    function(event, originalEvent) {
 					if(event.which === null) {
 						event.which = (originalEvent.charCode !== null) ? originalEvent.charCode : originalEvent.keyCode;
