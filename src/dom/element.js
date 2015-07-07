@@ -604,18 +604,21 @@
 					listener = function(event) {
 						var delegateTo;
 
-						event       = pool && pool.obtain(event) || modules['dom/event'].create(event);
-						delegateTo  = event.delegate;
-						event._quid = generateUuid();
+						event = pool && pool.obtain(event) || modules['dom/event'].create(event);
 
-						if(!delegate || matchesDelegate(event, delegate)) {
-							fn.call(event.currentTarget, event, event.originalEvent.detail);
-						}
+						if(!event.isPropagationStopped) {
+							delegateTo  = event.delegate;
+							event._quid = generateUuid();
 
-						if(delegateTo) {
-							delete event.delegate;
+							if(!delegate || matchesDelegate(event, delegate)) {
+								fn.call(event.currentTarget, event, event.originalEvent.detail);
+							}
 
-							emitEvent.call(self, delegateTo);
+							if(delegateTo) {
+								delete event.delegate;
+
+								emitEvent.call(self, delegateTo);
+							}
 						}
 
 						event.dispose && event.dispose();

@@ -44,8 +44,6 @@
 
 				if(useShared === true) {
 					pointer[uuid] = self;
-
-					//console.log(shared);
 				}
 			}
 		},
