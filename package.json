@@ -25,15 +25,32 @@
       "url": "http://www.gnu.org/copyleft/gpl.html"
     }
   ],
+  "filename": "base.js",
+  "autoupdate": {
+    "source": "git",
+    "target": "https://github.com/dlueth/qoopido.js.git",
+    "basePath": "/dist/latest/min",
+    "files": [
+      "*.js"
+    ]
+  },
+  "npmName": "qoopido.js",
   "npmFileMap": [
     {
-      "basePath": "/dist/latest/min/",
+      "basePath": "/dist/latest/min",
       "files": [
         "*.js"
       ]
     }
   ],
-  "keywords": [],
+  "keywords": [
+    "modular",
+    "library",
+    "toolit",
+    "amd",
+    "require",
+    "dry"
+  ],
   "devDependencies": {
     "gulp": "^3.8.8",
     "gulp-bump": "^0.1.11",
