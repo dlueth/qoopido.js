@@ -34,8 +34,10 @@
 				properties: 'type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which path'.split(' '),
 				process:    function(event, originalEvent) {
 					var pointer;
-					event.originalEvent = originalEvent;
-					event.metaKey       = (originalEvent.metaKey && originalEvent.metaKey !== false) ? true : false;
+					event.originalEvent        = originalEvent;
+					event.isDefaultPrevented   = (originalEvent.defaultPrevented) ? true : false;
+					event.isPropagationStopped = (originalEvent.cancelBubble) ? true : false;
+					event.metaKey              = (originalEvent.metaKey && originalEvent.metaKey !== false) ? true : false;
 
 					if(!event.target) {
 						event.target = originalEvent.srcElement || document;
