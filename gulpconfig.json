@@ -1,0 +1,179 @@
+{
+  "tasks": {
+    "bump": {
+      "watch": "package.json",
+      "destination": ""
+    },
+    "dist": {
+      "watch": [
+        "src/**/*.js"
+      ],
+      "destination": "dist/"
+    },
+    "packages": {
+      "destination": "packages/",
+      "base": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js"
+        ],
+        "clean": "packages/qoopido.base*"
+      },
+      "emitter": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/emitter.js"
+        ],
+        "clean": "packages/qoopido.emitter*"
+      },
+      "sense": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/array/indexof",
+          "src/polyfill/window/matchmedia.js",
+          "src/emitter.js",
+          "src/component/sense.js"
+        ],
+        "clean": "packages/qoopido.sense*"
+      },
+      "remux": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/array/indexof",
+          "src/polyfill/window/matchmedia.js",
+          "src/emitter.js",
+          "src/component/sense.js",
+          "src/component/remux.js"
+        ],
+        "clean": "packages/qoopido.remux*"
+      },
+      "emerge": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/support.js",
+          "src/function/merge.js",
+          "src/function/unique/uuid.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js",
+          "src/dom/element/emerge.js"
+        ],
+        "clean": "packages/qoopido.emerge*"
+      },
+      "lazyimage": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/support.js",
+          "src/function/merge.js",
+          "src/function/unique/uuid.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js",
+          "src/dom/element/emerge.js",
+          "src/dom/element/lazyimage.js"
+        ],
+        "clean": "packages/qoopido.lazyimage*"
+      },
+      "shrinkimage": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/function/merge.js",
+          "src/function/unique/string.js",
+          "src/function/unique/uuid.js",
+          "src/proxy.js",
+          "src/support.js",
+          "src/support/capability/datauri.js",
+          "src/support/element/canvas.js",
+          "src/support/element/canvas/todataurl.js",
+          "src/support/element/canvas/todataurl/png.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js",
+          "src/url.js",
+          "src/transport.js",
+          "src/transport/xhr.js",
+          "src/dom/element/shrinkimage.js"
+        ],
+        "clean": "packages/qoopido.shrinkimage*"
+      }
+    }
+  },
+  "strings": {
+    "banner": {
+      "min": [
+        "/*! {{gulp:package.title}} {{gulp:package.version}}, {{gulp:date.year}}-{{gulp:date.month}}-{{gulp:date.day}} | {{gulp:package.homepage}} | (c) {{gulp:date.year}} {{gulp:package.author.name}} */",
+        ""
+      ],
+      "max": [
+        "/*!",
+        "* {{gulp:package.title}}",
+        "*",
+        "* version: {{gulp:package.version}}",
+        "* date:    {{gulp:date.year}}-{{gulp:date.month}}-{{gulp:date.day}}",
+        "* author:  {{gulp:package.author.name}} <{{gulp:package.author.email}}>",
+        "* website: {{gulp:package.homepage}}",
+        "*",
+        "* Copyright (c) {{gulp:date.year}} {{gulp:package.author.name}}",
+        "*/",
+        ""
+      ]
+    }
+  }
+}
