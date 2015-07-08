@@ -490,9 +490,10 @@
 			}
 		},
 		isVisible: function() {
-			var element = this.element;
+			var self    = this,
+				element = self.element;
 
-			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
+			return !((element.offsetWidth <= 0 && element.offsetHeight <= 0) || self.getStyle('visibility') === 'hidden' || self.getStyle('opacity') <= 0);
 		},
 		hasClass: function(name) {
 			return (name) ? (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className) : false;
@@ -614,12 +615,6 @@
 			}
 
 			return self;
-		},
-		hide: function() {
-			return this.setStyle('display', 'none');
-		},
-		show: function() {
-			return this.removeStyle('display');
 		},
 		remove: function() {
 			var self    = this,
