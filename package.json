@@ -28,21 +28,12 @@
   "filename": "base.js",
   "autoupdate": {
     "source": "git",
-    "target": "https://github.com/dlueth/qoopido.js.git",
+    "target": "git://github.com/dlueth/qoopido.js.git",
     "basePath": "/dist/latest/min",
     "files": [
       "*.js"
     ]
   },
-  "npmName": "qoopido.js",
-  "npmFileMap": [
-    {
-      "basePath": "/dist/latest/min",
-      "files": [
-        "*.js"
-      ]
-    }
-  ],
   "keywords": [
     "modular",
     "library",
@@ -52,16 +43,22 @@
     "dry"
   ],
   "devDependencies": {
-    "gulp": "^3.8.8",
-    "gulp-bump": "^0.1.11",
-    "gulp-concat": "^2.3.3",
-    "gulp-header": "^1.0.5",
-    "gulp-jshint": "^1.7.0",
-    "gulp-load-plugins": "^0.6.0",
-    "gulp-plumber": "^0.6.5",
-    "gulp-rename": "^1.2.0",
+    "del": "^1.1.1",
+    "gulp": "^3.8.10",
+    "gulp-bump": "^0.3.1",
+    "gulp-concat": "^2.4.1",
+    "gulp-declare": "^0.3.0",
+    "gulp-define-module": "^0.1.3",
+    "gulp-devtools": "0.0.3",
+    "gulp-frep": "^0.1.3",
+    "gulp-header": "^1.2.2",
+    "gulp-jshint": "^1.9.0",
+    "gulp-less": "^3.0.0",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-plumber": "^1.0.0",
     "gulp-uglify": "^1.0.1",
-    "gulp-zip": "^2.0.1",
-    "jshint-stylish": "^0.4.0"
+    "gulp-util": "^3.0.1",
+    "jshint-stylish": "^2.0.1",
+    "run-sequence": "^1.0.2"
   }
 }
