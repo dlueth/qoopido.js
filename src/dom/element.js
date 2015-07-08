@@ -69,6 +69,7 @@
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
 		hooks            = modules['hook/css'],
+		storage          = {},
 		events           = {
 			custom: {
 				type:   'CustomEvent',
@@ -166,9 +167,17 @@
 
 			element = resolveElement(element);
 
-			self.type      = element.tagName;
-			self.element   = element;
-			self._listener = self._listener || {};
+			if(!element._quid) {
+				element._quid = generateUuid();
+
+				self.type      = element.tagName;
+				self.element   = element;
+				self._listener = {};
+
+				storage[element._quid] = self;
+			} else {
+				self = storage[element._quid];
+			}
 
 			if(typeof attributes === 'object' && attributes !== null) {
 				self.setAttributes(attributes);
@@ -177,6 +186,12 @@
 			if(typeof styles === 'object' && styles !== null) {
 				self.setStyles(styles);
 			}
+
+			if(self !== this) {
+				self.dispose && self.dispose();
+			}
+
+			return self;
 		},
 		_obtain: function(element, attributes, styles) {
 			this._constructor(element, attributes, styles);
