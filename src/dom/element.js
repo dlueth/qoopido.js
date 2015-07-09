@@ -675,7 +675,7 @@
 				listener = function(event) {
 					self.off(((each === true) ? event.type : events), listener);
 
-					fn.call(self, event, event.originalEvent.detail);
+					fn.call(this, event, event.originalEvent.detail);
 				};
 
 			fn._quid = listener._quid = generateUuid();
