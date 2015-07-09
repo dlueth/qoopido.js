@@ -15,7 +15,7 @@
 	'use strict';
 
 	if(!String.prototype.trim) {
-		var regex = new RegExp('^\\s+|\\s+$', 'g');
+		var regex = new RegExp('^[\\s\\uFEFF\\xA0]+|[\\s\\uFEFF\\xA0]+$', 'g');
 
 		String.prototype.trim = function () {
 			return this.replace(regex, '');

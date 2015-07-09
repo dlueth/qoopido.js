@@ -132,11 +132,23 @@ module.exports = gulp;
  * tasks (private)
  **************************************************/
 	gulp.task('bump', function(callback) {
+		var tasks = [ 'dist' ];
+
 		loadPackageFile();
 		preparePatterns();
 		loadConfigFile();
 
-		return sequence('dist', 'package:base', 'package:emitter', 'package:sense', 'package:remux', 'package:emerge', 'package:lazyimage', 'package:shrinkimage', callback);
+		for(key in config.tasks.packages) {
+			if(key === 'destination') {
+				continue;
+			}
+
+			tasks.push('package:' + key);
+		}
+
+		tasks.push(callback);
+
+		return sequence.apply(null, tasks);
 	});
 
 	gulp.task('dist:lint', function() {

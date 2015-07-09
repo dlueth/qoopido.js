@@ -23,6 +23,7 @@
  * @polyfill ../polyfill/element/matches
  * @polyfill ../polyfill/document/queryselector
  * @polyfill ../polyfill/document/queryselectorall
+ * @polyfill ../polyfill/string/trim
  * @optional ../pool/module
  */
 /* jshint loopfunc: true */
@@ -55,6 +56,10 @@
 
 	if(!document.querySelectorAll) {
 		dependencies.push('../polyfill/document/queryselectorall');
+	}
+
+	if(!String.prototype.trim) {
+		dependencies.push('../polyfill/string/trim');
 	}
 
 	window.qoopido.register('dom/element', definition, dependencies);
@@ -163,20 +168,22 @@
 		element:   null,
 		_listener: null,
 		_constructor: function(element, attributes, styles) {
-			var self = this;
+			var self = this,
+				uuid;
 
 			element = resolveElement(element);
+			uuid    = element._quid;
 
-			if(!element._quid) {
-				element._quid = generateUuid();
+			if(!uuid) {
+				uuid = element._quid = generateUuid();
 
 				self.type      = element.tagName;
 				self.element   = element;
 				self._listener = {};
 
-				storage[element._quid] = self;
+				storage[uuid] = self;
 			} else {
-				self = storage[element._quid];
+				self = storage[uuid];
 			}
 
 			if(typeof attributes === 'object' && attributes !== null) {
@@ -433,7 +440,25 @@
 			}
 		},
 		find: function(selector) {
-			return this.element.querySelectorAll(selector);
+			var self = this.element,
+				target, uuid, matches;
+
+			selector = selector.trim();
+
+			if(selector.charAt(0) === '>') {
+				uuid = self._quid;
+
+				self.setAttribute('data-quid', uuid);
+
+				selector = '[data-quid="' + uuid + '"] ' + selector;
+				matches  = self.parentNode.querySelectorAll(selector);
+
+				self.removeAttribute('data-quid');
+			} else {
+				matches = self.querySelectorAll(selector);
+			}
+
+			return matches;
 		},
 		parent: function(selector) {
 			var pointer;
@@ -465,9 +490,10 @@
 			}
 		},
 		isVisible: function() {
-			var element = this.element;
+			var self    = this,
+				element = self.element;
 
-			return !(element.offsetWidth <= 0 && element.offsetHeight <= 0);
+			return !((element.offsetWidth <= 0 && element.offsetHeight <= 0) || self.getStyle('visibility') === 'hidden' || self.getStyle('opacity') <= 0);
 		},
 		hasClass: function(name) {
 			return (name) ? (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className) : false;
@@ -589,12 +615,6 @@
 			}
 
 			return self;
-		},
-		hide: function() {
-			return this.setStyle('display', 'none');
-		},
-		show: function() {
-			return this.removeStyle('display');
 		},
 		remove: function() {
 			var self    = this,
