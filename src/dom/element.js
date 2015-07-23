@@ -69,7 +69,10 @@
 	var stringObject     = 'object',
 		stringString     = 'string',
 		generateUuid     = modules['function/unique/uuid'],
+		head             = document.getElementsByTagName('head')[0],
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
+		previousSibling  = (typeof head.previousElementSibling !== 'undefined') ? function previousSibling() { return this.previousElementSibling; } : function previousSibling() {var element = this; while(element = element.previousSibling) { if(element.nodeType === 1 ) { return element; }}},
+		nextSibling      = (typeof head.nextElementSibling !== 'undefined') ? function nextSibling() { return this.nextElementSibling; } : function nextSibling() {var element = this; while(element = element.nextSibling) { if(element.nodeType === 1 ) { return element; }}},
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
@@ -371,11 +374,9 @@
 				pointer  = element.parentNode.firstChild,
 				siblings = [];
 
-			for(; pointer; pointer = pointer.nextSibling) {
-				if(pointer.nodeType === 1 && pointer !== element) {
-					if(!selector || pointer.matches(selector)) {
-						siblings.push(pointer);
-					}
+			for(; pointer; pointer = nextSibling.call(pointer)) {
+				if(pointer !== element && (!selector || pointer.matches(selector))) {
+					siblings.push(pointer);
 				}
 			}
 
@@ -385,11 +386,9 @@
 			var pointer  = this.element.previousSibling,
 				siblings = [];
 
-			for(; pointer; pointer = pointer.previousSibling) {
-				if(pointer.nodeType === 1) {
-					if(!selector || pointer.matches(selector)) {
-						siblings.push(pointer);
-					}
+			for(; pointer; pointer = previousSibling.call(pointer)) {
+				if(!selector || pointer.matches(selector)) {
+					siblings.push(pointer);
 				}
 			}
 
@@ -399,41 +398,35 @@
 			var pointer  = this.element.nextSibling,
 				siblings = [];
 
-			for(; pointer; pointer = pointer.nextSibling) {
-				if(pointer.nodeType === 1) {
-					if(!selector || pointer.matches(selector)) {
-						siblings.push(pointer);
-					}
+			for(; pointer; pointer = nextSibling.call(pointer)) {
+				if(!selector || pointer.matches(selector)) {
+					siblings.push(pointer);
 				}
 			}
 
 			return siblings;
 		},
 		previous: function(selector) {
-			var pointer;
+			var pointer = previousSibling.call(this.element);
 
 			if(!selector) {
-				return this.element.previousSibling;
+				return pointer;
 			} else {
-				pointer = this.element.previousSibling;
-
-				for(; pointer; pointer = pointer.previousSibling) {
-					if(pointer.nodeType === 1 && pointer.matches(selector)) {
+				for(; pointer; pointer = previousSibling.call(pointer)) {
+					if(pointer.matches(selector)) {
 						return pointer;
 					}
 				}
 			}
 		},
 		next: function(selector) {
-			var pointer;
+			var pointer = nextSibling.call(this.element);
 
 			if(!selector) {
-				return this.element.nextSibling;
+				return pointer;
 			} else {
-				pointer = this.element.nextSibling;
-
-				for(; pointer; pointer = pointer.nextSibling) {
-					if(pointer.nodeType === 1 && pointer.matches(selector)) {
+				for(; pointer; pointer = nextSibling.call(pointer)) {
+					if(pointer.matches(selector)) {
 						return pointer;
 					}
 				}
@@ -441,7 +434,7 @@
 		},
 		find: function(selector) {
 			var self = this.element,
-				target, uuid, matches;
+				uuid, matches;
 
 			selector = selector.trim();
 

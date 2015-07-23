@@ -29,11 +29,11 @@
 		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'],
 		hooks = {
 			general: {
-				get: function(element, property, value) {
-					return getComputedStyle(element, null).getPropertyValue(property);
+				get: function(element, property) {
+					return getComputedStyle(element, null).getPropertyValue(property[0]);
 				},
 				set: function(element, property, value) {
-					element.style[property] = value;
+					element.style[property[1]] = value;
 				}
 			},
 			opacity:
@@ -79,10 +79,10 @@
 		process: function(method, element, property, value) {
 			var hook;
 
-			property = mSupport.getCssProperty(property, element)[1] || null;
+			property = mSupport.getCssProperty(property, element) || null;
 
 			if(property) {
-				return ((hook = this.get(property)) && hook[method] || this.get('general')[method])(element, property, value);
+				return ((hook = this.get(property[1])) && hook[method] || this.get('general')[method])(element, property, value);
 			}
 		}
 	});
