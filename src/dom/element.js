@@ -374,11 +374,9 @@
 				pointer  = element.parentNode.firstChild,
 				siblings = [];
 
-			for(; pointer; pointer = pointer.nextSibling) {
-				if(pointer.nodeType === 1 && pointer !== element) {
-					if(!selector || pointer.matches(selector)) {
-						siblings.push(pointer);
-					}
+			for(; pointer; pointer = nextSibling.call(pointer)) {
+				if(pointer !== element && (!selector || pointer.matches(selector))) {
+					siblings.push(pointer);
 				}
 			}
 
@@ -388,11 +386,9 @@
 			var pointer  = this.element.previousSibling,
 				siblings = [];
 
-			for(; pointer; pointer = pointer.previousSibling) {
-				if(pointer.nodeType === 1) {
-					if(!selector || pointer.matches(selector)) {
-						siblings.push(pointer);
-					}
+			for(; pointer; pointer = previousSibling.call(pointer)) {
+				if(!selector || pointer.matches(selector)) {
+					siblings.push(pointer);
 				}
 			}
 
@@ -402,11 +398,9 @@
 			var pointer  = this.element.nextSibling,
 				siblings = [];
 
-			for(; pointer; pointer = pointer.nextSibling) {
-				if(pointer.nodeType === 1) {
-					if(!selector || pointer.matches(selector)) {
-						siblings.push(pointer);
-					}
+			for(; pointer; pointer = nextSibling.call(pointer)) {
+				if(!selector || pointer.matches(selector)) {
+					siblings.push(pointer);
 				}
 			}
 
