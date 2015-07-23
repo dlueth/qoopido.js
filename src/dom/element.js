@@ -253,7 +253,7 @@
 				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
 
 				for(; (attribute = attributes[i]) !== undefined; i++) {
-					result[attribute] = self.element.getAttributes(attribute);
+					result[attribute] = self.element.getAttribute(attribute);
 				}
 			}
 
