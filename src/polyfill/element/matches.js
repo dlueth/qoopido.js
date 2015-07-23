@@ -1,5 +1,5 @@
 /*
- * Qoopido polyfill/elements/matches
+ * Qoopido polyfill/element/matches
  *
  * Copyright (c) 2014 Dirk Lueth
  *
