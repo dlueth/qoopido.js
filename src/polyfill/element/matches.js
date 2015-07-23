@@ -18,7 +18,7 @@
 		dependencies.push('../document/queryselectorall');
 	}
 
-	window.qoopido.register('polyfill/elements/matches', definition, dependencies);
+	window.qoopido.register('polyfill/element/matches', definition, dependencies);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {
 	'use strict';
 
