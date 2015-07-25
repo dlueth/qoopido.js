@@ -75,6 +75,7 @@
 		nextSibling      = (typeof head.nextElementSibling !== 'undefined') ? function nextSibling() { return this.nextElementSibling; } : function nextSibling() {var element = this; while(element = element.nextSibling) { if(element.nodeType === 1 ) { return element; }}},
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
+		splitList        = new RegExp(' +', 'g'),
 		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
 		hooks            = modules['hook/css'],
 		storage          = {},
@@ -148,6 +149,10 @@
 		return element;
 	}
 
+	function resolveArguments(parameters) {
+		return Array.prototype.concat.apply([], Array.prototype.splice.call(parameters, 0)).join(' ').split(splitList);
+	}
+
 	function matchesDelegate(event, delegate) {
 		var i = 0, pointer;
 
@@ -198,7 +203,7 @@
 			}
 
 			if(self !== this) {
-				self.dispose && self.dispose();
+				this.dispose && this.dispose();
 			}
 
 			return self;
@@ -244,17 +249,14 @@
 				return self.element.getAttribute(attribute);
 			}
 		},
-		getAttributes: function(attributes) {
-			var self   = this,
-				result = {},
+		getAttributes: function() {
+			var self       = this,
+				result     = {},
+				attributes = resolveArguments(arguments),
 				i = 0, attribute;
 
-			if(attributes) {
-				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
-
-				for(; (attribute = attributes[i]) !== undefined; i++) {
-					result[attribute] = self.element.getAttributes(attribute);
-				}
+			for(; (attribute = attributes[i]) !== undefined; i++) {
+				result[attribute] = self.element.getAttribute(attribute);
 			}
 
 			return result;
@@ -289,16 +291,13 @@
 
 			return self;
 		},
-		removeAttributes: function(attributes) {
-			var self = this,
+		removeAttributes: function() {
+			var self       = this,
+				attributes = resolveArguments(arguments),
 				i = 0, attribute;
 
-			if(attributes) {
-				attributes = (typeof attributes === stringString) ? attributes.split(' ') : attributes;
-
-				for(; (attribute = attributes[i]) !== undefined; i++) {
-					self.element.removeAttribute(attribute);
-				}
+			for(; (attribute = attributes[i]) !== undefined; i++) {
+				self.element.removeAttribute(attribute);
 			}
 
 			return self;
@@ -310,17 +309,14 @@
 				return hooks.process('get', self.element, property);
 			}
 		},
-		getStyles: function(properties) {
-			var self   = this,
-				result = {},
+		getStyles: function() {
+			var self       = this,
+				result     = {},
+				properties = resolveArguments(arguments),
 				i = 0, property;
 
-			if(properties) {
-				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
-
-				for(; (property = properties[i]) !== undefined; i++) {
-					result[property] = hooks.process('get', self.element, property);
-				}
+			for(; (property = properties[i]) !== undefined; i++) {
+				result[property] = hooks.process('get', self.element, property);
 			}
 
 			return result;
@@ -355,16 +351,13 @@
 
 			return self;
 		},
-		removeStyles: function(properties) {
-			var self = this,
+		removeStyles: function() {
+			var self       = this,
+				properties = resolveArguments(arguments),
 				i = 0, property;
 
-			if(properties) {
-				properties = (typeof properties === stringString) ? properties.split(' ') : properties;
-
-				for(; (property = properties[i]) !== undefined; i++) {
-					self.setStyle(property, '');
-				}
+			for(; (property = properties[i]) !== undefined; i++) {
+				self.setStyle(property, '');
 			}
 
 			return self;

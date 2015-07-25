@@ -63,9 +63,7 @@
 
 	prototype = modules['dom/element/emerge'].extend({
 		_constructor: function(element, settings) {
-			var self = this;
-
-			prototype._parent._constructor.call(self, element, modules['function/merge']({}, defaults, settings || {}));
+			var self = prototype._parent._constructor.call(this, element, modules['function/merge']({}, defaults, settings || {}));
 
 			self.on(EVENT_EMERGED, function onEmerge(event) {
 				if(queue === 0 || event.data === 1) {

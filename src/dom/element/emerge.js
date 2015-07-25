@@ -125,9 +125,7 @@
 		_state:    null,
 		_priority: null,
 		_constructor: function(element, settings) {
-			var self = this;
-
-			prototype._parent._constructor.call(self, element);
+			var self = prototype._parent._constructor.call(this, element);
 
 			settings = modules['function/merge']({}, defaults, settings || {});
 
@@ -151,6 +149,8 @@
 
 			window.on(DOM_RESIZE, function() { instanceOnResize.call(self); });
 			instanceOnResize.call(self);
+
+			return self;
 		},
 		remove: function() {
 			var self = this;

@@ -47,11 +47,11 @@
 
 					for(var i = 0; i < spliceLength; i++) {
 						var element = elements[i],
-							quid    = element._quid,
+							uuid    = element._puid,
 							dispose = element.dispose;
 
 						element         = self._dispose(element);
-						element._quid   = quid;
+						element._puid   = uuid;
 						element.dispose = dispose;
 
 						self._getPool.call(self, element).push(element);
@@ -100,7 +100,7 @@
 		_initElement: function(element) {
 			var self = this;
 
-			element._quid   = modules['function/unique/uuid']();
+			element._puid   = modules['function/unique/uuid']();
 			element.dispose = function() { self.dispose(element); };
 
 			self.metrics.total++;
@@ -133,7 +133,7 @@
 			var self  = this,
 				queue = self._queue;
 
-			if(!element._quid) {
+			if(!element._puid) {
 				element = self._initElement(element);
 
 				self.metrics.inUse++;

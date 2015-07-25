@@ -26,7 +26,7 @@
 		_destroy: null,
 		_constructor: function(module, options, useShared) {
 			var self    = this,
-				uuid    = module._quid || (module._quid = generateUuid()),
+				uuid    = module._puid || (module._puid = generateUuid()),
 				pointer = useShared && (shared.pool || (shared.pool = {})) && (shared.pool.module || (shared.pool.module = {}));
 
 			if(useShared === true && pointer[uuid]) {
