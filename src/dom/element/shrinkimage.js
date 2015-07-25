@@ -221,11 +221,9 @@
 
 	prototype = modules['dom/element'].extend({
 		_constructor: function(element, settings) {
-			var self = this,
-				foreground, background;
+			var self, foreground, background;
 
-			prototype._parent._constructor.call(self, element);
-
+			self           = prototype._parent._constructor.call(this, element);
 			self._settings = settings = modules['function/merge']({}, defaults, settings);
 
 			foreground = self.getAttribute(settings.attribute);
@@ -238,6 +236,8 @@
 			if(background !== 'none' && regexBackground.test(background)) {
 				processMain.call(self, background, true);
 			}
+
+			return self;
 		},
 		hide: function() {
 			this.setStyles({ visibility: 'hidden', opacity: 0 });
@@ -250,17 +250,18 @@
 	loader = modules['dom/element'].extend({
 		_url:   null,
 		_constructor: function(url, element) {
-			var self = this;
+			var self;
 
 			if(!element) {
 				element = pool && pool.obtain('img') || document.createElement('img');
 			}
 
-			loader._parent._constructor.call(self, element);
-
+			self      = loader._parent._constructor.call(this, element);
 			self._url = url;
 
 			processTransport.call(self, modules['transport/xhr']);
+
+			return self;
 		}
 	});
 
