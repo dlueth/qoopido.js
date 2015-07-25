@@ -203,7 +203,7 @@
 			}
 
 			if(self !== this) {
-				self.dispose && self.dispose();
+				this.dispose && this.dispose();
 			}
 
 			return self;
