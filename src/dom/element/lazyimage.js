@@ -73,6 +73,8 @@
 					load.call(self);
 				}
 			});
+
+			return self;
 		}
 	});
 

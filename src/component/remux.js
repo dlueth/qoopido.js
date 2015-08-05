@@ -72,14 +72,14 @@
 
 	prototype = modules['emitter'].extend({
 		_constructor: function() {
-			var self  = this,
+			var self  = prototype._parent._constructor.call(this),
 				pBase = parseInt(html.getAttribute('data-base'), 10);
-
-			prototype._parent._constructor.call(self);
 
 			if(isNaN(pBase) === false) {
 				base = pBase;
 			}
+
+			return self;
 		},
 		getState: function() {
 			return state;

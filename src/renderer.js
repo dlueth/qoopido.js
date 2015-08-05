@@ -70,9 +70,7 @@
 		paused:    false,
 		_tick:     null,
 		_constructor: function() {
-			var self = this;
-
-			prototype._parent._constructor.call(self);
+			var self = prototype._parent._constructor.call(this);
 
 			timeStart = timeLast = new Date().getTime();
 
@@ -101,6 +99,8 @@
 			qDocument.on(''.concat('visibilitychange ', mSupport.getPrefix()[0], 'visibilitychange'), function() { onVisibilityChange.call(self); });
 
 			onVisibilityChange.call(self);
+
+			return self;
 		}
 	});
 

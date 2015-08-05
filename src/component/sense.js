@@ -42,16 +42,18 @@
 	prototype = modules['emitter'].extend({
 		mql: null,
 		_constructor: function(query) {
-			var self     = this,
+			var self     = prototype._parent._constructor.call(this),
 				mql      = self.mql = queries[query] || (queries[query] = window.matchMedia(query)),
 				listener = function() {
 					onQueryStateChange.call(self);
 				};
 
-			prototype._parent._constructor.call(self);
+
 
 			mql.addListener(listener);
 			window.setTimeout(listener, 0);
+
+			return self;
 		},
 		matches: function() {
 			return this.mql.matches;

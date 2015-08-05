@@ -90,10 +90,8 @@
 		_image:      null,
 		_caption:    null,
 		_constructor: function(element, settings) {
-			var self = this,
+			var self = prototype._parent._constructor.call(this, element, settings),
 				defaultRatio, sources, i = 0, source, caption;
-
-			prototype._parent._constructor.call(self, element, settings);
 
 			defaultRatio = parseFloat(self.getAttribute('data-ratio') || 1);
 			sources      = self.find('[itemprop="source"],[itemprop="contentUrl"]');
@@ -127,6 +125,8 @@
 				});
 
 			storage.push(self);
+
+			return self;
 		}
 	});
 

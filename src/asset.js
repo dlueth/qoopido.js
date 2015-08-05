@@ -83,11 +83,9 @@
 	prototype = modules['emitter'].extend({
 		_uuid: null,
 		_constructor: function(url, id, version) {
-			var self       = this,
+			var self       = prototype._parent._constructor.call(this),
 				uuid       = generateUuid(),
 				properties = lookup[uuid] = { dfd: new DeferedPromise(), url: url };
-
-			prototype._parent._constructor.call(self);
 
 			self._uuid = uuid;
 
@@ -100,6 +98,8 @@
 					value:   '©' + id
 				};
 			}
+
+			return self;
 		},
 		fetch: function() {
 			var self       = this,

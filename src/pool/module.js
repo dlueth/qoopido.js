@@ -32,7 +32,7 @@
 			if(useShared === true && pointer[uuid]) {
 				return pointer[uuid];
 			} else {
-				prototype._parent._constructor.call(self, options);
+				self = prototype._parent._constructor.call(this, options);
 
 				self._module = module;
 
@@ -46,6 +46,8 @@
 					pointer[uuid] = self;
 				}
 			}
+
+			return self;
 		},
 		_dispose: function(element) {
 			return element;

@@ -93,6 +93,8 @@
 			self._variables   = { durationSamples: 0, durationTotal: 0, durationAverage: 0 };
 
 			setInterval(function() { processQueue.call(self); }, self._settings.interval);
+
+			return self;
 		},
 		_initPool: function() {
 			return [];
