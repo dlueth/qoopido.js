@@ -81,39 +81,31 @@ module.exports = gulp;
 				.pipe(plugins.jshint.reporter('jshint-stylish'));
 		});
 
-		gulp.task('package:' + name + ':clean', function(callback) {
-			return del(pointer.clean, callback);
-		});
-
 		gulp.task('package:' + name + ':build', function() {
 			return gulp.src(pointer.watch)
 				.pipe(plugins.plumber({ errorHandler: handleError}))
 				// max
 				.pipe(plugins.uglify({ compress: false, mangle: false, preserveComments: 'none', output: { beautify: true } }))
-				.pipe(plugins.concat('qoopido.' + name + '.' + package.version + '.js'))
+				.pipe(plugins.concat('qoopido.' + name + '.js'))
 				.pipe(plugins.header(config.strings.banner.max.join('\n')))
 				.pipe(plugins.frep(patterns))
 				.pipe(plugins.frep(getDatePatterns()))
 				.pipe(chmod(644))
-				.pipe(gulp.dest(config.tasks.packages.destination))
-				.pipe(plugins.concat('qoopido.' + name + '.latest.js'))
-				.pipe(chmod(644))
-				.pipe(gulp.dest(config.tasks.packages.destination))
+				.pipe(gulp.dest(config.tasks.dist.destination + '/' + package.version + '/max/packages/'))
+				.pipe(gulp.dest(config.tasks.dist.destination + '/latest/max/packages/'))
 				// min
 				.pipe(plugins.uglify({ preserveComments: 'none' }))
-				.pipe(plugins.concat('qoopido.' + name + '.' + package.version + '.min.js'))
+				.pipe(plugins.concat('qoopido.' + name + '.js'))
 				.pipe(plugins.header(config.strings.banner.min.join('\n')))
 				.pipe(plugins.frep(patterns))
 				.pipe(plugins.frep(getDatePatterns()))
 				.pipe(chmod(644))
-				.pipe(gulp.dest(config.tasks.packages.destination))
-				.pipe(plugins.concat('qoopido.' + name + '.latest.min.js'))
-				.pipe(chmod(644))
-				.pipe(gulp.dest(config.tasks.packages.destination));
+				.pipe(gulp.dest(config.tasks.dist.destination + '/' + package.version + '/min/packages/'))
+				.pipe(gulp.dest(config.tasks.dist.destination + '/latest/min/packages/'));
 		});
 
 		gulp.task('package:' + name, function(callback) {
-			return sequence('package:' + name + ':lint', 'package:' + name + ':clean', 'package:' + name + ':build', callback);
+			return sequence('package:' + name + ':lint', 'package:' + name + ':build', callback);
 		});
 	}
 
