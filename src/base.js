@@ -22,7 +22,7 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
-;(function(definition, global, navigator, window, document, undefined) {
+;(function(definition, navigator, global, document, undefined) {
 	'use strict';
 
 	function register(id, definition, dependencies, callback) {
@@ -55,7 +55,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, shared, namespace, navigator, window, document, undefined);
+			modules[id] = definition(modules, shared, namespace, navigator, global, document, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -79,13 +79,16 @@
 		});
 	}
 
-	var qoopido           = global.qoopido  || (global.qoopido = { register: register, registerSingleton: registerSingleton }),
+	var qoopido           = global.qoopido  || (global.qoopido = {}),
 		shared            = qoopido.shared  || (qoopido.shared = {}),
 		modules           = qoopido.modules || (qoopido.modules = {}),
 		dependencies      = [],
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
 		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
+
+	qoopido.register          = register;
+	qoopido.registerSingleton = registerSingleton;
 
 	function canonicalize(path) {
 		var collapsed;
@@ -158,5 +161,5 @@
 			}
 		};
 	},
-	this, navigator, window, document
+	navigator, global, document
 ));
