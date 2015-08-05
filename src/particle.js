@@ -30,13 +30,15 @@
 		velocity:      null,
 		acceleration:  null,
 		_constructor: function(x, y) {
+			var self = prototype._parent._constructor.call(this);
+
 			this._velocity     = poolVector.obtain(0, 0);
 			this._acceleration = poolVector.obtain(0, 0);
 			this.position      = poolVector.obtain(x, y);
 			this.velocity      = poolVector.obtain(0, 0);
 			this.acceleration  = [];
 
-			prototype._parent._constructor.call(this);
+			return self;
 		},
 		_obtain: function(x, y) {
 			this.position.x          = x || 0;

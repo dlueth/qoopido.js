@@ -33,6 +33,8 @@
 
 			self._properties = [];
 			self._obtain(event);
+
+			return self;
 		},
 		_obtain: function(event) {
 			hooks.process(this, event);

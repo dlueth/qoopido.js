@@ -41,13 +41,13 @@
 
 	prototype = modules['dom/element/emerge'].extend({
 		_constructor: function(element, settings) {
-			var self   = this,
+			var self   = prototype._parent._constructor.call(this, element, settings),
 				object = jQuery(element);
-
-			prototype._parent._constructor.call(self, element, settings);
 
 			self.on(EVENT_EMERGED, function(event) { object.trigger(JQUERY_EMERGED, { priority: event.data }); });
 			self.on(EVENT_DEMERGED, function() { object.trigger(JQUERY_DEMERGED); });
+
+			return self;
 		}
 	});
 

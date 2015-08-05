@@ -221,9 +221,9 @@
 
 	prototype = modules['dom/element'].extend({
 		_constructor: function(element, settings) {
-			var self, foreground, background;
+			var self = prototype._parent._constructor.call(this, element),
+				foreground, background;
 
-			self           = prototype._parent._constructor.call(this, element);
 			self._settings = settings = modules['function/merge']({}, defaults, settings);
 
 			foreground = self.getAttribute(settings.attribute);
