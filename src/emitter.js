@@ -53,6 +53,8 @@
 					self[method] = map(self, method);
 				}
 			}
+
+			return self;
 		},
 		on: function(events, fn) {
 			var self = this,

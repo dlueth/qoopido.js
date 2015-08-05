@@ -93,6 +93,8 @@
 			if(typeof styles === 'object' && styles !== null) {
 				self.setStyles(styles);
 			}
+
+			return self;
 		},
 		get: function(index) {
 			return this.elements[index] || null;

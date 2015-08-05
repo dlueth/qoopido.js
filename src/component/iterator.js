@@ -27,9 +27,7 @@
 		_settings: null,
 		_state:    null,
 		_constructor: function(data, settings) {
-			var self = this;
-
-			prototype._parent._constructor.call(self);
+			var self = prototype._parent._constructor.call(this);
 
 			self._settings = modules['function/merge']({}, defaultSettings, settings || {});
 			self._state    = { length: null, index: null, item: null, data: null };
@@ -37,6 +35,8 @@
 			if(data !== undefined && data !== null) {
 				self.setData(data);
 			}
+
+			return self;
 		},
 		getState: function() {
 			var self = this;

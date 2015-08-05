@@ -56,17 +56,6 @@
 				delete element[property];
 			}
 
-			/*
-			This code does work but seems suboptimal
-			for(property in element) {
-				if(element.hasOwnProperty(property)) {
-					delete element[property];
-				}
-			}
-
-			element[objectPrototype] = model;
-			*/
-
 			return element;
 		},
 		_obtain: function() {

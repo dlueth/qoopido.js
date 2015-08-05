@@ -45,15 +45,15 @@
 
 	prototype = modules['dom/element/shrinkimage'].extend({
 		_constructor: function(element, settings) {
-			var self   = this,
+			var self   = prototype._parent._constructor.call(this, element, settings),
 				object = jQuery(element);
-
-			prototype._parent._constructor.call(self, element, settings);
 
 			self.on(EVENT_QUEUED, function() { object.trigger(JQUERY_QUEUED); });
 			self.on(EVENT_CACHED, function() { object.trigger(JQUERY_CACHED); });
 			self.on(EVENT_LOADED, function() { object.trigger(JQUERY_LOADED); });
 			self.on(EVENT_FAILED, function() { object.trigger(JQUERY_FAILED); });
+
+			return self;
 		}
 	});
 
