@@ -161,5 +161,5 @@
 			}
 		};
 	},
-	navigator, global, document
+	navigator, this, document
 ));
