@@ -12,6 +12,8 @@
  * @require ../../support
  */
 
+/* global DocumentTouch */
+
 ;(function(definition) {
 	window.qoopido.register('support/capability/touch', definition, [ '../../support' ]);
 }(function(modules, shared, namespace, navigator, window, document, undefined) {

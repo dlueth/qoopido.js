@@ -22,6 +22,8 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
+/* global console, module, define */
+
 ;(function(definition, navigator, global, document, undefined) {
 	'use strict';
 
