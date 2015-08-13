@@ -3,7 +3,7 @@
  *
  * Provides facilities for responsive layouts solely based on REM units and overall proportionally scaling
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php

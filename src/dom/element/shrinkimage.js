@@ -7,7 +7,7 @@
  * Author:  Dirk Lueth <info@qoopido.com>
  * Website: https://github.com/dLueth/qoopido.shrinkimage
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Licensed under the MIT and GPL license.
  *  - http://www.opensource.org/licenses/mit-license.php

@@ -4,7 +4,7 @@
  * Borrowed from:
  * https://github.com/jakearchibald/es6-promise
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
