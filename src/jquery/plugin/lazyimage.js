@@ -14,15 +14,15 @@
  * @require ../../dom/element/lazyimage
  * @external jQuery
  */
-;(function(definition) {
-	window.qoopido.register('jquery/plugins/lazyimage', definition, [ '../../dom/element/lazyimage', 'jquery' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('jquery/plugins/lazyimage', definition, [ '../../dom/element/lazyimage', 'jquery' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var
 	// variables
-		jQuery = modules['jquery'] || window.jQuery,
-		name   = namespace.pop(),
+		jQuery = modules['jquery'] || global.jQuery,
+		name   = 'lazyimage',
 
 	// classes
 		prototype,
@@ -52,4 +52,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

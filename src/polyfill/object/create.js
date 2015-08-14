@@ -28,7 +28,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/create'] = definition();
 	}
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		if(!Object.create) {
@@ -60,5 +60,5 @@
 
 		return Object.create;
 	},
-	window.qoopido = window.qoopido || {}
+	this.qoopido = this.qoopido || {}
 ));

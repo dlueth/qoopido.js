@@ -12,12 +12,12 @@
  * @require ../../support
  */
 
-;(function(definition) {
-	window.qoopido.register('support/css/transform', definition, [ '../../support' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/css/transform', definition, [ '../../support' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/transform', function(deferred) {
 		(modules['support'].supportsCssProperty('transform')) ? deferred.resolve(modules['support'].getCssProperty('transform')) : deferred.reject();
 	});
-}));
+}, this));

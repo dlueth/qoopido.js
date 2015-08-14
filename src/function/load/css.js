@@ -11,12 +11,13 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('function/load/css', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('function/load/css', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var storage = {};
+	var document = global.document,
+		storage  = {};
 
 	return function load(url, media) {
 		media = media || 'all';
@@ -35,11 +36,11 @@
 
 			target.parentNode.insertBefore(link, target);
 
-			window.setTimeout(function() {
+			global.setTimeout(function() {
 				link.media = media;
 			});
 		}
 
 		return link;
 	};
-}, window, document));
+}, this));

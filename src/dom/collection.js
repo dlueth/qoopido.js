@@ -15,12 +15,13 @@
  * @require ./element
  * @optional ../pool/module
  */
-;(function(definition) {
-	window.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var mDomElement = modules['dom/element'],
+	var document    = global.document,
+		mDomElement = modules['dom/element'],
 		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement, null, true) || null;
 
 	function buildFragment() {
@@ -231,4 +232,4 @@
 		}
 	});
 
-}));
+}, this));

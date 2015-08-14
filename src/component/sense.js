@@ -14,15 +14,15 @@
  * @require ../emitter
  * @polyfill ../polyfill/window/matchmedia
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [ '../emitter' ];
 
-	if(!window.matchMedia) {
+	if(!global.matchMedia) {
 		dependencies.push('../polyfill/window/matchmedia');
 	}
 
-	window.qoopido.register('component/sense', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('component/sense', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -43,7 +43,7 @@
 		mql: null,
 		_constructor: function(query) {
 			var self     = prototype._parent._constructor.call(this),
-				mql      = self.mql = queries[query] || (queries[query] = window.matchMedia(query)),
+				mql      = self.mql = queries[query] || (queries[query] = global.matchMedia(query)),
 				listener = function() {
 					onQueryStateChange.call(self);
 				};
@@ -51,7 +51,7 @@
 
 
 			mql.addListener(listener);
-			window.setTimeout(listener, 0);
+			global.setTimeout(listener, 0);
 
 			return self;
 		},
@@ -61,4 +61,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

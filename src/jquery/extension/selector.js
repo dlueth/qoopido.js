@@ -13,13 +13,13 @@
  *
  * @external jQuery
  */
-;(function(definition) {
-	window.qoopido.register('jquery/extension/selector', definition, [ 'jquery' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('jquery/extension/selector', definition, [ 'jquery' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 	
-	var jQuery    = modules['jquery'] || window.jQuery,
-		$window   = jQuery(window),
+	var jQuery    = modules['jquery'] || global.jQuery,
+		$window   = jQuery(global),
 		$document = jQuery(document);
 
 	jQuery.extend(jQuery.expr[':'], {
@@ -68,7 +68,7 @@
 				return false;
 			}
 
-			return el.hostname && el.hostname !== window.location.hostname;
+			return el.hostname && el.hostname !== global.location.hostname;
 		},
 		inView: function(el) {
 			el = jQuery(el);
@@ -113,4 +113,4 @@
 	});
 
 	return jQuery;
-}));
+}, this));

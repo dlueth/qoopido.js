@@ -14,16 +14,18 @@
  *
  * @polyfill ./queryselectorall
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [];
 
 	if(!document.querySelectorAll) {
 		dependencies.push('./queryselectorall');
 	}
 
-	window.qoopido.register('polyfill/document/queryselector', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('polyfill/document/queryselector', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
+
+	var document = global.document;
 
 	if(!document.querySelector) {
 		document.querySelector = function(selector) {
@@ -34,4 +36,4 @@
 	}
 
 	return document.querySelector;
-}));
+}, this));

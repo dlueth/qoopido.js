@@ -27,22 +27,22 @@
  * @optional ../pool/module
  */
 /* jshint loopfunc: true */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [ '../base', '../function/unique/uuid', '../hook/css', './event' ];
 
-	if(!window.CustomEvent) {
+	if(!global.CustomEvent) {
 		dependencies.push('../polyfill/window/customevent');
 	}
 
-	if(!window.addEventListener) {
+	if(!global.addEventListener) {
 		dependencies.push('../polyfill/window/addeventlistener');
 	}
 
-	if(!window.removeEventListener) {
+	if(!global.removeEventListener) {
 		dependencies.push('../polyfill/window/removeeventlistener');
 	}
 
-	if(!window.dispatchEvent) {
+	if(!global.dispatchEvent) {
 		dependencies.push('../polyfill/window/dispatchevent');
 	}
 
@@ -62,11 +62,12 @@
 		dependencies.push('../polyfill/string/trim');
 	}
 
-	window.qoopido.register('dom/element', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('dom/element', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var stringObject     = 'object',
+	var document         = global.document,
+		stringObject     = 'object',
 		stringString     = 'string',
 		generateUuid     = modules['function/unique/uuid'],
 		head             = document.getElementsByTagName('head')[0],
@@ -703,4 +704,4 @@
 			return self;
 		}
 	});
-}));
+}, this));

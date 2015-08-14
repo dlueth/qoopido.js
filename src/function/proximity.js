@@ -11,9 +11,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('function/proximity', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('function/proximity', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return function proximity(source, target) {
@@ -37,4 +37,4 @@
 
 		return distance;
 	};
-}));
+}, this));

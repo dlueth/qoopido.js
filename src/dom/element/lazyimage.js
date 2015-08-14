@@ -18,9 +18,9 @@
  * @require ./emerge
  * @require ../../function/merge
  */
-;(function(definition) {
-	window.qoopido.register('dom/element/lazyimage', definition, [ './emerge', '../../function/merge' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('dom/element/lazyimage', definition, [ './emerge', '../../function/merge' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var
@@ -79,4 +79,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

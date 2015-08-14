@@ -15,19 +15,19 @@
  * @polyfill ../array/indexof
  */
 /* global Window, HTMLDocument */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [  ];
 
 	if(!Array.prototype.indexOf) {
 		dependencies.push('../array/indexof');
 	}
 
-	window.qoopido.register('polyfill/window/removeeventlistener', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('polyfill/window/removeeventlistener', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	if(!window.removeEventListener) {
-		window.removeEventListener = Window.prototype.removeEventListener = HTMLDocument.prototype.removeEventListener = Element.prototype.removeEventListener = function removeEventListener(type, listener) {
+	if(!global.removeEventListener) {
+		global.removeEventListener = Window.prototype.removeEventListener = HTMLDocument.prototype.removeEventListener = Element.prototype.removeEventListener = function removeEventListener(type, listener) {
 			var element = this;
 
 			if(element._events && element._events[type] && element._events[type].list) {
@@ -44,5 +44,5 @@
 		};
 	}
 
-	return window.removeEventListener;
-}));
+	return global.removeEventListener;
+}, this));

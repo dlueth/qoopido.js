@@ -15,9 +15,9 @@
  * @require ../function/merge
  */
 
-;(function(definition) {
-	window.qoopido.register('component/iterator', definition, [ '../emitter', '../function/merge' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('component/iterator', definition, [ '../emitter', '../function/merge' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -122,4 +122,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

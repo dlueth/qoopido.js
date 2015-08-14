@@ -14,9 +14,9 @@
  * @require ../base
  * @optional ./pool/object
  */
-;(function(definition) {
-	window.qoopido.register('vector/2d', definition, [ '../base' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('vector/2d', definition, [ '../base' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -96,4 +96,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

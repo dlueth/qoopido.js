@@ -12,14 +12,16 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('polyfill/document/queryselectorall', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/document/queryselectorall', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
+
+	var document = global.document;
 
 	if(!document.querySelectorAll) {
 		document.querySelectorAll = function(selector) {
-			var target   = window.document.getElementsByTagName('script')[0],
+			var target   = document.getElementsByTagName('script')[0],
 				style    = document.createElement('style'),
 				elements = [],
 				element;
@@ -29,7 +31,7 @@
 
 			style.styleSheet.cssText = selector + '{x-qsa:expression(document._qsa && document._qsa.push(this))}';
 
-			window.scrollBy(0, 0);
+			global.scrollBy(0, 0);
 			style.parentNode.removeChild(style);
 
 			while(document._qsa.length) {
@@ -50,4 +52,4 @@
 	}
 
 	return document.querySelectorAll;
-}));
+}, this));

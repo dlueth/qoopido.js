@@ -20,7 +20,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/defineproperty'] = definition();
 	}
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {
@@ -54,5 +54,5 @@
 
 		return Object.defineProperty;
 	},
-	window.qoopido = window.qoopido || {}
+	this.qoopido = this.qoopido || {}
 ));

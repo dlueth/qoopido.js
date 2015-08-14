@@ -25,18 +25,18 @@
  * @require ../../transport/xhr
  * @optional ./pool/dom
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr' ];
 
-	window.qoopido.register('dom/element/shrinkimage', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('dom/element/shrinkimage', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var
 	// properties
-		JSON            = window.JSON,
-		name            = namespace.pop(),
-		defaults        = { attribute: 'data-' + name, quality: 80, debug: false },
+		document        = global.document,
+		JSON            = global.JSON,
+		defaults        = { attribute: 'data-shrinkimage', quality: 80, debug: false },
 		pool            = shared.pool && shared.pool.dom || null,
 		lookup          = {},
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
@@ -266,4 +266,4 @@
 	});
 
 	return prototype;
-}, window));
+}, this));

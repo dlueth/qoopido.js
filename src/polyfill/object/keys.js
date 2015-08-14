@@ -12,9 +12,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('polyfill/object/keys', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/object/keys', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	if(!Object.keys) {
@@ -37,4 +37,4 @@
 	}
 
 	return Object.keys;
-}));
+}, this));

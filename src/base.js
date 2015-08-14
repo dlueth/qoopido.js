@@ -24,7 +24,7 @@
 
 /* global console, module, define */
 
-;(function(definition, navigator, global, document, undefined) {
+;(function(definition, global, undefined) {
 	'use strict';
 
 	function register(id, definition, dependencies, callback) {
@@ -57,7 +57,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, shared, namespace, navigator, global, document, undefined);
+			modules[id] = definition(modules, shared, global, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -115,7 +115,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {
@@ -163,5 +163,5 @@
 			}
 		};
 	},
-	navigator, this, document
+	this
 ));

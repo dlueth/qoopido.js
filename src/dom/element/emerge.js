@@ -15,15 +15,17 @@
  * @require ../../function/merge
  * @require ../../function/unique/uuid
  */
-;(function(definition) {
-	window.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var
 	// variables
 		defaults        = { interval: 50, threshold: 'auto', recur: true, auto: 1, visibility: true },
-		documentElement = window.document.documentElement,
+		document        = global.document,
+		documentElement = document.documentElement,
+		mGlobal         = modules['dom/element'].create(global),
 		viewport        = {},
 		intervals       = {},
 		elements        = {},
@@ -35,8 +37,6 @@
 		EVENT_EMERGED  = 'emerged',
 		EVENT_DEMERGED = 'demerged',
 		DOM_RESIZE     = 'resize orientationchange';
-
-	window = modules['dom/element'].create(window);
 
 	if(document.compatMode !== 'CSS1Compat') {
 		throw('[Qoopido.js] Not in standards mode');
@@ -53,7 +53,7 @@
 		}
 
 		if(pointer.length === 0) {
-			window.element.clearInterval(intervals[interval]);
+			global.clearInterval(intervals[interval]);
 
 			delete intervals[interval];
 		}
@@ -62,8 +62,8 @@
 	function globalOnResize() {
 		viewport.left   = 0;
 		viewport.top    = 0;
-		viewport.right  = window.innerWidth || documentElement.clientWidth;
-		viewport.bottom = window.innerHeight || documentElement.clientHeight;
+		viewport.right  = global.innerWidth || documentElement.clientWidth;
+		viewport.bottom = global.innerHeight || documentElement.clientHeight;
 	}
 
 	function instanceOnResize() {
@@ -135,7 +135,7 @@
 
 			if(intervals[settings.interval] === undefined) {
 				elements[settings.interval]  = elements[settings.interval] || { length: 0 };
-				intervals[settings.interval] = window.element.setInterval(function() { tick(settings.interval); }, settings.interval);
+				intervals[settings.interval] = global.setInterval(function() { tick(settings.interval); }, settings.interval);
 			}
 
 			self._quid     = modules['function/unique/uuid']();
@@ -147,7 +147,7 @@
 			elements[settings.interval][self._quid] = self;
 			elements[settings.interval].length++;
 
-			window.on(DOM_RESIZE, function() { instanceOnResize.call(self); });
+			mGlobal.on(DOM_RESIZE, function() { instanceOnResize.call(self); });
 			instanceOnResize.call(self);
 
 			return self;
@@ -160,8 +160,8 @@
 		}
 	});
 
-	window.on(DOM_RESIZE, globalOnResize);
+	mGlobal.on(DOM_RESIZE, globalOnResize);
 	globalOnResize();
 
 	return prototype;
-}));
+}, this));

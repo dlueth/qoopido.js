@@ -13,10 +13,12 @@
  *
  * @require ../base
  */
-;(function(definition) {
-	window.qoopido.registerSingleton('hook/event', definition, [ '../base' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.registerSingleton('hook/event', definition, [ '../base' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
+
+	var document = global.document;
 
 	function transferProperties(event, originalEvent, properties) {
 		var i = 0,
@@ -55,7 +57,7 @@
 							event.path.push(pointer);
 						} while(pointer = pointer.parentNode);
 
-						event.path.push(window);
+						event.path.push(global);
 					}
 				}
 			},
@@ -134,4 +136,4 @@
 			}
 		}
 	});
-}));
+}, this));

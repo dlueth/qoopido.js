@@ -14,9 +14,9 @@
  * @require ../pool
  * @require ../function/unique/uuid
  */
-;(function(definition) {
-	window.qoopido.register('pool/module', definition, [ '../pool', '../function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('pool/module', definition, [ '../pool', '../function/unique/uuid' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var generateUuid = modules['function/unique/uuid'];
@@ -58,4 +58,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

@@ -9,9 +9,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('polyfill/string/ucfirst', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/string/ucfirst', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	if(!String.prototype.ucfirst) {
@@ -23,4 +23,4 @@
 	}
 
 	return String.prototype.ucfirst;
-}));
+}, this));

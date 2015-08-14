@@ -14,15 +14,15 @@
  *
  * @polyfill ../polyfill/window/promise
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [];
 
-	if(!window.Promise) {
+	if(!global.Promise) {
 		dependencies.push('../polyfill/window/promise');
 	}
 
-	window.qoopido.register('promise/all', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('promise/all', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return function all(promises) {
@@ -30,7 +30,7 @@
 			throw new TypeError('You must pass an array to all.');
 		}
 
-		return new window.Promise(function(resolve, reject) {
+		return new global.Promise(function(resolve, reject) {
 			var results   = [],
 				remaining = promises.length,
 				i = 0, promise;
@@ -62,4 +62,4 @@
 			}
 		});
 	};
-}));
+}, this));

@@ -15,20 +15,21 @@
  * @require ./support
  * @require ./dom/element
  */
-;(function(definition) {
-	window.qoopido.registerSingleton('renderer', definition, [ './emitter', './support', './dom/element' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.registerSingleton('renderer', definition, [ './emitter', './support', './dom/element' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	function requestAnimationFrameFallback(callback) {
-		return window.setTimeout(callback, targetInterval);
+		return global.setTimeout(callback, targetInterval);
 	}
 
 	var prototype,
+		document              = global.document,
 		mSupport              = modules['support'],
 		qDocument             = modules['dom/element'].create(document),
-		requestAnimationFrame = window[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback,
-		cancelAnimationFrame  = window[mSupport.getMethod('cancelAnimationFrame')] || clearTimeout,
+		requestAnimationFrame = global[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback,
+		cancelAnimationFrame  = global[mSupport.getMethod('cancelAnimationFrame')] || clearTimeout,
 		visibilityProperty    = mSupport.getProperty('hidden', document),
 		targetFramerate       = 60,
 		targetInterval        = 1000 / targetFramerate,
@@ -105,4 +106,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

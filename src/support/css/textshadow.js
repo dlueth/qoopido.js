@@ -12,12 +12,12 @@
  * @require ../../support
  */
 
-;(function(definition) {
-	window.qoopido.register('support/css/textshadow', definition, [ '../../support' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/css/textshadow', definition, [ '../../support' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/textshadow', function(deferred) {
 		(modules['support'].supportsCssProperty('text-shadow')) ? deferred.resolve(modules['support'].getCssProperty('text-shadow')) : deferred.reject();
 	});
-}));
+}, this));
