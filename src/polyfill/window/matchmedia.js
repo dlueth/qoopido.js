@@ -4,7 +4,7 @@
  * Borrowed from:
  * https://github.com/weblinc/media-match
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -17,10 +17,10 @@
  * 
  * @browsers Chrome < 9, Firefox < 6, Internet Explorer < 10, Opera < 12.1, Safari < 5.1
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [  ];
 
-	if(!window.getComputedStyle) {
+	if(!global.getComputedStyle) {
 		dependencies.push('polyfill/window/getcomputedstyle');
 	}
 
@@ -28,11 +28,12 @@
 		dependencies.push('../array/indexof');
 	}
 
-	window.qoopido.register('polyfill/window/matchmedia', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('polyfill/window/matchmedia', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var identifier = 'qoopidoPolyfillWindowMatchmedia',
+		document   = global.document,
 		viewport   = document.documentElement,
 		queries    = [],
 		lookup     = {},
@@ -44,12 +45,12 @@
 		timeout;
 
 	function detectFeatures() {
-		var ww = window.innerWidth || viewport.clientWidth,
-			wh = window.innerHeight || viewport.clientHeight,
-			dw = window.screen.width,
-			dh = window.screen.height,
-			cd = window.screen.colorDepth,
-			pr = window.devicePixelRatio;
+		var ww = global.innerWidth || viewport.clientWidth,
+			wh = global.innerHeight || viewport.clientHeight,
+			dw = global.screen.width,
+			dh = global.screen.height,
+			cd = global.screen.colorDepth,
+			pr = global.devicePixelRatio;
 
 		features['width']               = ww;
 		features['height']              = wh;
@@ -60,7 +61,7 @@
 		features['device-height']       = dh;
 		features['device-width']        = dw;
 		features['device-pixel-ratio']  = pr || 1;
-		features['resolution']          = (pr && pr * 96) || window.screen.deviceXDPI || 96;
+		features['resolution']          = (pr && pr * 96) || global.screen.deviceXDPI || 96;
 		features['orientation']         = (wh >= ww ? 'portrait' : 'landscape');
 	}
 
@@ -226,7 +227,7 @@
 
 					if(query.listeners) {
 						for(; (listener = query.listeners[j]) !== undefined; j++) {
-							listener.call(window, query.mql);
+							listener.call(global, query.mql);
 						}
 					}
 				}
@@ -235,18 +236,18 @@
 	}
 
 	function delayOnResize() {
-		window.clearTimeout(timeout);
+		global.clearTimeout(timeout);
 
-		timeout = window.setTimeout(delayedOnResize, 10);
+		timeout = global.setTimeout(delayedOnResize, 10);
 	}
 
 	function initialize() {
-		var target      = window.document.getElementsByTagName('script')[0],
+		var target      = document.getElementsByTagName('script')[0],
 			style       = document.createElement('style'),
 			types       = ['screen', 'print', 'speech', 'projection', 'handheld', 'tv', 'braille', 'embossed', 'tty'],
 			cssText     = '#' + identifier + ' { position: relative; z-index: 0; }',
 			prefix      = '',
-			addListener = window.addEventListener || (prefix = 'on') && window.attachEvent,
+			addListener = global.addEventListener || (prefix = 'on') && global.attachEvent,
 			i           = 0,
 			pointer;
 
@@ -265,7 +266,7 @@
 			style.textContent = cssText;
 		}
 
-		features.type = types[((window.getComputedStyle || modules['polyfill/window/getcomputedstyle'])(style).zIndex * 1) || 0];
+		features.type = types[((global.getComputedStyle || modules['polyfill/window/getcomputedstyle'])(style).zIndex * 1) || 0];
 
 		style.parentNode.removeChild(style);
 
@@ -273,11 +274,11 @@
 		addListener(prefix + 'orientationchange', delayOnResize);
 	}
 
-	if(!window.matchMedia) {
+	if(!global.matchMedia) {
 		initialize();
 		detectFeatures();
 
-		window.matchMedia = function(query) {
+		global.matchMedia = function(query) {
 			var index = lookup[query] || false;
 
 			if(index === false) {
@@ -288,5 +289,5 @@
 		};
 	}
 
-	return window.matchMedia;
-}));
+	return global.matchMedia;
+}, this));

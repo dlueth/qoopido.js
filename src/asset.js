@@ -3,7 +3,7 @@
  *
  * Asset loading via XHR with localstorage caching
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -16,12 +16,13 @@
  * @require ./promise/defer
  * @require ./function/unique/uuid
  */
-;(function(definition) {
-	window.qoopido.register('asset', definition, [ './emitter', './transport/xhr', './promise/defer', './function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('asset', definition, [ './emitter', './transport/xhr', './promise/defer', './function/unique/uuid' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
+		document       = global.document,
 		lookup         = {},
 		xhrTransport   = modules['transport/xhr'],
 		xhrOptions     = { cache: true },
@@ -143,4 +144,4 @@
 	});
 
 	return prototype;
-}, window, document));
+}, this));

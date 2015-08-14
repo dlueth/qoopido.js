@@ -3,7 +3,7 @@
  *
  * jQuery function to prefetch resources
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -13,12 +13,12 @@
  *
  * @external jQuery
  */
-;(function(definition) {
-	window.qoopido.register('jquery/function/prefetch', definition, [ 'jquery' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('jquery/function/prefetch', definition, [ 'jquery' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var jQuery = modules['jquery'] || window.jQuery,
+	var jQuery = modules['jquery'] || global.jQuery,
 		$head  = jQuery('head'),
 		lookup = [];
 
@@ -34,4 +34,4 @@
 	};
 
 	return jQuery;
-}));
+}, this));

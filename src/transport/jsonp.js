@@ -3,7 +3,7 @@
  *
  * Provides basic JSONP functionality
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -19,12 +19,13 @@
  * @require ../promise/defer
  * @optional ./pool/dom
  */
-;(function(definition) {
-	window.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../promise/defer' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../promise/defer' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
+		document        = global.document,
 		DeferredPromise = modules['promise/defer'],
 		pool            = shared.pool && shared.pool.dom,
 		head            = document.getElementsByTagName('head')[0];
@@ -40,11 +41,11 @@
 		url     = (settings.cache === false) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', ''.concat('_=', new Date().getTime().toString())) : url;
 		url     = (content) ? ''.concat(url, (url.indexOf('?') > -1) ? '&' : '?', content) : url;
 
-		window[self.id] = function(data) {
+		global[self.id] = function(data) {
 			try {
-				delete window[self.id];
+				delete global[self.id];
 			} catch (exception) {
-				window[self.id] = null;
+				global[self.id] = null;
 			}
 
 			clear.call(self);
@@ -132,4 +133,4 @@
 	});
 
 	return prototype;
-}, window, document));
+}, this));

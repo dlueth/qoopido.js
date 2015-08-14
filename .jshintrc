@@ -14,12 +14,5 @@
 	"expr":true,
 	"validthis":true,
 	"scripturl":true,
-	"globals":{
-		"module": true,
-		"define": true,
-		"console": true,
-		"ActiveXObject": true,
-		"jQuery": false,
-	  	"DocumentTouch": true
-	}
+	"globals":{}
 }

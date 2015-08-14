@@ -1,7 +1,7 @@
 /*
  * Qoopido polyfill/object/getprototypeof
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -15,7 +15,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/getprototypeof'] = definition();
 	}
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		if(!Object.getPrototypeOf) {
@@ -32,5 +32,5 @@
 
 		return Object.getPrototypeOf;
 	},
-	window.qoopido = window.qoopido || {}
+	this.qoopido = this.qoopido || {}
 ));

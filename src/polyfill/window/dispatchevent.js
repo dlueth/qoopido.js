@@ -4,7 +4,7 @@
  * Borrowed from:
  * https://github.com/jonathantneal/polyfill
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -13,13 +13,13 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 /* global Window, HTMLDocument */
-;(function(definition) {
-	window.qoopido.register('polyfill/window/dispatchevent', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/window/dispatchevent', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	if(!window.dispatchEvent) {
-		window.dispatchEvent = Window.prototype.dispatchEvent = HTMLDocument.prototype.dispatchEvent = Element.prototype.dispatchEvent = function dispatchEvent(event) {
+	if(!global.dispatchEvent) {
+		global.dispatchEvent = Window.prototype.dispatchEvent = HTMLDocument.prototype.dispatchEvent = Element.prototype.dispatchEvent = function dispatchEvent(event) {
 			if(!arguments.length) {
 				throw new Error('Not enough arguments');
 			}
@@ -38,7 +38,7 @@
 					var cancelBubbleEvent = function(event) {
 						event.cancelBubble = true;
 
-						(element || window).detachEvent('on' + type, cancelBubbleEvent);
+						(element || global).detachEvent('on' + type, cancelBubbleEvent);
 					};
 
 					this.attachEvent('on' + type, cancelBubbleEvent);
@@ -67,5 +67,5 @@
 		};
 	}
 
-	return window.dispatchEvent;
-}));
+	return global.dispatchEvent;
+}, this));

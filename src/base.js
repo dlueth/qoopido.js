@@ -9,7 +9,7 @@
  * Shims borrowed from es5-shim by Kris Kowal
  * https://github.com/kriskowal/es5-shim
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -22,7 +22,9 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
-;(function(definition, navigator, global, document, undefined) {
+/* global console, module, define */
+
+;(function(definition, global, undefined) {
 	'use strict';
 
 	function register(id, definition, dependencies, callback) {
@@ -55,7 +57,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, shared, namespace, navigator, global, document, undefined);
+			modules[id] = definition(modules, shared, global, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -113,7 +115,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {
@@ -161,5 +163,5 @@
 			}
 		};
 	},
-	navigator, this, document
+	this
 ));

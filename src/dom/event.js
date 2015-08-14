@@ -3,7 +3,7 @@
  *
  * Provides DOM event normalization
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -14,9 +14,9 @@
  * @require ../base
  * @require ../hook/event
  */
-;(function(definition) {
-	window.qoopido.register('dom/event', definition, [ '../base', '../hook/event' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('dom/event', definition, [ '../base', '../hook/event' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var hooks = modules['hook/event'];
@@ -95,4 +95,4 @@
 			self.stopPropagation();
 		}
 	});
-}));
+}, this));

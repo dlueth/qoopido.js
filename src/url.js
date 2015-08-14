@@ -3,7 +3,7 @@
  *
  * Provides methods to centrally deal with URLs
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -13,13 +13,13 @@
  *
  * @require ./base
  */
-;(function(definition) {
-	window.qoopido.registerSingleton('url', definition, [ './base' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.registerSingleton('url', definition, [ './base' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var urlCurrent, regexLocal,
-		regexParameter = new RegExp('[?&]?([^=]+)=([^&]*)', 'g');
+	var regexParameter = new RegExp('[?&]?([^=]+)=([^&]*)', 'g'),
+		urlCurrent, regexLocal;
 
 	try {
 		urlCurrent = location;
@@ -42,7 +42,7 @@
 			return getResolver(url).href;
 		},
 		redirect: function redirect(url, target) {
-			target = target || window;
+			target = target || global;
 
 			target.location.href = this.resolve(url);
 		},
@@ -61,4 +61,4 @@
 			return regexLocal.test(this.resolve(url));
 		}
 	});
-}));
+}, this));

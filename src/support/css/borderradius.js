@@ -1,7 +1,7 @@
 /*
  * Qoopido support/css/borderradius
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -12,12 +12,12 @@
  * @require ../../support
  */
 
-;(function(definition) {
-	window.qoopido.register('support/css/borderradius', definition, [ '../../support' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/css/borderradius', definition, [ '../../support' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return modules['support'].addTest('/css/borderradius', function(deferred) {
 		(modules['support'].supportsCssProperty('border-radius')) ? deferred.resolve(modules['support'].getCssProperty('border-radius')) : deferred.reject();
 	});
-}));
+}, this));

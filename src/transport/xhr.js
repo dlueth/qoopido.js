@@ -3,7 +3,7 @@
  *
  * Provides basic XHR (AJAX) functionality
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -18,19 +18,21 @@
  * @require ../promise/defer
  */
 
-;(function(definition) {
-	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', '../promise/defer' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+/* global ActiveXObject */
+
+;(function(definition, global) {
+	global.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', '../promise/defer' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
 		DeferredPromise = modules['promise/defer'],
-		getXhr          = (typeof window.XMLHttpRequest !== 'undefined') ?
+		getXhr          = (typeof global.XMLHttpRequest !== 'undefined') ?
 			function(url) {
 				if(modules['url'].isLocal(url)) {
-					return new window.XMLHttpRequest();
+					return new global.XMLHttpRequest();
 				} else {
-					return window.XDomainRequest ? new window.XDomainRequest() : new window.XMLHttpRequest();
+					return global.XDomainRequest ? new global.XDomainRequest() : new global.XMLHttpRequest();
 				}
 			}
 			: function() {
@@ -173,4 +175,4 @@
 	});
 
 	return prototype;
-}, window, document));
+}, this));

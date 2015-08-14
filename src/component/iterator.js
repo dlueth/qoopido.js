@@ -3,7 +3,7 @@
  *
  * Provides UI independent iterator mechanics
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -15,9 +15,9 @@
  * @require ../function/merge
  */
 
-;(function(definition) {
-	window.qoopido.register('component/iterator', definition, [ '../emitter', '../function/merge' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('component/iterator', definition, [ '../emitter', '../function/merge' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -122,4 +122,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

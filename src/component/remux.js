@@ -3,7 +3,7 @@
  *
  * Provides facilities for responsive layouts solely based on REM units and overall proportionally scaling
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -14,9 +14,9 @@
  * @require ../emitter
  * @require ./sense
  */
-;(function(definition) {
-	window.qoopido.registerSingleton('component/remux', definition, [ '../emitter', './sense' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.registerSingleton('component/remux', definition, [ '../emitter', './sense' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -36,7 +36,7 @@
 			state.fontsize = fontsize;
 
 			if(current.fontsize !== state.fontsize || current.layout !== state.layout) {
-				state.ratio.device   = (window.devicePixelRatio || 1);
+				state.ratio.device   = (global.devicePixelRatio || 1);
 				state.ratio.fontsize = state.fontsize / base;
 				state.ratio.total    = state.ratio.device * state.ratio.fontsize;
 
@@ -61,7 +61,7 @@
 	function addQuery(query, layout, fontsize) {
 		var self = this;
 
-		window.setTimeout(function() {
+		global.setTimeout(function() {
 			modules['component/sense']
 				.create(query)
 				.on('matched', function() {
@@ -130,4 +130,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

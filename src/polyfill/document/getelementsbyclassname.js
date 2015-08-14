@@ -4,7 +4,7 @@
  * Borrowed from:
  * https://github.com/inexorabletash/polyfill
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -14,16 +14,18 @@
  *
  * @polyfill ./queryselectorall
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [];
 
 	if(!Object.defineProperty) {
 		dependencies.push('./queryselectorall');
 	}
 
-	window.qoopido.register('polyfill/document/getelementsbyclassname', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('polyfill/document/getelementsbyclassname', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
+
+	var document = window.document;
 
 	if(!document.getElementsByClassName) {
 		var regex = new RegExp('^|\\s+', 'g');
@@ -36,4 +38,4 @@
 	}
 
 	return document.getElementsByClassName;
-}));
+}, this));

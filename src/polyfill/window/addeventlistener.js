@@ -4,7 +4,7 @@
  * Borrowed from:
  * https://github.com/jonathantneal/polyfill
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -15,19 +15,21 @@
  * @polyfill ../array/indexof
  */
 /* global Window, HTMLDocument, Element */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [  ];
 
 	if(!Array.prototype.indexOf) {
 		dependencies.push('../array/indexof');
 	}
 
-	window.qoopido.register('polyfill/window/addeventlistener', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('polyfill/window/addeventlistener', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	if(!window.addEventListener) {
-		window.addEventListener = Window.prototype.addEventListener = HTMLDocument.prototype.addEventListener = Element.prototype.addEventListener = function addEventListener(type, listener) {
+	var documentElement = document.documentElement;
+
+	if(!global.addEventListener) {
+		global.addEventListener = Window.prototype.addEventListener = HTMLDocument.prototype.addEventListener = Element.prototype.addEventListener = function addEventListener(type, listener) {
 			var element = this;
 
 			if(!element._events) {
@@ -61,8 +63,8 @@
 					event.timeStamp     = new Date().getTime();
 
 					if(event.clientX) {
-						event.pageX = event.clientX + document.documentElement.scrollLeft;
-						event.pageY = event.clientY + document.documentElement.scrollTop;
+						event.pageX = event.clientX + documentElement.scrollLeft;
+						event.pageY = event.clientY + documentElement.scrollTop;
 					}
 
 					for(; (pointer = events[index]) !== undefined && !event.cancelImmediate; ++index) {
@@ -80,5 +82,5 @@
 		};
 	}
 
-	return window.addEventListener;
-}));
+	return global.addEventListener;
+}, this));

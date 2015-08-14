@@ -43,7 +43,7 @@
           "src/emitter.js"
         ]
       },
-      "sense": {
+      "component.sense": {
         "watch": [
           "src/base.js",
           "src/polyfill/window/matchmedia.js",
@@ -51,7 +51,7 @@
           "src/component/sense.js"
         ]
       },
-      "sense.legacy": {
+      "component.sense.legacy": {
         "watch": [
           "src/polyfill/object/defineproperty.js",
           "src/polyfill/object/defineproperties.js",
@@ -66,7 +66,7 @@
           "src/component/sense.js"
         ]
       },
-      "remux": {
+      "component.remux": {
         "watch": [
           "src/base.js",
           "src/polyfill/window/matchmedia.js",
@@ -75,7 +75,7 @@
           "src/component/remux.js"
         ]
       },
-      "remux.legacy": {
+      "component.remux.legacy": {
         "watch": [
           "src/polyfill/object/defineproperty.js",
           "src/polyfill/object/defineproperties.js",
@@ -91,7 +91,47 @@
           "src/component/remux.js"
         ]
       },
-      "emerge": {
+      "dom.element": {
+        "watch": [
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/support.js",
+          "src/function/merge.js",
+          "src/function/unique/uuid.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js"
+        ]
+      },
+      "dom.element.legacy": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/support.js",
+          "src/function/merge.js",
+          "src/function/unique/uuid.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js"
+        ]
+      },
+      "dom.element.emerge": {
         "watch": [
           "src/base.js",
           "src/polyfill/string/ucfirst.js",
@@ -109,7 +149,7 @@
           "src/dom/element/emerge.js"
         ]
       },
-      "emerge.legacy": {
+      "dom.element.emerge.legacy": {
         "watch": [
           "src/polyfill/object/defineproperty.js",
           "src/polyfill/object/defineproperties.js",
@@ -133,7 +173,7 @@
           "src/dom/element/emerge.js"
         ]
       },
-      "lazyimage": {
+      "dom.element.lazyimage": {
         "watch": [
           "src/base.js",
           "src/polyfill/string/ucfirst.js",
@@ -152,7 +192,7 @@
           "src/dom/element/lazyimage.js"
         ]
       },
-      "lazyimage.legacy": {
+      "dom.element.lazyimage.legacy": {
         "watch": [
           "src/polyfill/object/defineproperty.js",
           "src/polyfill/object/defineproperties.js",
@@ -177,7 +217,7 @@
           "src/dom/element/lazyimage.js"
         ]
       },
-      "shrinkimage": {
+      "dom.element.shrinkimage": {
         "watch": [
           "src/base.js",
           "src/polyfill/string/ucfirst.js",
@@ -204,7 +244,7 @@
           "src/dom/element/shrinkimage.js"
         ]
       },
-      "shrinkimage.legacy": {
+      "dom.element.shrinkimage.legacy": {
         "watch": [
           "src/polyfill/object/defineproperty.js",
           "src/polyfill/object/defineproperties.js",
@@ -235,6 +275,48 @@
           "src/transport.js",
           "src/transport/xhr.js",
           "src/dom/element/shrinkimage.js"
+        ]
+      },
+      "dom.collection": {
+        "watch": [
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/support.js",
+          "src/function/merge.js",
+          "src/function/unique/uuid.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js",
+          "src/dom/collection.js"
+        ]
+      },
+      "dom.collection.legacy": {
+        "watch": [
+          "src/polyfill/object/defineproperty.js",
+          "src/polyfill/object/defineproperties.js",
+          "src/polyfill/object/create.js",
+          "src/polyfill/object/getownpropertynames.js",
+          "src/polyfill/object/getownpropertydescriptor.js",
+          "src/base.js",
+          "src/polyfill/string/ucfirst.js",
+          "src/polyfill/string/lcfirst.js",
+          "src/polyfill/window/getcomputedstyle.js",
+          "src/polyfill/window/promise.js",
+          "src/promise/all.js",
+          "src/promise/defer.js",
+          "src/support.js",
+          "src/function/merge.js",
+          "src/function/unique/uuid.js",
+          "src/hook/event.js",
+          "src/hook/css.js",
+          "src/dom/event.js",
+          "src/dom/element.js",
+          "src/dom/collection.js"
         ]
       }
     }

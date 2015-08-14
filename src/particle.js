@@ -3,7 +3,7 @@
  *
  * Provides unified particle base
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -15,9 +15,9 @@
  * @require ./pool/module
  * @require ./vector/2d
  */
-;(function(definition) {
-	window.qoopido.register('particle', definition, [ './emitter', './pool/module', './vector/2d' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('particle', definition, [ './emitter', './pool/module', './vector/2d' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -70,4 +70,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

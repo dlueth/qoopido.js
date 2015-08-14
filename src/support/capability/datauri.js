@@ -1,7 +1,7 @@
 /*
  * Qoopido support/capability/datauri
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -13,9 +13,9 @@
  * @require ../../dom/element
  */
 
-;(function(definition) {
-	window.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var support = modules['support'];
@@ -35,4 +35,4 @@
 			}, false)
 			.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
 	});
-}));
+}, this));

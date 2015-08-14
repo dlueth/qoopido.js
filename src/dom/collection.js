@@ -3,7 +3,7 @@
  *
  * Provides additional methods for DOM element collections
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -15,12 +15,13 @@
  * @require ./element
  * @optional ../pool/module
  */
-;(function(definition) {
-	window.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var mDomElement = modules['dom/element'],
+	var document    = global.document,
+		mDomElement = modules['dom/element'],
 		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement, null, true) || null;
 
 	function buildFragment() {
@@ -231,4 +232,4 @@
 		}
 	});
 
-}));
+}, this));

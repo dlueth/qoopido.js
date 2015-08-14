@@ -1,7 +1,7 @@
 /*
  * Qoopido support/element/svg
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -12,12 +12,14 @@
  * @require ../../support
  */
 
-;(function(definition) {
-	window.qoopido.register('support/element/svg', definition, [ '../../support' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/element/svg', definition, [ '../../support' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
+
+	var document = global.document;
 
 	return modules['support'].addTest('/element/svg', function(deferred) {
 		(document.createElementNS && document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect) ? deferred.resolve() : deferred.reject();
 	});
-}));
+}, this));

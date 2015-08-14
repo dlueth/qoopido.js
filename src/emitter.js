@@ -3,7 +3,7 @@
  *
  * Provides mechanism to emit events and register listeners
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -13,9 +13,9 @@
  *
  * @require ./base
  */
-;(function(definition) {
-	window.qoopido.register('emitter', definition, [ './base' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('emitter', definition, [ './base' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var excludeMethods = /^(_|extend$|create$|on$|one$|off$|emit$|get.+)/;
@@ -129,4 +129,4 @@
 			return self;
 		}
 	});
-}));
+}, this));

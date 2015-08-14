@@ -1,7 +1,7 @@
 /*
  * Qoopido proxy
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -12,9 +12,9 @@
  * @require ./base
  * @require ./function/unique/uuid
  */
-;(function(definition) {
-	window.qoopido.register('proxy', definition, [ './base', './function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('proxy', definition, [ './base', './function/unique/uuid' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return modules['base'].extend({
@@ -29,4 +29,4 @@
 			return proxy;
 		}
 	});
-}));
+}, this));

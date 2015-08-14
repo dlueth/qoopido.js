@@ -3,7 +3,7 @@
  *
  * Provides object pooling facilities
  *
- * Copyright (c) 2014 Dirk Lueth
+ * Copyright (c) 2015 Dirk Lueth
  *
  * Dual licensed under the MIT and GPL licenses.
  *  - http://www.opensource.org/licenses/mit-license.php
@@ -13,12 +13,13 @@
  *
  * @require ../pool
  */
-;(function(definition) {
-	window.qoopido.register('pool/object', definition, [ '../pool' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('pool/object', definition, [ '../pool' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
+		document        = global.document,
 		supportsProto   = (Object.prototype.__proto__ === null),
 		objectPrototype = (supportsProto) ? '__proto__' : 'prototype',
 		model           = (supportsProto) ? null : (function() {
@@ -67,4 +68,4 @@
 	shared.pool.object = prototype.create();
 
 	return prototype;
-}));
+}, this));
