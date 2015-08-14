@@ -126,9 +126,9 @@ This code will set some basic configuration for require.js, load Qoopido.js ```b
 Next create your module file ```app/mymodule.js``` and add the code below:
 
 ```javascript
-;(function(definition) {
-	window.qoopido.register('mymodule', definition, [ 'qoopido/emitter' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('mymodule', definition, [ 'qoopido/emitter' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	// add private, static(!) properties and variables here
@@ -152,7 +152,7 @@ Next create your module file ```app/mymodule.js``` and add the code below:
 	});
 
 	return prototype;
-}));
+}, this));
 ```
 
 You just developed your first custom module with only one public method, ```publicMethod```. By defining ```qoopido/emitter``` as a dependency and extending ```modules['emitter']``` your custom module also inherited all of its original methods.
@@ -220,9 +220,9 @@ Remember that your module extends ```emitter``` which provides facilities to emi
 What we did here was to register listeners to these automatically emitted events. You can easily emit your own custom events by changing your ```app/mymodule.js``` to something like:
 
 ```javascript
-;(function(definition) {
-	window.qoopido.register(mymodule, definition, [ 'qoopido/emitter' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('mymodule', definition, [ 'qoopido/emitter' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype = modules['emitter'].extend({
@@ -240,7 +240,7 @@ What we did here was to register listeners to these automatically emitted events
 	});
 
 	return prototype;
-}));
+}, this));
 ```
 
 And afterwards register listeners in your ```./app/main.js``` like in the following example:
@@ -279,9 +279,6 @@ Included modules
 ---------------------------
 - asset (XHR asset loading with localStorage caching)
 - base (object inheritance)
-- emitter (event emitter)
-- proxy (universal proxy method)
-- url (handle URLs, parameter etc.)
 - component
 	- iterator (flexible and UI/UX independent iterator for e.g. paging)
 	- remux (REM based approach to responsive web design)
@@ -293,6 +290,7 @@ Included modules
 		- lazyimage (load images when entering or nearing the visible browser area)
 		- shrinkimage (load ".shrunk" files from server, alpha PNGs reduced by 60-80% in filesize)
 	- event (DOM event normalization)
+- emitter (event emitter)
 - function (provides single functions, e.g. helper)
 	- load
 		- css (inject a stylesheet into document)
@@ -329,6 +327,7 @@ Included modules
 		- getprototypeof
 		- keys
 	- string
+		- lcfirst
 		- trim
 		- ucfirst
 	- window
@@ -348,6 +347,7 @@ Included modules
 	- all
 	- defer
 	- race
+- proxy (universal proxy method)
 - renderer (centralized rendering pipeline)
 - support (feature detection)
 	- capability
@@ -377,6 +377,7 @@ Included modules
 - transport (base class for all transports)
 	- jsonp (JSONP transport)
 	- xhr (AJAX transport)
+- url (handle URLs, parameter etc.)
 - vector
 	- 2d
 - widget

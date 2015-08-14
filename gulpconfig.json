@@ -318,7 +318,7 @@
           "src/dom/element.js",
           "src/dom/collection.js"
         ]
-      },
+      }
     }
   },
   "strings": {
