@@ -86,7 +86,7 @@ module.exports = gulp;
 				.pipe(plugins.plumber({ errorHandler: handleError}))
 				// max
 				.pipe(plugins.uglify({ compress: false, mangle: false, preserveComments: 'none', output: { beautify: true } }))
-				.pipe(plugins.concat('qoopido.' + name + '.js'))
+				.pipe(plugins.concat(name + '.js'))
 				.pipe(plugins.header(config.strings.banner.max.join('\n')))
 				.pipe(plugins.frep(patterns))
 				.pipe(plugins.frep(getDatePatterns()))
@@ -95,7 +95,7 @@ module.exports = gulp;
 				.pipe(gulp.dest(config.tasks.dist.destination + '/latest/max/packages/'))
 				// min
 				.pipe(plugins.uglify({ preserveComments: 'none' }))
-				.pipe(plugins.concat('qoopido.' + name + '.js'))
+				.pipe(plugins.concat(name + '.js'))
 				.pipe(plugins.header(config.strings.banner.min.join('\n')))
 				.pipe(plugins.frep(patterns))
 				.pipe(plugins.frep(getDatePatterns()))
