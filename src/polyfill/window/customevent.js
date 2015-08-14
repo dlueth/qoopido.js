@@ -13,12 +13,14 @@
  * @author Dirk Lueth <info@qoopido.com>
  */
 /* global Window */
-;(function(definition) {
-	window.qoopido.register('polyfill/window/customevent', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/window/customevent', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	if(!window.CustomEvent) {
+	var document = global.document;
+
+	if(!global.CustomEvent) {
 		var createEvent = (document.createEvent) ?
 			function(type, eventInitDict, detail) {
 				var event      = document.createEvent('Event'),
@@ -42,7 +44,7 @@
 				return event;
 			};
 
-		window.CustomEvent =  Window.prototype.CustomEvent = function CustomEvent(type, eventInitDict, detail) {
+		global.CustomEvent =  Window.prototype.CustomEvent = function CustomEvent(type, eventInitDict, detail) {
 			if(!type) {
 				throw new Error('Not enough arguments');
 			}
@@ -51,5 +53,5 @@
 		};
 	}
 
-	return window.CustomEvent;
-}));
+	return global.CustomEvent;
+}, this));

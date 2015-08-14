@@ -14,19 +14,19 @@
  * @require ../base
  * @require ../support
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [ '../base', '../support' ];
 
-	if(!window.getComputedStyle) {
+	if(!global.getComputedStyle) {
 		dependencies.push('../polyfill/window/getcomputedstyle');
 	}
 
-	window.qoopido.registerSingleton('hook/css', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.registerSingleton('hook/css', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var mSupport         = modules['support'],
-		getComputedStyle = window.getComputedStyle || modules['polyfill/window/getcomputedstyle'],
+		getComputedStyle = global.getComputedStyle || modules['polyfill/window/getcomputedstyle'],
 		hooks = {
 			general: {
 				get: function(element, property) {
@@ -86,4 +86,4 @@
 			}
 		}
 	});
-}));
+}, this));

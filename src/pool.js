@@ -15,9 +15,9 @@
  * @require ./function/merge
  * @require ./function/unique/uuid
  */
-;(function(definition) {
-	window.qoopido.register('pool', definition, [ './base', './function/merge', './function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('pool', definition, [ './base', './function/merge', './function/unique/uuid' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -155,4 +155,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

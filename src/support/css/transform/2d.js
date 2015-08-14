@@ -13,9 +13,9 @@
  * @require ../transform
  */
 
-;(function(definition) {
-	window.qoopido.register('support/css/transform/2d', definition, [ '../../../support', '../transform' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/css/transform/2d', definition, [ '../../../support', '../transform' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var support = modules['support'];
@@ -40,4 +40,4 @@
 				}
 			);
 	});
-}));
+}, this));

@@ -20,7 +20,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/getownpropertydescriptor'] = definition();
 	}
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		if(!Object.getOwnPropertyDescriptor || !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {
@@ -48,5 +48,5 @@
 
 		return Object.getOwnPropertyDescriptor;
 	},
-	window.qoopido = window.qoopido || {}
+	this.qoopido = this.qoopido || {}
 ));

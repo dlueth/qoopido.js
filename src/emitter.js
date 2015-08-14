@@ -13,9 +13,9 @@
  *
  * @require ./base
  */
-;(function(definition) {
-	window.qoopido.register('emitter', definition, [ './base' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('emitter', definition, [ './base' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var excludeMethods = /^(_|extend$|create$|on$|one$|off$|emit$|get.+)/;
@@ -129,4 +129,4 @@
 			return self;
 		}
 	});
-}));
+}, this));

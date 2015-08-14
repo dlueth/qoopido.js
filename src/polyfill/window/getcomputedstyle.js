@@ -11,12 +11,12 @@
  *
  * @browsers Internet Explorer < 9
  */
-;(function(definition) {
-	window.qoopido.register('polyfill/window/getcomputedstyle', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/window/getcomputedstyle', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	if(!window.getComputedStyle) {
+	if(!global.getComputedStyle) {
 		var getComputedStyleRegex    = new RegExp('(\\-([a-z]){1})', 'g'),
 			getComputedStyleCallback = function() {
 				return arguments[2].toUpperCase();
@@ -40,6 +40,6 @@
 			return self;
 		};
 	} else {
-		return window.getComputedStyle;
+		return global.getComputedStyle;
 	}
-}));
+}, this));

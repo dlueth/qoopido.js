@@ -15,24 +15,24 @@
  * @require ./support
  * @require ./promise/defer
  */
-;(function(definition) {
-	window.qoopido.register('worker', definition, [ './base', './support', './promise/defer' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('worker', definition, [ './base', './support', './promise/defer' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var DeferredPromise = modules['promise/defer'],
 		regex           = new RegExp('Blob$', 'i'),
 		supportsWorker  = modules['support'].supportsMethod('Worker'),
-		urlMethod       = modules['support'].supportsMethod('URL') ? window[modules['support'].getMethod('URL')] : null,
+		urlMethod       = modules['support'].supportsMethod('URL') ? global[modules['support'].getMethod('URL')] : null,
 		blobMethod      = modules['support'].getMethod('Blob') || modules['support'].getMethod('BlobBuilder'),
 		workerSource    = "var self = this, regex = new RegExp(',\\s+', 'g'); self.addEventListener('message', function(pEvent) { self.postMessage({ type: 'result', result: self.process(pEvent.data.func).apply(null, pEvent.data.args)}); }, false); self.postProgress = function(pProgress) { self.postMessage({ type: 'progress', progress: pProgress}); }; self.process = function(pFunction) { var functionArguments = pFunction.substring(pFunction.indexOf('(') + 1, pFunction.indexOf(')')).replace(regex, ',').split(','); functionArguments.push(pFunction.substring(pFunction.indexOf('{') + 1, pFunction.lastIndexOf('}'))); return Function.apply(null, functionArguments); };",
 		task            = null;
 
 	if(supportsWorker && urlMethod && blobMethod) {
 		if(regex.test(blobMethod) === true) {
-			task = urlMethod.createObjectURL(new window[blobMethod]([ workerSource ], {type: 'text/javascript'}));
+			task = urlMethod.createObjectURL(new global[blobMethod]([ workerSource ], {type: 'text/javascript'}));
 		} else {
-			task = urlMethod.createObjectURL(new window[blobMethod]().append(workerSource).getBlob('text/javascript'));
+			task = urlMethod.createObjectURL(new global[blobMethod]().append(workerSource).getBlob('text/javascript'));
 		}
 	}
 
@@ -71,4 +71,4 @@
 			return deferred.promise;
 		}
 	});
-}));
+}, this));

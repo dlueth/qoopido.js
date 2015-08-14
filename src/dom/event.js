@@ -14,9 +14,9 @@
  * @require ../base
  * @require ../hook/event
  */
-;(function(definition) {
-	window.qoopido.register('dom/event', definition, [ '../base', '../hook/event' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('dom/event', definition, [ '../base', '../hook/event' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var hooks = modules['hook/event'];
@@ -95,4 +95,4 @@
 			self.stopPropagation();
 		}
 	});
-}));
+}, this));

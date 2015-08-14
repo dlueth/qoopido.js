@@ -13,9 +13,9 @@
  * @require ../video
  */
 
-;(function(definition) {
-	window.qoopido.register('support/element/video/mp4', definition, [ '../../../support', '../video' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/element/video/mp4', definition, [ '../../../support', '../video' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var support = modules['support'];
@@ -35,4 +35,4 @@
 				}
 			);
 	});
-}));
+}, this));

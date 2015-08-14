@@ -11,9 +11,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('function/merge', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('function/merge', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return function merge() {
@@ -43,4 +43,4 @@
 
 		return target;
 	};
-}));
+}, this));

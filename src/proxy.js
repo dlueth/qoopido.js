@@ -12,9 +12,9 @@
  * @require ./base
  * @require ./function/unique/uuid
  */
-;(function(definition) {
-	window.qoopido.register('proxy', definition, [ './base', './function/unique/uuid' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('proxy', definition, [ './base', './function/unique/uuid' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	return modules['base'].extend({
@@ -29,4 +29,4 @@
 			return proxy;
 		}
 	});
-}));
+}, this));

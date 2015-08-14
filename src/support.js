@@ -18,7 +18,7 @@
  * @polyfill ./polyfill/string/lcfirst
  * @optional ./pool/dom
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [ './base', './promise/all', './promise/defer' ];
 
 	if(!String.prototype.ucfirst) {
@@ -29,11 +29,12 @@
 		dependencies.push('./polyfill/string/lcfirst');
 	}
 
-	window.qoopido.registerSingleton('support', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.registerSingleton('support', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
-	var CombinedPromise    = modules['promise/all'],
+	var document           = global.document,
+		CombinedPromise    = modules['promise/all'],
 		DeferredPromise    = modules['promise/defer'],
 		matchPrefix        = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
 		removeJsPrefix     = new RegExp('^(?:webkit|khtml|icab|moz|ms|o)([A-Z])'),
@@ -125,7 +126,7 @@
 		},
 		getMethod: function(pMethod, pElement) {
 			pMethod  = normalize(pMethod);
-			pElement = pElement || window;
+			pElement = pElement || global;
 
 			var type    = pElement.tagName,
 				pointer = lookup.method[type] = lookup.method[type] || { },
@@ -159,7 +160,7 @@
 		},
 		getProperty: function(pProperty, pElement) {
 			pProperty = normalize(pProperty);
-			pElement  = pElement || window;
+			pElement  = pElement || global;
 
 			var type    = pElement.tagName,
 				pointer = lookup.property[type] = lookup.property[type] || { },
@@ -254,7 +255,7 @@
 			return stored;
 		},
 		testMethod: function(pMethod, pElement) {
-			pElement = pElement || window;
+			pElement = pElement || global;
 
 			var type    = pElement.tagName,
 				pointer = lookup.promises.method[type] = lookup.promises.method[type] || { },
@@ -272,7 +273,7 @@
 			return stored;
 		},
 		testProperty: function(pProperty, pElement) {
-			pElement = pElement || window;
+			pElement = pElement || global;
 
 			var type    = pElement.tagName,
 				pointer = lookup.promises.property[type] = lookup.promises.property[type] || { },
@@ -322,4 +323,4 @@
 			};
 		}
 	});
-}));
+}, this));

@@ -14,12 +14,14 @@
 
 /* global DocumentTouch */
 
-;(function(definition) {
-	window.qoopido.register('support/capability/touch', definition, [ '../../support' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('support/capability/touch', definition, [ '../../support' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
+	var navigator = global.navigator;
+
 	return modules['support'].addTest('/capability/touch', function(deferred) {
-		(('ontouchstart' in window) || (window.DocumentTouch && document instanceof DocumentTouch) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) ? deferred.resolve() : deferred.reject();
+		(('ontouchstart' in global) || (global.DocumentTouch && document instanceof DocumentTouch) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) ? deferred.resolve() : deferred.reject();
 	});
-}));
+}, this));

@@ -15,9 +15,9 @@
  * @require ./pool/module
  * @require ./vector/2d
  */
-;(function(definition) {
-	window.qoopido.register('particle', definition, [ './emitter', './pool/module', './vector/2d' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('particle', definition, [ './emitter', './pool/module', './vector/2d' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -70,4 +70,4 @@
 	});
 
 	return prototype;
-}));
+}, this));

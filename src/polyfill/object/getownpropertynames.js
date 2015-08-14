@@ -20,7 +20,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/getownpropertynames'] = definition();
 	}
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+}(function(modules, shared, global, undefined) {
 		'use strict';
 
 		if(!Object.getOwnPropertyNames) {
@@ -44,5 +44,5 @@
 
 		return Object.getOwnPropertyNames;
 	},
-	window.qoopido = window.qoopido || {}
+	this.qoopido = this.qoopido || {}
 ));

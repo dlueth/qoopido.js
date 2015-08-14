@@ -15,9 +15,9 @@
  * @browsers Firefox < 1.5, Internet Explorer < 9
  */
 /* global Window, HTMLDocument, Element */
-;(function(definition) {
-	window.qoopido.register('polyfill/array/indexof', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/array/indexof', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	if(!Array.prototype.indexOf) {
@@ -36,4 +36,4 @@
 	}
 
 	return Array.prototype.indexOf;
-}));
+}, this));

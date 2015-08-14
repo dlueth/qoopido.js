@@ -13,9 +13,9 @@
  *
  * @require ../pool
  */
-;(function(definition) {
-	window.qoopido.register('pool/array', definition, [ '../pool' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('pool/array', definition, [ '../pool' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype = modules['pool'].extend({
@@ -33,4 +33,4 @@
 	shared.pool.array = prototype.create();
 
 	return prototype;
-}));
+}, this));

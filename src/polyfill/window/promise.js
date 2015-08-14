@@ -12,14 +12,14 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('polyfill/window/promise', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('polyfill/window/promise', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var isObject   = function(value) { return typeof value === 'object'; },
 		isFunction = function(value) { return typeof value === 'function';},
-		asap       = (isFunction(window.setImmediate) && window.setImmediate) || function(fn) { setTimeout(fn, 1);};
+		asap       = (isFunction(global.setImmediate) && global.setImmediate) || function(fn) { setTimeout(fn, 1);};
 
 	function bind(fn, context) {
 		return function() {
@@ -195,9 +195,9 @@
 		});
 	};
 
-	if(!window.Promise) {
-		window.Promise = Promise;
+	if(!global.Promise) {
+		global.Promise = Promise;
 	}
 
-	return window.Promise;
-}));
+	return global.Promise;
+}, this));

@@ -11,9 +11,9 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition) {
-	window.qoopido.register('function/unique/string', definition);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('function/unique/string', definition);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var lookup     = {},
@@ -43,4 +43,4 @@
 
 		return result;
 	};
-}));
+}, this));

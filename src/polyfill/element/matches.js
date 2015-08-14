@@ -11,15 +11,15 @@
  *
  * @polyfill ../document/queryselectorall
  */
-;(function(definition) {
+;(function(definition, global) {
 	var dependencies = [];
 
 	if(!document.querySelectorAll) {
 		dependencies.push('../document/queryselectorall');
 	}
 
-	window.qoopido.register('polyfill/element/matches', definition, dependencies);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+	global.qoopido.register('polyfill/element/matches', definition, dependencies);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	if(!Element.prototype.matches) {
@@ -41,4 +41,4 @@
 	}
 
 	return Element.prototype.matches;
-}));
+}, this));

@@ -20,19 +20,19 @@
 
 /* global ActiveXObject */
 
-;(function(definition) {
-	window.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', '../promise/defer' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', '../promise/defer' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
 		DeferredPromise = modules['promise/defer'],
-		getXhr          = (typeof window.XMLHttpRequest !== 'undefined') ?
+		getXhr          = (typeof global.XMLHttpRequest !== 'undefined') ?
 			function(url) {
 				if(modules['url'].isLocal(url)) {
-					return new window.XMLHttpRequest();
+					return new global.XMLHttpRequest();
 				} else {
-					return window.XDomainRequest ? new window.XDomainRequest() : new window.XMLHttpRequest();
+					return global.XDomainRequest ? new global.XDomainRequest() : new global.XMLHttpRequest();
 				}
 			}
 			: function() {
@@ -175,4 +175,4 @@
 	});
 
 	return prototype;
-}, window, document));
+}, this));

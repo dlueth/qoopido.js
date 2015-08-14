@@ -16,9 +16,9 @@
  * @require ../../component/sense
  */
 
-;(function(definition) {
-	window.qoopido.register('widget/image/adapt', definition, [ '../../dom/element', '../../dom/element/emerge', '../../component/sense' ]);
-}(function(modules, shared, namespace, navigator, window, document, undefined) {
+;(function(definition, global) {
+	global.qoopido.register('widget/image/adapt', definition, [ '../../dom/element', '../../dom/element/emerge', '../../component/sense' ]);
+}(function(modules, shared, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -59,7 +59,7 @@
 					boundingbox = image.element.getBoundingClientRect();
 					width       = Math.round(boundingbox.width);
 					height      = Math.round(boundingbox.width * candidate.ratio);
-					url         = candidate.url.replace(regex, '$1.' + width + 'x' + height + '@' + (window.devicePixelRatio || 1) + '.$2');
+					url         = candidate.url.replace(regex, '$1.' + width + 'x' + height + '@' + (global.devicePixelRatio || 1) + '.$2');
 
 					image.setAttribute('src', url);
 				}
@@ -78,9 +78,9 @@
 	}
 
 	function delayOnResize() {
-		window.clearTimeout(timeout);
+		global.clearTimeout(timeout);
 
-		timeout = window.setTimeout(delayedOnResize, 200);
+		timeout = global.setTimeout(delayedOnResize, 200);
 	}
 
 	prototype = modules['dom/element/emerge'].extend({
@@ -131,8 +131,8 @@
 	});
 
 	mDomElement
-		.create(window)
+		.create(global)
 		.on('resize orientationchange', delayOnResize);
 
 	return prototype;
-}));
+}, this));
