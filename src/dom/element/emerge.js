@@ -17,7 +17,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('dom/element/emerge', definition, [ '../element', '../../function/merge', '../../function/unique/uuid' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var
@@ -25,7 +25,9 @@
 		defaults        = { interval: 50, threshold: 'auto', recur: true, auto: 1, visibility: true },
 		document        = global.document,
 		documentElement = document.documentElement,
-		mGlobal         = modules['dom/element'].create(global),
+		qGlobal         = qoopido.module('dom/element').create(global),
+		merge           = qoopido.module('function/merge'),
+		uniqueUuid      = qoopido.module('function/unique/uuid'),
 		viewport        = {},
 		intervals       = {},
 		elements        = {},
@@ -118,7 +120,7 @@
 		}
 	}
 
-	prototype = modules['dom/element'].extend({
+	prototype = qoopido.module('dom/element').extend({
 		_quid:     null,
 		_viewport: null,
 		_settings: null,
@@ -127,7 +129,7 @@
 		_constructor: function(element, settings) {
 			var self = prototype._parent._constructor.call(this, element);
 
-			settings = modules['function/merge']({}, defaults, settings || {});
+			settings = merge({}, defaults, settings || {});
 
 			if(settings.threshold === 'auto') {
 				delete settings.threshold;
@@ -138,7 +140,7 @@
 				intervals[settings.interval] = global.setInterval(function() { tick(settings.interval); }, settings.interval);
 			}
 
-			self._quid     = modules['function/unique/uuid']();
+			self._quid     = uniqueUuid();
 			self._viewport = {};
 			self._settings = settings;
 			self._state    = false;
@@ -147,7 +149,7 @@
 			elements[settings.interval][self._quid] = self;
 			elements[settings.interval].length++;
 
-			mGlobal.on(DOM_RESIZE, function() { instanceOnResize.call(self); });
+			qGlobal.on(DOM_RESIZE, function() { instanceOnResize.call(self); });
 			instanceOnResize.call(self);
 
 			return self;
@@ -160,7 +162,7 @@
 		}
 	});
 
-	mGlobal.on(DOM_RESIZE, globalOnResize);
+	qGlobal.on(DOM_RESIZE, globalOnResize);
 	globalOnResize();
 
 	return prototype;

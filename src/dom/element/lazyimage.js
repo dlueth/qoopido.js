@@ -20,12 +20,13 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('dom/element/lazyimage', definition, [ './emerge', '../../function/merge' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var
 	// variables
 		defaults = { interval: 50, threshold: 'auto', attribute: 'data-lazyimage' },
+		merge    = qoopido.module('function/merge'),
 		queue    = 0,
 
 	// methods / classes
@@ -61,9 +62,9 @@
 			.removeAttribute(attribute);
 	}
 
-	prototype = modules['dom/element/emerge'].extend({
+	prototype = qoopido.module('dom/element/emerge').extend({
 		_constructor: function(element, settings) {
-			var self = prototype._parent._constructor.call(this, element, modules['function/merge']({}, defaults, settings || {}));
+			var self = prototype._parent._constructor.call(this, element, merge({}, defaults, settings || {}));
 
 			self.on(EVENT_EMERGED, function onEmerge(event) {
 				if(queue === 0 || event.data === 1) {

@@ -16,12 +16,12 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/capability/touch', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var navigator = global.navigator;
 
-	return modules['support'].addTest('/capability/touch', function(deferred) {
+	return qoopido.module('support').addTest('/capability/touch', function(deferred) {
 		(('ontouchstart' in global) || (global.DocumentTouch && document instanceof DocumentTouch) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) ? deferred.resolve() : deferred.reject();
 	});
 }, this));

@@ -13,7 +13,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('function/merge', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	return function merge() {

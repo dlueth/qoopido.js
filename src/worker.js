@@ -17,16 +17,17 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('worker', definition, [ './base', './support', './promise/defer' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var DeferredPromise = modules['promise/defer'],
-		regex           = new RegExp('Blob$', 'i'),
-		supportsWorker  = modules['support'].supportsMethod('Worker'),
-		urlMethod       = modules['support'].supportsMethod('URL') ? global[modules['support'].getMethod('URL')] : null,
-		blobMethod      = modules['support'].getMethod('Blob') || modules['support'].getMethod('BlobBuilder'),
-		workerSource    = "var self = this, regex = new RegExp(',\\s+', 'g'); self.addEventListener('message', function(pEvent) { self.postMessage({ type: 'result', result: self.process(pEvent.data.func).apply(null, pEvent.data.args)}); }, false); self.postProgress = function(pProgress) { self.postMessage({ type: 'progress', progress: pProgress}); }; self.process = function(pFunction) { var functionArguments = pFunction.substring(pFunction.indexOf('(') + 1, pFunction.indexOf(')')).replace(regex, ',').split(','); functionArguments.push(pFunction.substring(pFunction.indexOf('{') + 1, pFunction.lastIndexOf('}'))); return Function.apply(null, functionArguments); };",
-		task            = null;
+	var PromiseDefer   = qoopido.module('promise/defer'),
+		Support        = qoopido.module('support'),
+		regex          = new RegExp('Blob$', 'i'),
+		supportsWorker = Support.supportsMethod('Worker'),
+		urlMethod      = Support.supportsMethod('URL') ? global[Support.getMethod('URL')] : null,
+		blobMethod     = Support.getMethod('Blob') || Support.getMethod('BlobBuilder'),
+		workerSource   = "var self = this, regex = new RegExp(',\\s+', 'g'); self.addEventListener('message', function(pEvent) { self.postMessage({ type: 'result', result: self.process(pEvent.data.func).apply(null, pEvent.data.args)}); }, false); self.postProgress = function(pProgress) { self.postMessage({ type: 'progress', progress: pProgress}); }; self.process = function(pFunction) { var functionArguments = pFunction.substring(pFunction.indexOf('(') + 1, pFunction.indexOf(')')).replace(regex, ',').split(','); functionArguments.push(pFunction.substring(pFunction.indexOf('{') + 1, pFunction.lastIndexOf('}'))); return Function.apply(null, functionArguments); };",
+		task           = null;
 
 	if(supportsWorker && urlMethod && blobMethod) {
 		if(regex.test(blobMethod) === true) {
@@ -36,9 +37,9 @@
 		}
 	}
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		execute: function(pFunction, pArguments) {
-			var deferred  = new DeferredPromise();
+			var deferred  = new PromiseDefer();
 
 			pArguments = pArguments || [];
 

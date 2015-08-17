@@ -14,10 +14,12 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/css/textshadow', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
-
-	return modules['support'].addTest('/css/textshadow', function(deferred) {
-		(modules['support'].supportsCssProperty('text-shadow')) ? deferred.resolve(modules['support'].getCssProperty('text-shadow')) : deferred.reject();
+	
+	var Support = qoopido.module('support');
+	
+	return Support.addTest('/css/textshadow', function(deferred) {
+		(Support.supportsCssProperty('text-shadow')) ? deferred.resolve(Support.getCssProperty('text-shadow')) : deferred.reject();
 	});
 }, this));

@@ -14,7 +14,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('polyfill/window/promise', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var isObject   = function(value) { return typeof value === 'object'; },

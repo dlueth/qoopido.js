@@ -16,12 +16,12 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('dom/event', definition, [ '../base', '../hook/event' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var hooks = modules['hook/event'];
+	var HookEvent = qoopido.module('hook/event');
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		originalEvent:                 null,
 		isDelegate:                    false,
 		isDefaultPrevented:            false,
@@ -37,7 +37,7 @@
 			return self;
 		},
 		_obtain: function(event) {
-			hooks.process(this, event);
+			HookEvent.process(this, event);
 		},
 		_dispose: function() {
 			var self = this,

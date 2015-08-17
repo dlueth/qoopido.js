@@ -15,13 +15,13 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/capability/datauri', definition, [ '../../support', '../../dom/element' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/capability/datauri', function(deferred) {
-		var sample = modules['dom/element'].create(support.pool ? support.pool.obtain('img') : document.createElement('img'));
+	return Support.addTest('/capability/datauri', function(deferred) {
+		var sample = qoopido.module('dom/element').create(Support.pool ? Support.pool.obtain('img') : document.createElement('img'));
 
 		sample
 			.one('error load', function(event) {

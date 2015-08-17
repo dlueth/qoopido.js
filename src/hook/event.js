@@ -15,7 +15,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.registerSingleton('hook/event', definition, [ '../base' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var document = global.document;
@@ -98,7 +98,7 @@
 			}
 		};
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		add: function(property, hook) {
 			if(property && hook && hooks[property]) {
 				hooks[property] = hook;

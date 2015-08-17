@@ -15,17 +15,17 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/css/transform/3d', definition, [ '../../../support', '../transform' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/css/transform/3d', function(deferred) {
-		modules['support/css/transform']()
+	return Support.addTest('/css/transform/3d', function(deferred) {
+		qoopido.module('support/css/transform')()
 			.then(
 				function() {
-					var sample = support.pool ? support.pool.obtain('div') : document.createElement('div'),
-						property = modules['support'].getCssProperty('transform');
+					var sample = Support.pool ? Support.pool.obtain('div') : document.createElement('div'),
+						property = Support.getCssProperty('transform');
 
 					try {
 						sample.style[property] = 'translate3d(0,0,0)';

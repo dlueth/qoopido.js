@@ -28,7 +28,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/create'] = definition();
 	}
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 		'use strict';
 
 		if(!Object.create) {

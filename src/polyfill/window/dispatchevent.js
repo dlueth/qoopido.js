@@ -15,7 +15,7 @@
 /* global Window, HTMLDocument */
 ;(function(definition, global) {
 	global.qoopido.register('polyfill/window/dispatchevent', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!global.dispatchEvent) {

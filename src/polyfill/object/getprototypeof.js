@@ -15,7 +15,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/getprototypeof'] = definition();
 	}
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 		'use strict';
 
 		if(!Object.getPrototypeOf) {

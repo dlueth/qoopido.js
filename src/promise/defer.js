@@ -22,7 +22,7 @@
 	}
 
 	global.qoopido.register('promise/defer', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	return function defer() {

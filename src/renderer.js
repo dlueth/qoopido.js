@@ -17,7 +17,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.registerSingleton('renderer', definition, [ './emitter', './support', './dom/element' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	function requestAnimationFrameFallback(callback) {
@@ -25,12 +25,12 @@
 	}
 
 	var prototype,
+		Support              = qoopido.module('support'),
 		document              = global.document,
-		mSupport              = modules['support'],
-		qDocument             = modules['dom/element'].create(document),
-		requestAnimationFrame = global[mSupport.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback,
-		cancelAnimationFrame  = global[mSupport.getMethod('cancelAnimationFrame')] || clearTimeout,
-		visibilityProperty    = mSupport.getProperty('hidden', document),
+		qDocument             = qoopido.module('dom/element').create(document),
+		requestAnimationFrame = global[Support.getMethod('requestAnimationFrame')] || requestAnimationFrameFallback,
+		cancelAnimationFrame  = global[Support.getMethod('cancelAnimationFrame')] || clearTimeout,
+		visibilityProperty    = Support.getProperty('hidden', document),
 		targetFramerate       = 60,
 		targetInterval        = 1000 / targetFramerate,
 		pausedAt, pausedDuration, interval, timeStart, timeNow, timeLast, timeDelta, frames = 0;
@@ -65,7 +65,7 @@
 		}
 	}
 
-	prototype = modules['emitter'].extend({
+	prototype = qoopido.module('emitter').extend({
 		framerate: 0,
 		ratio:     1,
 		paused:    false,
@@ -97,7 +97,7 @@
 				}
 			};
 
-			qDocument.on(''.concat('visibilitychange ', mSupport.getPrefix()[0], 'visibilitychange'), function() { onVisibilityChange.call(self); });
+			qDocument.on(''.concat('visibilitychange ', Support.getPrefix()[0], 'visibilitychange'), function() { onVisibilityChange.call(self); });
 
 			onVisibilityChange.call(self);
 

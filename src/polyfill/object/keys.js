@@ -14,7 +14,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('polyfill/object/keys', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!Object.keys) {

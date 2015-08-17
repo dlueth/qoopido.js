@@ -14,13 +14,13 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/css/rem', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/css/rem', function(deferred) {
-		var sample = support.pool ? support.pool.obtain('div') : document.createElement('div');
+	return Support.addTest('/css/rem', function(deferred) {
+		var sample = Support.pool ? Support.pool.obtain('div') : document.createElement('div');
 
 		try {
 			sample.style.fontSize = '3rem';

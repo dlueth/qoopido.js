@@ -16,18 +16,19 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('pool/module', definition, [ '../pool', '../function/unique/uuid' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var generateUuid = modules['function/unique/uuid'];
+	var uniqueUuid = qoopido.module('function/unique/uuid'),
+		mPoolModule;
 
-	var prototype = modules['pool'].extend({
+	var prototype = qoopido.module('pool').extend({
 		_module:  null,
 		_destroy: null,
 		_constructor: function(module, options, useShared) {
 			var self    = this,
-				uuid    = module._puid || (module._puid = generateUuid()),
-				pointer = useShared && (shared.pool || (shared.pool = {})) && (shared.pool.module || (shared.pool.module = {}));
+				uuid    = module._puid || (module._puid = uniqueUuid()),
+				pointer = useShared && mPoolModule;
 
 			if(useShared === true && pointer[uuid]) {
 				return pointer[uuid];
@@ -56,6 +57,8 @@
 			return this._module.create.apply(this._module, arguments);
 		}
 	});
+
+	qoopido.shared()['pool/module'] = mPoolModule = {};
 
 	return prototype;
 }, this));

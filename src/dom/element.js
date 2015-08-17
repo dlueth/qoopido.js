@@ -63,13 +63,16 @@
 	}
 
 	global.qoopido.register('dom/element', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var document         = global.document,
 		stringObject     = 'object',
 		stringString     = 'string',
-		generateUuid     = modules['function/unique/uuid'],
+		PoolModule       = qoopido.module('pool/module'),
+		DomEvent         = qoopido.module('dom/event'),
+		HooksCss         = qoopido.module('hook/css'),
+		uniqueUuid       = qoopido.module('function/unique/uuid'),
 		head             = document.getElementsByTagName('head')[0],
 		contentAttribute = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
 		previousSibling  = (typeof head.previousElementSibling !== 'undefined') ? function previousSibling() { return this.previousElementSibling; } : function previousSibling() {var element = this; while(element = element.previousSibling) { if(element.nodeType === 1 ) { return element; }}},
@@ -77,8 +80,7 @@
 		isTag            = new RegExp('^<(\\w+)\\s*/>$'),
 		matchEvent       = new RegExp('^[^-]+'),
 		splitList        = new RegExp(' +', 'g'),
-		pool             = modules['pool/module'] && modules['pool/module'].create(modules['dom/event'], null, true) || null,
-		hooks            = modules['hook/css'],
+		pool             = PoolModule && PoolModule.create(qoopido.module('dom/event'), null, true) || null,
 		storage          = {},
 		events           = {
 			custom: {
@@ -172,7 +174,7 @@
 		return false;
 	}
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		type:      null,
 		element:   null,
 		_listener: null,
@@ -184,7 +186,7 @@
 			uuid    = element._quid;
 
 			if(!uuid) {
-				uuid = element._quid = generateUuid();
+				uuid = element._quid = uniqueUuid();
 
 				self.type      = element.tagName;
 				self.element   = element;
@@ -307,7 +309,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				return hooks.process('get', self.element, property);
+				return HooksCss.process('get', self.element, property);
 			}
 		},
 		getStyles: function() {
@@ -317,7 +319,7 @@
 				i = 0, property;
 
 			for(; (property = properties[i]) !== undefined; i++) {
-				result[property] = hooks.process('get', self.element, property);
+				result[property] = HooksCss.process('get', self.element, property);
 			}
 
 			return result;
@@ -326,7 +328,7 @@
 			var self = this;
 
 			if(property && typeof property === stringString) {
-				hooks.process('set', self.element, property, value);
+				HooksCss.process('set', self.element, property, value);
 			}
 
 			return self;
@@ -337,7 +339,7 @@
 
 			if(properties && typeof properties === stringObject && !properties.length) {
 				for(property in properties) {
-					hooks.process('set', self.element, property, properties[property]);
+					HooksCss.process('set', self.element, property, properties[property]);
 				}
 			}
 
@@ -616,7 +618,7 @@
 				element  = self.element,
 				delegate = (arguments.length > 2) ? arguments[1] : null,
 				fn       = (arguments.length > 2) ? arguments[2] : arguments[1],
-				uuid     = fn._quid || (fn._quid = generateUuid()),
+				uuid     = fn._quid || (fn._quid = uniqueUuid()),
 				i = 0, event;
 
 			events  = events.split(' ');
@@ -626,11 +628,11 @@
 					listener = function(event) {
 						var delegateTo;
 
-						event = pool && pool.obtain(event) || modules['dom/event'].create(event);
+						event = pool && pool.obtain(event) || DomEvent.create(event);
 
 						if(!event.isPropagationStopped) {
 							delegateTo  = event.delegate;
-							event._quid = generateUuid();
+							event._quid = uniqueUuid();
 
 							if(!delegate || matchesDelegate(event, delegate)) {
 								fn.call(event.currentTarget, event, event.originalEvent.detail);
@@ -665,7 +667,7 @@
 					fn.call(this, event, event.originalEvent.detail);
 				};
 
-			fn._quid = listener._quid = generateUuid();
+			fn._quid = listener._quid = uniqueUuid();
 
 			if(delegate) {
 				self.on(events, delegate, listener);

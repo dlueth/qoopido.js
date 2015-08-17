@@ -16,12 +16,12 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('jquery/plugins/lazyimage', definition, [ '../../dom/element/lazyimage', 'jquery' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var
 	// variables
-		jQuery = modules['jquery'] || global.jQuery,
+		jQuery = qoopido.module('jquery') || global.jQuery,
 		name   = 'lazyimage',
 
 	// classes
@@ -39,7 +39,7 @@
 		});
 	};
 
-	prototype = modules['dom/element/lazyimage'].extend({
+	prototype = qoopido.module('dom/element/lazyimage').extend({
 		_constructor: function(element, settings) {
 			var self   = prototype._parent._constructor.call(this, element, settings),
 				object = jQuery(element);

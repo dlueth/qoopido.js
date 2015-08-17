@@ -18,14 +18,14 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('widget/image/adapt', definition, [ '../../dom/element', '../../dom/element/emerge', '../../component/sense' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		regex           = new RegExp('(.+?).(jpg|jpeg|png|gif|webp)$'),
-		mDomElement     = modules['dom/element'],
-		mComponentSense = modules['component/sense'],
-		storage         = [],
+		regex          = new RegExp('(.+?).(jpg|jpeg|png|gif|webp)$'),
+		DomElement     = qoopido.module('dom/element'),
+		ComponentSense = qoopido.module('component/sense'),
+		storage        = [],
 		timeout;
 
 	function setRatio(ratio) {
@@ -39,7 +39,7 @@
 	function processMedia(pointer, media) {
 		var self = this;
 
-		pointer.mql = mComponentSense
+		pointer.mql = ComponentSense
 			.create(media)
 			.on('matched dematched', function() {
 				checkCandidates.call(self);
@@ -55,7 +55,7 @@
 				setRatio.call(self, candidate.ratio);
 
 				if(self._visible === true) {
-					image       = self._image || (self._image = mDomElement.create('<img />', { src: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', alt: self._caption }, { position: 'absolute', display: 'block', width: '100%', height: '100%', top: '0', left: '0', margin: '0', padding: '0' }).appendTo(self._container));
+					image       = self._image || (self._image = DomElement.create('<img />', { src: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', alt: self._caption }, { position: 'absolute', display: 'block', width: '100%', height: '100%', top: '0', left: '0', margin: '0', padding: '0' }).appendTo(self._container));
 					boundingbox = image.element.getBoundingClientRect();
 					width       = Math.round(boundingbox.width);
 					height      = Math.round(boundingbox.width * candidate.ratio);
@@ -83,7 +83,7 @@
 		timeout = global.setTimeout(delayedOnResize, 200);
 	}
 
-	prototype = modules['dom/element/emerge'].extend({
+	prototype = qoopido.module('dom/element/emerge').extend({
 		_visible:    false,
 		_candidates: null,
 		_container:  null,
@@ -97,7 +97,7 @@
 			sources      = self.find('[itemprop="source"],[itemprop="contentUrl"]');
 
 			self._candidates = [];
-			self._container  = mDomElement.create('<div />').setStyles({ position: 'relative', display: 'block', width: '100%', height: 0, padding: 0 }).appendTo(self);
+			self._container  = DomElement.create('<div />').setStyles({ position: 'relative', display: 'block', width: '100%', height: 0, padding: 0 }).appendTo(self);
 			self._caption    = (caption = self.find('[itemprop="caption"]')[0]) ? caption.getAttribute('content') : null;
 
 			setRatio.call(self, defaultRatio);
@@ -130,7 +130,7 @@
 		}
 	});
 
-	mDomElement
+	DomElement
 		.create(global)
 		.on('resize orientationchange', delayOnResize);
 

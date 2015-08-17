@@ -16,16 +16,17 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('transport', definition, [ './base', './function/merge' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var prototype;
+	var prototype,
+		merge = qoopido.module('function/merge');
 
-	prototype = modules['base'].extend({
+	prototype = qoopido.module('base').extend({
 		setup: function(options) {
 			var self = this;
 
-			self._settings = modules['function/merge']({}, self._settings, options);
+			self._settings = merge({}, self._settings, options);
 
 			return self;
 		},

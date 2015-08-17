@@ -17,7 +17,7 @@
 /* global Window, HTMLDocument, Element */
 ;(function(definition, global) {
 	global.qoopido.register('polyfill/array/indexof', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!Array.prototype.indexOf) {

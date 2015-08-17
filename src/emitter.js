@@ -15,7 +15,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('emitter', definition, [ './base' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var excludeMethods = /^(_|extend$|create$|on$|one$|off$|emit$|get.+)/;
@@ -37,7 +37,7 @@
 		};
 	}
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		_mapped:   null,
 		_listener: null,
 		_temp:     null,

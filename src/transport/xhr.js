@@ -22,14 +22,17 @@
 
 ;(function(definition, global) {
 	global.qoopido.registerSingleton('transport/xhr', definition, [ '../transport', '../function/merge', '../function/unique/string', '../url', '../promise/defer' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		DeferredPromise = modules['promise/defer'],
-		getXhr          = (typeof global.XMLHttpRequest !== 'undefined') ?
+		merge        = qoopido.module('function/merge'),
+		uniqueString = qoopido.module('function/unique/string'),
+		Url          = qoopido.module('url'),
+		PromiseDefer = qoopido.module('promise/defer'),
+		getXhr       = (typeof global.XMLHttpRequest !== 'undefined') ?
 			function(url) {
-				if(modules['url'].isLocal(url)) {
+				if(Url.isLocal(url)) {
 					return new global.XMLHttpRequest();
 				} else {
 					return global.XDomainRequest ? new global.XDomainRequest() : new global.XMLHttpRequest();
@@ -129,7 +132,7 @@
 		xhr.onprogress = xhr.onreadystatechange = xhr.onerror = null;
 	}
 
-	prototype = modules['transport'].extend({
+	prototype = qoopido.module('transport').extend({
 		_settings: {
 			accept:      '*/*',
 			timeout:     5000,
@@ -144,13 +147,13 @@
 		load: function(method, url, data, options) {
 			var context = {};
 
-			url = modules['url'].resolve(url);
+			url = Url.resolve(url);
 
 			context.url      = url;
-			context.id       = ''.concat('xhr-', modules['function/unique/string']());
-			context.dfd      = new DeferredPromise();
+			context.id       = ''.concat('xhr-', uniqueString());
+			context.dfd      = new PromiseDefer();
 			context.xhr      = getXhr(url);
-			context.settings = modules['function/merge']({}, this._settings, options);
+			context.settings = merge({}, this._settings, options);
 			context.timeout  = null;
 
 			sendRequest.call(context, method.toUpperCase(), url, data);

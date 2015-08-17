@@ -16,12 +16,12 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('jquery/plugins/shrinkimage', definition, [ '../../dom/element/shrinkimage', 'jquery' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var
 	// variables
-		jQuery = modules['jquery'] || global.jQuery,
+		jQuery = qoopido.module('jquery') || global.jQuery,
 		name   = 'shrinkimage',
 
 	// classes
@@ -43,7 +43,7 @@
 		});
 	};
 
-	prototype = modules['dom/element/shrinkimage'].extend({
+	prototype = qoopido.module('dom/element/shrinkimage').extend({
 		_constructor: function(element, settings) {
 			var self   = prototype._parent._constructor.call(this, element, settings),
 				object = jQuery(element);

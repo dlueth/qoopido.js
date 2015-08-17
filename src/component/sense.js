@@ -22,7 +22,7 @@
 	}
 
 	global.qoopido.register('component/sense', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -39,7 +39,7 @@
 		}
 	}
 
-	prototype = modules['emitter'].extend({
+	prototype = qoopido.module('emitter').extend({
 		mql: null,
 		_constructor: function(query) {
 			var self     = prototype._parent._constructor.call(this),
