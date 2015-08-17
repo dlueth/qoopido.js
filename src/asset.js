@@ -83,7 +83,7 @@
 
 	prototype = qoopido.module('emitter').extend({
 		_uuid: null,
-		_constructor: function(url, id, version) {
+		_constructor: function(url, id, version, prefix) {
 			var self       = prototype._parent._constructor.call(this),
 				uuid       = uniqueUuid(),
 				properties = lookup[uuid] = { dfd: new PromiseDefer(), url: url };
@@ -91,13 +91,18 @@
 			self._uuid = uuid;
 
 			if(id && version) {
-				properties.id      = id;
+				properties.id      = (prefix || global.location.host) + ':' + id;
 				properties.version = version;
 				properties.cookie  = encodeURIComponent('qoopido[asset][' + id.replace(regex, '][') + ']');
 				properties.storage = {
-					version: '@' + id,
-					value:   '©' + id
+					version: '#' + id,
+					access:  '@' + id,
+					value:   '$' + id
 				};
+
+				self.on('hit stored', function() {
+					localStorage[properties.storage.access] = new Date().getTime();
+				});
 			}
 
 			return self;
@@ -134,6 +139,7 @@
 				document.cookie = properties.cookie + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 
 				delete localStorage[storage.version];
+				delete localStorage[storage.access];
 				delete localStorage[storage.value];
 
 				self.emit('cleared', properties.url, properties.id, properties.version);
