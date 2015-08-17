@@ -15,10 +15,10 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('jquery/extension/selector', definition, [ 'jquery' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 	
-	var jQuery    = modules['jquery'] || global.jQuery,
+	var jQuery    = qoopido.module('jquery') || global.jQuery,
 		$window   = jQuery(global),
 		$document = jQuery(document);
 

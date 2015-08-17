@@ -17,19 +17,20 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('component/iterator', definition, [ '../emitter', '../function/merge' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		defaultSettings = { loop: true, initial: 0 };
+		defaultSettings = { loop: true, initial: 0 },
+		merge           = qoopido.module('function/merge');
 
-	prototype = modules['emitter'].extend({
+	prototype = qoopido.module('emitter').extend({
 		_settings: null,
 		_state:    null,
 		_constructor: function(data, settings) {
 			var self = prototype._parent._constructor.call(this);
 
-			self._settings = modules['function/merge']({}, defaultSettings, settings || {});
+			self._settings = merge({}, defaultSettings, settings || {});
 			self._state    = { length: null, index: null, item: null, data: null };
 
 			if(data !== undefined && data !== null) {

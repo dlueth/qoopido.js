@@ -15,16 +15,16 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/element/video/ogg', definition, [ '../../../support', '../video' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/element/video/ogg', function(deferred) {
-		modules['support/element/video']()
+	return Support.addTest('/element/video/ogg', function(deferred) {
+		qoopido.module('support/element/video')()
 			.then(
 				function() {
-					var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
+					var sample = Support.pool ? Support.pool.obtain('video') : document.createElement('video');
 
 					(sample.canPlayType('video/ogg; codecs="theora, vorbis"')) ? deferred.resolve() : deferred.reject();
 

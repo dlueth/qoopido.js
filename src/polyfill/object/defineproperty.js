@@ -20,7 +20,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/defineproperty'] = definition();
 	}
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 		'use strict';
 
 		if(!Object.defineProperty || !(function () { try { Object.defineProperty({}, 'x', {}); return true; } catch (exception) { return false; } } ())) {

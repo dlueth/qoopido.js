@@ -15,7 +15,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.registerSingleton('url', definition, [ './base' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var regexParameter = new RegExp('[?&]?([^=]+)=([^&]*)', 'g'),
@@ -37,7 +37,7 @@
 		return resolver;
 	}
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		resolve: function(url) {
 			return getResolver(url).href;
 		},

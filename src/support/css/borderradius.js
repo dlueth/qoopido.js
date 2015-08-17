@@ -14,10 +14,12 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/css/borderradius', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
+	
+	var Support = qoopido.module('support');
 
-	return modules['support'].addTest('/css/borderradius', function(deferred) {
-		(modules['support'].supportsCssProperty('border-radius')) ? deferred.resolve(modules['support'].getCssProperty('border-radius')) : deferred.reject();
+	return Support.addTest('/css/borderradius', function(deferred) {
+		(Support.supportsCssProperty('border-radius')) ? deferred.resolve(Support.getCssProperty('border-radius')) : deferred.reject();
 	});
 }, this));

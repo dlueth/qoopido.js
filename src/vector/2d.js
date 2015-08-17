@@ -16,15 +16,15 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('vector/2d', definition, [ '../base' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
 		TO_DEGREES = 180 / Math.PI,
 		TO_RADIANS = Math.PI / 180,
-		pool       = shared.pool && shared.pool.object;
+		pool       = qoopido.shared('pool/object');
 
-	prototype = modules['base'].extend({
+	prototype = qoopido.module('base').extend({
 		_temp: null,
 		x:     null,
 		y:     null,

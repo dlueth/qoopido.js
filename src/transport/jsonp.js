@@ -21,14 +21,18 @@
  */
 ;(function(definition, global) {
 	global.qoopido.registerSingleton('transport/jsonp', definition, [ '../transport', '../function/merge', '../function/unique/uuid', '../url', '../dom/element', '../promise/defer' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		document        = global.document,
-		DeferredPromise = modules['promise/defer'],
-		pool            = shared.pool && shared.pool.dom,
-		head            = document.getElementsByTagName('head')[0];
+		document     = global.document,
+		merge        = qoopido.module('function/merge'),
+		uniqueString = qoopido.module('function/unique/string'),
+		Url          = qoopido.module('url'),
+		DomElement   = qoopido.module('dom/element'),
+		PromiseDefer = qoopido.module('promise/defer'),
+		pool         = qoopido.shared('pool/dom'),
+		head         = document.getElementsByTagName('head')[0];
 
 	function sendRequest(url, content) {
 		var self     = this,
@@ -107,7 +111,7 @@
 		self.script.off() && self.script.element.dispose && self.script.element.dispose();
 	}
 
-	prototype = modules['transport'].extend({
+	prototype = qoopido.module('transport').extend({
 		_settings: {
 			callback: 'callback',
 			cache:    false,
@@ -116,12 +120,12 @@
 		load: function(url, data, options) {
 			var context = {};
 
-			url = modules['url'].resolve(url);
+			url = Url.resolve(url);
 
-			context.id       = ''.concat('jsonp-', modules['function/unique/string']());
-			context.dfd      = new DeferredPromise();
-			context.script   = modules['dom/element'].create(pool ? pool.obtain('script') : document.createElement('script'));
-			context.settings = modules['function/merge']({}, this._settings, options);
+			context.id       = ''.concat('jsonp-', uniqueString());
+			context.dfd      = new PromiseDefer();
+			context.script   = DomElement.create(pool ? pool.obtain('script') : document.createElement('script'));
+			context.settings = merge({}, this._settings, options);
 			context.timeout  = null;
 
 			context.script.setAttribute('async', true);

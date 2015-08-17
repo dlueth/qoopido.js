@@ -15,16 +15,16 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/element/canvas/todataurl', definition, [ '../../../support', '../canvas' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/element/canvas/todataurl', function(deferred) {
-		modules['support/element/canvas']()
+	return Support.addTest('/element/canvas/todataurl', function(deferred) {
+		qoopido.module('support/element/canvas')()
 			.then(
 				function() {
-					var sample = support.pool ? support.pool.obtain('canvas') : document.createElement('canvas');
+					var sample = Support.pool ? Support.pool.obtain('canvas') : document.createElement('canvas');
 
 					(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
 

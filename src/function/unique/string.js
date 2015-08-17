@@ -13,7 +13,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('function/unique/string', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var lookup     = {},

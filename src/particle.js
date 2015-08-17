@@ -17,13 +17,13 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('particle', definition, [ './emitter', './pool/module', './vector/2d' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		poolVector = modules['pool/module'].create(modules['vector/2d'], null, true);
+		poolVector = qoopido.module('pool/module').create(qoopido.module('vector/2d'), null, true);
 
-	prototype = modules['emitter'].extend({
+	prototype = qoopido.module('emitter').extend({
 		_velocity:     null,
 		_acceleration: null,
 		position:      null,

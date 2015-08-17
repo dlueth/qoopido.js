@@ -22,7 +22,7 @@
 	}
 
 	global.qoopido.register('polyfill/document/getelementsbyclassname', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var document = window.document;

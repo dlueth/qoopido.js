@@ -11,7 +11,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('polyfill/string/ucfirst', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!String.prototype.ucfirst) {

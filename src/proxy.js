@@ -14,17 +14,19 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('proxy', definition, [ './base', './function/unique/uuid' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	return modules['base'].extend({
+	var uniqueUuid = qoopido.module('function/unique/uuid');
+
+	return qoopido.module('base').extend({
 		_constructor: function(context, fn) {
 			var args  = Array.prototype.splice.call(arguments, 2),
 				proxy = function() {
 					return fn.apply(context, Array.prototype.slice.call(arguments).concat(args));
 				};
 
-			proxy._quid = modules['function/unique/uuid']();
+			proxy._quid = uniqueUuid();
 
 			return proxy;
 		}

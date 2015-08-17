@@ -27,6 +27,14 @@
 ;(function(definition, global, undefined) {
 	'use strict';
 
+	var qoopido           = global.qoopido  || (global.qoopido = {}),
+		shared            = qoopido.shared  || (qoopido.shared = {}),
+		modules           = qoopido.modules || (qoopido.modules = {}),
+		dependencies      = [],
+		isInternal        = new RegExp('^\\.+\\/'),
+		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
+		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
+
 	function register(id, definition, dependencies, callback) {
 		var namespace = id.split('/'),
 			initialize;
@@ -57,7 +65,7 @@
 				}
 			}
 
-			modules[id] = definition(modules, shared, global, undefined);
+			modules[id] = definition(qoopido, global, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -81,16 +89,13 @@
 		});
 	}
 
-	var qoopido           = global.qoopido  || (global.qoopido = {}),
-		shared            = qoopido.shared  || (qoopido.shared = {}),
-		modules           = qoopido.modules || (qoopido.modules = {}),
-		dependencies      = [],
-		isInternal        = new RegExp('^\\.+\\/'),
-		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
-		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
+	function getModule(id) {
+		return (id) ? modules[id] || null : modules;
+	}
 
-	qoopido.register          = register;
-	qoopido.registerSingleton = registerSingleton;
+	function getShared(id) {
+		return (id) ? shared[id] || null : shared;
+	}
 
 	function canonicalize(path) {
 		var collapsed;
@@ -101,6 +106,11 @@
 
 		return path.replace(removeNeutral, '');
 	}
+
+	qoopido.register          = register;
+	qoopido.registerSingleton = registerSingleton;
+	qoopido.module            = getModule;
+	qoopido.shared            = getShared;
 
 	if(!Object.create) {
 		dependencies.push('./polyfill/object/create');
@@ -115,7 +125,7 @@
 	}
 
 	register('base', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 		'use strict';
 
 		function getOwnPropertyDescriptors(object) {

@@ -14,13 +14,13 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/element/video', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/element/video', function(deferred) {
-		var sample = support.pool ? support.pool.obtain('video') : document.createElement('video');
+	return Support.addTest('/element/video', function(deferred) {
+		var sample = Support.pool ? Support.pool.obtain('video') : document.createElement('video');
 
 		(sample.canPlayType) ? deferred.resolve() : deferred.reject();
 

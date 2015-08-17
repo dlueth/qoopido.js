@@ -16,14 +16,15 @@
  */
 ;(function(definition, global) {
 	global.qoopido.registerSingleton('component/remux', definition, [ '../emitter', './sense' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		html    = document.getElementsByTagName('html')[0],
-		base    = 16,
-		state   = { fontsize: null, layout: null, ratio: { } },
-		current = { fontsize: null, layout: null };
+		ComponentSense = qoopido.module('component/sense'),
+		html           = document.getElementsByTagName('html')[0],
+		base           = 16,
+		state          = { fontsize: null, layout: null, ratio: { } },
+		current        = { fontsize: null, layout: null };
 
 	function updateState(layout, fontsize) {
 		var self = this;
@@ -62,7 +63,7 @@
 		var self = this;
 
 		global.setTimeout(function() {
-			modules['component/sense']
+			ComponentSense
 				.create(query)
 				.on('matched', function() {
 					updateState.call(self, layout, fontsize);
@@ -70,7 +71,7 @@
 		}, 0);
 	}
 
-	prototype = modules['emitter'].extend({
+	prototype = qoopido.module('emitter').extend({
 		_constructor: function() {
 			var self  = prototype._parent._constructor.call(this),
 				pBase = parseInt(html.getAttribute('data-base'), 10);

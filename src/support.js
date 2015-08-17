@@ -30,12 +30,12 @@
 	}
 
 	global.qoopido.registerSingleton('support', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var document           = global.document,
-		CombinedPromise    = modules['promise/all'],
-		DeferredPromise    = modules['promise/defer'],
+		PromiseAll         = qoopido.module('promise/all'),
+		PromiseDefer       = qoopido.module('promise/defer'),
 		matchPrefix        = new RegExp('^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])'),
 		removeJsPrefix     = new RegExp('^(?:webkit|khtml|icab|moz|ms|o)([A-Z])'),
 		removeCssPrefix    = new RegExp('^-(?:webkit|khtml|icab|moz|ms|o)-'),
@@ -66,9 +66,9 @@
 					.replace(convertToCamelCase, callbackUcfirst);
 	}
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		test: { },
-		pool: shared.pool && shared.pool.dom,
+		pool: qoopido.shared('pool/dom'),
 		testMultiple: function() {
 			var test, tests = [], i = 0;
 
@@ -78,7 +78,7 @@
 						tests.push(this.test[test]());
 						break;
 					case 'boolean':
-						var deferred = new DeferredPromise();
+						var deferred = new PromiseDefer();
 
 						!!(test) ? deferred.resolve() : deferred.reject();
 
@@ -90,7 +90,7 @@
 				}
 			}
 
-			return new CombinedPromise(tests);
+			return new PromiseAll(tests);
 		},
 		getPrefix: function() {
 			var self   = this,
@@ -244,7 +244,7 @@
 			var stored = lookup.promises.prefix;
 
 			if(stored === null) {
-				var deferred = new DeferredPromise(),
+				var deferred = new PromiseDefer(),
 					prefix   = this.getPrefix();
 
 				(!!prefix) ? deferred.resolve(prefix) : deferred.reject();
@@ -262,7 +262,7 @@
 				stored  = pointer[pMethod] = lookup.promises.method[type][pMethod] || null;
 
 			if(stored === null) {
-				var deferred = new DeferredPromise(),
+				var deferred = new PromiseDefer(),
 					method   = this.getMethod(pMethod, pElement);
 
 				(!!method) ? deferred.resolve(method) : deferred.reject();
@@ -280,7 +280,7 @@
 				stored  = pointer[pProperty] = lookup.promises.property[type][pProperty] || null;
 
 			if(stored === null) {
-				var deferred = new DeferredPromise(),
+				var deferred = new PromiseDefer(),
 					property = this.getProperty(pProperty, pElement);
 
 				(!!property) ? deferred.resolve(property) : deferred.reject();
@@ -294,7 +294,7 @@
 			var stored = lookup.promises.css[pProperty] || null;
 
 			if(stored === null) {
-				var deferred = new DeferredPromise(),
+				var deferred = new PromiseDefer(),
 					property = this.getCssProperty(pProperty);
 
 				(!!property) ? deferred.resolve(property) : deferred.reject();
@@ -309,7 +309,7 @@
 				var stored = lookup.promises.test[pId] || null;
 
 				if(stored === null) {
-					var deferred  = new DeferredPromise(),
+					var deferred  = new PromiseDefer(),
 						parameter = Array.prototype.slice.call(arguments);
 
 					parameter.splice(0, 0, deferred);

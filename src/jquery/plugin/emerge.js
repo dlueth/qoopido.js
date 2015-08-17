@@ -16,12 +16,12 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('jquery/plugins/emerge', definition, [ '../../dom/element/emerge', 'jquery' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var
 	// variables
-		jQuery = modules['jquery'] || global.jQuery,
+		jQuery = qoopido.module('jquery') || global.jQuery,
 		name   = 'emerge',
 
 	// classes
@@ -39,7 +39,7 @@
 		});
 	};
 
-	prototype = modules['dom/element/emerge'].extend({
+	prototype = qoopido.module('dom/element/emerge').extend({
 		_constructor: function(element, settings) {
 			var self   = prototype._parent._constructor.call(this, element, settings),
 				object = jQuery(element);

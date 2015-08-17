@@ -19,7 +19,7 @@
 	}
 
 	global.qoopido.register('polyfill/element/matches', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!Element.prototype.matches) {

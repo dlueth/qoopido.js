@@ -29,7 +29,7 @@
 	var dependencies = [ '../element', '../../proxy', '../../function/merge', '../../url', '../../support', '../../support/capability/datauri', '../../support/element/canvas/todataurl/png', '../../transport/xhr' ];
 
 	global.qoopido.register('dom/element/shrinkimage', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var
@@ -37,12 +37,16 @@
 		document        = global.document,
 		JSON            = global.JSON,
 		defaults        = { attribute: 'data-shrinkimage', quality: 80, debug: false },
-		pool            = shared.pool && shared.pool.dom || null,
+		merge           = qoopido.module('function/merge'),
+		Url             = qoopido.module('url'),
+		DomElement      = qoopido.module('dom/element'),
+		TransportXhr    = qoopido.module('transport/xhr'),
+		pool            = qoopido.shared('pool/dom'),
 		lookup          = {},
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
 		regexSuffix     = new RegExp('\\.png$', 'i'),
-		supported       = modules['support'].testMultiple('/capability/datauri', '/element/canvas/todataurl/png'),
+		supported       = qoopido.module('support').testMultiple('/capability/datauri', '/element/canvas/todataurl/png'),
 
 	// methods / classes
 		prototype, loader,
@@ -58,11 +62,11 @@
 		DOM_STATE       = ''.concat(DOM_LOAD, ' ', DOM_ERROR);
 
 	function processMain(url, isBackground) {
-		url          = modules['url'].resolve(regexPath.exec(url)[1]);
+		url          = Url.resolve(regexPath.exec(url)[1]);
 		isBackground = (isBackground === true);
 
 		var self     = this,
-			settings = modules['function/merge']({}, self._settings, modules['url'].getParameter(url)),
+			settings = merge({}, self._settings, qoopido.module('url').getParameter(url)),
 			target   = settings.target || (url = url.split('?')[0]).replace(regexSuffix, ''.concat('.q', settings.quality, '.shrunk'));
 
 		if(!isBackground) {
@@ -219,12 +223,12 @@
 		return false;
 	}
 
-	prototype = modules['dom/element'].extend({
+	prototype = DomElement.extend({
 		_constructor: function(element, settings) {
 			var self = prototype._parent._constructor.call(this, element),
 				foreground, background;
 
-			self._settings = settings = modules['function/merge']({}, defaults, settings);
+			self._settings = settings = merge({}, defaults, settings);
 
 			foreground = self.getAttribute(settings.attribute);
 			background = self.getStyle('backgroundImage');
@@ -247,7 +251,7 @@
 		}
 	});
 
-	loader = modules['dom/element'].extend({
+	loader = DomElement.extend({
 		_url:   null,
 		_constructor: function(url, element) {
 			var self;
@@ -259,7 +263,7 @@
 			self      = loader._parent._constructor.call(this, element);
 			self._url = url;
 
-			processTransport.call(self, modules['transport/xhr']);
+			processTransport.call(self, TransportXhr);
 
 			return self;
 		}

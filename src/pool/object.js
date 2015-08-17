@@ -15,7 +15,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('pool/object', definition, [ '../pool' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
@@ -44,7 +44,7 @@
 			return empty;
 		}());
 
-	prototype = modules['pool'].extend({
+	prototype = qoopido.module('pool').extend({
 		getModel: function() {
 			return model;
 		},
@@ -64,8 +64,7 @@
 		}
 	});
 
-	shared.pool        = shared.pool || {};
-	shared.pool.object = prototype.create();
+	qoopido.shared()['pool/object'] = prototype.create();
 
 	return prototype;
 }, this));

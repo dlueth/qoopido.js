@@ -17,12 +17,13 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('dom/collection', definition, [ '../base', './element' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var document    = global.document,
-		mDomElement = modules['dom/element'],
-		pool        = modules['pool/module'] && modules['pool/module'].create(mDomElement, null, true) || null;
+	var document   = global.document,
+		DomElement = qoopido.module('dom/element'),
+		PoolModule = qoopido.module('pool/module'),
+		pool       = PoolModule && PoolModule.create(DomElement, null, true) || null;
 
 	function buildFragment() {
 		var self      = this,
@@ -53,7 +54,7 @@
 	function mapFragment(target, method) {
 		var self = this;
 
-		target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+		target = (target && target.element) ? target : (pool && pool.obtain(target) || DomElement.create(target));
 
 		if(target) {
 			target[method].call(target, buildFragment.call(self));
@@ -64,7 +65,7 @@
 		return self;
 	}
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		elements: null,
 		_constructor: function(elements, attributes, styles) {
 			var self = this,
@@ -84,7 +85,7 @@
 			}
 
 			for(i = 0; (element = elements[i]) !== undefined; i++) {
-				self.elements.push(pool && pool.obtain(element) || mDomElement.create(element));
+				self.elements.push(pool && pool.obtain(element) || DomElement.create(element));
 			}
 
 			if(typeof attributes === 'object' && attributes !== null) {
@@ -153,7 +154,7 @@
 		insertBefore: function(target) {
 			var self = this;
 
-			target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+			target = (target && target.element) ? target : (pool && pool.obtain(target) || DomElement.create(target));
 
 			if(target) {
 				target.element.parentNode.insertBefore(buildFragment.call(self), target.element);
@@ -166,7 +167,7 @@
 		insertAfter: function(target) {
 			var self = this;
 
-			target = (target && target.element) ? target : (pool && pool.obtain(target) || mDomElement.create(target));
+			target = (target && target.element) ? target : (pool && pool.obtain(target) || DomElement.create(target));
 
 			if(target) {
 				target.element.nextSibling ? target.element.parentNode.insertBefore(buildFragment.call(self), target.element.nextSibling) : target.element.appendChild(buildFragment.call(self));

@@ -20,7 +20,7 @@
 	} else {
 		(qoopido.modules = qoopido.modules || {})['polyfill/object/getownpropertydescriptor'] = definition();
 	}
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 		'use strict';
 
 		if(!Object.getOwnPropertyDescriptor || !(function () { try { Object.getOwnPropertyDescriptor({ x: 0 }, 'x'); return true; } catch (exception) { return false; } } ())) {

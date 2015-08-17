@@ -29,7 +29,7 @@
 	}
 
 	global.qoopido.register('polyfill/window/matchmedia', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var identifier = 'qoopidoPolyfillWindowMatchmedia',
@@ -266,7 +266,7 @@
 			style.textContent = cssText;
 		}
 
-		features.type = types[((global.getComputedStyle || modules['polyfill/window/getcomputedstyle'])(style).zIndex * 1) || 0];
+		features.type = types[((global.getComputedStyle || qoopido.module('polyfill/window/getcomputedstyle'))(style).zIndex * 1) || 0];
 
 		style.parentNode.removeChild(style);
 

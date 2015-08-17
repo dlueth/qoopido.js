@@ -14,10 +14,12 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/css/boxshadow', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
+	
+	var Support = qoopido.module('support');
 
-	return modules['support'].addTest('/css/boxshadow', function(deferred) {
-		(modules['support'].supportsCssProperty('box-shadow')) ? deferred.resolve(modules['support'].getCssProperty('box-shadow')) : deferred.reject();
+	return Support.addTest('/css/boxshadow', function(deferred) {
+		(Support.supportsCssProperty('box-shadow')) ? deferred.resolve(Support.getCssProperty('box-shadow')) : deferred.reject();
 	});
 }, this));

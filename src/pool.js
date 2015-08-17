@@ -17,11 +17,13 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('pool', definition, [ './base', './function/merge', './function/unique/uuid' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		settings = {
+		merge      = qoopido.module('function/merge'),
+		uniqueUuid = qoopido.module('function/unique/uuid'),
+		settings   = {
 			interval:    1000 / 60,
 			frameBudget: 0.5,
 			maxPoolsize: 1000
@@ -77,7 +79,7 @@
 		}
 	}
 
-	prototype = modules['base'].extend({
+	prototype = qoopido.module('base').extend({
 		metrics:    null,
 		_settings:  null,
 		_pool:      null,
@@ -87,7 +89,7 @@
 			var self = this;
 
 			self.metrics      = { total: 0, inPool: 0, inUse: 0, inQueue: 0, recycled: 0, destroyed: 0 };
-			self._settings    = modules['function/merge']({}, settings, options);
+			self._settings    = merge({}, settings, options);
 			self._pool        = self._initPool();
 			self._queue       = [];
 			self._variables   = { durationSamples: 0, durationTotal: 0, durationAverage: 0 };
@@ -102,7 +104,7 @@
 		_initElement: function(element) {
 			var self = this;
 
-			element._puid   = modules['function/unique/uuid']();
+			element._puid   = uniqueUuid();
 			element.dispose = function() { self.dispose(element); };
 
 			self.metrics.total++;

@@ -54,7 +54,7 @@ Although the library is technically capable of being manually included the prefe
 <script type="text/javascript" data-main="./app/main" src="./vendor/require.js/require.min.js"></script>
 ```
 
-Next create the file ```./app/main.js``` (from the ```data-main``` attribute above), copy & paste the following code snippet and adjust paths and dependencies according to your specific needs and habits:
+Next create the file ```main.js``` (from the ```data-main``` attribute above), copy & paste the following code snippet and adjust paths and dependencies according to your specific needs and habits:
 
 ```javascript
 require.config({
@@ -101,20 +101,20 @@ Put the following code snippet into your HTML code to get require.js up & runnin
 <script type="text/javascript" data-main="./app/main" src="./vendor/require.js/require.min.js"></script>
 ```
 
-Like in the example above create the file ***./app/main.js*** and copy & paste the following code:
+Like in the example above create the file ```main.js``` and copy & paste the following code:
 
 ```javascript
 require.config({
-	baseUrl: 'app/',
+	baseUrl: './',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min'
+		qoopido: '//cdn.jsdelivr.net/qoopido.js/latest'
 	}
 });
 
 require([ 'qoopido/base' ], function() {
 	'use strict';
 
-	require('mymodule', function(mymodule) {
+	require([ 'app/mymodule' ], function(mymodule) {
 		// put your code here, e.g.
 		var instance = mymodule.create();
 	});
@@ -128,14 +128,14 @@ Next create your module file ```app/mymodule.js``` and add the code below:
 ```javascript
 ;(function(definition, global) {
 	global.qoopido.register('mymodule', definition, [ 'qoopido/emitter' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	// add private, static(!) properties and variables here
 	// add private, static(!) methods here
 	// add private methods here (use call/apply for invocation)
 
-	var prototype = modules['emitter'].extend({
+	var prototype = qoopido.module('emitter').extend({
 		// add pulic properties here
 		_constructor: function() {
 			var self = this;
@@ -155,22 +155,22 @@ Next create your module file ```app/mymodule.js``` and add the code below:
 }, this));
 ```
 
-You just developed your first custom module with only one public method, ```publicMethod```. By defining ```qoopido/emitter``` as a dependency and extending ```modules['emitter']``` your custom module also inherited all of its original methods.
+You just developed your first custom module with only one public method, ```publicMethod```. By defining ```qoopido/emitter``` as a dependency and extending it your custom module also inherited all of its original methods.
 
-So let us see what happens when you actually call your public method (console openened) by changing your ```./app/main.js``` to:
+So let us see what happens when you actually call your public method (console openened) by changing your ```main.js``` to:
 
 ```javascript
 require.config({
-	baseUrl: 'app/',
+	baseUrl: './',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min'
+		qoopido: '//cdn.jsdelivr.net/qoopido.js/latest'
 	}
 });
 
 require([ 'qoopido/base' ], function() {
 	'use strict';
 
-	require('mymodule', function(mymodule) {
+	require([ 'app/mymodule' ], function(mymodule) {
 		var instance = mymodule.create();
 
 		instance.publicMethod();
@@ -178,20 +178,20 @@ require([ 'qoopido/base' ], function() {
 });
 ```
 
-OK, so far so good: The module just output the string ```public method called``` to your console, correct? Anything more to it, you ask? Sure! Alter your ```./app/main.js``` again to contain the following code:
+OK, so far so good: The module just output the string ```public method called``` to your console, correct? Anything more to it, you ask? Sure! Alter your ```main.js``` again to contain the following code:
 
 ```javascript
 require.config({
-	baseUrl: 'app/',
+	baseUrl: './',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min'
+		qoopido: '//cdn.jsdelivr.net/qoopido.js/latest'
 	}
 });
 
 require([ 'qoopido/base' ], function() {
 	'use strict';
 
-	require('mymodule', function(mymodule) {
+	require([ 'app/mymodule' ], function(mymodule) {
 		var instance = mymodule.create()
         		.on('prePublicMethod', function(event, originalArguments) {
         			console.log(arguments);
@@ -222,10 +222,10 @@ What we did here was to register listeners to these automatically emitted events
 ```javascript
 ;(function(definition, global) {
 	global.qoopido.register('mymodule', definition, [ 'qoopido/emitter' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var prototype = modules['emitter'].extend({
+	var prototype = qoopido.module('emitter').extend({
 		_constructor: function() {
 			var self = this;
 
@@ -243,20 +243,20 @@ What we did here was to register listeners to these automatically emitted events
 }, this));
 ```
 
-And afterwards register listeners in your ```./app/main.js``` like in the following example:
+And afterwards register listeners in your ```main.js``` like in the following example:
 
 ```javascript
 require.config({
-	baseUrl: 'app/',
+	baseUrl: './',
 	paths: {
-		qoopido: '../vendor/qoopido.js/dist/latest/min'
+		qoopido: '//cdn.jsdelivr.net/qoopido.js/latest'
 	}
 });
 
 require([ 'qoopido/base' ], function() {
 	'use strict';
 
-	require('mymodule', function(mymodule) {
+	require([ 'app/mymodule' ], function(mymodule) {
 		var instance = mymodule.create()
 			.on('privateMethod', function() {
 				console.log(arguments);

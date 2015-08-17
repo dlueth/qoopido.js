@@ -15,10 +15,10 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('pool/array', definition, [ '../pool' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var prototype = modules['pool'].extend({
+	var prototype = qoopido.module('pool').extend({
 		_dispose: function(element) {
 			element.length = 0;
 
@@ -29,8 +29,7 @@
 		}
 	});
 
-	shared.pool       = shared.pool || {};
-	shared.pool.array = prototype.create();
+	qoopido.shared()['pool/array'] = prototype.create();
 
 	return prototype;
 }, this));

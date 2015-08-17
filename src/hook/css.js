@@ -22,11 +22,11 @@
 	}
 
 	global.qoopido.registerSingleton('hook/css', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var mSupport         = modules['support'],
-		getComputedStyle = global.getComputedStyle || modules['polyfill/window/getcomputedstyle'],
+	var Support          = qoopido.module('support'),
+		getComputedStyle = global.getComputedStyle || qoopido.module('polyfill/window/getcomputedstyle'),
 		hooks = {
 			general: {
 				get: function(element, property) {
@@ -37,7 +37,7 @@
 				}
 			},
 			opacity:
-				(!mSupport.supportsCssProperty('opacity')) ?
+				(!Support.supportsCssProperty('opacity')) ?
 					{
 						regex: new RegExp('alpha\\(opacity=(.*)\\)', 'i'),
 						get: function(element, property, value) {
@@ -61,7 +61,7 @@
 				: null
 		};
 
-	return modules['base'].extend({
+	return qoopido.module('base').extend({
 		add: function(property, hook) {
 			if(property && hook && hooks[property]) {
 				hooks[property] = hook;
@@ -79,7 +79,7 @@
 		process: function(method, element, property, value) {
 			var hook;
 
-			property = mSupport.getCssProperty(property, element) || null;
+			property = Support.getCssProperty(property, element) || null;
 
 			if(property) {
 				return ((hook = this.get(property[1])) && hook[method] || this.get('general')[method])(element, property, value);

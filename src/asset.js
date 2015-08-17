@@ -18,18 +18,18 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('asset', definition, [ './emitter', './transport/xhr', './promise/defer', './function/unique/uuid' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		document       = global.document,
-		lookup         = {},
-		xhrTransport   = modules['transport/xhr'],
-		xhrOptions     = { cache: true },
-		DeferedPromise = modules['promise/defer'],
-		generateUuid   = modules['function/unique/uuid'],
-		regex          = new RegExp('/', 'g'),
-		queue          = [];
+		document     = global.document,
+		lookup       = {},
+		xhrOptions   = { cache: true },
+		TransportXhr = qoopido.module('transport/xhr'),
+		PromiseDefer = qoopido.module('promise/defer'),
+		uniqueUuid   = qoopido.module('function/unique/uuid'),
+		regex        = new RegExp('/', 'g'),
+		queue        = [];
 
 	function queueAdd(asset) {
 		queue.push(asset);
@@ -54,7 +54,7 @@
 			defered    = properties.dfd,
 			url        = properties.url;
 
-		return xhrTransport
+		return TransportXhr
 			.get(url, null, xhrOptions)
 			.then(
 				function(transport) {
@@ -81,12 +81,12 @@
 			);
 	}
 
-	prototype = modules['emitter'].extend({
+	prototype = qoopido.module('emitter').extend({
 		_uuid: null,
 		_constructor: function(url, id, version) {
 			var self       = prototype._parent._constructor.call(this),
-				uuid       = generateUuid(),
-				properties = lookup[uuid] = { dfd: new DeferedPromise(), url: url };
+				uuid       = uniqueUuid(),
+				properties = lookup[uuid] = { dfd: new PromiseDefer(), url: url };
 
 			self._uuid = uuid;
 

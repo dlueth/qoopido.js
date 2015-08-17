@@ -14,13 +14,13 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/element/canvas', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	var support = modules['support'];
+	var Support = qoopido.module('support');
 
-	return support.addTest('/element/canvas', function(deferred) {
-		var sample = support.pool ? support.pool.obtain('canvas') : document.createElement('canvas');
+	return Support.addTest('/element/canvas', function(deferred) {
+		var sample = Support.pool ? Support.pool.obtain('canvas') : document.createElement('canvas');
 
 		(sample.getContext && sample.getContext('2d')) ? deferred.resolve() : deferred.reject();
 

@@ -13,7 +13,7 @@
  */
 ;(function(definition, global) {
 	global.qoopido.register('polyfill/window/getcomputedstyle', definition);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!global.getComputedStyle) {

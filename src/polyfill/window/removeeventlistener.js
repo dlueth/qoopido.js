@@ -23,7 +23,7 @@
 	}
 
 	global.qoopido.register('polyfill/window/removeeventlistener', definition, dependencies);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
 	if(!global.removeEventListener) {

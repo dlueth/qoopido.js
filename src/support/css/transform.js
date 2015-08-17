@@ -14,10 +14,12 @@
 
 ;(function(definition, global) {
 	global.qoopido.register('support/css/transform', definition, [ '../../support' ]);
-}(function(modules, shared, global, undefined) {
+}(function(qoopido, global, undefined) {
 	'use strict';
 
-	return modules['support'].addTest('/css/transform', function(deferred) {
-		(modules['support'].supportsCssProperty('transform')) ? deferred.resolve(modules['support'].getCssProperty('transform')) : deferred.reject();
+	var Support = qoopido.module('support');
+
+	return Support.addTest('/css/transform', function(deferred) {
+		(Support.supportsCssProperty('transform')) ? deferred.resolve(Support.getCssProperty('transform')) : deferred.reject();
 	});
 }, this));
