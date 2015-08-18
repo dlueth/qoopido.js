@@ -25,7 +25,7 @@
 
 	var
 	// variables
-		defaults = { interval: 50, threshold: 'auto', attribute: 'data-lazyimage' },
+		defaults = qoopido.defaults('dom/element/lazyimage', { interval: 50, threshold: 'auto', attribute: 'data-lazyimage' }),
 		merge    = qoopido.module('function/merge'),
 		queue    = 0,
 

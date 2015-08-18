@@ -25,6 +25,7 @@
 	'use strict';
 
 	var prototype,
+		defaults     = qoopido.defaults('transport/jsonp', { callback: 'callback' }),
 		document     = global.document,
 		merge        = qoopido.module('function/merge'),
 		uniqueString = qoopido.module('function/unique/string'),
@@ -112,11 +113,6 @@
 	}
 
 	prototype = qoopido.module('transport').extend({
-		_settings: {
-			callback: 'callback',
-			cache:    false,
-			timeout:  5000
-		},
 		load: function(url, data, options) {
 			var context = {};
 
@@ -125,7 +121,7 @@
 			context.id       = ''.concat('jsonp-', uniqueString());
 			context.dfd      = new PromiseDefer();
 			context.script   = DomElement.create(pool ? pool.obtain('script') : document.createElement('script'));
-			context.settings = merge({}, this._settings, options);
+			context.settings = merge({}, qoopido.defaults('transport'), defaults, options);
 			context.timeout  = null;
 
 			context.script.setAttribute('async', true);

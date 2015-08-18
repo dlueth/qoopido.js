@@ -21,8 +21,8 @@
 	'use strict';
 
 	var prototype,
-		defaultSettings = { loop: true, initial: 0 },
-		merge           = qoopido.module('function/merge');
+		defaults = qoopido.defaults('component/iterator', { loop: true, initial: 0 }),
+		merge    = qoopido.module('function/merge');
 
 	prototype = qoopido.module('emitter').extend({
 		_settings: null,
@@ -30,7 +30,7 @@
 		_constructor: function(data, settings) {
 			var self = prototype._parent._constructor.call(this);
 
-			self._settings = merge({}, defaultSettings, settings || {});
+			self._settings = merge({}, defaults, settings || {});
 			self._state    = { length: null, index: null, item: null, data: null };
 
 			if(data !== undefined && data !== null) {
