@@ -22,6 +22,7 @@
 	'use strict';
 
 	var prototype,
+		defaults     = qoopido.defaults('asset', { prefix: global.location.host }),
 		document     = global.document,
 		lookup       = {},
 		xhrOptions   = { cache: true },
@@ -81,31 +82,46 @@
 			);
 	}
 
+	function onHit(event) {
+		var properties = lookup[this._uuid],
+			expires    = properties.expires,
+			storage    = properties.storage,
+			time       = new Date().getTime();
+
+		localStorage[storage.access] = time;
+
+		if(expires > 0 && event === 'stored') {
+			localStorage[storage.expires] = time + expires;
+		}
+	}
+
 	prototype = qoopido.module('emitter').extend({
 		_uuid: null,
-		_constructor: function(url, id, version, prefix) {
+		_constructor: function(url, id, version, expires) {
 			var self       = prototype._parent._constructor.call(this),
 				uuid       = uniqueUuid(),
 				properties = lookup[uuid] = { dfd: new PromiseDefer(), url: url },
 				pid;
 
+			expires = parseInt(expires, 10);
+
 			self._uuid = uuid;
 
 			if(id && version) {
-				pid = (prefix || global.location.host) + '[' + id + ']';
+				pid = defaults.prefix + '[' + id + ']';
 
 				properties.id      = id;
 				properties.version = version;
+				properties.expires = expires;
 				properties.cookie  = encodeURIComponent('qoopido[asset][' + id.replace(regex, '][') + ']');
 				properties.storage = {
 					version: '#' + pid,
 					access:  '@' + pid,
+					expires: '?' + pid,
 					value:   '$' + pid
 				};
 
-				self.on('hit stored', function() {
-					localStorage[properties.storage.access] = new Date().getTime();
-				});
+				self.on('hit stored', onHit);
 			}
 
 			return self;
@@ -118,17 +134,18 @@
 				id         = properties.id,
 				version    = properties.version,
 				storage    = properties.storage,
-				stored     = storage && storage.version && localStorage[storage.version];
+				stored     = storage && storage.version && localStorage[storage.version],
+				expires    = storage && storage.expires && localStorage[storage.expires];
 
-			if(stored && stored >= version) {
+			if(!stored || stored < version || (expires && expires < new Date().getTime())) {
+				self.emit('miss', url, id, version);
+
+				queueAdd(self);
+			} else {
 				var value = localStorage[properties.storage.value];
 
 				self.emit('hit', url, id, version, value);
 				defered.resolve(value);
-			} else {
-				self.emit('miss', url, id, version);
-
-				queueAdd(self);
 			}
 
 			return defered.promise;
@@ -136,14 +153,15 @@
 		clear: function() {
 			var self       = this,
 				properties = lookup[self._uuid],
-				storage    = properties.storage;
+				storage    = properties.storage,
+				key;
 
 			if(storage) {
 				document.cookie = properties.cookie + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 
-				delete localStorage[storage.version];
-				delete localStorage[storage.access];
-				delete localStorage[storage.value];
+				for(key in storage) {
+					delete localStorage[storage[key]];
+				}
 
 				self.emit('cleared', properties.url, properties.id, properties.version);
 			}

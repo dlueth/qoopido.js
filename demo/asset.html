@@ -143,12 +143,13 @@
 		// parse relevant properties from "itemprop" attribute
 		var property = element.getAttribute('itemprop'),
 			url      = element.getAttribute('content'),
+			expires  = element.getAttribute('data-expires'),
 			id       = property.substring(0, property.indexOf('@')),
 			version  = property.substring(property.indexOf('@') + 1);
 
 		require(['asset'], function(mAsset) {
 			// create an instance and pass url, id and version of asset
-			var asset = assets[index] = mAsset.create(url, id, version);
+			var asset = assets[index] = mAsset.create(url, id, version, expires);
 
 			// process
 			asset
@@ -172,27 +173,27 @@
 				.fetch()
 				// ... which returns a promise
 				.then(
-				function(value) {
-					switch(element.tagName) {
-						case 'STYLE':
-							if(element.styleSheet) {
-								element.styleSheet.cssText = value;
-							} else {
-								element.innerHTML = value;
-							}
-							break;
-						case 'SCRIPT':
-							element.text = value;
-							break;
-					}
+					function(value) {
+						switch(element.tagName) {
+							case 'STYLE':
+								if(element.styleSheet) {
+									element.styleSheet.cssText = value;
+								} else {
+									element.innerHTML = value;
+								}
+								break;
+							case 'SCRIPT':
+								element.text = value;
+								break;
+						}
 
-					log(id + ':resolved');
-				},
-				function() {
-					log(id + ':rejected');
-				})
-				// you could also clear localStorage and cookies for an asset
-				// .clear()
+						log(id + ':resolved');
+					},
+					function() {
+						log(id + ':rejected');
+					})
+					// you could also clear localStorage and cookies for an asset
+					// .clear()
 				;
 		});
 	};
