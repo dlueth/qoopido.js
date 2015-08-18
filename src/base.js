@@ -27,10 +27,12 @@
 ;(function(definition, global, undefined) {
 	'use strict';
 
-	var qoopido           = global.qoopido  || (global.qoopido = {}),
-		shared            = qoopido.shared  || (qoopido.shared = {}),
-		modules           = qoopido.modules || (qoopido.modules = {}),
+	var qoopido           = global.qoopido   || (global.qoopido   = {}),
+		shared            = qoopido.shared   || (qoopido.shared   = {}),
+		modules           = qoopido.modules  || (qoopido.modules  = {}),
+		defaults          = qoopido.defaults || (qoopido.defaults = {}),
 		dependencies      = [],
+		publicInterface   = {},
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
 		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
@@ -65,7 +67,7 @@
 				}
 			}
 
-			modules[id] = definition(qoopido, global, undefined);
+			modules[id] = definition(publicInterface, global, undefined);
 
 			if(callback) {
 				callback(modules[id]);
@@ -97,6 +99,14 @@
 		return (id) ? shared[id] || null : shared;
 	}
 
+	function getDefaults(id, options) {
+		if(id && options) {
+			defaults[id] = options;
+		}
+
+		return (id) ? defaults[id] || (defaults[id] = {}) : defaults;
+	}
+
 	function canonicalize(path) {
 		var collapsed;
 
@@ -109,8 +119,9 @@
 
 	qoopido.register          = register;
 	qoopido.registerSingleton = registerSingleton;
-	qoopido.module            = getModule;
-	qoopido.shared            = getShared;
+	publicInterface.module    = getModule;
+	publicInterface.shared    = getShared;
+	publicInterface.defaults  = getDefaults;
 
 	if(!Object.create) {
 		dependencies.push('./polyfill/object/create');
