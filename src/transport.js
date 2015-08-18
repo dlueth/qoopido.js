@@ -22,14 +22,9 @@
 	var prototype,
 		merge = qoopido.module('function/merge');
 
+	qoopido.defaults('transport', { timeout: 5000, cache: false });
+
 	prototype = qoopido.module('base').extend({
-		setup: function(options) {
-			var self = this;
-
-			self._settings = merge({}, self._settings, options);
-
-			return self;
-		},
 		serialize: function(obj, prefix) {
 			var parameter = [], id, key, value;
 

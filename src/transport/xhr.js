@@ -26,6 +26,7 @@
 	'use strict';
 
 	var prototype,
+		defaults     = qoopido.defaults('transport/xhr', { accept: '*/*', async: true, header: {}, username: null, password: null, contentType: 'application/x-www-form-urlencoded; charset=UTF-8 ', xhrOptions:  {} }),
 		merge        = qoopido.module('function/merge'),
 		uniqueString = qoopido.module('function/unique/string'),
 		Url          = qoopido.module('url'),
@@ -80,7 +81,7 @@
 		self.timeout = setTimeout(function() { onTimeout.call(self); }, settings.timeout);
 	}
 
-	function onProgress(event) {
+	function onProgress() {
 		var self = this;
 
 		if(self.timeout) {
@@ -133,17 +134,6 @@
 	}
 
 	prototype = qoopido.module('transport').extend({
-		_settings: {
-			accept:      '*/*',
-			timeout:     5000,
-			async:       true,
-			cache:       false,
-			header:      {},
-			username:    null,
-			password:    null,
-			contentType: 'application/x-www-form-urlencoded; charset=UTF-8 ',
-			xhrOptions:  {}
-		},
 		load: function(method, url, data, options) {
 			var context = {};
 
@@ -153,7 +143,7 @@
 			context.id       = ''.concat('xhr-', uniqueString());
 			context.dfd      = new PromiseDefer();
 			context.xhr      = getXhr(url);
-			context.settings = merge({}, this._settings, options);
+			context.settings = merge({}, qoopido.defaults('transport'), defaults, options);
 			context.timeout  = null;
 
 			sendRequest.call(context, method.toUpperCase(), url, data);

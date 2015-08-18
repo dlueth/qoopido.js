@@ -21,13 +21,9 @@
 	'use strict';
 
 	var prototype,
+		defaults   = qoopido.defaults('pool', { interval: 1000 / 60, frameBudget: 0.5, maxPoolsize: 1000 }),
 		merge      = qoopido.module('function/merge'),
-		uniqueUuid = qoopido.module('function/unique/uuid'),
-		settings   = {
-			interval:    1000 / 60,
-			frameBudget: 0.5,
-			maxPoolsize: 1000
-		};
+		uniqueUuid = qoopido.module('function/unique/uuid');
 
 	function processQueue() {
 		var self        = this,
@@ -85,11 +81,11 @@
 		_pool:      null,
 		_queue:     null,
 		_variables: null,
-		_constructor: function(options) {
+		_constructor: function(settings) {
 			var self = this;
 
 			self.metrics      = { total: 0, inPool: 0, inUse: 0, inQueue: 0, recycled: 0, destroyed: 0 };
-			self._settings    = merge({}, settings, options);
+			self._settings    = merge({}, defaults, settings);
 			self._pool        = self._initPool();
 			self._queue       = [];
 			self._variables   = { durationSamples: 0, durationTotal: 0, durationAverage: 0 };

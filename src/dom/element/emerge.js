@@ -22,7 +22,7 @@
 
 	var
 	// variables
-		defaults        = { interval: 50, threshold: 'auto', recur: true, auto: 1, visibility: true },
+		defaults        = qoopido.defaults('dom/element/emerge', { interval: 50, threshold: 'auto', recur: true, auto: 1, visibility: true }),
 		document        = global.document,
 		documentElement = document.documentElement,
 		qGlobal         = qoopido.module('dom/element').create(global),

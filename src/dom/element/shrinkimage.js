@@ -36,7 +36,7 @@
 	// properties
 		document        = global.document,
 		JSON            = global.JSON,
-		defaults        = { attribute: 'data-shrinkimage', quality: 80, debug: false },
+		defaults        = qoopido.defaults('dom/element/shrinkimage', { attribute: 'data-shrinkimage', quality: 80, debug: false }),
 		merge           = qoopido.module('function/merge'),
 		Url             = qoopido.module('url'),
 		DomElement      = qoopido.module('dom/element'),
@@ -228,7 +228,7 @@
 			var self = prototype._parent._constructor.call(this, element),
 				foreground, background;
 
-			self._settings = settings = merge({}, defaults, settings);
+			self._settings = settings = merge({}, defaults, settings || {});
 
 			foreground = self.getAttribute(settings.attribute);
 			background = self.getStyle('backgroundImage');
