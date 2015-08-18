@@ -86,18 +86,21 @@
 		_constructor: function(url, id, version, prefix) {
 			var self       = prototype._parent._constructor.call(this),
 				uuid       = uniqueUuid(),
-				properties = lookup[uuid] = { dfd: new PromiseDefer(), url: url };
+				properties = lookup[uuid] = { dfd: new PromiseDefer(), url: url },
+				pid;
 
 			self._uuid = uuid;
 
 			if(id && version) {
-				properties.id      = (prefix || global.location.host) + ':' + id;
+				pid = (prefix || global.location.host) + '[' + id + ']';
+
+				properties.id      = id;
 				properties.version = version;
 				properties.cookie  = encodeURIComponent('qoopido[asset][' + id.replace(regex, '][') + ']');
 				properties.storage = {
-					version: '#' + id,
-					access:  '@' + id,
-					value:   '$' + id
+					version: '#' + pid,
+					access:  '@' + pid,
+					value:   '$' + pid
 				};
 
 				self.on('hit stored', function() {
