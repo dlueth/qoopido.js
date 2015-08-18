@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<title>Qoopido.js example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="./default.css" />
+
+	<!-- I do use an empty "style" tag whenever I want to directly load + inject an asset -->
+	<!--
+	<style type="text/css" itemprop="asset/css/complete@0.0.10" content="//cdn.qoopido.com/portfolio/assets/css/min/complete.css"></style>
+	-->
+
+	<!-- When I just want to lazyload an asset I would use a "meta" tag instead -->
+	<meta itemprop="asset/css/complete@0.0.10" content="//cdn.qoopido.com/portfolio/assets/css/min/complete.css" />
+
+	<!-- If I have above the fold CSS/JS and want/need to inject it as fast as possible, without having to load require.js or any modules I do add the following (minified) script to my document head -->
+
+	<!--
+	<script type="text/javascript">
+		;(function(window, document, localStorage, undefined) {
+			var assets, i, asset, property, id, version, stored, value;
+
+			if(localStorage) {
+				assets = document.querySelectorAll('[itemprop^="asset/"]');
+
+				for(i = 0; (asset = assets[i]) !== undefined; i++) {
+					property = asset.getAttribute('itemprop');
+					id       = property.substring(0, property.indexOf('@')),
+					version  = property.substring(property.indexOf('@') + 1);
+					stored   = localStorage['@' + id];
+					value    = localStorage['©' + id];
+
+					if(stored && stored >= version) {
+						switch(asset.tagName.toLowerCase()) {
+							case 'style':
+								if(asset.styleSheet) {
+									asset.styleSheet.cssText = value;
+								} else {
+									asset.innerHTML = value;
+								}
+
+								break;
+							case 'script':
+								asset.text = value;
+
+								break;
+						}
+
+						asset.removeAttribute('itemprop');
+						asset.removeAttribute('content');
+					}
+				}
+			}
+		}(window, document, localStorage));
+	</script>
+	-->
+</head>
+<body>
+
+<div id="console">
+	<svg width="22px" height="22px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+		<path d="M21,35.7 C29.1185862,35.7 35.7,29.1185862 35.7,21 C35.7,12.8814138 29.1185862,6.3 21,6.3 C12.8814138,6.3 6.3,12.8814138 6.3,21 C6.3,29.1185862 12.8814138,35.7 21,35.7 Z M21,42 C9.40201968,42 0,32.5979803 0,21 C0,9.40201968 9.40201968,0 21,0 C32.5979803,0 42,9.40201968 42,21 C42,25.4717509 40.6023075,29.617053 38.22,33.0228094 L38.22,38.22 L33.0228094,38.22 C29.617053,40.6023075 25.4717509,42 21,42 Z M21,42" fill="#FFFFFF"></path>
+		<path d="M21,29.4 C16.3608079,29.4 12.6,25.6391921 12.6,21 C12.6,16.3608079 16.3608079,12.6 21,12.6 C25.6391921,12.6 29.4,16.3608079 29.4,21 C29.4,22.3143115 29.0981487,23.5581219 28.56,24.6658654 L28.56,28.56 L24.6658654,28.56 C23.5581219,29.0981487 22.3143115,29.4 21,29.4 Z M21,29.4" fill="#FFFFFF"></path>
+	</svg>
+
+	<h3>localStorage asset loader</h3>
+	<dl>
+		<dt>idle</dt><dd></dd>
+	</dl>
+
+	<div class="actions">
+		<span data-clear>clear</span>
+		<span data-reload>reload</span>
+	</div>
+</div>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+<script type="text/javascript">
+;(function(require, window, document, undefined) {
+	require.config({
+		baseUrl: '../../src'
+	});
+
+	// find all assets to load
+	var assets       = Array.prototype.slice.call(document.querySelectorAll('[itemprop^="asset/"]')),
+		regexCss     = new RegExp('url\\(\\s*(?:"|\'|)(?!data:)(.+?)(?:"|\'|)\\)', 'g'),
+		debugConsole = document.querySelector('#console dl'),
+		debugLog     = [],
+		i;
+
+	require([ 'base' ], function() {
+		// loop through all assets
+		if(assets.length > 0) {
+			for(i = 0; i < assets.length; i++) {
+				// The asset module has an internal queue that loads only one asset at a time to not block any critical things
+				processAsset(assets[i], i);
+			}
+		}
+
+		// attach clear to button
+		require([ 'dom/element' ], function(mDomElement) {
+			mDomElement
+					.create('#console .actions')
+					.on('click', '[data-clear]', function(event) {
+						event.preventDefault();
+						event.stopPropagation();
+
+						for(i = 0; i < assets.length; i++) {
+							assets[i].clear();
+						}
+					})
+					.on('click', '[data-reload]', function(event) {
+						event.preventDefault();
+						event.stopPropagation();
+
+						location['reload']();
+					});
+		});
+	});
+
+	// logging helper
+	function log(message) {
+		if(message) {
+			message = message.split(':');
+
+			debugLog.push('<dt>' + message[0] + '</dt><dd>' + message[1] + '</dd>');
+
+			window.setTimeout(function() {
+				debugLog.splice(0, 1);
+
+				log();
+
+				if(debugLog.length === 0) {
+					debugConsole.innerHTML = '<dt>idle</dt><dd></dd>';
+				}
+			}, 2000 * debugLog.length);
+		}
+
+		debugConsole.innerHTML = debugLog.join('');
+	}
+
+	function processAsset(element, index) {
+		// parse relevant properties from "itemprop" attribute
+		var property = element.getAttribute('itemprop'),
+			url      = element.getAttribute('content'),
+			id       = property.substring(0, property.indexOf('@')),
+			version  = property.substring(property.indexOf('@') + 1);
+
+		require(['asset'], function(mAsset) {
+			// create an instance and pass url, id and version of asset
+			var asset = assets[index] = mAsset.create(url, id, version);
+
+			// process
+			asset
+				// register a listener for the "stored" event to e.g. rebase URLs in the stored CSS
+				.on('stored', function(event, url, id, version, value, lsVersion, lsValue) {
+					var base = url.substring(0, url.lastIndexOf('/') + 1);
+
+					localStorage[lsValue] = value.replace(regexCss, 'url(' + base + '$1)');
+
+					log(id + ':' + event);
+				})
+				// register listeners for "hit" and "loaded" events which share parameters
+				.on('hit loaded', function(event, url, id, version, value) {
+					log(id + ':' + event);
+				})
+				// register listeners for "miss" and "cleared" events which share parameters
+				.on('miss cleared', function(event, url, id, version) {
+					log(id + ':' + event);
+				})
+				// initialize fetching the asset...
+				.fetch()
+				// ... which returns a promise
+				.then(
+				function(value) {
+					switch(element.tagName) {
+						case 'STYLE':
+							if(element.styleSheet) {
+								element.styleSheet.cssText = value;
+							} else {
+								element.innerHTML = value;
+							}
+							break;
+						case 'SCRIPT':
+							element.text = value;
+							break;
+					}
+
+					log(id + ':resolved');
+				},
+				function() {
+					log(id + ':rejected');
+				})
+				// you could also clear localStorage and cookies for an asset
+				// .clear()
+				;
+		});
+	};
+}(require, window, document));
+</script>
+
+</body>
+</html>
