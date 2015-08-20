@@ -11,7 +11,17 @@
 	-->
 
 	<!-- When I just want to lazyload an asset I would use a "meta" tag instead -->
-	<meta itemprop="asset/css/complete@0.0.10" content="//cdn.qoopido.com/portfolio/assets/css/min/complete.css" />
+	<meta itemprop="asset/jsdelivr/qoopido/asset@1.0.0" content="//cdn.jsdelivr.net/qoopido.js/latest/asset.js" />
+	<meta itemprop="asset/jsdelivr/qoopido/base@1.0.0" content="//cdn.jsdelivr.net/qoopido.js/latest/base.js" />
+	<meta itemprop="asset/jsdelivr/qoopido/particle@1.0.0" content="//cdn.jsdelivr.net/qoopido.js/latest/particle.js" />
+	<meta itemprop="asset/jsdelivr/qoopido/pool@1.0.0" content="//cdn.jsdelivr.net/qoopido.js/latest/pool.js" />
+	<meta itemprop="asset/jsdelivr/qoopido/support@1.0.0" content="//cdn.jsdelivr.net/qoopido.js/latest/support.js" />
+
+	<meta itemprop="asset/cdnjs/qoopido/asset@1.0.0" content="//cdnjs.cloudflare.com/ajax/libs/qoopido.js/3.7.4/asset.js" />
+	<meta itemprop="asset/cdnjs/qoopido/base@1.0.0" content="//cdnjs.cloudflare.com/ajax/libs/qoopido.js/3.7.4/base.js" data-expires="60" />
+	<meta itemprop="asset/cdnjs/qoopido/particle@1.0.0" content="//cdnjs.cloudflare.com/ajax/libs/qoopido.js/3.7.4/particle.js" />
+	<meta itemprop="asset/cdnjs/qoopido/pool@1.0.0" content="//cdnjs.cloudflare.com/ajax/libs/qoopido.js/3.7.4/pool.js" data-expires="60" />
+	<meta itemprop="asset/cdnjs/qoopido/support@1.0.0" content="//cdnjs.cloudflare.com/ajax/libs/qoopido.js/3.7.4/support.js" />
 
 	<!-- If I have above the fold CSS/JS and want/need to inject it as fast as possible, without having to load require.js or any modules I do add the following (minified) script to my document head -->
 
@@ -149,24 +159,24 @@
 
 		require(['asset'], function(mAsset) {
 			// create an instance and pass url, id and version of asset
-			var asset = assets[index] = mAsset.create(url, id, version, expires);
+			var asset = assets[index] = mAsset.create(url, id, { version: version, expiration: expires });
 
 			// process
 			asset
 				// register a listener for the "stored" event to e.g. rebase URLs in the stored CSS
-				.on('stored', function(event, url, id, version, value, lsVersion, lsValue) {
+				.on('stored', function(event, id, value, key) {
 					var base = url.substring(0, url.lastIndexOf('/') + 1);
 
-					localStorage[lsValue] = value.replace(regexCss, 'url(' + base + '$1)');
+					localStorage[key] = value.replace(regexCss, 'url(' + base + '$1)');
 
 					log(id + ':' + event);
 				})
 				// register listeners for "hit" and "loaded" events which share parameters
-				.on('hit loaded', function(event, url, id, version, value) {
+				.on('hit loaded', function(event, id, value) {
 					log(id + ':' + event);
 				})
 				// register listeners for "miss" and "cleared" events which share parameters
-				.on('miss cleared', function(event, url, id, version) {
+				.on('miss cleared', function(event, id) {
 					log(id + ':' + event);
 				})
 				// initialize fetching the asset...

@@ -14,69 +14,94 @@
  * @require ./emitter
  * @require ./transport/xhr
  * @require ./promise/defer
+ * @require ./function/merge
  * @require ./function/unique/uuid
  */
 ;(function(definition, global) {
-	global.qoopido.register('asset', definition, [ './emitter', './transport/xhr', './promise/defer', './function/unique/uuid' ]);
+	global.qoopido.register('asset', definition, [ './emitter', './transport/xhr', './promise/defer', './function/merge', './function/unique/uuid' ]);
 }(function(qoopido, global, undefined) {
 	'use strict';
 
 	var prototype,
-		defaults     = qoopido.defaults('asset', { prefix: global.location.host }),
+		defaults     = qoopido.defaults('asset', { prefix: global.location.host, limit: 3, version: null, expiration: null }),
 		document     = global.document,
 		lookup       = {},
 		xhrOptions   = { cache: true },
 		TransportXhr = qoopido.module('transport/xhr'),
 		PromiseDefer = qoopido.module('promise/defer'),
+		merge        = qoopido.module('function/merge'),
 		uniqueUuid   = qoopido.module('function/unique/uuid'),
 		regex        = new RegExp('/', 'g'),
-		queue        = [];
+		queue        = {};
 
 	function queueAdd(asset) {
-		queue.push(asset);
+		var host    = lookup[asset._uuid].host,
+			pointer = queue[host] || (queue[host] = { queued: 0, assets: [] }),
+			assets  = pointer.assets;
 
-		queue.length === 1 && queueProcess();
+		assets.push(asset);
+
+		pointer.queued === 0 && queueProcess(pointer);
 	}
 
-	function queueProcess() {
-		loadAsset(queue[0])
-			.then(
-				function() {
-					queue.splice(0, 1) && queue.length >= 1 && queueProcess();
-				},
-				function() {
-					queue.splice(0, 1) && queue.length >= 1 && queueProcess();
-				}
-			);
+	function queueProcess(queue) {
+		var assets = queue.assets;
+
+		while(queue.queued < defaults.limit && assets[0]) {
+			loadAsset(queue, assets.splice(0, 1)[0]);
+		}
 	}
 
-	function loadAsset(asset) {
+	function loadAsset(queue, asset) {
 		var properties = lookup[asset._uuid],
 			defered    = properties.dfd,
-			url        = properties.url;
+			url        = properties.url,
+			limit      = defaults.limit,
+			assets     = queue.assets;
 
-		return TransportXhr
+		queue.queued++;
+
+		TransportXhr
 			.get(url, null, xhrOptions)
 			.then(
-				function(transport) {
-					var value   = transport.data,
-						id      = properties.id,
-						version = properties.version,
-						storage = properties.storage;
+				function(response) {
+					queue.queued--;
+					queue.queued < limit && assets.length >= 1 && queueProcess(queue);
 
-					asset.emit('loaded', url, id, version, value);
+					var value    = response.data,
+						id       = properties.id,
+						storage  = properties.storage,
+						settings = properties.settings,
+						cookie;
+
+					asset.emit('loaded', id, value, storage.value);
 
 					if(storage) {
-						document.cookie               = properties.cookie + '=' + encodeURIComponent(version) + '; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
-						localStorage[storage.version] = version;
-						localStorage[storage.value]   = value;
+						localStorage[storage.value] = value;
 
-						asset.emit('stored', url, id, version, value, storage.version, storage.value);
+						if(properties.settings.version || properties.settings.version) {
+							cookie = [];
+
+							if(settings.version) {
+								cookie.push('"version":"' + settings.version + '"');
+							}
+
+							if(settings.expiration) {
+								cookie.push('"expiration":"' + settings.expiration + '"');
+							}
+
+							document.cookie = properties.cookie + '=' + encodeURIComponent('{' + cookie.join(',') + '}') + '; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/';
+						}
+
+						asset.emit('stored', id, value, storage.value);
 					}
 
 					defered.resolve(localStorage[storage.value]);
 				},
 				function() {
+					queue.queued--;
+					queue.queued < limit && assets.length >= 1 && queueProcess(queue);
+
 					defered.reject();
 				}
 			);
@@ -84,41 +109,54 @@
 
 	function onHit(event) {
 		var properties = lookup[this._uuid],
-			expires    = properties.expires,
 			storage    = properties.storage,
+			settings   = properties.settings,
+			version    = settings.version,
+			expiration = settings.expiration,
 			time       = new Date().getTime();
 
 		localStorage[storage.access] = time;
 
-		if(expires > 0 && event === 'stored') {
-			localStorage[storage.expires] = time + expires;
+		if(expiration && event === 'stored') {
+			localStorage[storage.expiration] = time + expiration;
 		}
+
+		if(version && event === 'stored') {
+			localStorage[storage.version] = version;
+		}
+	}
+
+	function resolveUrl(url) {
+		var resolver = document.createElement('a');
+
+		resolver.href = url;
+
+		return resolver;
 	}
 
 	prototype = qoopido.module('emitter').extend({
 		_uuid: null,
-		_constructor: function(url, id, version, expires) {
+		_constructor: function(url, id, options) {
 			var self       = prototype._parent._constructor.call(this),
 				uuid       = uniqueUuid(),
 				properties = lookup[uuid] = { dfd: new PromiseDefer(), url: url },
+				settings   = merge({}, defaults, options),
 				pid;
-
-			expires = parseInt(expires, 10);
 
 			self._uuid = uuid;
 
-			if(id && version) {
-				pid = defaults.prefix + '[' + id + ']';
+			if(id) {
+				pid = settings.prefix + '[' + id + ']';
 
-				properties.id      = id;
-				properties.version = version;
-				properties.expires = expires;
-				properties.cookie  = encodeURIComponent('qoopido[asset][' + id.replace(regex, '][') + ']');
-				properties.storage = {
-					version: '#' + pid,
-					access:  '@' + pid,
-					expires: '?' + pid,
-					value:   '$' + pid
+				properties.id       = id;
+				properties.host     = resolveUrl(url).host;
+				properties.settings = settings;
+				properties.cookie   = encodeURIComponent('qoopido[asset][' + id.replace(regex, '][') + ']');
+				properties.storage  = {
+					value:      '$' + pid,
+					access:     '@' + pid,
+					version:    '#' + pid,
+					expiration: '?' + pid
 				};
 
 				self.on('hit stored', onHit);
@@ -128,23 +166,25 @@
 		},
 		fetch: function() {
 			var self       = this,
-				properties = lookup[self._uuid],
-				defered    = properties.dfd,
-				url        = properties.url,
-				id         = properties.id,
-				version    = properties.version,
-				storage    = properties.storage,
-				stored     = storage && storage.version && localStorage[storage.version],
-				expires    = storage && storage.expires && localStorage[storage.expires];
+				properties       = lookup[self._uuid],
+				defered          = properties.dfd,
+				id               = properties.id,
+				storage          = properties.storage,
+				settings         = properties.settings,
+				version          = settings.version,
+				expiration       = settings.expiration,
+				storedValue      = storage.value && localStorage[storage.value],
+				storedVersion    = storedValue && localStorage[storage.version],
+				storedExpiration = storedValue && localStorage[storage.expiration];
 
-			if(!stored || stored < version || (expires && expires < new Date().getTime())) {
-				self.emit('miss', url, id, version);
+			if(!storedValue || (storedVersion && storedVersion !== version) || (storedExpiration && storedExpiration < new Date().getTime()) || (!storedVersion && version) || (!storedExpiration &&  expiration)) {
+				self.emit('miss', id);
 
 				queueAdd(self);
 			} else {
 				var value = localStorage[properties.storage.value];
 
-				self.emit('hit', url, id, version, value);
+				self.emit('hit', id, value);
 				defered.resolve(value);
 			}
 
@@ -163,7 +203,7 @@
 					delete localStorage[storage[key]];
 				}
 
-				self.emit('cleared', properties.url, properties.id, properties.version);
+				self.emit('cleared', properties.id);
 			}
 
 			return self;
