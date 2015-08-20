@@ -26,7 +26,8 @@
 
 		qoopido.register('polyfill/object/create', definition, dependencies);
 	} else {
-		(qoopido.modules = qoopido.modules || {})['polyfill/object/create'] = definition();
+		qoopido.storage = qoopido.storage || {};
+		(qoopido.storage.modules = qoopido.storage.modules || {})['polyfill/object/create'] = definition();
 	}
 }(function(qoopido, global, undefined) {
 		'use strict';

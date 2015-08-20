@@ -26,7 +26,8 @@
 
 		qoopido.register('polyfill/object/defineproperties', definition, dependencies);
 	} else {
-		(qoopido.modules = qoopido.modules || {})['polyfill/object/defineproperties'] = definition();
+		qoopido.storage = qoopido.storage || {};
+		(qoopido.storage.modules = qoopido.storage.modules || {})['polyfill/object/defineproperties'] = definition();
 	}
 }(function(qoopido, global, undefined) {
 		'use strict';

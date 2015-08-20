@@ -18,7 +18,8 @@
 	if(qoopido.register) {
 		qoopido.register('polyfill/object/defineproperty', definition);
 	} else {
-		(qoopido.modules = qoopido.modules || {})['polyfill/object/defineproperty'] = definition();
+		qoopido.storage = qoopido.storage || {};
+		(qoopido.storage.modules = qoopido.storage.modules || {})['polyfill/object/defineproperty'] = definition();
 	}
 }(function(qoopido, global, undefined) {
 		'use strict';

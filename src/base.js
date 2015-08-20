@@ -28,9 +28,10 @@
 	'use strict';
 
 	var qoopido           = global.qoopido   || (global.qoopido   = {}),
-		shared            = qoopido.shared   || (qoopido.shared   = {}),
-		modules           = qoopido.modules  || (qoopido.modules  = {}),
-		defaults          = qoopido.defaults || (qoopido.defaults = {}),
+		storage           = qoopido.storage  || (qoopido.storage  = {}),
+		storageModules    = storage.modules  || (storage.modules  = {}),
+		storageDefaults   = storage.defaults || (storage.defaults = {}),
+		storageShared     = storage.shared   || (storage.shared   = {}),
 		dependencies      = [],
 		publicInterface   = {},
 		isInternal        = new RegExp('^\\.+\\/'),
@@ -41,8 +42,8 @@
 		var namespace = id.split('/'),
 			initialize;
 
-		if(modules[id]) {
-			return modules[id];
+		if(storageModules[id]) {
+			return storageModules[id];
 		}
 
 		initialize = function() {
@@ -57,23 +58,23 @@
 						dependency = canonicalize(path + '/' + dependency);
 					}
 
-					if(!modules[dependency] && arguments[i]) {
-						modules[dependency] = arguments[i];
+					if(!storageModules[dependency] && arguments[i]) {
+						storageModules[dependency] = arguments[i];
 					}
 
-					if(internal && !modules[dependency] && typeof console !== 'undefined') {
+					if(internal && !storageModules[dependency] && typeof console !== 'undefined') {
 						console.error(''.concat('[Qoopido.js] ', id, ': Could not load dependency ', dependency));
 					}
 				}
 			}
 
-			modules[id] = definition(publicInterface, global, undefined);
+			storageModules[id] = definition(publicInterface, global, undefined);
 
 			if(callback) {
-				callback(modules[id]);
+				callback(storageModules[id]);
 			}
 
-			return modules[id];
+			return storageModules[id];
 		};
 
 		if (typeof module !== 'undefined' && module.exports) {
@@ -87,24 +88,24 @@
 
 	function registerSingleton(id, definition, dependencies) {
 		register(id, definition, dependencies, function(module) {
-			modules[id] = module.create();
+			storageModules[id] = module.create();
 		});
 	}
 
-	function getModule(id) {
-		return (id) ? modules[id] || null : modules;
+	function module(id) {
+		return (id) ? storageModules[id] || null : storageModules;
 	}
 
-	function getShared(id) {
-		return (id) ? shared[id] || null : shared;
+	function shared(id) {
+		return (id) ? storageShared[id] || null : storageShared;
 	}
 
-	function getDefaults(id, options) {
+	function defaults(id, options) {
 		if(id && options) {
-			defaults[id] = options;
+			storageDefaults[id] = options;
 		}
 
-		return (id) ? defaults[id] || (defaults[id] = {}) : defaults;
+		return (id) ? storageDefaults[id] || (storageDefaults[id] = {}) : storageDefaults;
 	}
 
 	function canonicalize(path) {
@@ -117,11 +118,11 @@
 		return path.replace(removeNeutral, '');
 	}
 
-	qoopido.register          = register;
-	qoopido.registerSingleton = registerSingleton;
-	publicInterface.module    = getModule;
-	publicInterface.shared    = getShared;
-	publicInterface.defaults  = getDefaults;
+	publicInterface.register          = qoopido.register          = register;
+	publicInterface.registerSingleton = qoopido.registerSingleton = registerSingleton;
+	publicInterface.module            = qoopido.module            = module;
+	publicInterface.shared            = qoopido.shared            = shared;
+	publicInterface.defaults          = qoopido.defaults          = defaults;
 
 	if(!Object.create) {
 		dependencies.push('./polyfill/object/create');

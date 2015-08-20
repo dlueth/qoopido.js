@@ -18,7 +18,8 @@
 	if(qoopido.register) {
 		qoopido.register('polyfill/object/getownpropertydescriptor', definition);
 	} else {
-		(qoopido.modules = qoopido.modules || {})['polyfill/object/getownpropertydescriptor'] = definition();
+		qoopido.storage = qoopido.storage || {};
+		(qoopido.storage.modules = qoopido.storage.modules || {})['polyfill/object/getownpropertydescriptor'] = definition();
 	}
 }(function(qoopido, global, undefined) {
 		'use strict';
