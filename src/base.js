@@ -22,7 +22,7 @@
  * @polyfill ./polyfill/object/getownpropertydescriptor
  */
 
-/* global console, module, define */
+/* global module, define */
 
 ;(function(definition, global, undefined) {
 	'use strict';
@@ -37,6 +37,15 @@
 		isInternal        = new RegExp('^\\.+\\/'),
 		regexCanonicalize = new RegExp('(?:\\/|)[^\\/]*\\/\\.\\.'),
 		removeNeutral     = new RegExp('(^\\/)|\\.\\/', 'g');
+
+	function MissingDependencyException(module, dependency) {
+		this.module     = module;
+		this.dependency = dependency;
+		this.message    = 'could not be resolved';
+		this.toString   = function() {
+			return 'MissingDependencyException: module ' + dependency + ' requested by ' + module + ' ' + this.message;
+		};
+	}
 
 	function register(id, definition, dependencies, callback) {
 		var namespace = id.split('/'),
@@ -62,8 +71,8 @@
 						storageModules[dependency] = arguments[i];
 					}
 
-					if(internal && !storageModules[dependency] && typeof console !== 'undefined') {
-						console.error(''.concat('[Qoopido.js] ', id, ': Could not load dependency ', dependency));
+					if(internal && !storageModules[dependency]) {
+						throw new MissingDependencyException(id, dependency);
 					}
 				}
 			}
