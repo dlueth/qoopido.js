@@ -110,7 +110,7 @@
 										assign.call(self, url, isBackground);
 									}
 								}, false);
-	
+
 							break;
 					}
 				}
