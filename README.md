@@ -278,7 +278,7 @@ Although this example does absolutely not present a practical use case nor anyth
 Included modules
 ---------------------------
 - asset (XHR asset loading with localStorage caching)
-- base (object inheritance)
+- base (abstract, object inheritance)
 - component
 	- iterator (flexible and UI/UX independent iterator for e.g. paging)
 	- remux (REM based approach to responsive web design)
@@ -338,7 +338,7 @@ Included modules
 		- matchmedia
 		- promise
 		- removeeventlistener
-- pool (pooling facilities and pool factory)
+- pool (abstract, pooling facilities and pool factory)
 	- array (pooling facilities for arrays)
 	- dom (pooling facilities for DOM elements)
 	- module (pooling facilities for Qoopido.js modules or external objects/classes)
@@ -374,7 +374,7 @@ Included modules
 			- mp4
 			- ogg
 			- webm
-- transport (base class for all transports)
+- transport (abstract, base class for all transports)
 	- jsonp (JSONP transport)
 	- xhr (AJAX transport)
 - url (handle URLs, parameter etc.)
