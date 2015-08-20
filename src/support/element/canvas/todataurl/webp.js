@@ -20,18 +20,18 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/element/canvas/todataurl/webp', function(deferred) {
+	return Support.register('element/canvas/todataurl/webp', function(deferred) {
 		qoopido.module('support/element/canvas/todataurl')()
 			.then(
 				function() {
 					var sample = Support.pool ? Support.pool.obtain('canvas') : document.createElement('canvas');
 
-					(sample.toDataURL('image/webp').indexOf('data:image/webp') === 0) ? deferred.resolve() : deferred.reject();
+					(sample.toDataURL('image/webp').indexOf('data:image/webp') === 0) ? deferred.resolve(true) : deferred.reject(false);
 
 					sample.dispose && sample.dispose();
 				},
 				function() {
-					deferred.reject();
+					deferred.reject(false);
 				}
 			);
 	});

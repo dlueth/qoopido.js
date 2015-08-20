@@ -19,7 +19,7 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/rem', function(deferred) {
+	return Support.register('css/rem', function(deferred) {
 		var sample = Support.pool ? Support.pool.obtain('div') : document.createElement('div');
 
 		try {
@@ -27,7 +27,7 @@
 		} catch(exception) { }
 
 
-		((/rem/).test(sample.style.fontSize)) ? deferred.resolve() : deferred.reject();
+		((/rem/).test(sample.style.fontSize)) ? deferred.resolve(true) : deferred.reject(false);
 
 		sample.dispose && sample.dispose();
 	});

@@ -20,7 +20,7 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/transform/2d', function(deferred) {
+	return Support.register('css/transform/2d', function(deferred) {
 		qoopido.module('support/css/transform')()
 			.then(
 				function() {
@@ -31,12 +31,12 @@
 						sample.style[property] = 'rotate(30deg)';
 					} catch(exception) { }
 
-					((/rotate/).test(sample.style[property])) ? deferred.resolve() : deferred.reject();
+					((/rotate/).test(sample.style[property])) ? deferred.resolve(true) : deferred.reject(false);
 
 					sample.dispose && sample.dispose();
 				},
 				function() {
-					deferred.reject();
+					deferred.reject(false);
 				}
 			);
 	});

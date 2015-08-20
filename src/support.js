@@ -45,6 +45,7 @@
 			return arguments[1].ucfirst();
 		},
 		lookup = {
+			tests:    { },
 			prefix:   null,
 			method:   { },
 			property: { },
@@ -60,38 +61,22 @@
 
 	function normalize(value) {
 		return value
-					.replace(removeJsPrefix, '$1')
-					.lcfirst()
-					.replace(removeCssPrefix, '')
-					.replace(convertToCamelCase, callbackUcfirst);
+			.replace(removeJsPrefix, '$1')
+			.lcfirst()
+			.replace(removeCssPrefix, '')
+			.replace(convertToCamelCase, callbackUcfirst);
+	}
+
+	function MissingTestException(test) {
+		this.name     = test;
+		this.message  = 'could not be resolved';
+		this.toString = function() {
+			return 'MissingTestException: test ' + test + ' ' + this.message;
+		};
 	}
 
 	return qoopido.module('base').extend({
-		test: { },
 		pool: qoopido.shared('pool/dom'),
-		testMultiple: function() {
-			var test, tests = [], i = 0;
-
-			for(; (test = arguments[i]) !== undefined; i++) {
-				switch(typeof test) {
-					case 'string':
-						tests.push(this.test[test]());
-						break;
-					case 'boolean':
-						var deferred = new PromiseDefer();
-
-						!!(test) ? deferred.resolve() : deferred.reject();
-
-						tests.push(deferred.promise);
-						break;
-					default:
-						tests.push(test);
-						break;
-				}
-			}
-
-			return new PromiseAll(tests);
-		},
 		getPrefix: function() {
 			var self   = this,
 				stored = lookup.prefix || null,
@@ -304,8 +289,35 @@
 
 			return stored;
 		},
-		addTest: function(pId, pTest) {
-			return this.test[pId] = function() {
+		test: function() {
+			var pointer, tests = [], i = 0;
+
+			for(; (pointer = arguments[i]) !== undefined; i++) {
+				switch(typeof pointer) {
+					case 'string':
+						if(!lookup.tests[pointer]) {
+							throw new MissingTestException(pointer);
+						}
+
+						tests.push(lookup.tests[pointer]());
+						break;
+					case 'boolean':
+						var deferred = new PromiseDefer();
+
+						!!(pointer) ? deferred.resolve(true) : deferred.reject(false);
+
+						tests.push(deferred.promise);
+						break;
+					default:
+						tests.push(pointer);
+						break;
+				}
+			}
+
+			return new PromiseAll(tests);
+		},
+		register: function(pId, pTest) {
+			return lookup.tests[pId] = function() {
 				var stored = lookup.promises.test[pId] || null;
 
 				if(stored === null) {

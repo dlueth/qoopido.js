@@ -20,18 +20,18 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/element/canvas/todataurl', function(deferred) {
+	return Support.register('element/canvas/todataurl', function(deferred) {
 		qoopido.module('support/element/canvas')()
 			.then(
 				function() {
 					var sample = Support.pool ? Support.pool.obtain('canvas') : document.createElement('canvas');
 
-					(sample.toDataURL !== undefined) ? deferred.resolve() : deferred.reject();
+					(sample.toDataURL !== undefined) ? deferred.resolve(true) : deferred.reject(false);
 
 					sample.dispose && sample.dispose();
 				},
 				function() {
-					deferred.reject();
+					deferred.reject(false);
 				}
 			);
 	});

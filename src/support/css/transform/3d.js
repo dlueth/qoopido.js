@@ -20,7 +20,7 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/transform/3d', function(deferred) {
+	return Support.register('css/transform/3d', function(deferred) {
 		qoopido.module('support/css/transform')()
 			.then(
 				function() {
@@ -31,12 +31,12 @@
 						sample.style[property] = 'translate3d(0,0,0)';
 					} catch(exception) { }
 
-					((/translate3d/).test(sample.style[property])) ? deferred.resolve() : deferred.reject();
+					((/translate3d/).test(sample.style[property])) ? deferred.resolve(true) : deferred.reject(false);
 
 					sample.dispose && sample.dispose();
 				},
 				function() {
-					deferred.reject();
+					deferred.reject(false);
 				}
 			);
 	});

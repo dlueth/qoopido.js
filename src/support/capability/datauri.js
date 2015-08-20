@@ -20,15 +20,15 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/capability/datauri', function(deferred) {
+	return Support.register('capability/datauri', function(deferred) {
 		var sample = qoopido.module('dom/element').create(Support.pool ? Support.pool.obtain('img') : document.createElement('img'));
 
 		sample
 			.one('error load', function(event) {
 				if(event.type === 'load' && sample.element.width === 1 && sample.element.height === 1) {
-					deferred.resolve();
+					deferred.resolve(true);
 				} else {
-					deferred.reject();
+					deferred.reject(false);
 				}
 
 				sample.element.dispose && sample.element.dispose();

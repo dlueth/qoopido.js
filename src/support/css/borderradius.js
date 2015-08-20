@@ -19,7 +19,7 @@
 	
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/borderradius', function(deferred) {
-		(Support.supportsCssProperty('border-radius')) ? deferred.resolve(Support.getCssProperty('border-radius')) : deferred.reject();
+	return Support.register('css/borderradius', function(deferred) {
+		(Support.supportsCssProperty('border-radius')) ? deferred.resolve(Support.getCssProperty('border-radius')) : deferred.reject(false);
 	});
 }, this));

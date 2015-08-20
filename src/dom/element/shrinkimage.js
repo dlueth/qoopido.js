@@ -46,7 +46,7 @@
 		regexBackground = new RegExp('^url\\x28"{0,1}data:image/shrink,(.+?)"{0,1}\\x29$', 'i'),
 		regexPath       = new RegExp('^(?:url\\x28"{0,1}|)(?:data:image/shrink,|)(.+?)(?:"{0,1}\\x29|)$', 'i'),
 		regexSuffix     = new RegExp('\\.png$', 'i'),
-		supported       = qoopido.module('support').testMultiple('/capability/datauri', '/element/canvas/todataurl/png'),
+		supported       = qoopido.module('support').test('capability/datauri', 'element/canvas/todataurl/png'),
 
 	// methods / classes
 		prototype, loader,
@@ -77,51 +77,51 @@
 
 		supported
 			.then(
-			function() {
-				if(settings.debug === true) {
-					throw new Error('[Qoopido.js] Debug enabled');
+				function() {
+					if(settings.debug === true) {
+						throw new Error('[Qoopido.js] Debug enabled');
+					}
+
+					switch(typeof lookup[target]) {
+						case 'object':
+							lookup[target]
+								.one(EVENT_LOADED, function(event) {
+									assign.call(self, event.data, isBackground);
+								});
+
+							self.emit(EVENT_QUEUED);
+							break;
+						case 'string':
+							assign.call(self, lookup[target], isBackground);
+							break;
+						default:
+							lookup[target] = loader
+								.create(target, (!isBackground) ? self.element : null)
+								.one(EVENT_STATE, function(event, data) {
+									if(event.type === EVENT_LOADED) {
+										lookup[target] = data;
+
+										self.emit(EVENT_CACHED);
+
+										assign.call(self, data, isBackground);
+									} else {
+										lookup[target] = url;
+
+										assign.call(self, url, isBackground);
+									}
+								}, false);
+	
+							break;
+					}
 				}
-
-				switch(typeof lookup[target]) {
-					case 'object':
-						lookup[target]
-							.one(EVENT_LOADED, function(event) {
-								assign.call(self, event.data, isBackground);
-							});
-
-						self.emit(EVENT_QUEUED);
-						break;
-					case 'string':
-						assign.call(self, lookup[target], isBackground);
-						break;
-					default:
-						lookup[target] = loader
-							.create(target, (!isBackground) ? self.element : null)
-							.one(EVENT_STATE, function(event, data) {
-								if(event.type === EVENT_LOADED) {
-									lookup[target] = data;
-
-									self.emit(EVENT_CACHED);
-
-									assign.call(self, data, isBackground);
-								} else {
-									lookup[target] = url;
-
-									assign.call(self, url, isBackground);
-								}
-							}, false);
-
-						break;
-				}
-			}
-		)
+			)
 			['catch'](
-			function() {
-				lookup[target] = url;
+				function() {
+					lookup[target] = url;
 
-				assign.call(self, url, isBackground);
-			}
-		);
+					assign.call(self, url, isBackground);
+				}
+			);
 	}
 
 	function assign(source, isBackground) {

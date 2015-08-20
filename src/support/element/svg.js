@@ -19,7 +19,7 @@
 
 	var document = global.document;
 
-	return qoopido.module('support').addTest('/element/svg', function(deferred) {
-		(document.createElementNS && document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect) ? deferred.resolve() : deferred.reject();
+	return qoopido.module('support').register('element/svg', function(deferred) {
+		(document.createElementNS && document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect) ? deferred.resolve(true) : deferred.reject(false);
 	});
 }, this));

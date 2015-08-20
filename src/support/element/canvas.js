@@ -19,10 +19,10 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/element/canvas', function(deferred) {
+	return Support.register('element/canvas', function(deferred) {
 		var sample = Support.pool ? Support.pool.obtain('canvas') : document.createElement('canvas');
 
-		(sample.getContext && sample.getContext('2d')) ? deferred.resolve() : deferred.reject();
+		(sample.getContext && sample.getContext('2d')) ? deferred.resolve(true) : deferred.reject(false);
 
 		sample.dispose && sample.dispose();
 	});

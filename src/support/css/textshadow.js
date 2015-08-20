@@ -19,7 +19,7 @@
 	
 	var Support = qoopido.module('support');
 	
-	return Support.addTest('/css/textshadow', function(deferred) {
-		(Support.supportsCssProperty('text-shadow')) ? deferred.resolve(Support.getCssProperty('text-shadow')) : deferred.reject();
+	return Support.register('css/textshadow', function(deferred) {
+		(Support.supportsCssProperty('text-shadow')) ? deferred.resolve(Support.getCssProperty('text-shadow')) : deferred.reject(false);
 	});
 }, this));

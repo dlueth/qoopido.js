@@ -20,18 +20,18 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/element/video/webm', function(deferred) {
+	return Support.register('element/video/webm', function(deferred) {
 		qoopido.module('support/element/video')()
 			.then(
 				function() {
 					var sample = Support.pool ? Support.pool.obtain('video') : document.createElement('video');
 
-					(sample.canPlayType('video/webm; codecs="vp8, vorbis"')) ? deferred.resolve() : deferred.reject();
+					(sample.canPlayType('video/webm; codecs="vp8, vorbis"')) ? deferred.resolve(true) : deferred.reject(false);
 
 					sample.dispose && sample.dispose();
 				},
 				function() {
-					deferred.reject();
+					deferred.reject(false);
 				}
 			);
 	});

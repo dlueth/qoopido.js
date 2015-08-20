@@ -19,7 +19,7 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/transition', function(deferred) {
-		(Support.supportsCssProperty('transition')) ? deferred.resolve(Support.getCssProperty('transition')) : deferred.reject();
+	return Support.register('css/transition', function(deferred) {
+		(Support.supportsCssProperty('transition')) ? deferred.resolve(Support.getCssProperty('transition')) : deferred.reject(false);
 	});
 }, this));

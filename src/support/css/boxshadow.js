@@ -19,7 +19,7 @@
 	
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/boxshadow', function(deferred) {
-		(Support.supportsCssProperty('box-shadow')) ? deferred.resolve(Support.getCssProperty('box-shadow')) : deferred.reject();
+	return Support.register('css/boxshadow', function(deferred) {
+		(Support.supportsCssProperty('box-shadow')) ? deferred.resolve(Support.getCssProperty('box-shadow')) : deferred.reject(false);
 	});
 }, this));

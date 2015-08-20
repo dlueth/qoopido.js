@@ -19,7 +19,7 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/css/transform', function(deferred) {
-		(Support.supportsCssProperty('transform')) ? deferred.resolve(Support.getCssProperty('transform')) : deferred.reject();
+	return Support.register('css/transform', function(deferred) {
+		(Support.supportsCssProperty('transform')) ? deferred.resolve(Support.getCssProperty('transform')) : deferred.reject(false);
 	});
 }, this));

@@ -19,10 +19,10 @@
 
 	var Support = qoopido.module('support');
 
-	return Support.addTest('/element/video', function(deferred) {
+	return Support.register('element/video', function(deferred) {
 		var sample = Support.pool ? Support.pool.obtain('video') : document.createElement('video');
 
-		(sample.canPlayType) ? deferred.resolve() : deferred.reject();
+		(sample.canPlayType) ? deferred.resolve(true) : deferred.reject(false);
 
 		sample.dispose && sample.dispose();
 	});
