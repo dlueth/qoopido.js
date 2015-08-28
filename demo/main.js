@@ -3,7 +3,7 @@
 
 	demand
 		.configure({
-			base: '/demo',
+			base: 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/demo',
 			pattern: {
 				'/qoopido': 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min'
 			}
