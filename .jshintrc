@@ -14,5 +14,9 @@
 	"expr":true,
 	"validthis":true,
 	"scripturl":true,
-	"globals":{}
+  	"-W030":true,
+	"globals":{
+	  "demand":true,
+	  "provide":true
+	}
 }

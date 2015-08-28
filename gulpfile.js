@@ -130,6 +130,7 @@ module.exports = gulp;
 		preparePatterns();
 		loadConfigFile();
 
+		/*
 		for(key in config.tasks.packages) {
 			if(key === 'destination') {
 				continue;
@@ -137,6 +138,7 @@ module.exports = gulp;
 
 			tasks.push('package:' + key);
 		}
+		*/
 
 		tasks.push(callback);
 
@@ -182,6 +184,7 @@ module.exports = gulp;
 
 
 	// create package tasks
+	/*
 	for(key in config.tasks.packages) {
 		if(key === 'destination') {
 			continue;
@@ -189,6 +192,7 @@ module.exports = gulp;
 
 		registerPackageBuildTasks(key);
 	}
+	*/
 
 /**************************************************
  * tasks (public)
@@ -221,6 +225,7 @@ module.exports = gulp;
 		gulp.watch(config.tasks.dist.watch, [ 'dist' ]);
 
 		// create package tasks
+		/*
 		for(key in config.tasks.packages) {
 			if(key === 'destination') {
 				continue;
@@ -228,6 +233,7 @@ module.exports = gulp;
 
 			registerPackageWatchTasks(key);
 		}
+		*/
 	});
 
 	gulp.task('default', [ 'watch' ]);

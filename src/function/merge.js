@@ -1,4 +1,4 @@
-/*
+/**
  * Qoopido function/merge
  *
  * Function to deep merge any number of data structures. First argument is the target and will be modified!
@@ -11,36 +11,40 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition, global) {
-	global.qoopido.register('function/merge', definition);
-}(function(qoopido, global, undefined) {
+
+;(function(undefined) {
 	'use strict';
 
-	return function merge() {
-		var target = arguments[0],
-			i, properties, property, tgt, src;
+	function definition() {
+		return function merge() {
+			var target = arguments[0],
+				i, properties, property, tgt, tgt_io, src;
 
-		for(i = 1; (properties = arguments[i]) !== undefined; i++) {
-			for(property in properties) {
-				tgt = target[property];
-				src = properties[property];
+			for(i = 1; (properties = arguments[i]) !== undefined; i++) {
+				for(property in properties) {
+					tgt = target[property];
+					src = properties[property];
 
-				if(src !== undefined) {
-					if(src !== null && typeof src === 'object') {
-						if(src.length !== undefined) {
-							tgt = (tgt && typeof tgt === 'object' && tgt.length !== undefined) ? tgt : [];
+					if(src !== undefined) {
+						if(src !== null && typeof src === 'object') {
+							tgt_io = (tgt && typeof tgt === 'object');
+							if(src.length !== undefined) {
+								tgt = (tgt_io && tgt.length !== undefined) ? tgt : [];
+							} else {
+								tgt = (tgt_io && tgt.length === undefined) ? tgt : {};
+							}
+
+							target[property] = merge(tgt, src);
 						} else {
-							tgt = (tgt && typeof tgt === 'object' && tgt.length === undefined) ? tgt : {};
+							target[property] = src;
 						}
-
-						target[property] = merge(tgt, src);
-					} else {
-						target[property] = src;
 					}
 				}
 			}
-		}
 
-		return target;
-	};
-}, this));
+			return target;
+		};
+	}
+
+	provide(definition);
+}());

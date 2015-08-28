@@ -1,0 +1,119 @@
+<script>
+	(function(url, window, document, type, name, script, target, pointer) {
+		script  = document.createElement(type = 'script');
+		target  = document.getElementsByTagName(type)[0];
+
+		pointer = window[name] = function(path) {
+			pointer.main = path;
+		};
+
+		pointer.configure = function(settings) {
+			pointer.settings = settings;
+		};
+
+		script.async = script.defer = 1;
+		script.src   = url;
+
+		target.parentNode.insertBefore(script, target);
+	}('../../dist/latest/min/demand.js', window, document, 'script', 'demand'));
+
+	demand('main.js');
+</script>
+
+<script type="text/javascript">
+	/*
+provide('debug/gnarf', function fDebugGnarf(debug, debug2) { console.log('debug/gnarf', debug, debug2); return function mDebugGnarf() {}; }, '../debug', '../debug2');
+
+demand('debug/gnarf', 'debug').then(
+		function(debugGnarf, debug) {
+			console.log(debugGnarf, debug);
+			//dependencies[0]();
+		},
+		function(error) {
+			console.log(error);
+		}
+);
+	 */
+
+/*
+;(function(qoopido) {
+	// Define class Child1
+		function Child1() {
+			console.log('Child1 constructor called');
+		}
+
+		// Define class Child1 prototype methods
+		Child1.prototype = {
+			method1: function() {
+				console.log('Child1.method1 called via ' + this.constructor.name);
+			}
+		};
+
+	// Define class Child2
+		function Child2() {
+			// parent constructor "super" must be explicitly called via prototype and call/apply
+			Child2.prototype.super.call(this);
+
+			console.log('Child2 constructor called');
+		}
+
+		// Define class Child2 prototype methods
+		Child2.prototype = {
+			method2: function() {
+				console.log('Child1.method2 called via ' + this.constructor.name);
+			}
+		};
+
+	// Define class Child3
+		function Child3() {
+			// parent constructor "super" must be explicitly called via prototype and call/apply
+			Child3.prototype.super.call(this);
+
+			console.log('Child3 constructor called');
+		}
+
+		// Define class Child3 prototype methods
+		Child3.prototype = {
+			method3: function() {
+				console.log('Child1.method3 called via ' + this.constructor.name);
+			}
+		};
+
+	// Initialize inheritance
+		// remark: Child1 will be directly modified, no need to assign it again
+
+		qoopido.base.extend(Child1); // Child1 inherits from base
+		Child1.extend(Child2); // Child2 inherits from Child1
+		Child2.extend(Child3, true); // Child3 inherits from Child2
+
+		// remark: Child3 is marked as "final" (second argument of extend set to "true") so cannot be extended again
+
+	console.group('constructor chain instantiating Child1');
+		var child1 = new Child1();
+	console.groupEnd();
+
+	console.group('constructor chain instantiating Child2');
+		var child2 = new Child2();
+	console.groupEnd();
+
+	console.group('constructor chain instantiating Child3');
+		var child3 = new Child3();
+	console.groupEnd();
+
+	console.group('checking instanceof child3');
+		console.log('child3 instanceof Child1:', child3 instanceof Child1);
+		console.log('child3 instanceof Child2:', child3 instanceof Child2);
+		console.log('child3 instanceof Child3:', child3 instanceof Child3);
+	console.groupEnd();
+
+	console.group('checking various method calls');
+		child1.method1();
+		child2.method1();
+		child2.method2();
+		child3.method1();
+		child3.method2();
+		child3.method3();
+	console.groupEnd();
+}(this.qoopido));
+*/
+</script>

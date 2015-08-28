@@ -1,4 +1,4 @@
-/*
+/**
  * Qoopido function/unique/uuid
  *
  * Provides globally unique uuids
@@ -11,32 +11,34 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  */
-;(function(definition, global) {
-	global.qoopido.register('function/unique/uuid', definition);
-}(function(qoopido, global, undefined) {
+
+;(function() {
 	'use strict';
 
-	var lookup     = {},
-		regex      = new RegExp('[xy]', 'g');
+	var storage = {},
+		regex   = new RegExp('[xy]', 'g');
 
 	function generateUuid() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(regex, function(c) {
-			var r = Math.random() * 16 | 0,
-				v = (c === 'x') ? r : (r & 0x3 | 0x8);
+			var r = Math.random() * 16 | 0;
 
-			return v.toString(16);
+			return ((c === 'x') ? r : (r & 0x3 | 0x8)).toString(16);
 		});
 	}
 
-	return function() {
-		var result;
+	function definition() {
+		return function uuid() {
+			var result;
 
-		do {
-			result = generateUuid();
-		} while(typeof lookup[result] !== 'undefined');
+			do {
+				result = generateUuid();
+			} while(storage[result]);
 
-		lookup[result] = true;
+			storage[result] = 1;
 
-		return result;
-	};
-}, this));
+			return result;
+		};
+	}
+
+	provide(definition);
+}());

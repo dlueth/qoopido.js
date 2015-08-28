@@ -1,8 +1,8 @@
 {
   "name": "qoopido.js",
-  "title": "Qoopido.js library",
+  "title": "Qoopido.js",
   "description": "Modular library of dry, extendable and AMD compatible JavaScript modules",
-  "version": "3.7.4",
+  "version": "4.0.0",
   "homepage": "https://github.com/dlueth/qoopido.js",
   "author": {
     "name": "Dirk Lueth",

@@ -1,4 +1,4 @@
-/*
+/**
  * Qoopido emitter
  *
  * Provides mechanism to emit events and register listeners
@@ -12,121 +12,148 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./base
+ *
+ * @polyfill Object.defineProperty
+ * @polyfill Object.getOwnPropertyNames
+ * @polyfill Object.getOwnPropertyDescriptor
+ * @polyfill Object.getPrototypeOf
  */
-;(function(definition, global) {
-	global.qoopido.register('emitter', definition, [ './base' ]);
-}(function(qoopido, global, undefined) {
+
+;(function(undefined) {
 	'use strict';
 
-	var excludeMethods = /^(_|extend$|create$|on$|one$|off$|emit$|get.+)/;
+	var regexExclude = /^(extend$|_|get.+)/,
+		o_dp         = Object.defineProperty,
+		o_gopn       = Object.getOwnPropertyNames,
+		o_gopd       = Object.getOwnPropertyDescriptor,
+		o_gpo        = Object.getPrototypeOf,
+		gcd          = function(value, writable) { return { writable: !!writable, configurable: false, enumerable: false, value: value };},
+		storage      = {};
 
-	function map(context, method) {
-		var event = method.charAt(0).toUpperCase() + method.slice(1);
+	function conceal() {
+		var self       = this,
+			prototype  = self.constructor.prototype,
+			properties = o_gopn(prototype); // might have to be changed to Object.keys + further checks
 
-		context._mapped[method] = context[method];
+		properties.forEach(function(property) {
+			var event, descriptor;
 
-		return function() {
-			var args = Array.prototype.slice.call(arguments),
-				returnValue;
+			if(typeof self[property] === 'function' && regexExclude.test(property) === false && o_gopd(prototype, property).writable) {
+				event      = property.charAt(0).toUpperCase() + property.slice(1);
+				descriptor = o_gopd(prototype, property);
 
-			context.emit.apply(context, ['pre' + event, args]);
-			returnValue = context._mapped[method].apply(context, args);
-			context.emit.apply(context, ['post' + event, args, returnValue]);
+				descriptor.value = function() {
+					var result;
 
-			return returnValue;
-		};
+					self.emit('pre' + event, arguments);
+
+					result = prototype[property].apply(self, arguments);
+
+					self.emit('post' + event, arguments, result);
+
+					return result;
+				};
+
+				Object.defineProperty(self, property, descriptor);
+			}
+		});
 	}
 
-	return qoopido.module('base').extend({
-		_mapped:   null,
-		_listener: null,
-		_temp:     null,
-		_constructor: function() {
+	function definition(base, functionUniqueUuid) {
+		function Emitter() {
 			var self = this,
-				method;
+				uuid = self.uuid;
 
-			self._mapped   = {};
-			self._listener = {};
+			!uuid && (uuid = functionUniqueUuid()) && o_dp(self, 'uuid', gcd(uuid));
 
-			for(method in self) {
-				if(typeof self[method] === 'function' && excludeMethods.test(method) === false) {
-					self[method] = map(self, method);
-				}
-			}
+			storage[uuid] = {};
 
-			return self;
-		},
-		on: function(events, fn) {
-			var self = this,
-				i = 0, event;
-
-			events = events.split(' ');
-
-			for(; (event = events[i]) !== undefined; i++) {
-				(self._listener[event] = self._listener[event] || []).push(fn);
-			}
-
-			return self;
-		},
-		one: function(events, fn, each) {
-			each = (each !== false);
-
-			var self = this;
-
-			self.on(events, function listener(event) {
-				self.off(((each === true) ? event : events), listener);
-
-				fn.apply(this, arguments);
-			});
-
-			return self;
-		},
-		off: function(events, fn) {
-			var self = this,
-				i = 0, event, j, listener;
-
-			if(events) {
-				events = events.split(' ');
-
-				for(; (event = events[i]) !== undefined; i++) {
-					self._listener[event] = self._listener[event] || [];
-
-					if(fn) {
-						for(j = 0; (listener = self._listener[event][j]) !== undefined; j++) {
-							if(listener === fn) {
-								self._listener[event].splice(j, 1);
-
-								j--;
-							}
-						}
-					} else {
-						self._listener[event].length = 0;
-					}
-				}
-			} else {
-				for(event in self._listener) {
-					self._listener[event].length = 0;
-				}
-			}
-
-			return self;
-		},
-		emit: function(event) {
-			var self = this,
-				i = 0, listener;
-
-			if(event !== undefined) {
-				self._listener[event] = self._listener[event] || [];
-				self._temp            = self._listener[event].slice();
-
-				for(; (listener = self._temp[i]) !== undefined; i++) {
-					listener.apply(self, arguments);
-				}
-
-				self._temp.length = 0;
+			if(o_gpo(self) !== Emitter.prototype) {
+				conceal.call(self);
 			}
 
 			return self;
 		}
-	});
-}, this));
+
+		Emitter.prototype = {
+			on: function(events, fn) {
+				var self    = this,
+					pointer = storage[self.uuid],
+					i = 0, event;
+
+				events = events.split(' ');
+
+				for(; (event = events[i]) !== undefined; i++) {
+					(pointer[event] = pointer[event] || []).push(fn);
+				}
+
+				return self;
+			},
+			one: function(events, fn, each) {
+				var self = this;
+
+				each = (each !== false);
+
+				self.on(events, function listener(event) {
+					self.off(((each === true) ? event : events), listener);
+
+					fn.apply(this, arguments);
+				});
+
+				return self;
+			},
+			off: function(events, fn) {
+				var self    = this,
+					pointer = storage[self.uuid],
+					i = 0, event, j, listener;
+
+				if(events) {
+					events = events.split(' ');
+
+					for(; (event = events[i]) !== undefined; i++) {
+						pointer[event] = pointer[event] || [];
+
+						if(fn) {
+							for(j = 0; (listener = pointer[event][j]) !== undefined; j++) {
+								if(listener === fn) {
+									pointer[event].splice(j, 1);
+
+									j--;
+								}
+							}
+						} else {
+							pointer[event].length = 0;
+						}
+					}
+				} else {
+					for(event in self.listener) {
+						pointer[event].length = 0;
+					}
+				}
+
+				return self;
+			},
+			emit: function(event) {
+				var self = this,
+					pointer, temp, i = 0, listener;
+
+				if(event) {
+					pointer = storage[self.uuid];
+
+					pointer[event] = pointer[event] || [];
+					temp           = pointer[event].slice();
+
+					for(; (listener = temp[i]) !== undefined; i++) {
+						listener.apply(self, arguments);
+					}
+				}
+
+				return self;
+			}
+		};
+
+		return base.extend(Emitter);
+	}
+
+	provide(definition, 'base', 'function/unique/uuid');
+}());

@@ -1,4 +1,4 @@
-/*
+/**
  * Qoopido component/iterator
  *
  * Provides UI independent iterator mechanics
@@ -13,114 +13,130 @@
  *
  * @require ../emitter
  * @require ../function/merge
+ * @require ../function/unique/uuid
+ *
+ * @polyfill Object.defineProperty
  */
 
-;(function(definition, global) {
-	global.qoopido.register('component/iterator', definition, [ '../emitter', '../function/merge' ]);
-}(function(qoopido, global, undefined) {
+;(function(undefined) {
 	'use strict';
 
-	var prototype,
-		defaults = qoopido.defaults('component/iterator', { loop: true, initial: 0 }),
-		merge    = qoopido.module('function/merge');
+	var o_dp    = Object.defineProperty,
+		gcd     = function(value, writable) { return { writable: !!writable, configurable: false, enumerable: false, value: value };},
+		storage = {};
 
-	prototype = qoopido.module('emitter').extend({
-		_settings: null,
-		_state:    null,
-		_constructor: function(data, settings) {
-			var self = prototype._parent._constructor.call(this);
+	function definition(Emitter, functionMerge, functionUniqueUuid) {
+		var prototype;
 
-			self._settings = merge({}, defaults, settings || {});
-			self._state    = { length: null, index: null, item: null, data: null };
+		function Iterator(data, settings) {
+			var self = this.super.call(this),
+				uuid = self.uuid;
 
-			if(data !== undefined && data !== null) {
-				self.setData(data);
-			}
+			!uuid && (uuid = functionUniqueUuid()) && o_dp(self, 'uuid', gcd(uuid));
 
-			return self;
-		},
-		getState: function() {
-			var self = this;
+			storage[uuid] = {
+				settings: functionMerge({}, Iterator.settings, settings),
+				length:   null,
+				index:    null,
+				current:  null,
+				data:     null
+			};
 
-			return self._state;
-		},
-		setData: function(data) {
-			var self = this;
-
-			if(typeof data === 'object' && data.length) {
-				self._state.data   = data;
-				self._state.length = data.length;
-
-				if(self._settings.initial !== null) {
-					self.seek(self._settings.initial);
-				}
-			}
-
-			return self;
-		},
-		getData: function() {
-			var self = this;
-
-			return self._state.data;
-		},
-		getLength: function() {
-			var self = this;
-
-			return self._state.length;
-		},
-		getIndex: function() {
-			var self = this;
-
-			return self._state.index;
-		},
-		getCurrent: function() {
-			var self = this;
-
-			return self._state.data[self._state.index] || null;
-		},
-		getItem: function(index) {
-			var self = this;
-
-			return self._state.data[index] || null;
-		},
-		first: function() {
-			var self = this;
-
-			return self.seek(0);
-		},
-		last: function() {
-			var self = this;
-
-			return self.seek(self._state.length - 1);
-		},
-		previous: function() {
-			var self = this, index;
-
-			index = (self._settings.loop === true) ? (self._state.index - 1) % self._state.length : self._state.index - 1;
-			index = (self._settings.loop === true && index < 0) ? self._state.length + index : index;
-
-			return self.seek(index);
-		},
-		next: function() {
-			var self = this, index;
-
-			index = (self._settings.loop === true) ? (self._state.index + 1) % self._state.length : self._state.index + 1;
-
-			return self.seek(index);
-		},
-		seek: function(index) {
-			var self = this;
-
-			index  = parseInt(index, 10);
-
-			if(index !== self._state.index && self._state.data[index] !== undefined) {
-				self._state.index = index;
-				self._state.item  = self._state.data[index];
-			}
+			data && self.setData(data);
 
 			return self;
 		}
-	});
 
-	return prototype;
-}, this));
+		Iterator.prototype = {
+			setData: function(data) {
+				var self = this,
+					uuid, properties, settings;
+
+				if(typeof data === 'object' && data.length) {
+					uuid       = self.uuid;
+					properties = storage[uuid];
+					settings   = properties.settings;
+
+					properties.data   = data;
+					properties.length = data.length;
+
+					if(settings.initial !== null) {
+						self.seek(settings.initial);
+					}
+				}
+
+				return self;
+			},
+			getState: function() {
+				return this.state;
+			},
+			getLength: function() {
+				return this.state.length;
+			},
+			getIndex: function() {
+				return this.state.index;
+			},
+			getCurrent: function() {
+				return this.state.current;
+			},
+			getItem: function(index) {
+				return this.state.data[index];
+			},
+			getData: function() {
+				return this.state.data;
+			},
+			seek: function(index) {
+				var self       = this,
+					properties = storage[self.uuid];
+
+				index = parseInt(index, 10);
+
+				if(index !== properties.index && typeof properties.data[index] !== 'undefined') {
+					properties.index   = index;
+					properties.current = properties.data[index];
+				}
+
+				return self;
+			},
+			first: function() {
+				return this.seek(0);
+			},
+			last: function() {
+				var self       = this,
+					properties = storage[self.uuid];
+
+				return self.seek(properties.length - 1);
+			},
+			previous: function() {
+				var self       = this,
+					uuid       = self.uuid,
+					properties = storage[uuid],
+					settings   = properties.settings,
+					index;
+
+				index = (settings.loop === true) ? (properties.index - 1) % properties.length : properties.index - 1;
+				index = (settings.loop === true && index < 0) ? properties.length + index : index;
+
+				return self.seek(index);
+			},
+			next: function() {
+				var self       = this,
+					uuid       = self.uuid,
+					properties = storage[uuid],
+					settings   = properties.settings,
+					index;
+
+				index = (settings.loop === true) ? (properties.index + 1) % properties.length : properties.index + 1;
+
+				return self.seek(index);
+			}
+		};
+
+		prototype          = Emitter.extend(Iterator);
+		prototype.settings = { loop: true, initial: 0 };
+
+		return prototype;
+	}
+
+	provide(definition, '../emitter', '../function/merge', '../function/unique/uuid');
+}());
