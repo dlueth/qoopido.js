@@ -1,4 +1,4 @@
-;(function(global) {
+;(function() {
 	'use strict';
 
 	demand
@@ -23,35 +23,10 @@
 
 
 	function definition(appTest, qoopidoBase) {
-		console.log('/app/main', appTest, qoopidoBase);
-
-		new qoopidoBase();
-
 		return function appMain() {
 
 		}
 	}
 
 	provide('/app/main', definition, 'test', '/qoopido/base');
-
-	/*
-	function definition(test, Iterator) {
-		new Iterator()
-			.on('preSeek postSeek', function(event, args, result) {
-				console.log(event, args, result);
-			})
-			.setData([ 1, 2, 3, 4])
-			.seek(2);
-
-		//console.log(new Iterator());
-	}
-
-	provide('app/main', definition, 'test', '/qoopido/component/iterator');
-	*/
-
-	/*
-	demand('qoopido/newemitter').then(
-		function(emitter) { console.log('hier', emitter);}
-	);
-	*/
-}(this));
+}());
