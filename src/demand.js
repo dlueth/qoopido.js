@@ -410,9 +410,4 @@
 
 				target.appendChild(script);
 			}
-
-	global.debug = {
-		modules: modules,
-		queue:   queue
-	};
 }(this));
