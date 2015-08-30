@@ -1,2 +1,2 @@
-/*! Qoopido.js 4.0.0, 2015-08-28 | https://github.com/dlueth/qoopido.js | (c) 2015 Dirk Lueth */
+/*! Qoopido.js 4.0.0, 2015-08-30 | https://github.com/dlueth/qoopido.js | (c) 2015 Dirk Lueth */
 !function(){"use strict";function e(){function e(){}return e.extend=function(e){var u=this,i=e.prototype,p={};return o(i).forEach(function(e){p[e]=n(i,e)}),p.constructor=c(e),p["super"]=c(u),e.prototype=t(u.prototype||u,p),!e["final"]&&r(e,"extend",c(u.extend,!0)),e},e}var t=Object.create,r=Object.defineProperty,n=Object.getOwnPropertyDescriptor,o=Object.getOwnPropertyNames,c=function(e,t){return{writable:!!t,configurable:!1,enumerable:!1,value:e}};provide(e)}();

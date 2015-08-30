@@ -2,7 +2,7 @@
 * Qoopido.js
 *
 * version: 4.0.0
-* date:    2015-08-28
+* date:    2015-08-30
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -103,5 +103,5 @@
         };
         return base.extend(Emitter);
     }
-    provide(definition, "base", "function/unique/uuid");
+    provide(definition).when("base", "function/unique/uuid");
 })();

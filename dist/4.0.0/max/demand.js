@@ -2,7 +2,7 @@
 * Qoopido.js
 *
 * version: 4.0.0
-* date:    2015-08-28
+* date:    2015-08-30
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -10,14 +10,14 @@
 */
 (function(global) {
     "use strict";
-    var d = document, a_p_s = Array.prototype.slice, defaults = {
+    var g_st = global.setTimeout, d = document, a_p_s = Array.prototype.slice, defaults = {
         base: "/"
     }, target = d.getElementsByTagName("head")[0], resolver = d.createElement("a"), regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, resolve, queue;
     function demand() {
         var self = this || {}, module = self instanceof Module ? self : null, dependencies = a_p_s.call(arguments), resolveHandler, rejectHandler;
-        self.then = function(success, error) {
-            resolveHandler = success;
-            rejectHandler = error;
+        self.then = function(onResolve, onReject) {
+            resolveHandler = onResolve;
+            rejectHandler = onReject;
         };
         dependencies.forEach(function(dependency, index) {
             var resolved = resolve.path(dependency, module), handler = resolved.handler, pointer = modules[handler] || (modules[handler] = {});
@@ -31,26 +31,33 @@
         return self;
     }
     function provide() {
-        var path = arguments[0] && typeof arguments[0] === "string" && arguments[0] || null, factory = !path && arguments[0] || arguments[1], dependencies = a_p_s.call(arguments, path ? 2 : 1), loader, module, promise, defered;
+        var path = arguments[0] && typeof arguments[0] === "string" && arguments[0] || null, factory = !path && arguments[0] || arguments[1], dependencies, loader, module, promise, defered;
         if (!path && queue.current) {
             loader = queue.current;
             path = loader.path;
         }
         if (path) {
-            module = new Module(path, factory, dependencies);
-            promise = modules[module.handler][module.path] = module.promise;
-            if (loader) {
-                defered = loader.defered;
-                promise.then(function(value) {
-                    defered.resolve(value);
-                }, function(error) {
-                    defered.reject(new Error("unable to resolve module", loader.path, error));
-                });
-                queue.length > 0 && queue.next();
-            }
+            g_st(function() {
+                module = new Module(path, factory, dependencies || []);
+                promise = modules[module.handler][module.path] = module.promise;
+                if (loader) {
+                    defered = loader.defered;
+                    promise.then(function(value) {
+                        defered.resolve(value);
+                    }, function(error) {
+                        defered.reject(new Error("unable to resolve module", loader.path, error));
+                    });
+                    queue.length > 0 && queue.next();
+                }
+            }, 0);
         } else {
             throw new Error("unspecified anonymous provide");
         }
+        return {
+            when: function() {
+                dependencies = a_p_s.call(arguments);
+            }
+        };
     }
     function configure(config) {
         var pointerBase = config.base, pointerPattern = config.pattern, key;
