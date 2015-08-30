@@ -16,17 +16,18 @@
 
 				new qoopidoComponentIterator();
 			},
-			function() {
-				console.log('=> error');
+			function(error) {
+				console.log('=> error', error);
 			}
 		);
 
-
 	function definition(appTest, qoopidoBase) {
+		console.log('/app/main', appTest, qoopidoBase);
+
 		return function appMain() {
 
 		}
 	}
 
-	provide('/app/main', definition, 'test', '/qoopido/base');
+	provide('/app/main', definition).when('test', '/qoopido/base');
 }());
