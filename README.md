@@ -7,19 +7,16 @@ There will always be some demo code in the ```demo``` directory of this reposito
 
 
 ## Compatibility
----------------------------
 Qoopido.js does not officially isupport older legacy Internet Explorers (< IE9) but might still work with a lot of polyfills.
 
 In this early alpha the loader (called ```demand``` and its counterpart ```provide```) require your browser to provide native ```Promise``` support or a polyfill.
 
 
 ## External dependencies
----------------------------
 None, beside polyfills eventually(!!!)
 
 
 ## Installation
----------------------------
 There currently are four ways to get Qoopido.js included into your project:
 
 ### CDN
@@ -50,7 +47,6 @@ If you have Node, NPM and bower installed typing ```bower install``` will instal
 
 
 ## Using the library
----------------------------
 In contrast to earlier versions Qoopido.js does come with its own loader. The loader consists of two components ```demand``` and ```provide``` just like require.js ```require``` and ```define```. Use the following code snippet in a standalone script tag before the clsoing body tag to include demand:
 
 ```javascript
@@ -104,6 +100,8 @@ Once demand.js is loaded anything that is either explicitly requested via ```dem
 
 Handlers can, quite similar to require.js, be explicitly set for a certain module by prefixing the module path by ```[mimetype]!```. The default handler, e.g., is ```application/javascript``` which will automatically be used when no other handler is set.
 
+
+### Demanding modules
 After your project is set up accordingly you can load further modules like this
 
 ```javascript
@@ -114,14 +112,16 @@ demand('app/test', '/qoopido/component/iterator')
 
 			new qoopidoComponentIterator();
 		},
-		function() {
-			console.log('=> error');
+		function(error) {
+			console.log('=> error', error);
 		}
 	);
 ```
 
 Module paths not starting with a ```/``` will be resolved relative to  the path of an eventual parent module. The resulting path will afterwards get matched to patterns defined via ```demand.configure``` which will finally lead to an absolute URL to fetch the module from.
 
+
+### Providing inline modules
 Beside demanding other modules you can as well provide your own, just like in the following example:
 
 ```javascript
@@ -131,29 +131,90 @@ function definition(appTest, qoopidoBase) {
 	}
 }
 
-provide('/app/main', definition, 'test', '/qoopido/base');
+provide('/app/main', definition).when('test', '/qoopido/base');
 ```
 
-This is an example for an inline module. The ```provide``` call, in this case, consists of three parts:
+This is an example for an inline module. The ```provide``` call, in this case, consists of two arguments:
 
-- first argument: path of the module
-- second argument: definition of the module
-- further arguments: dependencies
+- path of the module
+- definition/factory of the module
 
-So the most simple inline ```provide``` call possible has two arguments: path and definition.
+When dynamically loading modules ```path``` will has to be omitted and get internally resolved via loading queue handling instead.
 
-```provide``` can and will also be called anonymously in case of a dynamically loaded module. This is purely reserved for modules being loaded due to the queue used to resolve such modules.
-
-**Sidenote**
-> I think about changing the current ```provide``` syntax to feel a bit more like the promise like ```demand``` syntax (read: demand is not a real promise, although native promises are used internally) introducing a ```when``` method. I am not exactly sure yet on how and if this will be possible to achieve.
+Module resolution via ```provide``` is internally defered via a setTimeout call to be able to return an object providing a ```when``` function to request dependencies. Although this might technically not be the cleanest solution it feels much better to write and understand. Beside that, it simply works great :)
 
 
-## Extending modules
----------------------------
-Will be written within the next couple of days. See the modules already provided to get a rough idea for the time being :)
+### Providing loadable modules
+Demand will dynamically load any modules that are not already registered. You just learnt how to provide inline modules which is only slightly different from building an external, loadable module. In addition to inline modules you just need some boilerplate code and an anynymous ```provide``` call without the ```path``` argument like in the following example:
+
+```javascript
+;(function() {
+	'use strict';
+
+	function definition(qoopidoBase) {
+		return function appTest() {
+
+		}
+	}
+
+	provide(definition).when('/qoopido/base');
+}());
+```
+
+This example shows the module ```/app/test``` which we already know as the first dependency of the prior example. As with the inline module the ```definition``` factory will receive all dependencies as arguments passed so they are in scope of the actual module.
+
+
+### Extending modules
+Beside simply providing means to demand and provide modules Qoopido.js also offers an easy, nice and flexible, prototype based inheritance/extension mechanism for you to use. This is especially of great use if you, like myself, prefer small modular/atomic modules that are easily combinable over big, unmaintainable monolitic scripts.
+
+Extension is absolutely dead simple. Let us rewrite the prior example making the module ```/app/test``` extend the ```base``` module of Qoopido.js:
+
+```javascript
+;(function() {
+	'use strict';
+
+	function definition(qoopidoBase) {
+
+		function appTest() {
+
+		}
+		
+		return qoopidoBase.extend(appTest);
+	}
+
+	provide(definition).when('/qoopido/base');
+}());
+```
+
+Our ```appTest``` module just inherited from ```base``` which will only add an ```extend``` method to it so it may itself be extended. Note that it is also possible to prohibit further extension via setting a ```final``` property:
+
+```javascript
+;(function() {
+	'use strict';
+
+	function definition(qoopidoBase) {
+
+		function appTest() {
+
+		}
+		
+		appTest.final = true;
+		
+		return qoopidoBase.extend(appTest);
+	}
+
+	provide(definition).when('/qoopido/base');
+}());
+```
+
+Adding a ```final``` will prohibit ```base``` to add an extend method to the module. In case of this example this does not make any sense but might be necessary in more complex real world scenarios.
+
+If you want some more examples simply look into the ```src``` directory of this repository. At the moment the best example for multiple extension/inheritance is the ```component/iterator``` module.
+
+The extension mechanism works in a way that ensures that native JavaScript ```instanceof``` will work and stay fully intact which is a big improvement over earlier versions of Qoopido.js. Beside that new instances will now be created via the native JavaScript ```new``` keyword instead of having to call a ```create``` method.
+
 
 ## Included modules
----------------------------
 Keep in mind that this is a very early aplha. I will migrate most of the modules from prior releases as soon as the base is finalized.
 
 - demand/provide (Promise based flexible loader)
