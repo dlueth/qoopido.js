@@ -138,5 +138,5 @@
 		return prototype;
 	}
 
-	provide(definition, '../emitter', '../function/merge', '../function/unique/uuid');
+	provide(definition).when('../emitter', '../function/merge', '../function/unique/uuid');
 }());

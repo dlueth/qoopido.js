@@ -22,7 +22,8 @@
 ;(function(global) {
 	'use strict';
 
-	var d                  = document,
+	var g_st               = global.setTimeout,
+		d                  = document,
 		a_p_s              = Array.prototype.slice,
 		defaults           = { base: '/' },
 		target             = d.getElementsByTagName('head')[0],
@@ -47,9 +48,9 @@
 					dependencies = a_p_s.call(arguments),
 					resolveHandler, rejectHandler;
 
-				self.then = function(success, error) {
-					resolveHandler = success;
-					rejectHandler  = error;
+				self.then = function(onResolve, onReject) {
+					resolveHandler = onResolve;
+					rejectHandler  = onReject;
 				};
 
 				dependencies.forEach(
@@ -80,8 +81,7 @@
 			function provide() {
 				var path         = (arguments[0] && typeof arguments[0] === 'string' && arguments[0]) || null,
 					factory      = (!path && arguments[0]) || arguments[1],
-					dependencies = a_p_s.call(arguments, (path) ? 2 : 1),
-					loader, module, promise, defered;
+					dependencies, loader, module, promise, defered;
 
 				if(!path && queue.current) {
 					loader = queue.current;
@@ -89,27 +89,34 @@
 				}
 
 				if(path) {
-					module  = new Module(path, factory, dependencies);
-					promise = modules[module.handler][module.path] = module.promise;
+					g_st(
+						function() {
+								module  = new Module(path, factory, dependencies || []);
+								promise = modules[module.handler][module.path] = module.promise;
 
-					if(loader) {
-						defered = loader.defered;
+								if(loader) {
+									defered = loader.defered;
 
-						promise
-							.then(
-								function(value) {
-									defered.resolve(value);
-								},
-								function(error) {
-									defered.reject(new Error('unable to resolve module', loader.path, error));
+									promise
+										.then(
+											function(value) {
+												defered.resolve(value);
+											},
+											function(error) {
+												defered.reject(new Error('unable to resolve module', loader.path, error));
+											}
+										);
+
+									queue.length > 0 && queue.next();
 								}
-							);
-
-						queue.length > 0 && queue.next();
-					}
+						},
+						0
+					);
 				} else {
 					throw new Error('unspecified anonymous provide');
 				}
+
+				return { when: function() { dependencies = a_p_s.call(arguments); } };
 			}
 
 	// additional static methods

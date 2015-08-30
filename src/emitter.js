@@ -155,5 +155,5 @@
 		return base.extend(Emitter);
 	}
 
-	provide(definition, 'base', 'function/unique/uuid');
+	provide(definition).when('base', 'function/unique/uuid');
 }());
