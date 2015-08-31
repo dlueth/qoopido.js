@@ -50,7 +50,7 @@ If you have Node, NPM and bower installed typing ```bower install``` will instal
 
 
 ## Using the library
-In contrast to earlier versions Qoopido.js does come with its own loader. The loader consists of two components ```demand``` and ```provide``` just like require.js ```require``` and ```define```. Use the following code snippet in a standalone script tag before the clsoing body tag to include demand:
+In contrast to earlier versions Qoopido.js 4.0.0 will come with its own loader. The loader consists of two components ```demand``` and ```provide``` just like require.js ```require``` and ```define```. Use the following code snippet in a standalone script tag before the clsoing body tag to include demand:
 
 ```javascript
 (function(url, window, document, type, name, script, target, pointer) {
@@ -95,7 +95,7 @@ The demanded ```main.js``` might look like the following example:
 
 At the moment ```main.js``` will not be loaded via ```demand``` but it will be added to the DOM as a normal script tag with its async and defer attributes set to true.
 
-Once demand.js is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR as well as modified and injected into the DOM with the help of a handler. The result will be cached in ```localStorage``` and will get validated against the version number set vida ```configure```.
+Once demand.js is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR as well as modified and injected into the DOM with the help of a handler. The result will be cached in ```localStorage``` and will get validated against the version number set via ```configure```.
 
 ```demand``` comes with handlers for JavaScript and CSS. Handlers have three objectives:
 
