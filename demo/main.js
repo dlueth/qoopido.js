@@ -4,9 +4,9 @@
 	demand
 		.configure({
 			version: '1.0.0',
-			base:    'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/demo',
+			base:    'https://cdn.rawgit.com/dlueth/qoopido.js/release/4.0.0/demo',
 			pattern: {
-				'/qoopido': 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min'
+				'/qoopido': 'https://cdn.rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
 			}
 		});
 
@@ -30,12 +30,15 @@
 		}
 	}
 
-	provide('/app/main', definition).when('test', '/qoopido/base');
+	provide('/app/main', definition)
+		.when('test', '/qoopido/base');
 
 	demand('text/css!default')
 		.then(
 			function(cssDefault) {
 				console.log('[success]', cssDefault);
+
+				cssDefault.media = 'screen';
 			},
 			function(error) {
 				console.log('[error]', error);
