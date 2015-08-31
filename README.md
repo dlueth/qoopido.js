@@ -109,6 +109,7 @@ You can also set your own handlers easily:
 
 ```javascript
 demand.addHandler(
+	'[mimetype]',
 	'[file extension]',
 	{ 
 		resolve: function(path, value) {
