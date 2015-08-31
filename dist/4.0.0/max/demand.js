@@ -10,10 +10,10 @@
 */
 (function(global) {
     "use strict";
-    var g_st = global.setTimeout, d = document, ls = localStorage, a_p_s = Array.prototype.slice, defaults = {
+    var d = document, ls = localStorage, st = setTimeout, a_p_s = Array.prototype.slice, target = d.getElementsByTagName("head")[0], resolver = d.createElement("a"), regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, regexMatchCssUrl = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g, defaults = {
         version: "1.0.0",
         base: "/"
-    }, target = d.getElementsByTagName("head")[0], resolver = d.createElement("a"), regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, regexMatchCssUrl = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, version, resolve, storage, queue;
+    }, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, version, resolve, storage, queue, JavascriptHandler, CssHandler;
     function demand() {
         var self = this || {}, module = self instanceof Module ? self : null, dependencies = a_p_s.call(arguments), resolveHandler, rejectHandler;
         self.then = function(onResolve, onReject) {
@@ -38,7 +38,7 @@
             path = loader.path;
         }
         if (path) {
-            g_st(function() {
+            st(function() {
                 module = new Module(path, factory, dependencies || []);
                 promise = modules[module.handler][module.path] = module.promise;
                 if (loader) {
@@ -247,7 +247,7 @@
                 };
                 xhr.open("GET", self.url + pointer.suffix, true);
                 xhr.send();
-                g_st(function() {
+                st(function() {
                     if (xhr.readyState < 4) {
                         xhr.abort();
                     }
@@ -283,8 +283,7 @@
         });
         return self;
     }
-    function JavascriptHandler() {}
-    JavascriptHandler.prototype = {
+    JavascriptHandler = {
         resolve: function(aPath, aValue) {
             var script = d.createElement("script");
             script.defer = script.async = true;
@@ -293,8 +292,7 @@
             target.appendChild(script);
         }
     };
-    function CssHandler() {}
-    CssHandler.prototype = {
+    CssHandler = {
         resolve: function(aPath, aValue) {
             var style = d.createElement("style"), sheet = style.styleSheet;
             style.type = "text/css";
@@ -302,7 +300,7 @@
             sheet && (sheet.cssText = aValue) || (style.innerHTML = aValue);
             style.setAttribute("demand-path", aPath);
             target.appendChild(style);
-            g_st(function() {
+            st(function() {
                 style.media = "all";
                 provide(function() {
                     return true;
@@ -319,8 +317,8 @@
     };
     storage = new Storage();
     queue = new Queue();
-    addHandler("application/javascript", ".js", new JavascriptHandler());
-    addHandler("text/css", ".css", new CssHandler());
+    addHandler("application/javascript", ".js", JavascriptHandler);
+    addHandler("text/css", ".css", CssHandler);
     configure(defaults) && settings && configure(settings);
     demand.configure = configure;
     demand.addHandler = addHandler;
