@@ -19,6 +19,9 @@ None, beside polyfills eventually(!!!)
 ## Installation
 There currently are four ways to get Qoopido.js included into your project:
 
+**remark**
+> As Qoopido.js 4.0.0 is not yet released this section is not currently not valid and the only way to get the alpha is by either downloading or cloning from the corresponding git branch.
+
 ### CDN
 Qoopido.js will continue to be pushed to jsdelivr and CDNJS. I personally recommend jsdelivr.
 
@@ -81,6 +84,7 @@ The demanded ```main.js``` might look like the following example:
 
 	demand
 		.configure({
+			version: '1.0.0',
 			base: '[path/url to your scripts]',
 			pattern: {
 				'/qoopido': '[path/url to Qoopidpo.js]'
@@ -91,12 +95,13 @@ The demanded ```main.js``` might look like the following example:
 
 At the moment ```main.js``` will not be loaded via ```demand``` but it will be added to the DOM as a normal script tag with its async and defer attributes set to true.
 
-Once demand.js is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR and injected into the DOM with the help of a handler.
+Once demand.js is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR as well as modified and injected into the DOM with the help of a handler. The result will be cached in ```localStorage``` and will get validated against the version number set vida ```configure```.
 
-```demand``` comes with a handler for JavaScript and another handler for CSS is in the works. Handlers have two jobs:
+```demand``` comes with handlers for JavaScript and CSS. Handlers have three objectives:
 
 - provide a filename extension/suffix to be added the the url
-- provide a callback that handles DOM injection and final resolution of a module via an anonymous ```provide``` call
+- provide a function named ```resolve``` that handles DOM injection and final resolution of a module via an anonymous ```provide``` call
+- provide an optional function named ```modify``` that handles eventually necessary conversion of the loaded source (e.g. CSS paths that are normally relative to the CSS-file path)
 
 Handlers can, quite similar to require.js, be explicitly set for a certain module by prefixing the module path by ```[mimetype]!```. The default handler, e.g., is ```application/javascript``` which will automatically be used when no other handler is set.
 
