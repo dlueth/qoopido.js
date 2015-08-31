@@ -50,18 +50,14 @@
 					dependencies = a_p_s.call(arguments),
 					resolveHandler, rejectHandler;
 
-				self.then = function(onResolve, onReject) {
-					resolveHandler = onResolve;
-					rejectHandler  = onReject;
-				};
-
 				dependencies.forEach(
 					function(dependency, index) {
 						var resolved = resolve.path(dependency, module),
 							handler  = resolved.handler,
+							path     = resolved.path,
 							pointer  = modules[handler] || (modules[handler] = {});
 
-						this[index] = pointer[resolved.path] || (pointer[resolved.path] = (new Loader(dependency, module)).promise);
+						this[index] = pointer[path] || (pointer[path] = (new Loader(dependency, module)).promise);
 					},
 					dependencies);
 
@@ -76,41 +72,54 @@
 						}
 					);
 
-				return self;
+				return {
+					then: function(onResolve, onReject) {
+						resolveHandler = onResolve;
+						rejectHandler  = onReject;
+					}
+				};
 			}
 
 		// provide
 			function provide() {
 				var path         = (arguments[0] && typeof arguments[0] === 'string' && arguments[0]) || null,
 					factory      = (!path && arguments[0]) || arguments[1],
-					dependencies, loader, module, promise, defered;
+					dependencies, loader;
 
 				if(!path && queue.current) {
 					loader = queue.current;
-					path   = loader.path;
+					path   = loader.handler + '!' + loader.path;
 				}
 
 				if(path) {
 					st(function() {
-						module  = new Module(path, factory, dependencies || []);
-						promise = modules[module.handler][module.path] = module.promise;
+						var resolved = resolve.path(path),
+							pointer  = modules[resolved.handler],
+							module, promise, defered;
 
-						if(loader) {
-							!loader.cached && loader.store();
+						if(!loader && pointer[resolved.path]) {
+							throw new Error('duplicate found for module', path);
+						} else {
+							module  = new Module(path, factory, dependencies || []);
+							promise = modules[module.handler][module.path] = module.promise;
 
-							defered = loader.defered;
+							if(loader) {
+								!loader.cached && loader.store();
 
-							promise
-								.then(
-									function(value) {
-										defered.resolve(value);
-									},
-									function(error) {
-										defered.reject(new Error('unable to resolve module', path, error));
-									}
-								);
+								defered = loader.defered;
 
-							queue.length > 0 && queue.next();
+								promise
+									.then(
+										function(value) {
+											defered.resolve(value);
+										},
+										function(error) {
+											defered.reject(new Error('unable to resolve module', path, error));
+										}
+									);
+
+								queue.length > 0 && queue.next();
+							}
 						}
 					});
 				} else {
@@ -213,7 +222,7 @@
 							self.url = resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href;
 						}
 					} else {
-						return { handler: handler, path: aPath, version: version };
+						return { handler: pointer, path: aPath, version: version };
 					}
 				}
 			};
@@ -407,9 +416,7 @@
 
 				resolve.path.call(self, aPath);
 
-				self.promise = defered.promise;
-
-				self.promise.then(null, function(error) {
+				(self.promise = defered.promise).then(null, function(error) {
 					log(new Error('unable to resolve module', self.path, error));
 				});
 
@@ -429,6 +436,7 @@
 				resolve: function(aPath, aValue) {
 					var script = d.createElement('script');
 
+					script.type  = 'application/javascript';
 					script.defer = script.async = true;
 					script.text  = aValue;
 
