@@ -461,9 +461,7 @@
 					target.appendChild(style);
 
 					st(function() {
-						style.media = 'all';
-
-						provide(function() { return true; });
+						provide(function() { return style; });
 					});
 				},
 				modify: function(aUrl, aValue) {
