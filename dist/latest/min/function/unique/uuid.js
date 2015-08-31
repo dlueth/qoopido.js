@@ -1,2 +1,2 @@
-/*! Qoopido.js 4.0.0, 2015-08-30 | https://github.com/dlueth/qoopido.js | (c) 2015 Dirk Lueth */
+/*! Qoopido.js 4.0.0, 2015-08-31 | https://github.com/dlueth/qoopido.js | (c) 2015 Dirk Lueth */
 !function(){"use strict";function x(){return"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(t,function(x){var n=16*Math.random()|0;return("x"===x?n:3&n|8).toString(16)})}function n(){return function(){var n;do n=x();while(r[n]);return r[n]=1,n}}var r={},t=new RegExp("[xy]","g");provide(n)}();
