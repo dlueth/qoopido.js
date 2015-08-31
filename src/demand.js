@@ -24,13 +24,15 @@
 
 	var g_st               = global.setTimeout,
 		d                  = document,
+		ls                 = localStorage,
 		a_p_s              = Array.prototype.slice,
-		defaults           = { base: '/' },
+		defaults           = { version: '1.0.0', base: '/' },
 		target             = d.getElementsByTagName('head')[0],
 		resolver           = d.createElement('a'),
 		regexIsAbsolute    = /^\//i,
 		regexMatchHandler  = /^([-\w]+\/[-\w]+)!/,
 		regexMatchSpecial  = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+		regexMatchCssUrl   = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g,
 		main               = global.demand.main,
 		settings           = global.demand.settings,
 		host               = global.location.host,
@@ -38,7 +40,7 @@
 		pattern            = {},
 		handler            = {},
 		modules            = {},
-		resolve, queue;
+		version, resolve, storage, queue;
 
 	// main public methods
 		// demand
@@ -89,29 +91,28 @@
 				}
 
 				if(path) {
-					g_st(
-						function() {
-								module  = new Module(path, factory, dependencies || []);
-								promise = modules[module.handler][module.path] = module.promise;
+					g_st(function() {
+						module  = new Module(path, factory, dependencies || []);
+						promise = modules[module.handler][module.path] = module.promise;
 
-								if(loader) {
-									defered = loader.defered;
+						if(loader) {
+							!loader.cached && loader.store();
 
-									promise
-										.then(
-											function(value) {
-												defered.resolve(value);
-											},
-											function(error) {
-												defered.reject(new Error('unable to resolve module', loader.path, error));
-											}
-										);
+							defered = loader.defered;
 
-									queue.length > 0 && queue.next();
-								}
-						},
-						0
-					);
+							promise
+								.then(
+									function(value) {
+										defered.resolve(value);
+									},
+									function(error) {
+										defered.reject(new Error('unable to resolve module', path, error));
+									}
+								);
+
+							queue.length > 0 && queue.next();
+						}
+					});
 				} else {
 					throw new Error('unspecified anonymous provide');
 				}
@@ -121,10 +122,15 @@
 
 	// additional static methods
 		// configure
-			function configure(config) {
-				var pointerBase    = config.base,
-					pointerPattern = config.pattern,
+			function configure(aConfig) {
+				var pointerVersion = aConfig.version,
+					pointerBase    = aConfig.base,
+					pointerPattern = aConfig.pattern,
 					key;
+
+				if(pointerVersion) {
+					version = pointerVersion;
+				}
 
 				if(pointerBase) {
 					base = new Pattern(pointerBase, resolve.url(pointerBase).href);
@@ -138,10 +144,10 @@
 			}
 
 		// addHandler
-			function addHandler(type, suffix, fn) {
-				if(!handler[type]) {
-					handler[type] = { suffix: suffix, callback: fn };
-					modules[type] = {};
+			function addHandler(aType, aSuffix, aHandler) {
+				if(!handler[aType]) {
+					handler[aType] = { suffix: aSuffix, resolve: aHandler.resolve, modify: aHandler.modify };
+					modules[aType] = {};
 
 					return true;
 				}
@@ -151,76 +157,98 @@
 
 	// helper
 		// log
-			function log(message) {
-				var type = (message instanceof Error) ? 'error' : 'info';
+			function log(aMessage) {
+				var type = (aMessage instanceof Error) ? 'error' : 'info';
 
 				if(typeof console !== 'undefined') {
-					console[type](message.toString());
+					console[type](aMessage.toString());
 				}
 			}
 
 		// escape
-			function escape(value) {
-				return value.replace(regexMatchSpecial, '\\$&');
+			function escape(aValue) {
+				return aValue.replace(regexMatchSpecial, '\\$&');
 			}
 
 		// isAbsolute
-			function isAbsolute(path) {
-				return regexIsAbsolute.test(path);
+			function isAbsolute(aPath) {
+				return regexIsAbsolute.test(aPath);
 			}
 
 		// resolve
 			resolve = {
-				url: function(url) {
-					resolver.href = url;
+				url: function(aUrl) {
+					resolver.href = aUrl;
 
 					return resolver;
 				},
-				path: function(path, parent) {
+				path: function(aPath, aParent) {
 					var self    = this,
-						handler = path.match(regexMatchHandler) || 'application/javascript',
+						pointer = aPath.match(regexMatchHandler) || 'application/javascript',
 						absolute, key, match;
 
-					if(typeof handler !== 'string') {
-						path    = path.replace(handler[0], '');
-						handler = handler[1];
+					if(typeof pointer !== 'string') {
+						aPath   = aPath.replace(new RegExp('^' + escape(pointer[0])), '');
+						pointer = pointer[1];
 					}
 
-					if((absolute = isAbsolute(path))) {
-						path = base.remove(resolve.url(base.url + path).href);
+					if((absolute = isAbsolute(aPath))) {
+						aPath = base.remove(resolve.url(base.url + aPath).href);
 					} else {
-						path = resolve.url(((parent && parent.path + '/../') || '/') + path).pathname;
+						aPath = resolve.url(((aParent && aParent.path + '/../') || '/') + aPath).pathname;
 					}
 
 					for(key in pattern) {
-						if(pattern[key].matches(path)) {
+						if(pattern[key].matches(aPath)) {
 							match = pattern[key];
 						}
 					}
 
 					if(self instanceof Module || self instanceof Loader) {
-						self.handler = handler;
-						self.path    = path;
+						self.handler = pointer;
+						self.path    = aPath;
+						self.version = version;
 
 						if(self instanceof Loader) {
-							self.url = resolve.url((match ? match.process(path) : (absolute ? '//' + host : base.url) + path)).href;
+							self.url = resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href;
 						}
 					} else {
-						return { handler: handler, path: path };
+						return { handler: handler, path: aPath, version: version };
 					}
 				}
 			};
 
 	// modules
+		// Storage
+			function Storage() {
+
+			}
+
+			Storage.prototype = {
+				get: function(aPath, aVersion) {
+					var data = JSON.parse(ls.getItem(aPath));
+
+					if(!aVersion || (data && aVersion === data.version)) {
+						return data;
+					}
+				},
+				set: function(aPath, aValue, aVersion) {
+					ls.setItem(aPath, JSON.stringify({ version: aVersion || version, source: aValue }));
+				},
+				clear: function(aPath) {
+					(aPath && ls.removeItem(aPath)) || ls.clear();
+				}
+			};
+
 		// Error
-			function Error(message, module, stack) {
+			function Error(aMessage, aModule, aStack) {
 				var self = this;
 
-				self.message = message;
-				self.module  = module;
+				self.message = aMessage;
+				self.module  = aModule;
 
-				if(stack) {
-					self.stack = stack;
+				if(aStack) {
+					self.stack = aStack;
 				}
 
 				return self;
@@ -242,25 +270,25 @@
 			};
 
 		// Pattern
-			function Pattern(pattern, url) {
+			function Pattern(aPattern, aUrl) {
 				var self = this;
 
-				self.url          = resolve.url(url).href;
-				self.regexPattern = new RegExp('^' + escape(pattern));
-				self.regexUrl     = new RegExp('^' + escape(url));
+				self.url          = resolve.url(aUrl).href;
+				self.regexPattern = new RegExp('^' + escape(aPattern));
+				self.regexUrl     = new RegExp('^' + escape(aUrl));
 			}
 
 			Pattern.prototype = {
-				matches: function(path) {
-					return this.regexPattern.test(path);
+				matches: function(aPath) {
+					return this.regexPattern.test(aPath);
 				},
-				remove: function(url) {
-					return url.replace(this.regexUrl, '');
+				remove: function(aUrl) {
+					return aUrl.replace(this.regexUrl, '');
 				},
-				process: function(path) {
+				process: function(aPath) {
 					var self = this;
 
-					return path.replace(self.regexPattern, self.url);
+					return aPath.replace(self.regexPattern, self.url);
 				}
 			};
 
@@ -274,11 +302,11 @@
 
 			Queue.prototype = {
 				length: 0,
-				add: function(item) {
+				add: function(aItem) {
 					var self  = this,
 						queue = self.queue;
 
-					queue.push(item);
+					queue.push(aItem);
 
 					self.length++;
 
@@ -287,7 +315,8 @@
 				next: function() {
 					var self    = this,
 						current = self.current,
-						queue   = self.queue;
+						queue   = self.queue,
+						pointer;
 
 					if(current) {
 						self.current = null;
@@ -298,23 +327,26 @@
 
 					if(queue.length) {
 						current = self.current = self.queue[0];
+						pointer = handler[current.handler];
 
-						handler[current.handler].callback(current.path, current.value);
+						!current.cached && pointer.modify && (current.source = pointer.modify(current.url, current.source));
+						pointer.resolve(current.path, current.source);
 					}
 				}
 			};
 
 		// Loader
-			function Loader(path, parent) {
+			function Loader(aPath, aParent) {
 				var self    = this,
 					defered = Promise.defer(),
 					xhr     = new XMLHttpRequest(),
-					pointer;
+					pointer, cached;
 
-				resolve.path.call(self, path, parent);
+				resolve.path.call(self, aPath, aParent);
 
 				self.defered = defered;
 				self.promise = defered.promise;
+				self.cached  = false;
 				pointer      = handler[self.handler];
 
 				if(!parent) {
@@ -322,22 +354,28 @@
 				}
 
 				if(pointer) {
-					xhr.onreadystatechange = function() {
-						if(xhr.readyState === 4) {
-							if(xhr.status === 200 || (xhr.status === 0 && xhr.responseText)) {
-								self.value = xhr.responseText;
+					cached = self.retrieve();
 
-								queue.add(self);
-							} else {
-								defered.reject(new Error('unable to load module', self.path));
+					if(cached) {
+						queue.add(self);
+					} else {
+						xhr.onreadystatechange = function() {
+							if(xhr.readyState === 4) {
+								if(xhr.status === 200 || (xhr.status === 0 && xhr.responseText)) {
+									self.source = xhr.responseText;
+
+									queue.add(self);
+								} else {
+									defered.reject(new Error('unable to load module', self.path));
+								}
 							}
-						}
-					};
+						};
 
-					xhr.open('GET', self.url + pointer.suffix, true);
-					xhr.send();
+						xhr.open('GET', self.url + pointer.suffix, true);
+						xhr.send();
 
-					setTimeout(function() { if(xhr.readyState < 4) { xhr.abort(); } }, 5000);
+						g_st(function() { if(xhr.readyState < 4) { xhr.abort(); } }, 5000);
+					}
 				} else {
 					defered.reject(new Error('no handler "' + self.handler + '" for', self.path));
 				}
@@ -345,12 +383,29 @@
 				return self;
 			}
 
+			Loader.prototype = {
+				store: function() {
+					var self = this;
+
+					storage.set(self.path, self.source, self.version);
+				},
+				retrieve: function() {
+					var self   = this,
+						cache  = storage.get(self.path, self.version),
+						cached = self.cached = !!(cache);
+
+					cached && (self.source = cache.source);
+
+					return cached;
+				}
+			};
+
 		// Module
-			function Module(path, factory, dependencies) {
+			function Module(aPath, aFactory, aDependencies) {
 				var self    = this,
 					defered = Promise.defer();
 
-				resolve.path.call(self, path);
+				resolve.path.call(self, aPath);
 
 				self.promise = defered.promise;
 
@@ -359,9 +414,9 @@
 				});
 
 				demand
-					.apply(self, dependencies)
+					.apply(self, aDependencies)
 					.then(
-						function() { defered.resolve(factory.apply(null, arguments)); },
+						function() { defered.resolve(aFactory.apply(null, arguments)); },
 						function(error) { defered.reject(new Error('unable to resolve dependencies for', self.path, error)); }
 					);
 
@@ -370,27 +425,63 @@
 
 	// default handler
 		// JavaScript
-			function JavascriptHandler(path, value) {
-				var script = d.createElement('script');
+			function JavascriptHandler() {}
 
-				script.defer = script.async = true;
-				script.text  = value;
+			JavascriptHandler.prototype = {
+				resolve: function(aPath, aValue) {
+					var script = d.createElement('script');
 
-				script.setAttribute('demand-path', path);
+					script.defer = script.async = true;
+					script.text  = aValue;
 
-				target.appendChild(script);
-			}
+					script.setAttribute('demand-path', aPath);
+
+					target.appendChild(script);
+				}
+			};
 
 		// CSS
-			function CssHandler(value) {}
+			function CssHandler() {}
+
+			CssHandler.prototype = {
+				resolve: function(aPath, aValue) {
+					var style = d.createElement('style'),
+						sheet = style.styleSheet;
+
+					style.type  = 'text/css';
+					style.media = 'only x';
+					(sheet && (sheet.cssText = aValue)) || (style.innerHTML = aValue);
+
+					style.setAttribute('demand-path', aPath);
+
+					target.appendChild(style);
+
+					g_st(function() {
+						style.media = 'all';
+
+						provide(function() { return true; });
+					});
+				},
+				modify: function(aUrl, aValue) {
+					var base = resolve.url(aUrl + '/..').href,
+						match;
+
+					while((match = regexMatchCssUrl.exec(aValue))) {
+						aValue = aValue.replace(match[0], 'url(' + resolve.url(base + match[1]).pathname + ')');
+					}
+
+					return aValue;
+				}
+			};
 
 	// initialization
 		// create queue
-			queue = new Queue();
+			storage = new Storage();
+			queue   = new Queue();
 
 		// add default handler
-			addHandler('application/javascript', '.js', JavascriptHandler);
-			addHandler('text/css', '.css', CssHandler);
+			addHandler('application/javascript', '.js', new JavascriptHandler());
+			addHandler('text/css', '.css', new CssHandler());
 
 		// configure
 			configure(defaults) && settings && configure(settings);
