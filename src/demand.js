@@ -22,17 +22,17 @@
 ;(function(global) {
 	'use strict';
 
-	var g_st               = global.setTimeout,
-		d                  = document,
+	var d                  = document,
 		ls                 = localStorage,
+		st                 = setTimeout,
 		a_p_s              = Array.prototype.slice,
-		defaults           = { version: '1.0.0', base: '/' },
 		target             = d.getElementsByTagName('head')[0],
 		resolver           = d.createElement('a'),
 		regexIsAbsolute    = /^\//i,
 		regexMatchHandler  = /^([-\w]+\/[-\w]+)!/,
 		regexMatchSpecial  = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
 		regexMatchCssUrl   = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g,
+		defaults           = { version: '1.0.0', base: '/' },
 		main               = global.demand.main,
 		settings           = global.demand.settings,
 		host               = global.location.host,
@@ -40,7 +40,7 @@
 		pattern            = {},
 		handler            = {},
 		modules            = {},
-		version, resolve, storage, queue;
+		version, resolve, storage, queue, JavascriptHandler, CssHandler;
 
 	// main public methods
 		// demand
@@ -91,7 +91,7 @@
 				}
 
 				if(path) {
-					g_st(function() {
+					st(function() {
 						module  = new Module(path, factory, dependencies || []);
 						promise = modules[module.handler][module.path] = module.promise;
 
@@ -374,7 +374,7 @@
 						xhr.open('GET', self.url + pointer.suffix, true);
 						xhr.send();
 
-						g_st(function() { if(xhr.readyState < 4) { xhr.abort(); } }, 5000);
+						st(function() { if(xhr.readyState < 4) { xhr.abort(); } }, 5000);
 					}
 				} else {
 					defered.reject(new Error('no handler "' + self.handler + '" for', self.path));
@@ -423,11 +423,9 @@
 				return self;
 			}
 
-	// default handler
+	// handler
 		// JavaScript
-			function JavascriptHandler() {}
-
-			JavascriptHandler.prototype = {
+			JavascriptHandler = {
 				resolve: function(aPath, aValue) {
 					var script = d.createElement('script');
 
@@ -441,9 +439,7 @@
 			};
 
 		// CSS
-			function CssHandler() {}
-
-			CssHandler.prototype = {
+			CssHandler = {
 				resolve: function(aPath, aValue) {
 					var style = d.createElement('style'),
 						sheet = style.styleSheet;
@@ -456,7 +452,7 @@
 
 					target.appendChild(style);
 
-					g_st(function() {
+					st(function() {
 						style.media = 'all';
 
 						provide(function() { return true; });
@@ -480,8 +476,8 @@
 			queue   = new Queue();
 
 		// add default handler
-			addHandler('application/javascript', '.js', new JavascriptHandler());
-			addHandler('text/css', '.css', new CssHandler());
+			addHandler('application/javascript', '.js', JavascriptHandler);
+			addHandler('text/css', '.css', CssHandler);
 
 		// configure
 			configure(defaults) && settings && configure(settings);
