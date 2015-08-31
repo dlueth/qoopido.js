@@ -307,9 +307,8 @@
             style.setAttribute("demand-path", aPath);
             target.appendChild(style);
             st(function() {
-                style.media = "all";
                 provide(function() {
-                    return true;
+                    return style;
                 });
             });
         },
