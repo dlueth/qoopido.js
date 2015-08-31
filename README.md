@@ -99,11 +99,35 @@ Once demand.js is loaded anything that is either explicitly requested via ```dem
 
 ```demand``` comes with handlers for JavaScript and CSS. Handlers have three objectives:
 
-- provide a filename extension/suffix to be added the the url
+- provide a file extension/suffix to be added the the url
 - provide a function named ```resolve``` that handles DOM injection and final resolution of a module via an anonymous ```provide``` call
 - provide an optional function named ```modify``` that handles eventually necessary conversion of the loaded source (e.g. CSS paths that are normally relative to the CSS-file path)
 
 Handlers can, quite similar to require.js, be explicitly set for a certain module by prefixing the module path by ```[mimetype]!```. The default handler, e.g., is ```application/javascript``` which will automatically be used when no other handler is set.
+
+You can also set your own handlers easily:
+
+```javascript
+demand.addHandler(
+	'[file extension]',
+	{ 
+		resolve: function(path, value) {
+			/* inject or otherwise resolve the dependency */
+			
+			provide(function definition() {
+				return true;
+			});
+		},
+		modify: function(url, value) {
+			/* modify the passed value */
+			
+			return value;
+		}
+	}
+);
+```
+
+Just keep in mind that ```[File extension]``` has to include a leading ```.``` to be able to stay flexible and that ```resolve``` contains an anonymous ```provide``` call that resolves the queued loader. In case you need a ```modify``` function make sure it returns the modified ```value```.
 
 
 ### Demanding modules
