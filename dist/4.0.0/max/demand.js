@@ -16,40 +16,46 @@
     }, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, version, resolve, storage, queue, JavascriptHandler, CssHandler;
     function demand() {
         var self = this || {}, module = self instanceof Module ? self : null, dependencies = a_p_s.call(arguments), resolveHandler, rejectHandler;
-        self.then = function(onResolve, onReject) {
-            resolveHandler = onResolve;
-            rejectHandler = onReject;
-        };
         dependencies.forEach(function(dependency, index) {
-            var resolved = resolve.path(dependency, module), handler = resolved.handler, pointer = modules[handler] || (modules[handler] = {});
-            this[index] = pointer[resolved.path] || (pointer[resolved.path] = new Loader(dependency, module).promise);
+            var resolved = resolve.path(dependency, module), handler = resolved.handler, path = resolved.path, pointer = modules[handler] || (modules[handler] = {});
+            this[index] = pointer[path] || (pointer[path] = new Loader(dependency, module).promise);
         }, dependencies);
         Promise.all(dependencies).then(function() {
             typeof resolveHandler === "function" && resolveHandler.apply(null, arguments[0]);
         }, function(error) {
             typeof rejectHandler === "function" && rejectHandler(error);
         });
-        return self;
+        return {
+            then: function(onResolve, onReject) {
+                resolveHandler = onResolve;
+                rejectHandler = onReject;
+            }
+        };
     }
     function provide() {
-        var path = arguments[0] && typeof arguments[0] === "string" && arguments[0] || null, factory = !path && arguments[0] || arguments[1], dependencies, loader, module, promise, defered;
+        var path = arguments[0] && typeof arguments[0] === "string" && arguments[0] || null, factory = !path && arguments[0] || arguments[1], dependencies, loader;
         if (!path && queue.current) {
             loader = queue.current;
-            path = loader.path;
+            path = loader.handler + "!" + loader.path;
         }
         if (path) {
             st(function() {
-                module = new Module(path, factory, dependencies || []);
-                promise = modules[module.handler][module.path] = module.promise;
-                if (loader) {
-                    !loader.cached && loader.store();
-                    defered = loader.defered;
-                    promise.then(function(value) {
-                        defered.resolve(value);
-                    }, function(error) {
-                        defered.reject(new Error("unable to resolve module", path, error));
-                    });
-                    queue.length > 0 && queue.next();
+                var resolved = resolve.path(path), pointer = modules[resolved.handler], module, promise, defered;
+                if (!loader && pointer[resolved.path]) {
+                    throw new Error("duplicate found for module", path);
+                } else {
+                    module = new Module(path, factory, dependencies || []);
+                    promise = modules[module.handler][module.path] = module.promise;
+                    if (loader) {
+                        !loader.cached && loader.store();
+                        defered = loader.defered;
+                        promise.then(function(value) {
+                            defered.resolve(value);
+                        }, function(error) {
+                            defered.reject(new Error("unable to resolve module", path, error));
+                        });
+                        queue.length > 0 && queue.next();
+                    }
                 }
             });
         } else {
@@ -129,7 +135,7 @@
                 }
             } else {
                 return {
-                    handler: handler,
+                    handler: pointer,
                     path: aPath,
                     version: version
                 };
@@ -272,8 +278,7 @@
     function Module(aPath, aFactory, aDependencies) {
         var self = this, defered = Promise.defer();
         resolve.path.call(self, aPath);
-        self.promise = defered.promise;
-        self.promise.then(null, function(error) {
+        (self.promise = defered.promise).then(null, function(error) {
             log(new Error("unable to resolve module", self.path, error));
         });
         demand.apply(self, aDependencies).then(function() {
@@ -286,6 +291,7 @@
     JavascriptHandler = {
         resolve: function(aPath, aValue) {
             var script = d.createElement("script");
+            script.type = "application/javascript";
             script.defer = script.async = true;
             script.text = aValue;
             script.setAttribute("demand-path", aPath);
