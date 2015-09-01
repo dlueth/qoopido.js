@@ -5,7 +5,7 @@
 		demand
 			.configure({
 				pattern: {
-					'/qoopido': '/src', // https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min'
+					'/qoopido': 'https://cdn.rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
 				}
 			});
 
@@ -43,6 +43,8 @@
 				console.log('[error]', error);
 			}
 		);
+
+		return true;
 	}
 
 	provide(definition);
