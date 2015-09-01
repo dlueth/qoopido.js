@@ -1,10 +1,7 @@
 /**
  * Qoopido demand
  *
- * Promise based module loader.
- *
- * I highly recommend this Promise polyfill:
- * https://github.com/getify/native-promise-only
+ * Promise like module loader (XHR) with localStorage caching
  *
  * Copyright (c) 2015 Dirk Lueth
  *
@@ -14,11 +11,10 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @polyfill Promise
  * @polyfill XMLHttpRequest
  */
 
-/* global Promise, console */
+/* global console */
 ;(function(global) {
 	'use strict';
 
@@ -51,9 +47,8 @@
 		// demand
 			function demand() {
 				var self         = this || {},
-					module       = self instanceof Module ? self : null,
-					dependencies = a_p_s.call(arguments),
-					bond;
+					module       = isInstanceOf(self, Module) ? self : null,
+					dependencies = a_p_s.call(arguments);
 
 				dependencies.forEach(
 					function(dependency, index) {
@@ -66,13 +61,7 @@
 					},
 					dependencies);
 
-				bond = Bond.all(dependencies);
-
-				return {
-					then: function(onResolve, onReject) {
-						bond.then(onResolve, onReject);
-					}
-				};
+				return Bond.all(dependencies);
 			}
 
 		// provide
@@ -154,17 +143,13 @@
 				if(!handler[aType]) {
 					handler[aType] = { suffix: aSuffix, resolve: aHandler.resolve, modify: aHandler.modify };
 					modules[aType] = {};
-
-					return true;
 				}
-
-				return false;
 			}
 
 	// helper
 		// log
 			function log(aMessage) {
-				var type = (aMessage instanceof Error) ? 'error' : 'info';
+				var type = (isInstanceOf(aMessage, Error)) ? 'error' : 'info';
 
 				if(typeof console !== 'undefined') {
 					console[type](aMessage.toString());
@@ -186,6 +171,11 @@
 				return url.replace(regexMatchProtocol, '');
 			}
 
+		// isInstanceOf
+			function isInstanceOf(instance, module) {
+				return instance instanceof module;
+			}
+
 		// resolve
 			resolve = {
 				url: function(aUrl) {
@@ -194,8 +184,9 @@
 					return resolver;
 				},
 				path: function(aPath, aParent) {
-					var self    = this,
-						pointer = aPath.match(regexMatchHandler) || 'application/javascript',
+					var self     = this,
+						pointer  = aPath.match(regexMatchHandler) || 'application/javascript',
+						isLoader = isInstanceOf(self, Loader),
 						absolute, key, match;
 
 					if(typeof pointer !== 'string') {
@@ -210,18 +201,14 @@
 					}
 
 					for(key in pattern) {
-						if(pattern[key].matches(aPath)) {
-							match = pattern[key];
-						}
+						pattern[key].matches(aPath) && (match = pattern[key]);
 					}
 
-					if(self instanceof Module || self instanceof Loader) {
+					if(isLoader || isInstanceOf(self, Module)) {
 						self.handler = pointer;
 						self.path    = aPath;
 
-						if(self instanceof Loader) {
-							self.url = removeProtocol(resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href);
-						}
+						isLoader && (self.url = removeProtocol(resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href));
 					} else {
 						return { handler: pointer, path: aPath };
 					}
@@ -248,9 +235,8 @@
 	// modules
 		// Bond
 			function Bond(executor) {
-				var self = this;
-
-				self.listener = { resolved: [], rejected: [] };
+				var self     = this,
+					listener = { resolved: [], rejected: [] };
 
 				function resolve() {
 					handle(BOND_RESOLVED, arguments);
@@ -265,27 +251,16 @@
 						self.state = aState;
 						self.value = aParameter;
 
-						self.listener[aState].forEach(function(aHandler) {
+						listener[aState].forEach(function(aHandler) {
 							aHandler.apply(null, self.value);
 						});
 					}
 				}
 
-				executor(resolve, reject);
-			}
-
-			Bond.prototype = {
-				constructor: Bond,
-				state:       BOND_PENDING,
-				value:       null,
-				listener:    null,
-				then: function(aResolved, aRejected) {
-					var self = this,
-						listener;
+				self.then = function(aResolved, aRejected) {
+					var self = this;
 
 					if(self.state === BOND_PENDING) {
-						listener = self.listener;
-
 						aResolved && listener[BOND_RESOLVED].push(aResolved);
 						aRejected && listener[BOND_REJECTED].push(aRejected);
 					} else {
@@ -300,7 +275,16 @@
 								break;
 						}
 					}
-				}
+				};
+
+				executor(resolve, reject);
+			}
+
+			Bond.prototype = {
+				constructor: Bond,
+				state:       BOND_PENDING,
+				value:       null,
+				listener:    null
 			};
 
 			Bond.defer = function() {
@@ -315,11 +299,11 @@
 			};
 
 			Bond.all = function(aBonds) {
-				var defered  = Bond.defer(),
-					bond     = defered.bond,
-					resolved = [],
-					total    = aBonds.length,
-					current  = 0;
+				var defered       = Bond.defer(),
+					bond          = defered.bond,
+					resolved      = [],
+					countTotal    = aBonds.length,
+					countResolved = 0;
 
 				aBonds.forEach(function(aBond, aIndex) {
 					aBond.then(
@@ -327,16 +311,29 @@
 							if(bond.state === BOND_PENDING) {
 								resolved[aIndex] = a_p_s.call(arguments);
 
-								current++;
+								countResolved++;
 
-								current === total && defered.resolve.apply(null, a_p_c.apply([], resolved));
+								countResolved === countTotal && defered.resolve.apply(null, a_p_c.apply([], resolved));
 							}
 						},
-						function() { defered.reject.apply(null, arguments); }
+						defered.reject
 					);
 				});
 
 				return bond;
+			};
+
+			Bond.race = function(aBonds) {
+				var defered = Bond.defer();
+
+				aBonds.forEach(function(aBond) {
+					aBond.then(
+						defered.resolve,
+						defered.reject
+					);
+				});
+
+				return defered.bond;
 			};
 
 		// Error
@@ -346,9 +343,7 @@
 				self.message = aMessage;
 				self.module  = aModule;
 
-				if(aStack) {
-					self.stack = aStack;
-				}
+				aStack && (self.stack = aStack);
 
 				return self;
 			}
@@ -593,6 +588,7 @@
 		// register modules
 			provide('/demand', function() { return demand; });
 			provide('/provide', function() { return provide; });
+			provide('/bond', function() { return Bond; });
 
 		// load main script
 			if(main) {
