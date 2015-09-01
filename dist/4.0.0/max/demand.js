@@ -2,7 +2,7 @@
 * Qoopido.js
 *
 * version: 4.0.0
-* date:    2015-08-31
+* date:    2015-09-01
 * author:  Dirk Lueth <info@qoopido.com>
 * website: https://github.com/dlueth/qoopido.js
 *
@@ -10,25 +10,20 @@
 */
 (function(global) {
     "use strict";
-    var d = document, ls = localStorage, st = setTimeout, a_p_s = Array.prototype.slice, target = d.getElementsByTagName("head")[0], resolver = d.createElement("a"), regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, regexMatchCssUrl = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g, defaults = {
+    var d = document, ls = localStorage, st = setTimeout, a_p_s = Array.prototype.slice, a_p_c = Array.prototype.concat, target = d.getElementsByTagName("head")[0], resolver = d.createElement("a"), regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, regexMatchCssUrl = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g, regexMatchProtocol = /^http(s?):/, BOND_PENDING = "pending", BOND_RESOLVED = "resolved", BOND_REJECTED = "rejected", defaults = {
         version: "1.0.0",
         base: "/"
-    }, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, version, resolve, storage, queue, JavascriptHandler, CssHandler;
+    }, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, version, queue, resolve, storage, JavascriptHandler, CssHandler;
     function demand() {
-        var self = this || {}, module = self instanceof Module ? self : null, dependencies = a_p_s.call(arguments), resolveHandler, rejectHandler;
+        var self = this || {}, module = self instanceof Module ? self : null, dependencies = a_p_s.call(arguments), bond;
         dependencies.forEach(function(dependency, index) {
             var resolved = resolve.path(dependency, module), handler = resolved.handler, path = resolved.path, pointer = modules[handler] || (modules[handler] = {});
-            this[index] = pointer[path] || (pointer[path] = new Loader(dependency, module).promise);
+            this[index] = pointer[path] || (pointer[path] = new Loader(dependency, module).bond);
         }, dependencies);
-        Promise.all(dependencies).then(function() {
-            typeof resolveHandler === "function" && resolveHandler.apply(null, arguments[0]);
-        }, function(error) {
-            typeof rejectHandler === "function" && rejectHandler(error);
-        });
+        bond = Bond.all(dependencies);
         return {
             then: function(onResolve, onReject) {
-                resolveHandler = onResolve;
-                rejectHandler = onReject;
+                bond.then(onResolve, onReject);
             }
         };
     }
@@ -40,19 +35,19 @@
         }
         if (path) {
             st(function() {
-                var resolved = resolve.path(path), pointer = modules[resolved.handler], module, promise, defered;
+                var resolved = resolve.path(path), pointer = modules[resolved.handler], module, bond, defered;
                 if (!loader && pointer[resolved.path]) {
                     throw new Error("duplicate found for module", path);
                 } else {
                     module = new Module(path, factory, dependencies || []);
-                    promise = modules[module.handler][module.path] = module.promise;
+                    bond = modules[module.handler][module.path] = module.bond;
                     if (loader) {
                         !loader.cached && loader.store();
                         defered = loader.defered;
-                        promise.then(function(value) {
-                            defered.resolve(value);
-                        }, function(error) {
-                            defered.reject(new Error("unable to resolve module", path, error));
+                        bond.then(function() {
+                            defered.resolve.apply(null, arguments);
+                        }, function() {
+                            defered.reject(new Error("unable to resolve module", path, arguments));
                         });
                         queue.length > 0 && queue.next();
                     }
@@ -80,6 +75,7 @@
                 pattern[key] = new Pattern(key, pointerPattern[key]);
             }
         }
+        return true;
     }
     function addHandler(aType, aSuffix, aHandler) {
         if (!handler[aType]) {
@@ -105,6 +101,9 @@
     function isAbsolute(aPath) {
         return regexIsAbsolute.test(aPath);
     }
+    function removeProtocol(url) {
+        return url.replace(regexMatchProtocol, "");
+    }
     resolve = {
         url: function(aUrl) {
             resolver.href = aUrl;
@@ -129,36 +128,104 @@
             if (self instanceof Module || self instanceof Loader) {
                 self.handler = pointer;
                 self.path = aPath;
-                self.version = version;
                 if (self instanceof Loader) {
-                    self.url = resolve.url(match ? match.process(aPath) : (absolute ? "//" + host : base.url) + aPath).href;
+                    self.url = removeProtocol(resolve.url(match ? match.process(aPath) : (absolute ? "//" + host : base.url) + aPath).href);
                 }
             } else {
                 return {
                     handler: pointer,
-                    path: aPath,
-                    version: version
+                    path: aPath
                 };
             }
         }
     };
-    function Storage() {}
-    Storage.prototype = {
-        get: function(aPath, aVersion) {
+    storage = {
+        get: function(aPath, aUrl) {
             var data = JSON.parse(ls.getItem(aPath));
-            if (!aVersion || data && aVersion === data.version) {
+            if (data && data.version === version && data.url === aUrl) {
                 return data;
             }
         },
-        set: function(aPath, aValue, aVersion) {
+        set: function(aPath, aValue, aUrl) {
             ls.setItem(aPath, JSON.stringify({
-                version: aVersion || version,
+                version: version,
+                url: aUrl,
                 source: aValue
             }));
         },
         clear: function(aPath) {
             aPath && ls.removeItem(aPath) || ls.clear();
         }
+    };
+    function Bond(executor) {
+        var self = this;
+        self.listener = {
+            resolved: [],
+            rejected: []
+        };
+        function resolve() {
+            handle(BOND_RESOLVED, arguments);
+        }
+        function reject() {
+            handle(BOND_REJECTED, arguments);
+        }
+        function handle(aState, aParameter) {
+            if (self.state === BOND_PENDING) {
+                self.state = aState;
+                self.value = aParameter;
+                self.listener[aState].forEach(function(aHandler) {
+                    aHandler.apply(null, self.value);
+                });
+            }
+        }
+        executor(resolve, reject);
+    }
+    Bond.prototype = {
+        constructor: Bond,
+        state: BOND_PENDING,
+        value: null,
+        listener: null,
+        then: function(aResolved, aRejected) {
+            var self = this, listener;
+            if (self.state === BOND_PENDING) {
+                listener = self.listener;
+                aResolved && listener[BOND_RESOLVED].push(aResolved);
+                aRejected && listener[BOND_REJECTED].push(aRejected);
+            } else {
+                switch (self.state) {
+                  case BOND_RESOLVED:
+                    aResolved.apply(null, self.value);
+                    break;
+
+                  case BOND_REJECTED:
+                    aRejected.apply(null, self.value);
+                    break;
+                }
+            }
+        }
+    };
+    Bond.defer = function() {
+        var self = {};
+        self.bond = new Bond(function(aResolve, aReject) {
+            self.resolve = aResolve;
+            self.reject = aReject;
+        });
+        return self;
+    };
+    Bond.all = function(aBonds) {
+        var defered = Bond.defer(), bond = defered.bond, resolved = [], total = aBonds.length, current = 0;
+        aBonds.forEach(function(aBond, aIndex) {
+            aBond.then(function() {
+                if (bond.state === BOND_PENDING) {
+                    resolved[aIndex] = a_p_s.call(arguments);
+                    current++;
+                    current === total && defered.resolve.apply(null, a_p_c.apply([], resolved));
+                }
+            }, function() {
+                defered.reject.apply(null, arguments);
+            });
+        });
+        return bond;
     };
     function Error(aMessage, aModule, aStack) {
         var self = this;
@@ -227,14 +294,14 @@
         }
     };
     function Loader(aPath, aParent) {
-        var self = this, defered = Promise.defer(), xhr = new XMLHttpRequest(), pointer, cached;
+        var self = this, defered = Bond.defer(), xhr = new XMLHttpRequest(), pointer, cached;
         resolve.path.call(self, aPath, aParent);
         self.defered = defered;
-        self.promise = defered.promise;
+        self.bond = defered.bond;
         self.cached = false;
         pointer = handler[self.handler];
         if (!parent) {
-            self.promise.then(null, log);
+            self.bond.then(null, log);
         }
         if (pointer) {
             cached = self.retrieve();
@@ -267,25 +334,30 @@
     Loader.prototype = {
         store: function() {
             var self = this;
-            storage.set(self.path, self.source, self.version);
+            storage.set(self.path, self.source, self.url);
         },
         retrieve: function() {
-            var self = this, cache = storage.get(self.path, self.version), cached = self.cached = !!cache;
+            var self = this, cache = storage.get(self.path, self.url), cached = self.cached = !!cache;
             cached && (self.source = cache.source);
             return cached;
         }
     };
     function Module(aPath, aFactory, aDependencies) {
-        var self = this, defered = Promise.defer();
+        var self = this, defered = Bond.defer();
         resolve.path.call(self, aPath);
-        (self.promise = defered.promise).then(null, function(error) {
+        self.bond = defered.bond;
+        self.bond.then(null, function(error) {
             log(new Error("unable to resolve module", self.path, error));
         });
-        demand.apply(self, aDependencies).then(function() {
-            defered.resolve(aFactory.apply(null, arguments));
-        }, function(error) {
-            defered.reject(new Error("unable to resolve dependencies for", self.path, error));
-        });
+        if (aDependencies.length > 0) {
+            demand.apply(self, aDependencies).then(function() {
+                defered.resolve(aFactory.apply(null, arguments));
+            }, function(error) {
+                defered.reject(new Error("unable to resolve dependencies for", self.path, error));
+            });
+        } else {
+            defered.resolve(aFactory());
+        }
         return self;
     }
     JavascriptHandler = {
@@ -320,19 +392,22 @@
             return aValue;
         }
     };
-    storage = new Storage();
     queue = new Queue();
     addHandler("application/javascript", ".js", JavascriptHandler);
     addHandler("text/css", ".css", CssHandler);
     configure(defaults) && settings && configure(settings);
     demand.configure = configure;
     demand.addHandler = addHandler;
+    demand.clear = storage.clear;
     global.demand = demand;
     global.provide = provide;
+    provide("/demand", function() {
+        return demand;
+    });
+    provide("/provide", function() {
+        return provide;
+    });
     if (main) {
-        var script = d.createElement("script");
-        script.defer = script.async = true;
-        script.src = main;
-        target.appendChild(script);
+        demand(main);
     }
 })(this);
