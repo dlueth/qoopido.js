@@ -32,6 +32,7 @@
 		regexMatchHandler  = /^([-\w]+\/[-\w]+)!/,
 		regexMatchSpecial  = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
 		regexMatchCssUrl   = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g,
+		regexMatchProtocol = /^http(s?):/,
 		defaults           = { version: '1.0.0', base: '/' },
 		main               = global.demand.main,
 		settings           = global.demand.settings,
@@ -40,7 +41,7 @@
 		pattern            = {},
 		handler            = {},
 		modules            = {},
-		version, resolve, storage, queue, JavascriptHandler, CssHandler;
+		version, queue, resolve, storage, JavascriptHandler, CssHandler;
 
 	// main public methods
 		// demand
@@ -150,6 +151,8 @@
 						pattern[key] = new Pattern(key, pointerPattern[key]);
 					}
 				}
+
+				return true;
 			}
 
 		// addHandler
@@ -184,6 +187,11 @@
 				return regexIsAbsolute.test(aPath);
 			}
 
+		// removeProtocol
+			function removeProtocol(url) {
+				return url.replace(regexMatchProtocol, '');
+			}
+
 		// resolve
 			resolve = {
 				url: function(aUrl) {
@@ -216,39 +224,34 @@
 					if(self instanceof Module || self instanceof Loader) {
 						self.handler = pointer;
 						self.path    = aPath;
-						self.version = version;
 
 						if(self instanceof Loader) {
-							self.url = resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href;
+							self.url = removeProtocol(resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href);
 						}
 					} else {
-						return { handler: pointer, path: aPath, version: version };
+						return { handler: pointer, path: aPath };
 					}
 				}
 			};
 
-	// modules
-		// Storage
-			function Storage() {
-
-			}
-
-			Storage.prototype = {
-				get: function(aPath, aVersion) {
+		// storage
+			storage = {
+				get: function(aPath, aUrl) {
 					var data = JSON.parse(ls.getItem(aPath));
 
-					if(!aVersion || (data && aVersion === data.version)) {
+					if(data && data.version === version && data.url === aUrl) {
 						return data;
 					}
 				},
-				set: function(aPath, aValue, aVersion) {
-					ls.setItem(aPath, JSON.stringify({ version: aVersion || version, source: aValue }));
+				set: function(aPath, aValue, aUrl) {
+					ls.setItem(aPath, JSON.stringify({ version: version, url: aUrl, source: aValue }));
 				},
 				clear: function(aPath) {
 					(aPath && ls.removeItem(aPath)) || ls.clear();
 				}
 			};
 
+	// modules
 		// Error
 			function Error(aMessage, aModule, aStack) {
 				var self = this;
@@ -396,11 +399,11 @@
 				store: function() {
 					var self = this;
 
-					storage.set(self.path, self.source, self.version);
+					storage.set(self.path, self.source, self.url);
 				},
 				retrieve: function() {
 					var self   = this,
-						cache  = storage.get(self.path, self.version),
+						cache  = storage.get(self.path, self.url),
 						cached = self.cached = !!(cache);
 
 					cached && (self.source = cache.source);
@@ -478,8 +481,7 @@
 
 	// initialization
 		// create queue
-			storage = new Storage();
-			queue   = new Queue();
+			queue = new Queue();
 
 		// add default handler
 			addHandler('application/javascript', '.js', JavascriptHandler);
@@ -491,16 +493,16 @@
 		// register in global scope
 			demand.configure  = configure;
 			demand.addHandler = addHandler;
+			demand.clear      = storage.clear;
 			global.demand     = demand;
 			global.provide    = provide;
 
+		// register modules
+			provide('/demand', function() { return demand; });
+			provide('/provide', function() { return provide; });
+
 		// load main script
 			if(main) {
-				var script = d.createElement('script');
-
-				script.defer = script.async = true;
-				script.src   = main;
-
-				target.appendChild(script);
+				demand(main);
 			}
 }(this));
