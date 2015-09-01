@@ -1,21 +1,15 @@
 <script>
-	(function(url, window, document, type, name, script, target, pointer) {
-		script  = document.createElement(type = 'script');
-		target  = document.getElementsByTagName(type)[0];
+	(function(url, main, settings) {
+		(function(window, document, type, target, script){
+			target = document.getElementsByTagName(type)[0];
+			script = document.createElement(type);
 
-		pointer = window[name] = function(path) {
-			pointer.main = path;
-		};
+			window['demand'] = { main: main, settings: settings };
 
-		pointer.configure = function(settings) {
-			pointer.settings = settings;
-		};
+			script.async = script.defer = 1;
+			script.src   = url;
 
-		script.async = script.defer = 1;
-		script.src   = url;
-
-		target.parentNode.insertBefore(script, target);
-	}('https://cdn.rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min/demand.js', window, document, 'script', 'demand'));
-
-	demand('main.js');
+			target.parentNode.insertBefore(script, target);
+		}(window, document, 'script'))
+	}('/src/demand.js', 'main', { base: '/demo', version: '1.0.0' }));
 </script>
