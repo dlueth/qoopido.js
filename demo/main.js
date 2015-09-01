@@ -5,7 +5,7 @@
 		demand
 			.configure({
 				pattern: {
-					'/qoopido': 'https://cdn.rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
+					'/qoopido': 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
 				}
 			});
 
