@@ -1,15 +1,13 @@
 # Qoopido.js
 This is an alpha preview of the upcoming release of Qoopido.js 4.0.0. It is mainly provided for testing and feedback reasons and things will most likely be subject to change.
 
-Qoopido.js is a highly modular and flexible JavaScript library providing inheritance/extension mechanisms to strongly encourage the creation of re-usable code in a very modular fashion. Because of its modular nature it comes with its own Promise based loader as well.
+Qoopido.js is a highly modular and flexible JavaScript library providing inheritance/extension mechanisms to strongly encourage the creation of re-usable code in a very modular fashion. Because of its modular nature it comes with its own promise like loader as well.
 
 There will always be some demo code in the ```demo``` directory of this repository which you can directly view via [rawgit](https://rawgit.com/dlueth/qoopido.js/release/4.0.0/demo/debug.html). Keep in mind thought that the demo code is only for alpha testing purposes. You will most likely have to open your browser's developer console to see some output plus you might have to flush your localStorage frequently.
 
 
 ## Compatibility
 Qoopido.js does not officially support older legacy Internet Explorers (< IE9) but might still work with some polyfills.
-
-In this early alpha the loader (called ```demand``` and its counterpart ```provide```) require your browser to include native ```Promise``` support or a polyfill. I do currently think about replacing the need for native promises or a polyfill with something similar that does the job equally well.
 
 
 ## External dependencies
@@ -89,7 +87,7 @@ The demanded ```main``` module might look like the following example:
 				version: '1.0.0', // optional, defaults to "1.0.0"
 				base: '[path/url to your scripts]', // optional, defaults to "/"
 				pattern: {
-					'/qoopido': '[path/url to Qoopidpo.js]'
+					'/qoopido': '[path/url to Qoopido.js]'
 				}
 			});
 	}
