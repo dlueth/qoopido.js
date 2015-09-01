@@ -1,15 +1,15 @@
 # Qoopido.js
 This is an alpha preview of the upcoming release of Qoopido.js 4.0.0. It is mainly provided for testing and feedback reasons and things will most likely be subject to change.
 
-Qoopido.js is a highly modular and flexible JavaScript library providing inheritance/extension mechanisms to encourage writing re-usable code. Because of its modular nature it comes with its own Promise based loader as well.
+Qoopido.js is a highly modular and flexible JavaScript library providing inheritance/extension mechanisms to strongly encourage the creation of re-usable code in a very modular fashion. Because of its modular nature it comes with its own Promise based loader as well.
 
-There will always be some demo code in the ```demo``` directory of this repository which you can directly view via [rawgit](https://rawgit.com/dlueth/qoopido.js/release/4.0.0/demo/debug.html).
+There will always be some demo code in the ```demo``` directory of this repository which you can directly view via [rawgit](https://rawgit.com/dlueth/qoopido.js/release/4.0.0/demo/debug.html). Keep in mind thought that the demo code is only for alpha testing purposes. You will most likely have to open your browser's developer console to see some output plus you might have to flush your localStorage frequently.
 
 
 ## Compatibility
-Qoopido.js does not officially isupport older legacy Internet Explorers (< IE9) but might still work with a lot of polyfills.
+Qoopido.js does not officially support older legacy Internet Explorers (< IE9) but might still work with some polyfills.
 
-In this early alpha the loader (called ```demand``` and its counterpart ```provide```) require your browser to provide native ```Promise``` support or a polyfill.
+In this early alpha the loader (called ```demand``` and its counterpart ```provide```) require your browser to include native ```Promise``` support or a polyfill. I do currently think about replacing the need for native promises or a polyfill with something similar that does the job equally well.
 
 
 ## External dependencies
@@ -26,7 +26,7 @@ There currently are four ways to get Qoopido.js included into your project:
 Qoopido.js will continue to be pushed to jsdelivr and CDNJS. I personally recommend jsdelivr.
 
 ### Manual
-Download the current version from the following URL and put all the contents of the directory ```dist/latest/src``` and/or ```dist/latest/min``` into a directory under your project root.
+Download the current version from GitHub and put all the contents of the directory ```dist/latest/src``` and/or ```dist/latest/min``` into a directory under your project root.
 
 ```
 https://github.com/dlueth/qoopido.js
@@ -50,52 +50,57 @@ If you have Node, NPM and bower installed typing ```bower install``` will instal
 
 
 ## Using the library
-In contrast to earlier versions Qoopido.js 4.0.0 will come with its own loader. The loader consists of two components ```demand``` and ```provide``` just like require.js ```require``` and ```define```. Use the following code snippet in a standalone script tag before the clsoing body tag to include demand:
+In contrast to earlier versions Qoopido.js 4.0.0 will come with its own loader. The loader consists of two components ```demand``` and ```provide``` just like require.js ```require``` and ```define```. Use the following code snippet in a standalone script tag before the closing body tag to include demand:
 
 ```javascript
-(function(url, window, document, type, name, script, target, pointer) {
-	script  = document.createElement(type = 'script');
-	target  = document.getElementsByTagName(type)[0];
+(function(url, main, settings) {
+	(function(window, document, type, target, script){
+		target = document.getElementsByTagName(type)[0];
+		script = document.createElement(type);
 
-	pointer = window[name] = function(path) {
-		pointer.main = path;
-	};
+		window['demand'] = { main: main, settings: settings };
 
-	pointer.configure = function(settings) {
-		pointer.settings = settings;
-	};
+		script.async = script.defer = 1;
+		script.src   = url;
 
-	script.async = script.defer = 1;
-	script.src   = url;
-
-	target.parentNode.insertBefore(script, target);
-}('[path/url to demand.js]', window, document, 'script', 'demand'));
-
-demand('main.js');
+		target.parentNode.insertBefore(script, target);
+	}(window, document, 'script'))
+}('/src/demand.js', 'main', { base: '/demo', version: '1.0.0' }));
 ```
 
-The above snippet is very similar to how Google Analytics is loaded. As you can see you can directly call ```demand``` to set the main JavaScript file as well as ```demand.configure``` to set basic configuration options (more on that later).
-
-The demanded ```main.js``` might look like the following example:
+You may as well use the uglified version:
 
 ```javascript
-;(function() {
+!function(a,b,c){!function(d,e,f,g,h){g=e.getElementsByTagName(f)[0],h=e.createElement(f),d.demand={main:b,settings:c},h.async=h.defer=1,h.src=a,g.parentNode.insertBefore(h,g)}(window,document,"script")}
+("/src/demand.js","main",{base:"/demo",version:"1.0.0"});
+```
+
+The above snippet is very similar to the one Google Analytics provides. The outer function allows you to specify an URL from which to load demand itself as well as a path to the main module and configuration settings for demand. The path to the main module will be relative to base if it is relative itself.
+
+The demanded ```main``` module might look like the following example:
+
+```javascript
+;(function(global, demand, provide) {
 	'use strict';
 
-	demand
-		.configure({
-			version: '1.0.0',
-			base: '[path/url to your scripts]',
-			pattern: {
-				'/qoopido': '[path/url to Qoopidpo.js]'
-			}
-		});
-}());
+	function definition() {
+		demand
+			.configure({
+				version: '1.0.0', // optional, defaults to "1.0.0"
+				base: '[path/url to your scripts]', // optional, defaults to "/"
+				pattern: {
+					'/qoopido': '[path/url to Qoopidpo.js]'
+				}
+			});
+	}
+	
+	provide(definition);
+}(this, demand, provide));
 ```
 
-At the moment ```main.js``` will not be loaded via ```demand``` but it will be added to the DOM as a normal script tag with its async and defer attributes set to true.
-
 Once demand.js is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR as well as modified and injected into the DOM with the help of a handler. The result will be cached in ```localStorage``` and will get validated against the version number set via ```configure```.
+
+As you might have guessed already ```main``` itself is also loaded as a module and therefore will get cached in localStorage.
 
 ```demand``` comes with handlers for JavaScript and CSS. Handlers have three objectives:
 
@@ -148,7 +153,7 @@ demand('app/test', '/qoopido/component/iterator')
 	);
 ```
 
-Module paths not starting with a ```/``` will be resolved relative to  the path of an eventual parent module. The resulting path will afterwards get matched to patterns defined via ```demand.configure``` which will finally lead to an absolute URL to fetch the module from.
+Module paths not starting with a ```/``` will be resolved relative to the path of an eventual parent module. The resulting path will afterwards get matched to patterns defined via ```demand.configure``` which will finally lead to an absolute URL to fetch the module from.
 
 
 ### Providing inline modules
@@ -216,7 +221,7 @@ Extension is absolutely dead simple. Let us rewrite the prior example making the
 }());
 ```
 
-Our ```appTest``` module just inherited from ```base``` which will only add an ```extend``` method to it so it may itself be extended. Note that it is also possible to prohibit further extension via setting a ```final``` property:
+Our ```appTest``` module just inherited from ```base``` which will only add an ```extend``` method to it so it may itself be extended by further modules. Note that it is also possible to prohibit further extension by setting a ```final``` property on the module itself before calling ```extend```:
 
 ```javascript
 ;(function() {
@@ -241,7 +246,7 @@ Adding a ```final``` will prohibit ```base``` to add an extend method to the mod
 
 If you want some more examples simply look into the ```src``` directory of this repository. At the moment the best example for multiple extension/inheritance is the ```component/iterator``` module.
 
-The extension mechanism works in a way that ensures that native JavaScript ```instanceof``` will work and stay fully intact which is a big improvement over earlier versions of Qoopido.js. Beside that new instances will now be created via the native JavaScript ```new``` keyword instead of having to call a ```create``` method.
+The extension mechanism works in a way that ensures that native JavaScript ```instanceof``` will work and stay fully intact which is a big improvement over earlier versions of Qoopido.js. Beside that new instances will now be created via the native JavaScript ```new``` keyword instead of having to call a. explicit ```create``` method manually.
 
 
 ## Included modules
