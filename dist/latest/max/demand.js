@@ -15,17 +15,12 @@
         base: "/"
     }, main = global.demand.main, settings = global.demand.settings, host = global.location.host, base = {}, pattern = {}, handler = {}, modules = {}, version, queue, resolve, storage, JavascriptHandler, CssHandler;
     function demand() {
-        var self = this || {}, module = self instanceof Module ? self : null, dependencies = a_p_s.call(arguments), bond;
+        var self = this || {}, module = isInstanceOf(self, Module) ? self : null, dependencies = a_p_s.call(arguments);
         dependencies.forEach(function(dependency, index) {
             var resolved = resolve.path(dependency, module), handler = resolved.handler, path = resolved.path, pointer = modules[handler] || (modules[handler] = {});
             this[index] = pointer[path] || (pointer[path] = new Loader(dependency, module).bond);
         }, dependencies);
-        bond = Bond.all(dependencies);
-        return {
-            then: function(onResolve, onReject) {
-                bond.then(onResolve, onReject);
-            }
-        };
+        return Bond.all(dependencies);
     }
     function provide() {
         var path = arguments[0] && typeof arguments[0] === "string" && arguments[0] || null, factory = !path && arguments[0] || arguments[1], dependencies, loader;
@@ -85,12 +80,10 @@
                 modify: aHandler.modify
             };
             modules[aType] = {};
-            return true;
         }
-        return false;
     }
     function log(aMessage) {
-        var type = aMessage instanceof Error ? "error" : "info";
+        var type = isInstanceOf(aMessage, Error) ? "error" : "info";
         if (typeof console !== "undefined") {
             console[type](aMessage.toString());
         }
@@ -104,13 +97,16 @@
     function removeProtocol(url) {
         return url.replace(regexMatchProtocol, "");
     }
+    function isInstanceOf(instance, module) {
+        return instance instanceof module;
+    }
     resolve = {
         url: function(aUrl) {
             resolver.href = aUrl;
             return resolver;
         },
         path: function(aPath, aParent) {
-            var self = this, pointer = aPath.match(regexMatchHandler) || "application/javascript", absolute, key, match;
+            var self = this, pointer = aPath.match(regexMatchHandler) || "application/javascript", isLoader = isInstanceOf(self, Loader), absolute, key, match;
             if (typeof pointer !== "string") {
                 aPath = aPath.replace(new RegExp("^" + escape(pointer[0])), "");
                 pointer = pointer[1];
@@ -121,16 +117,12 @@
                 aPath = resolve.url((aParent && aParent.path + "/../" || "/") + aPath).pathname;
             }
             for (key in pattern) {
-                if (pattern[key].matches(aPath)) {
-                    match = pattern[key];
-                }
+                pattern[key].matches(aPath) && (match = pattern[key]);
             }
-            if (self instanceof Module || self instanceof Loader) {
+            if (isLoader || isInstanceOf(self, Module)) {
                 self.handler = pointer;
                 self.path = aPath;
-                if (self instanceof Loader) {
-                    self.url = removeProtocol(resolve.url(match ? match.process(aPath) : (absolute ? "//" + host : base.url) + aPath).href);
-                }
+                isLoader && (self.url = removeProtocol(resolve.url(match ? match.process(aPath) : (absolute ? "//" + host : base.url) + aPath).href));
             } else {
                 return {
                     handler: pointer,
@@ -158,8 +150,7 @@
         }
     };
     function Bond(executor) {
-        var self = this;
-        self.listener = {
+        var self = this, listener = {
             resolved: [],
             rejected: []
         };
@@ -173,22 +164,14 @@
             if (self.state === BOND_PENDING) {
                 self.state = aState;
                 self.value = aParameter;
-                self.listener[aState].forEach(function(aHandler) {
+                listener[aState].forEach(function(aHandler) {
                     aHandler.apply(null, self.value);
                 });
             }
         }
-        executor(resolve, reject);
-    }
-    Bond.prototype = {
-        constructor: Bond,
-        state: BOND_PENDING,
-        value: null,
-        listener: null,
-        then: function(aResolved, aRejected) {
-            var self = this, listener;
+        self.then = function(aResolved, aRejected) {
+            var self = this;
             if (self.state === BOND_PENDING) {
-                listener = self.listener;
                 aResolved && listener[BOND_RESOLVED].push(aResolved);
                 aRejected && listener[BOND_REJECTED].push(aRejected);
             } else {
@@ -202,7 +185,14 @@
                     break;
                 }
             }
-        }
+        };
+        executor(resolve, reject);
+    }
+    Bond.prototype = {
+        constructor: Bond,
+        state: BOND_PENDING,
+        value: null,
+        listener: null
     };
     Bond.defer = function() {
         var self = {};
@@ -213,27 +203,30 @@
         return self;
     };
     Bond.all = function(aBonds) {
-        var defered = Bond.defer(), bond = defered.bond, resolved = [], total = aBonds.length, current = 0;
+        var defered = Bond.defer(), bond = defered.bond, resolved = [], countTotal = aBonds.length, countResolved = 0;
         aBonds.forEach(function(aBond, aIndex) {
             aBond.then(function() {
                 if (bond.state === BOND_PENDING) {
                     resolved[aIndex] = a_p_s.call(arguments);
-                    current++;
-                    current === total && defered.resolve.apply(null, a_p_c.apply([], resolved));
+                    countResolved++;
+                    countResolved === countTotal && defered.resolve.apply(null, a_p_c.apply([], resolved));
                 }
-            }, function() {
-                defered.reject.apply(null, arguments);
-            });
+            }, defered.reject);
         });
         return bond;
+    };
+    Bond.race = function(aBonds) {
+        var defered = Bond.defer();
+        aBonds.forEach(function(aBond) {
+            aBond.then(defered.resolve, defered.reject);
+        });
+        return defered.bond;
     };
     function Error(aMessage, aModule, aStack) {
         var self = this;
         self.message = aMessage;
         self.module = aModule;
-        if (aStack) {
-            self.stack = aStack;
-        }
+        aStack && (self.stack = aStack);
         return self;
     }
     Error.prototype = {
@@ -406,6 +399,9 @@
     });
     provide("/provide", function() {
         return provide;
+    });
+    provide("/bond", function() {
+        return Bond;
     });
     if (main) {
         demand(main);
