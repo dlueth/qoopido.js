@@ -10,13 +10,13 @@
 */
 (function(global) {
     "use strict";
-    var document = global.document, setTimeout = global.setTimeout, arrayPrototypeSlice = Array.prototype.slice, arrayPrototypeConcat = Array.prototype.concat, target = document.getElementsByTagName("head")[0], resolver = document.createElement("a"), DEMAND_PREFIX = "[demand]", STRING_UNDEFINED = "undefined", LOCALSTORAGE_STATE = "[state]", LOCALSTORAGE_VALUE = "[value]", BOND_PENDING = "pending", BOND_RESOLVED = "resolved", BOND_REJECTED = "rejected", regexBase = /^/, regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, regexMatchCssUrl = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g, regexMatchProtocol = /^http(s?):/, regexMatchLsState = /^\[demand\]\[(.+?)\]\[state\]$/, localStorage = global.localStorage, remainingSpace = localStorage && typeof localStorage.remainingSpace !== STRING_UNDEFINED, defaults = {
+    var document = global.document, setTimeout = global.setTimeout, setInterval = global.setInterval, clearInterval = global.clearInterval, arrayPrototypeSlice = Array.prototype.slice, arrayPrototypeConcat = Array.prototype.concat, target = document.getElementsByTagName("head")[0], resolver = document.createElement("a"), DEMAND_PREFIX = "[demand]", STRING_UNDEFINED = "undefined", LOCALSTORAGE_STATE = "[state]", LOCALSTORAGE_VALUE = "[value]", BOND_PENDING = "pending", BOND_RESOLVED = "resolved", BOND_REJECTED = "rejected", regexBase = /^/, regexIsAbsolute = /^\//i, regexMatchHandler = /^([-\w]+\/[-\w]+)!/, regexMatchSpecial = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, regexMatchCssUrl = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g, regexMatchProtocol = /^http(s?):/, regexMatchLsState = /^\[demand\]\[(.+?)\]\[state\]$/, localStorage = global.localStorage, remainingSpace = localStorage && typeof localStorage.remainingSpace !== STRING_UNDEFINED, defaults = {
         cache: true,
         version: "1.0.0",
         lifetime: 0,
         timeout: 5e3,
         base: "/"
-    }, main = global.demand.main, settings = global.demand.settings, pattern = {}, handler = {}, modules = {}, base, cache, timeout, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
+    }, main = global.demand.main, settings = global.demand.settings, modules = {}, pattern = {}, tests = {}, handler = {}, base, cache, timeout, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
     function demand() {
         var self = this || {}, module = isInstanceOf(self, Module) ? self : null, dependencies = arrayPrototypeSlice.call(arguments);
         dependencies.forEach(function(dependency, index) {
@@ -61,12 +61,12 @@
         };
     }
     function configure(aConfig) {
-        var pointerTimeout = aConfig.timeout, pointerVersion = aConfig.version, pointerLifetime = aConfig.lifetime, pointerBase = aConfig.base, pointerPattern = aConfig.pattern, key;
+        var pointerTimeout = aConfig.timeout, pointerVersion = aConfig.version, pointerLifetime = aConfig.lifetime, pointerBase = aConfig.base, pointerPattern = aConfig.pattern, pointerTests = aConfig.tests, key;
         if (typeof aConfig.cache !== STRING_UNDEFINED) {
             cache = !!aConfig.cache;
         }
         if (pointerTimeout) {
-            timeout = Math.min(Math.max(parseInt(pointerTimeout, 10), 2e3), 1e4);
+            timeout = Math.min(Math.max(parseInt(pointerTimeout, 10), 2), 10) * 1e3;
         }
         if (pointerVersion) {
             version = pointerVersion;
@@ -80,6 +80,11 @@
         if (pointerPattern) {
             for (key in pointerPattern) {
                 key !== "base" && (pattern[key] = new Pattern(key, pointerPattern[key]));
+            }
+        }
+        if (pointerTests) {
+            for (key in pointerTests) {
+                tests[key] = pointerTests[key];
             }
         }
         return true;
@@ -339,7 +344,7 @@
             queue.length === 1 && self.next();
         },
         next: function() {
-            var self = this, current = self.current, queue = self.queue, pointer;
+            var self = this, current = self.current, queue = self.queue, defered, path, pointer, test, interval;
             if (current) {
                 self.current = null;
                 queue.shift();
@@ -347,11 +352,19 @@
             }
             if (queue.length) {
                 current = self.current = self.queue[0];
+                defered = current.defered;
+                path = current.path;
                 pointer = handler[current.handler];
                 !current.cached && pointer.modify && (current.source = pointer.modify(current.url, current.source));
-                pointer.resolve(current.path, current.source);
+                pointer.resolve(path, current.source);
+                if (test = tests[path]) {
+                    interval = setInterval(function() {
+                        var result = test();
+                        result && defered.resolve(result) && clearInterval(interval);
+                    }, 100);
+                }
                 setTimeout(function() {
-                    current.defered.reject(new Error("timeout resolving module", current.path));
+                    defered.reject(new Error("timeout resolving module", path));
                 }, timeout / 5);
             }
         }
