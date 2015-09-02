@@ -1,7 +1,7 @@
 # Qoopido.js
 This is an alpha preview of the upcoming release of Qoopido.js 4.0.0. It is mainly provided for testing and feedback reasons and things will most likely be subject to change.
 
-Qoopido.js is a highly modular and flexible JavaScript library providing inheritance/extension mechanisms to strongly encourage the creation of re-usable code in a very modular fashion. Because of its modular nature it comes with its own promise like loader as well.
+Qoopido.js is a highly modular and flexible JavaScript library providing inheritance/extension mechanisms to strongly encourage the creation of re-usable code in a very modular fashion. Because of its modular nature it comes with its own promise like loader called ```demand```.
 
 There will always be some demo code in the ```demo``` directory of this repository which you can directly view via [rawgit](https://rawgit.com/dlueth/qoopido.js/release/4.0.0/demo/debug.html). Keep in mind thought that the demo code is only for alpha testing purposes. You will most likely have to open your browser's developer console to see some output plus you might have to flush your localStorage frequently.
 
@@ -11,40 +11,11 @@ Qoopido.js does not officially support older legacy Internet Explorers (< IE9) b
 
 
 ## External dependencies
-None, beside polyfills eventually(!!!)
+None, yet :)
 
 
 ## Installation
-There currently are four ways to get Qoopido.js included into your project:
-
-**remark**
-> As Qoopido.js 4.0.0 is not yet released this section is not currently not valid and the only way to get the alpha is by either downloading or cloning from the corresponding git branch.
-
-### CDN
-Qoopido.js will continue to be pushed to jsdelivr and CDNJS. I personally recommend jsdelivr.
-
-### Manual
-Download the current version from GitHub and put all the contents of the directory ```dist/latest/src``` and/or ```dist/latest/min``` into a directory under your project root.
-
-```
-https://github.com/dlueth/qoopido.js
-```
-
-### GitHub
-Clone the following repository into your projects directory structure.
-
-```
-git clone https://github.com/dlueth/qoopido.js.git
-```
-
-### Bower
-Change into your project directory and type
-
-```
-bower install qoopido.js
-```
-
-If you have Node, NPM and bower installed typing ```bower install``` will install eventually required external dependencies into the location you specified in the ```.bowerrc``` file in your users home directory.
+As Qoopido.js 4.0.0 is not yet released the only way to get the alpha is by either downloading or cloning from this GitHub branch.
 
 
 ## Using the library
@@ -63,14 +34,14 @@ In contrast to earlier versions Qoopido.js 4.0.0 will come with its own loader. 
 
 		target.parentNode.insertBefore(script, target);
 	}(window, document, 'script'))
-}('/src/demand.js', 'main', { base: '/demo', version: '1.0.0' }));
+}('/src/demand.js', 'main', { base: '/demo' }));
 ```
 
 You may as well use the uglified version:
 
 ```javascript
 !function(a,b,c){!function(d,e,f,g,h){g=e.getElementsByTagName(f)[0],h=e.createElement(f),d.demand={main:b,settings:c},h.async=h.defer=1,h.src=a,g.parentNode.insertBefore(h,g)}(window,document,"script")}
-("/src/demand.js","main",{base:"/demo",version:"1.0.0"});
+("/src/demand.js","main",{base:"/demo"});
 ```
 
 The above snippet is very similar to the one Google Analytics provides. The outer function allows you to specify an URL from which to load demand itself as well as a path to the main module and configuration settings for demand. The path to the main module will be relative to base if it is relative itself.
@@ -84,8 +55,31 @@ The demanded ```main``` module might look like the following example:
 	function definition() {
 		demand
 			.configure({
-				version: '1.0.0', // optional, defaults to "1.0.0"
-				base: '[path/url to your scripts]', // optional, defaults to "/"
+				// enables or disables localStorage caching
+				// optional, defaults to "true"
+				cache: true,
+				
+				// cache will be validated against version
+				// optional, defaults to "1.0.0"
+				version: '1.0.0',
+				
+				// cache will be validated against lifetime, if > 0
+				// optional, defaults to "0"
+				lifetime: 60,
+				
+				// sets the timeout for XHR requests
+				// loaded but not yet resolved modules 
+				// have a timeout of timeout / 5 to get
+				// resolved by their handler
+				// optional, defaults to "5000" (limited to "2000" up to "8000")
+				timeout: 8000, 
+				
+				// base path from where your relative 
+				// dependencies get loaded
+				// optional, defaults to "/"
+				base: '[path/url to your scripts]',
+				
+				// optional
 				pattern: {
 					'/qoopido': '[path/url to Qoopido.js]'
 				}
@@ -96,19 +90,19 @@ The demanded ```main``` module might look like the following example:
 }(this, demand, provide));
 ```
 
-Once demand.js is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR as well as modified and injected into the DOM with the help of a handler. The result will be cached in ```localStorage``` and will get validated against the version number set via ```configure```.
+Once demand is loaded anything that is either explicitly requested via ```demand``` or as a dependency of a ```provide``` call will be loaded via XHR as well as modified and injected into the DOM with the help of a handler. The result will be cached in ```localStorage``` (if caching is enabled and localStorage is available) and will get validated against the version number and the timeout both set via ```configure```, as well as the modules URL.
 
-As you might have guessed already ```main``` itself is also loaded as a module and therefore will get cached in localStorage.
+As you might have guessed already ```main``` itself is also loaded as a module and therefore will also get cached in localStorage.
 
 ```demand``` comes with handlers for JavaScript and CSS. Handlers have three objectives:
 
 - provide a file extension/suffix to be added the the url
 - provide a function named ```resolve``` that handles DOM injection and final resolution of a module via an anonymous ```provide``` call
-- provide an optional function named ```modify``` that handles eventually necessary conversion of the loaded source (e.g. CSS paths that are normally relative to the CSS-file path)
+- provide an optional function named ```modify``` that, if present, handles necessary conversion of the loaded source (e.g. CSS paths that are normally relative to the CSS-file path)
 
-Handlers can, quite similar to require.js, be explicitly set for a certain module by prefixing the module path by ```[mimetype]!```. The default handler, e.g., is ```application/javascript``` which will automatically be used when no other handler is set.
+Handlers can, quite similar to require.js, be explicitly set for a certain module by prefixing the module path by ```[mimetype]!```. The default handler, e.g., is ```application/javascript``` which will automatically be used when no other handler is explicitly set.
 
-You can also set your own handlers easily:
+You can also create your own handlers easily:
 
 ```javascript
 demand.addHandler(
@@ -131,7 +125,41 @@ demand.addHandler(
 );
 ```
 
-Just keep in mind that ```[File extension]``` has to include a leading ```.``` to be able to stay flexible and that ```resolve``` contains an anonymous ```provide``` call that resolves the queued loader. In case you need a ```modify``` function make sure it returns the modified ```value```.
+Just keep these few things in mind:
+
+- ```[File extension]``` has to include a leading ```.``` to be able to stay flexible
+- ```resolve``` must make an anonymous ```provide``` call that resolves the queued loader
+- in case you need a ```modify``` function make sure it returns the modified ```value```
+
+
+### Controlling the cache
+If caching is enabled, localStorage available and its quota not exceeded chances are good you will never have to manually deal with the caching.
+
+By default demand will invalidate a modules cache under the following conditions:
+
+- global ```version``` changed
+- cache is expired due to ```lifetime```
+- a modules URL changed
+
+Demand will, in addition, do its best to keep leftover garbage to a minimum. It does so by starting an automatic garbage collection for expired caches on load. In addition it will also clear a cache if it gets requested and is found to be invalid for any reason.
+
+Beside this demand still offers manual control by registering a ```demand.clear``` method to the global demand function. See the following example to learn more about the details:
+
+```javascript
+// without parameters it will clear all demand-related caches in localStorage
+demand.clear();
+
+// called this way it will only clear caches that are expired
+demand.clear(true);
+
+// called with a path of a module only this modules cache will be cleared
+demand.clear('[path of the module]')
+```
+
+**Sidenote**
+> Demand does use a prefix for its localStorage keys to prevent conflicts with other scripts. Each cache will consist of two keys, one to store the ```state``` information (as JSON) and one for the actual ```source``` of the module. By separating the two only a very small string will have to get parsed as JSON which could lead to performance constraints if a potentially huge module would have to get parsed this way.
+
+> Demand will also do its best to detect "quota exceeded" errors by putting a try/catch around the actual cache writes. As IE does not throw exceptions currently a workaround to use ```localStorage.remainingSpace```is implemented as well.
 
 
 ### Demanding modules
@@ -145,13 +173,16 @@ demand('app/test', '/qoopido/component/iterator')
 
 			new qoopidoComponentIterator();
 		},
-		function(error) {
-			console.log('=> error', error);
+		function() {
+			console.log('=> error', arguments);
 		}
 	);
 ```
 
 Module paths not starting with a ```/``` will be resolved relative to the path of an eventual parent module. The resulting path will afterwards get matched to patterns defined via ```demand.configure``` which will finally lead to an absolute URL to fetch the module from.
+
+**Sidenote**
+> The error callback function will be passed **all** rejected dependencies as arguments, not only the first one rejected.
 
 
 ### Providing inline modules
@@ -170,15 +201,17 @@ provide('/app/main', definition).when('test', '/qoopido/base');
 This is an example for an inline module. The ```provide``` call, in this case, consists of two arguments:
 
 - path of the module
-- definition/factory of the module
+- definition of the module
 
-When dynamically loading modules ```path``` will has to be omitted and get internally resolved via loading queue handling instead.
+When dynamically loading modules ```path``` will have to be omitted and gets internally resolved via loading queue handling instead.
 
 Module resolution via ```provide``` is internally defered via a setTimeout call to be able to return an object providing a ```when``` function to request dependencies. Although this might technically not be the cleanest solution it feels much better to write and understand. Beside that, it simply works great :)
 
 
 ### Providing loadable modules
-Demand will dynamically load any modules that are not already registered. You just learnt how to provide inline modules which is only slightly different from building an external, loadable module. In addition to inline modules you just need some boilerplate code and an anynymous ```provide``` call without the ```path``` argument like in the following example:
+You just learnt how to provide inline modules which is only slightly different from building an external, loadable module. Demand will dynamically load any modules that are not already registered.
+
+In addition to inline modules you just need some boilerplate code and an anynymous ```provide``` call without the ```path``` argument like in the following example:
 
 ```javascript
 ;(function() {
@@ -190,15 +223,16 @@ Demand will dynamically load any modules that are not already registered. You ju
 		}
 	}
 
-	provide(definition).when('/qoopido/base');
+	provide(definition)
+		.when('/qoopido/base');
 }());
 ```
 
-This example shows the module ```/app/test``` which we already know as the first dependency of the prior example. As with the inline module the ```definition``` factory will receive all dependencies as arguments passed so they are in scope of the actual module.
+This example illustrates a module named ```/app/test``` which we already know as the first dependency of the prior example. As with the inline module the ```definition``` function will receive all dependencies as arguments passed so they are in scope of the actual module.
 
 
 ### Extending modules
-Beside simply providing means to demand and provide modules Qoopido.js also offers an easy, nice and flexible, prototype based inheritance/extension mechanism for you to use. This is especially of great use if you, like myself, prefer small modular/atomic modules that are easily combinable over big, unmaintainable monolitic scripts.
+Beside simply providing means to demand and provide modules Qoopido.js also offers an easy, nice and flexible, prototype based inheritance/extension mechanism for you to use. This is especially great if you, like myself, prefer small modular/atomic modules that are easily combinable over big, unmaintainable monolitic scripts.
 
 Extension is absolutely dead simple. Let us rewrite the prior example making the module ```/app/test``` extend the ```base``` module of Qoopido.js:
 
@@ -215,11 +249,14 @@ Extension is absolutely dead simple. Let us rewrite the prior example making the
 		return qoopidoBase.extend(appTest);
 	}
 
-	provide(definition).when('/qoopido/base');
+	provide(definition)
+		.when('/qoopido/base');
 }());
 ```
 
-Our ```appTest``` module just inherited from ```base``` which will only add an ```extend``` method to it so it may itself be extended by further modules. Note that it is also possible to prohibit further extension by setting a ```final``` property on the module itself before calling ```extend```:
+Our ```appTest``` module just inherited from ```base``` which will only add an ```extend``` method to it so it may itself be extended by further modules. 
+
+Note that it is also possible to prohibit further extension by setting a ```final``` property on the module itself before calling ```extend```:
 
 ```javascript
 ;(function() {
@@ -236,15 +273,17 @@ Our ```appTest``` module just inherited from ```base``` which will only add an `
 		return qoopidoBase.extend(appTest);
 	}
 
-	provide(definition).when('/qoopido/base');
+	provide(definition)
+		.when('/qoopido/base');
 }());
 ```
 
-Adding a ```final``` will prohibit ```base``` to add an extend method to the module. In case of this example this does not make any sense but might be necessary in more complex real world scenarios.
+Adding a ```final``` property will prohibit ```base``` to add an extend method to the module. In case of this example it does certainly not make any sense but it might be necessary in more complex, real world scenarios.
 
 If you want some more examples simply look into the ```src``` directory of this repository. At the moment the best example for multiple extension/inheritance is the ```component/iterator``` module.
 
-The extension mechanism works in a way that ensures that native JavaScript ```instanceof``` will work and stay fully intact which is a big improvement over earlier versions of Qoopido.js. Beside that new instances will now be created via the native JavaScript ```new``` keyword instead of having to call a. explicit ```create``` method manually.
+**Sidenote**
+> The extension mechanism works in a way that ensures that native JavaScript ```instanceof``` will work and stay fully intact - which is a big improvement over earlier versions of Qoopido.js. Beside that, new instances will now be created via the native JavaScript ```new``` keyword instead of having to call an explicit ```create``` method manually.
 
 
 ## Included modules
