@@ -11,44 +11,49 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @polyfill XMLHttpRequest
+ * @requires XMLHttpRequest, JSON.parse, JSON.stringify, Array.forEach
  */
 
-/* global console */
+/* globals console */
 ;(function(global) {
 	'use strict';
 
-	var d                  = document,
-		ls                 = localStorage,
-		st                 = setTimeout,
-		a_p_s              = Array.prototype.slice,
-		a_p_c              = Array.prototype.concat,
-		target             = d.getElementsByTagName('head')[0],
-		resolver           = d.createElement('a'),
-		regexIsAbsolute    = /^\//i,
-		regexMatchHandler  = /^([-\w]+\/[-\w]+)!/,
-		regexMatchSpecial  = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
-		regexMatchCssUrl   = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g,
-		regexMatchProtocol = /^http(s?):/,
-		BOND_PENDING       = 'pending',
-		BOND_RESOLVED      = 'resolved',
-		BOND_REJECTED      = 'rejected',
-		defaults           = { version: '1.0.0', base: '/' },
-		main               = global.demand.main,
-		settings           = global.demand.settings,
-		host               = global.location.host,
-		base               = {},
-		pattern            = {},
-		handler            = {},
-		modules            = {},
-		version, queue, resolve, storage, JavascriptHandler, CssHandler;
+	var document             = global.document,
+		setTimeout           = global.setTimeout,
+		arrayPrototypeSlice  = Array.prototype.slice,
+		arrayPrototypeConcat = Array.prototype.concat,
+		target               = document.getElementsByTagName('head')[0],
+		resolver             = document.createElement('a'),
+		DEMAND_PREFIX        = '[demand]',
+		STRING_UNDEFINED     = 'undefined',
+		LOCALSTORAGE_STATE   = '[state]',
+		LOCALSTORAGE_VALUE   = '[value]',
+		BOND_PENDING         = 'pending',
+		BOND_RESOLVED        = 'resolved',
+		BOND_REJECTED        = 'rejected',
+		regexBase            = /^/,
+		regexIsAbsolute      = /^\//i,
+		regexMatchHandler    = /^([-\w]+\/[-\w]+)!/,
+		regexMatchSpecial    = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,
+		regexMatchCssUrl     = /url\(\s*(?:"|'|)(?!data:|http:|https:|\/)(.+?)(?:"|'|)\)/g,
+		regexMatchProtocol   = /^http(s?):/,
+		regexMatchLsState    = /^\[demand\]\[(.+?)\]\[state\]$/,
+		localStorage         = global.localStorage,
+		remainingSpace       = localStorage && typeof localStorage.remainingSpace !== STRING_UNDEFINED,
+		defaults             = { cache: true, version: '1.0.0', lifetime: 0, timeout: 5000, base: '/' },
+		main                 = global.demand.main,
+		settings             = global.demand.settings,
+		pattern              = {},
+		handler              = {},
+		modules              = {},
+		base, cache, timeout, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
 
 	// main public methods
 		// demand
 			function demand() {
 				var self         = this || {},
 					module       = isInstanceOf(self, Module) ? self : null,
-					dependencies = a_p_s.call(arguments);
+					dependencies = arrayPrototypeSlice.call(arguments);
 
 				dependencies.forEach(
 					function(dependency, index) {
@@ -57,11 +62,11 @@
 							path     = resolved.path,
 							pointer  = modules[handler] || (modules[handler] = {});
 
-						this[index] = pointer[path] || (pointer[path] = (new Loader(dependency, module)).bond);
+						this[index] = pointer[path] || (pointer[path] = (new Loader(dependency, module)).pledge);
 					},
 					dependencies);
 
-				return Bond.all(dependencies);
+				return Pledge.all(dependencies);
 			}
 
 		// provide
@@ -76,31 +81,30 @@
 				}
 
 				if(path) {
-					st(function() {
+					setTimeout(function() {
 						var resolved = resolve.path(path),
 							pointer  = modules[resolved.handler],
-							module, bond, defered;
+							module, pledge, defered;
 
 						if(!loader && pointer[resolved.path]) {
 							throw new Error('duplicate found for module', path);
 						} else {
 							module = new Module(path, factory, dependencies || []);
-							bond   = modules[module.handler][module.path] = module.bond;
+							pledge = modules[module.handler][module.path] = module.pledge;
 
 							if(loader) {
 								!loader.cached && loader.store();
 
 								defered = loader.defered;
 
-								bond
-									.then(
-										function() {
-											defered.resolve.apply(null, arguments);
-										},
-										function() {
-											defered.reject(new Error('unable to resolve module', path, arguments));
-										}
-									);
+								pledge.then(
+									function() {
+										defered.resolve.apply(null, arguments);
+									},
+									function() {
+										defered.reject(new Error('unable to resolve module', path, arguments));
+									}
+								);
 
 								queue.length > 0 && queue.next();
 							}
@@ -110,28 +114,42 @@
 					throw new Error('unspecified anonymous provide');
 				}
 
-				return { when: function() { dependencies = a_p_s.call(arguments); } };
+				return { when: function() { dependencies = arrayPrototypeSlice.call(arguments); } };
 			}
 
 	// additional static methods
 		// configure
 			function configure(aConfig) {
-				var pointerVersion = aConfig.version,
-					pointerBase    = aConfig.base,
-					pointerPattern = aConfig.pattern,
+				var pointerTimeout  = aConfig.timeout,
+					pointerVersion  = aConfig.version,
+					pointerLifetime = aConfig.lifetime,
+					pointerBase     = aConfig.base,
+					pointerPattern  = aConfig.pattern,
 					key;
+
+				if(typeof aConfig.cache !== STRING_UNDEFINED) {
+					cache = !!(aConfig.cache);
+				}
+
+				if(pointerTimeout) {
+					timeout = Math.min(Math.max(parseInt(pointerTimeout, 10), 2000), 10000);
+				}
 
 				if(pointerVersion) {
 					version = pointerVersion;
 				}
 
+				if(pointerLifetime) {
+					lifetime = Math.max(parseInt(pointerLifetime, 10), 0) * 1000;
+				}
+
 				if(pointerBase) {
-					base = new Pattern(pointerBase, resolve.url(pointerBase).href);
+					base = pattern.base = new Pattern(regexBase, resolve.url(pointerBase).href);
 				}
 
 				if(pointerPattern) {
 					for(key in pointerPattern) {
-						pattern[key] = new Pattern(key, pointerPattern[key]);
+						key !== 'base' && (pattern[key] = new Pattern(key, pointerPattern[key]));
 					}
 				}
 
@@ -149,9 +167,9 @@
 	// helper
 		// log
 			function log(aMessage) {
-				var type = (isInstanceOf(aMessage, Error)) ? 'error' : 'info';
+				var type = (isInstanceOf(aMessage, Error)) ? 'error' : 'warn';
 
-				if(typeof console !== 'undefined') {
+				if(typeof console !== STRING_UNDEFINED) {
 					console[type](aMessage.toString());
 				}
 			}
@@ -187,14 +205,14 @@
 					var self     = this,
 						pointer  = aPath.match(regexMatchHandler) || 'application/javascript',
 						isLoader = isInstanceOf(self, Loader),
-						absolute, key, match;
+						key, match;
 
 					if(typeof pointer !== 'string') {
 						aPath   = aPath.replace(new RegExp('^' + escape(pointer[0])), '');
 						pointer = pointer[1];
 					}
 
-					if((absolute = isAbsolute(aPath))) {
+					if(isAbsolute(aPath)) {
 						aPath = base.remove(resolve.url(base.url + aPath).href);
 					} else {
 						aPath = resolve.url(((aParent && aParent.path + '/../') || '/') + aPath).pathname;
@@ -208,7 +226,7 @@
 						self.handler = pointer;
 						self.path    = aPath;
 
-						isLoader && (self.url = removeProtocol(resolve.url((match ? match.process(aPath) : (absolute ? '//' + host : base.url) + aPath)).href));
+						isLoader && (self.url = removeProtocol(resolve.url(match.process(aPath)).href));
 					} else {
 						return { handler: pointer, path: aPath };
 					}
@@ -218,23 +236,79 @@
 		// storage
 			storage = {
 				get: function(aPath, aUrl) {
-					var data = JSON.parse(ls.getItem(aPath));
+					var id, state;
 
-					if(data && data.version === version && data.url === aUrl) {
-						return data;
+					if(localStorage && cache) {
+						id    = DEMAND_PREFIX + '[' + aPath + ']';
+						state = JSON.parse(localStorage.getItem(id + LOCALSTORAGE_STATE));
+
+						if(state && state.version === version && state.url === aUrl && (state.expires === 0 || state.expires > new Date().getTime())) {
+							return localStorage.getItem(id + LOCALSTORAGE_VALUE);
+						} else {
+							storage.clear(aPath);
+						}
 					}
 				},
 				set: function(aPath, aValue, aUrl) {
-					ls.setItem(aPath, JSON.stringify({ version: version, url: aUrl, source: aValue }));
+					var id, spaceBefore;
+
+					if(localStorage && cache) {
+						id = DEMAND_PREFIX + '[' + aPath + ']';
+
+						try {
+							spaceBefore = remainingSpace ? localStorage.remainingSpace : null;
+
+							localStorage.setItem(id + LOCALSTORAGE_VALUE, aValue);
+							localStorage.setItem(id + LOCALSTORAGE_STATE, JSON.stringify({ version: version, expires: lifetime > 0 ? new Date().getTime() + lifetime : 0, url: aUrl }));
+
+							if(spaceBefore !== null && localStorage.remainingSpace === spaceBefore) {
+								throw 'QuotaExceedError';
+							}
+						} catch(error) {
+							log('unable to cache module ' + aPath);
+						}
+					}
 				},
 				clear: function(aPath) {
-					(aPath && ls.removeItem(aPath)) || ls.clear();
+					var id, key, match, state;
+
+					if(localStorage && cache) {
+						switch(typeof aPath) {
+							case 'string':
+								id = DEMAND_PREFIX + '[' + aPath + ']';
+
+								localStorage.removeItem(id + LOCALSTORAGE_STATE);
+								localStorage.removeItem(id + LOCALSTORAGE_VALUE);
+
+								break;
+							case 'boolean':
+								for(key in localStorage) {
+									match = key.match(regexMatchLsState);
+
+									if(match) {
+										state = JSON.parse(localStorage.getItem(DEMAND_PREFIX + '[' + match[1] + ']' + LOCALSTORAGE_STATE));
+
+										if(state && state.expires > 0 && state.expires <= new Date().getTime()) {
+											storage.clear(match[1]);
+										}
+									}
+								}
+
+								break;
+							case STRING_UNDEFINED:
+								for(key in localStorage) {
+									key.indexOf(DEMAND_PREFIX) === 0 && (localStorage.removeItem(key));
+								}
+
+								break;
+						}
+					}
 				}
 			};
 
 	// modules
-		// Bond
-			function Bond(executor) {
+		// Pledge
+			function Pledge(executor) {
 				var self     = this,
 					listener = { resolved: [], rejected: [] };
 
@@ -280,17 +354,17 @@
 				executor(resolve, reject);
 			}
 
-			Bond.prototype = {
-				constructor: Bond,
+			Pledge.prototype = {
+				constructor: Pledge,
 				state:       BOND_PENDING,
 				value:       null,
 				listener:    null
 			};
 
-			Bond.defer = function() {
+			Pledge.defer = function() {
 				var self = {};
 
-				self.bond = new Bond(function(aResolve, aReject) {
+				self.pledge = new Pledge(function(aResolve, aReject) {
 					self.resolve = aResolve;
 					self.reject  = aReject;
 				});
@@ -298,42 +372,45 @@
 				return self;
 			};
 
-			Bond.all = function(aBonds) {
-				var defered       = Bond.defer(),
-					bond          = defered.bond,
+			Pledge.all = function(aPledges) {
+				var defered       = Pledge.defer(),
+					pledge        = defered.pledge,
 					resolved      = [],
-					countTotal    = aBonds.length,
+					rejected      = [],
+					countTotal    = aPledges.length,
 					countResolved = 0;
 
-				aBonds.forEach(function(aBond, aIndex) {
-					aBond.then(
+				aPledges.forEach(function(aPledge, aIndex) {
+					aPledge.then(
 						function() {
-							if(bond.state === BOND_PENDING) {
-								resolved[aIndex] = a_p_s.call(arguments);
+							resolved[aIndex] = arrayPrototypeSlice.call(arguments);
 
-								countResolved++;
+							countResolved++;
 
-								countResolved === countTotal && defered.resolve.apply(null, a_p_c.apply([], resolved));
-							}
+							countResolved === countTotal && defered.resolve.apply(null, arrayPrototypeConcat.apply([], resolved));
 						},
-						defered.reject
+						function() {
+							rejected.push(arrayPrototypeSlice.call(arguments));
+
+							rejected.length + countResolved === countTotal && defered.reject.apply(null, arrayPrototypeConcat.apply([], rejected));
+						}
 					);
 				});
 
-				return bond;
+				return pledge;
 			};
 
-			Bond.race = function(aBonds) {
-				var defered = Bond.defer();
+			Pledge.race = function(aPledges) {
+				var defered = Pledge.defer();
 
-				aBonds.forEach(function(aBond) {
-					aBond.then(
+				aPledges.forEach(function(aPledge) {
+					aPledge.then(
 						defered.resolve,
 						defered.reject
 					);
 				});
 
-				return defered.bond;
+				return defered.pledge;
 			};
 
 		// Error
@@ -343,24 +420,36 @@
 				self.message = aMessage;
 				self.module  = aModule;
 
-				aStack && (self.stack = aStack);
+				aStack && (self.stack = arrayPrototypeSlice.call(aStack));
 
 				return self;
 			}
 
 			Error.prototype = {
 				toString: function() {
-					var self    = this,
-						result  = '[demand] ' + self.message + ' ' + self.module;
+					var self   = this,
+						result = DEMAND_PREFIX + ' ' + self.message + ' ' + self.module;
 
 					if(self.stack) {
-						while(self = self.stack) {
-							result += '\n    > ' + self.message + ' ' + self.module;
-						}
+						result = Error.traverse(self.stack, result, 1);
 					}
 
 					return result;
 				}
+			};
+
+			Error.traverse = function(stack, value, depth) {
+				var indention = new Array(depth + 1).join(' ');
+
+				stack.forEach(function(item) {
+					value += '\n' + indention + '> ' + item.message + ' ' + item.module;
+
+					if(item.stack) {
+						value = Error.traverse(item.stack, value, depth + 1);
+					}
+				});
+
+				return value;
 			};
 
 		// Pattern
@@ -368,7 +457,7 @@
 				var self = this;
 
 				self.url          = resolve.url(aUrl).href;
-				self.regexPattern = new RegExp('^' + escape(aPattern));
+				self.regexPattern = (isInstanceOf(aPattern, RegExp)) ? aPattern : new RegExp('^' + escape(aPattern));
 				self.regexUrl     = new RegExp('^' + escape(aUrl));
 			}
 
@@ -424,7 +513,12 @@
 						pointer = handler[current.handler];
 
 						!current.cached && pointer.modify && (current.source = pointer.modify(current.url, current.source));
+
 						pointer.resolve(current.path, current.source);
+
+						setTimeout(function() {
+							current.defered.reject(new Error('timeout resolving module', current.path));
+						}, timeout / 5);
 					}
 				}
 			};
@@ -432,25 +526,24 @@
 		// Loader
 			function Loader(aPath, aParent) {
 				var self    = this,
-					defered = Bond.defer(),
+					defered = Pledge.defer(),
 					xhr     = new XMLHttpRequest(),
-					pointer, cached;
+					pointer;
 
 				resolve.path.call(self, aPath, aParent);
 
 				self.defered = defered;
-				self.bond    = defered.bond;
-				self.cached  = false;
+				self.pledge  = defered.pledge;
 				pointer      = handler[self.handler];
 
 				if(!parent) {
-					self.bond.then(null, log);
+					self.pledge.then(null, log);
 				}
 
 				if(pointer) {
-					cached = self.retrieve();
+					self.retrieve();
 
-					if(cached) {
+					if(self.cached) {
 						queue.add(self);
 					} else {
 						xhr.onreadystatechange = function() {
@@ -468,7 +561,7 @@
 						xhr.open('GET', self.url + pointer.suffix, true);
 						xhr.send();
 
-						st(function() { if(xhr.readyState < 4) { xhr.abort(); } }, 5000);
+						setTimeout(function() { if(xhr.readyState < 4) { xhr.abort(); } }, timeout);
 					}
 				} else {
 					defered.reject(new Error('no handler "' + self.handler + '" for', self.path));
@@ -488,23 +581,21 @@
 						cache  = storage.get(self.path, self.url),
 						cached = self.cached = !!(cache);
 
-					cached && (self.source = cache.source);
-
-					return cached;
+					cached && (self.source = cache);
 				}
 			};
 
 		// Module
 			function Module(aPath, aFactory, aDependencies) {
 				var self    = this,
-					defered = Bond.defer();
+					defered = Pledge.defer();
 
 				resolve.path.call(self, aPath);
 
-				self.bond = defered.bond;
+				self.pledge = defered.pledge;
 
-				self.bond.then(null, function(error) {
-					log(new Error('unable to resolve module', self.path, error));
+				self.pledge.then(null, function() {
+					log(new Error('unable to resolve module', self.path, arguments));
 				});
 
 				if(aDependencies.length > 0) {
@@ -512,7 +603,7 @@
 						.apply(self, aDependencies)
 						.then(
 							function() { defered.resolve(aFactory.apply(null, arguments)); },
-							function(error) { defered.reject(new Error('unable to resolve dependencies for', self.path, error)); }
+							function() { defered.reject(new Error('unable to resolve dependencies for', self.path, arguments)); }
 						);
 				} else {
 					defered.resolve(aFactory());
@@ -525,7 +616,7 @@
 		// JavaScript
 			JavascriptHandler = {
 				resolve: function(aPath, aValue) {
-					var script = d.createElement('script');
+					var script = document.createElement('script');
 
 					script.type  = 'application/javascript';
 					script.defer = script.async = true;
@@ -540,7 +631,7 @@
 		// CSS
 			CssHandler = {
 				resolve: function(aPath, aValue) {
-					var style = d.createElement('style'),
+					var style = document.createElement('style'),
 						sheet = style.styleSheet;
 
 					style.type  = 'text/css';
@@ -551,7 +642,7 @@
 
 					target.appendChild(style);
 
-					st(function() {
+					setTimeout(function() {
 						provide(function() { return style; });
 					});
 				},
@@ -571,6 +662,9 @@
 		// create queue
 			queue = new Queue();
 
+		// execute localStorage garbage collection
+			storage.clear(true);
+
 		// add default handler
 			addHandler('application/javascript', '.js', JavascriptHandler);
 			addHandler('text/css', '.css', CssHandler);
@@ -588,10 +682,10 @@
 		// register modules
 			provide('/demand', function() { return demand; });
 			provide('/provide', function() { return provide; });
-			provide('/bond', function() { return Bond; });
+			provide('/pledge', function() { return Pledge; });
 
-		// load main script
-			if(main) {
-				demand(main);
-			}
+	// load main script
+	if(main) {
+		demand(main);
+	}
 }(this));
