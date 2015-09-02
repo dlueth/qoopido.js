@@ -42,7 +42,7 @@
 		regexMatchLsState    = /^\[demand\]\[(.+?)\]\[state\]$/,
 		localStorage         = global.localStorage,
 		remainingSpace       = localStorage && typeof localStorage.remainingSpace !== STRING_UNDEFINED,
-		defaults             = { cache: true, version: '1.0.0', lifetime: 0, timeout: 5000, base: '/' },
+		defaults             = { cache: true, version: '1.0.0', lifetime: 0, timeout: 5, base: '/' },
 		main                 = global.demand.main,
 		settings             = global.demand.settings,
 		modules              = {},
@@ -532,7 +532,7 @@
 							interval = setInterval(function() {
 								var result = test();
 
-								result && defered.resolve(result) && clearInterval(interval);
+								result && provide(function() { return result; }) && clearInterval(interval);
 							}, 100);
 						}
 
