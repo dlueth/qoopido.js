@@ -34,14 +34,14 @@ In contrast to earlier versions Qoopido.js 4.0.0 will come with its own loader. 
 
 		target.parentNode.insertBefore(script, target);
 	}(window, document, 'script'))
-}('/src/demand.js', 'main', { base: '/demo' }));
+}('/src/demand.js', 'main', { base: '/demo', version: '1.0.0' }));
 ```
 
 You may as well use the uglified version:
 
 ```javascript
 !function(a,b,c){!function(d,e,f,g,h){g=e.getElementsByTagName(f)[0],h=e.createElement(f),d.demand={main:b,settings:c},h.async=h.defer=1,h.src=a,g.parentNode.insertBefore(h,g)}(window,document,"script")}
-("/src/demand.js","main",{base:"/demo"});
+("/src/demand.js","main",{base:"/demo",version:"1.0.0"});
 ```
 
 The above snippet is very similar to the one Google Analytics provides. The outer function allows you to specify an URL from which to load demand itself as well as a path to the main module and configuration settings for demand. The path to the main module will be relative to base if it is relative itself.
@@ -81,7 +81,16 @@ The demanded ```main``` module might look like the following example:
 				
 				// optional
 				pattern: {
-					'/qoopido': '[path/url to Qoopido.js]'
+					'/qoopido': '[path/url to Qoopido.js]',
+					'/jquery':  '//cdn.jsdelivr.net/jquery/2.1.4/jquery.min'
+				},
+				
+				// tests allow you to write fallback tests
+				// for modules that do not natively support
+				// demand/provide
+				// optional
+				tests: {
+					'/jquery': function() { return global.jQuery; }
 				}
 			});
 	}
