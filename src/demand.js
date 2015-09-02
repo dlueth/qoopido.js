@@ -20,6 +20,8 @@
 
 	var document             = global.document,
 		setTimeout           = global.setTimeout,
+		setInterval          = global.setInterval,
+		clearInterval        = global.clearInterval,
 		arrayPrototypeSlice  = Array.prototype.slice,
 		arrayPrototypeConcat = Array.prototype.concat,
 		target               = document.getElementsByTagName('head')[0],
@@ -43,9 +45,10 @@
 		defaults             = { cache: true, version: '1.0.0', lifetime: 0, timeout: 5000, base: '/' },
 		main                 = global.demand.main,
 		settings             = global.demand.settings,
-		pattern              = {},
-		handler              = {},
 		modules              = {},
+		pattern              = {},
+		tests                = {},
+		handler              = {},
 		base, cache, timeout, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
 
 	// main public methods
@@ -125,6 +128,7 @@
 					pointerLifetime = aConfig.lifetime,
 					pointerBase     = aConfig.base,
 					pointerPattern  = aConfig.pattern,
+					pointerTests    = aConfig.tests,
 					key;
 
 				if(typeof aConfig.cache !== STRING_UNDEFINED) {
@@ -132,7 +136,7 @@
 				}
 
 				if(pointerTimeout) {
-					timeout = Math.min(Math.max(parseInt(pointerTimeout, 10), 2000), 10000);
+					timeout = Math.min(Math.max(parseInt(pointerTimeout, 10), 2), 10) * 1000;
 				}
 
 				if(pointerVersion) {
@@ -150,6 +154,12 @@
 				if(pointerPattern) {
 					for(key in pointerPattern) {
 						key !== 'base' && (pattern[key] = new Pattern(key, pointerPattern[key]));
+					}
+				}
+
+				if(pointerTests) {
+					for(key in pointerTests) {
+						tests[key] = pointerTests[key];
 					}
 				}
 
@@ -499,7 +509,7 @@
 					var self    = this,
 						current = self.current,
 						queue   = self.queue,
-						pointer;
+						defered, path, pointer, test, interval;
 
 					if(current) {
 						self.current = null;
@@ -510,14 +520,24 @@
 
 					if(queue.length) {
 						current = self.current = self.queue[0];
+						defered = current.defered;
+						path    = current.path;
 						pointer = handler[current.handler];
 
 						!current.cached && pointer.modify && (current.source = pointer.modify(current.url, current.source));
 
-						pointer.resolve(current.path, current.source);
+						pointer.resolve(path, current.source);
+
+						if(test = tests[path]) {
+							interval = setInterval(function() {
+								var result = test();
+
+								result && defered.resolve(result) && clearInterval(interval);
+							}, 100);
+						}
 
 						setTimeout(function() {
-							current.defered.reject(new Error('timeout resolving module', current.path));
+							defered.reject(new Error('timeout resolving module', path));
 						}, timeout / 5);
 					}
 				}
