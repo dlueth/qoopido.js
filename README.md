@@ -65,14 +65,16 @@ The demanded ```main``` module might look like the following example:
 				
 				// cache will be validated against lifetime, if > 0
 				// optional, defaults to "0"
+				// unit: seconds
 				lifetime: 60,
 				
 				// sets the timeout for XHR requests
 				// loaded but not yet resolved modules 
 				// have a timeout of timeout / 5 to get
 				// resolved by their handler
-				// optional, defaults to "5000" (limited to "2000" up to "8000")
-				timeout: 8000, 
+				// optional, defaults to "5" (limited to "2" up to "10")
+				// unit: seconds
+				timeout: 8, 
 				
 				// base path from where your relative 
 				// dependencies get loaded
