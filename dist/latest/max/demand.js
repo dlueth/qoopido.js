@@ -14,7 +14,7 @@
         cache: true,
         version: "1.0.0",
         lifetime: 0,
-        timeout: 5e3,
+        timeout: 5,
         base: "/"
     }, main = global.demand.main, settings = global.demand.settings, modules = {}, pattern = {}, tests = {}, handler = {}, base, cache, timeout, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
     function demand() {
@@ -360,7 +360,9 @@
                 if (test = tests[path]) {
                     interval = setInterval(function() {
                         var result = test();
-                        result && defered.resolve(result) && clearInterval(interval);
+                        result && provide(function() {
+                            return result;
+                        }) && clearInterval(interval);
                     }, 100);
                 }
                 setTimeout(function() {
