@@ -16,8 +16,8 @@
 
 				new qoopidoComponentIterator();
 			},
-			function(error) {
-				console.log('[error]', error);
+			function() {
+				console.log('[error]', arguments);
 			}
 		);
 
@@ -35,12 +35,12 @@
 		demand('text/css!default')
 			.then(
 			function(cssDefault) {
-				console.log('[success]', cssDefault);
+				console.log('[success] /default => ', cssDefault);
 
 				cssDefault.media = 'screen';
 			},
-			function(error) {
-				console.log('[error]', error);
+			function() {
+				console.log('[error] /default =>', arguments);
 			}
 		);
 
