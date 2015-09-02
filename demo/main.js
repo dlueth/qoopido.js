@@ -6,13 +6,17 @@
 			.configure({
 				pattern: {
 					'/qoopido': 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
+					'/jquery':  '//cdn.jsdelivr.net/jquery/2.1.4/jquery.min'
+				},
+				tests: {
+					'/jquery': function() { return global.jQuery; }
 				}
 			});
 
-		demand('app/test', '/qoopido/component/iterator')
+		demand('app/test', '/qoopido/component/iterator', '/jquery')
 			.then(
-			function(appTest, qoopidoComponentIterator) {
-				console.log('[success]', appTest, qoopidoComponentIterator);
+			function(appTest, qoopidoComponentIterator, jQuery) {
+				console.log('[success]', appTest, qoopidoComponentIterator, jQuery);
 
 				new qoopidoComponentIterator();
 			},
