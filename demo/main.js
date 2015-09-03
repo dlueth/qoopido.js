@@ -6,7 +6,7 @@
 			demand
 				.configure({
 					pattern: {
-						'/adapter':       'http://qoopido.demand.machine.local/src/adapter',
+						'/adapter':       'https://rawgit.com/dlueth/qoopido.demand/development/dist/latest/min/adapter',
 						'/qoopido/4.0.0': 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
 						'/qoopido/3.7.4': '//cdn.jsdelivr.net/qoopido.js/3.7.4',
 						'/jquery':        '//cdn.jsdelivr.net/jquery/2.1.4/jquery.min'
