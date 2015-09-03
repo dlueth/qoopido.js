@@ -20,8 +20,6 @@
 
 	var document             = global.document,
 		setTimeout           = global.setTimeout,
-		setInterval          = global.setInterval,
-		clearInterval        = global.clearInterval,
 		arrayPrototypeSlice  = Array.prototype.slice,
 		arrayPrototypeConcat = Array.prototype.concat,
 		target               = document.getElementsByTagName('head')[0],
@@ -30,9 +28,9 @@
 		STRING_UNDEFINED     = 'undefined',
 		LOCALSTORAGE_STATE   = '[state]',
 		LOCALSTORAGE_VALUE   = '[value]',
-		BOND_PENDING         = 'pending',
-		BOND_RESOLVED        = 'resolved',
-		BOND_REJECTED        = 'rejected',
+		PLEDGE_PENDING       = 'pending',
+		PLEDGE_RESOLVED      = 'resolved',
+		PLEDGE_REJECTED      = 'rejected',
 		regexBase            = /^/,
 		regexIsAbsolute      = /^\//i,
 		regexMatchHandler    = /^([-\w]+\/[-\w]+)!/,
@@ -47,9 +45,9 @@
 		settings             = global.demand.settings,
 		modules              = {},
 		pattern              = {},
-		tests                = {},
+		probes               = {},
 		handler              = {},
-		base, cache, timeout, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
+		base, cache, timeoutXhr, timeoutQueue, version, lifetime, queue, resolve, storage, JavascriptHandler, CssHandler;
 
 	// main public methods
 		// demand
@@ -128,7 +126,7 @@
 					pointerLifetime = aConfig.lifetime,
 					pointerBase     = aConfig.base,
 					pointerPattern  = aConfig.pattern,
-					pointerTests    = aConfig.tests,
+					pointerProbes   = aConfig.probes,
 					key;
 
 				if(typeof aConfig.cache !== STRING_UNDEFINED) {
@@ -136,7 +134,8 @@
 				}
 
 				if(pointerTimeout) {
-					timeout = Math.min(Math.max(parseInt(pointerTimeout, 10), 2), 10) * 1000;
+					timeoutXhr   = Math.min(Math.max(parseInt(pointerTimeout, 10), 2), 10) * 1000;
+					timeoutQueue = Math.min(Math.max(timeoutXhr / 5, 1000), 5000);
 				}
 
 				if(pointerVersion) {
@@ -157,9 +156,9 @@
 					}
 				}
 
-				if(pointerTests) {
-					for(key in pointerTests) {
-						tests[key] = pointerTests[key];
+				if(pointerProbes) {
+					for(key in pointerProbes) {
+						probes[key] = pointerProbes[key];
 					}
 				}
 
@@ -323,15 +322,15 @@
 					listener = { resolved: [], rejected: [] };
 
 				function resolve() {
-					handle(BOND_RESOLVED, arguments);
+					handle(PLEDGE_RESOLVED, arguments);
 				}
 
 				function reject() {
-					handle(BOND_REJECTED, arguments);
+					handle(PLEDGE_REJECTED, arguments);
 				}
 
 				function handle(aState, aParameter) {
-					if(self.state === BOND_PENDING) {
+					if(self.state === PLEDGE_PENDING) {
 						self.state = aState;
 						self.value = aParameter;
 
@@ -344,16 +343,16 @@
 				self.then = function(aResolved, aRejected) {
 					var self = this;
 
-					if(self.state === BOND_PENDING) {
-						aResolved && listener[BOND_RESOLVED].push(aResolved);
-						aRejected && listener[BOND_REJECTED].push(aRejected);
+					if(self.state === PLEDGE_PENDING) {
+						aResolved && listener[PLEDGE_RESOLVED].push(aResolved);
+						aRejected && listener[PLEDGE_REJECTED].push(aRejected);
 					} else {
 						switch(self.state) {
-							case BOND_RESOLVED:
+							case PLEDGE_RESOLVED:
 								aResolved.apply(null, self.value);
 
 								break;
-							case BOND_REJECTED:
+							case PLEDGE_REJECTED:
 								aRejected.apply(null, self.value);
 
 								break;
@@ -366,7 +365,7 @@
 
 			Pledge.prototype = {
 				constructor: Pledge,
-				state:       BOND_PENDING,
+				state:       PLEDGE_PENDING,
 				value:       null,
 				listener:    null
 			};
@@ -509,7 +508,7 @@
 					var self    = this,
 						current = self.current,
 						queue   = self.queue,
-						defered, path, pointer, test, interval;
+						defered, path, pointer;
 
 					if(current) {
 						self.current = null;
@@ -528,17 +527,13 @@
 
 						pointer.resolve(path, current.source);
 
-						if(test = tests[path]) {
-							interval = setInterval(function() {
-								var result = test();
-
-								result && provide(function() { return result; }) && clearInterval(interval);
-							}, 100);
+						if(probes[path]) {
+							current.probe();
 						}
 
 						setTimeout(function() {
 							defered.reject(new Error('timeout resolving module', path));
-						}, timeout / 5);
+						}, timeoutQueue);
 					}
 				}
 			};
@@ -581,7 +576,7 @@
 						xhr.open('GET', self.url + pointer.suffix, true);
 						xhr.send();
 
-						setTimeout(function() { if(xhr.readyState < 4) { xhr.abort(); } }, timeout);
+						setTimeout(function() { if(xhr.readyState < 4) { xhr.abort(); } }, timeoutXhr);
 					}
 				} else {
 					defered.reject(new Error('no handler "' + self.handler + '" for', self.path));
@@ -591,6 +586,21 @@
 			}
 
 			Loader.prototype = {
+				probe: function() {
+					var self    = this,
+						path    = self.path,
+						pledge  = self.defered.pledge,
+						pending = pledge.state === PLEDGE_PENDING,
+						result  = probes[path]();
+
+					if(result && pending) {
+						provide(function() { return result; });
+					} else {
+						if(pending) {
+							setTimeout(self.probe, 100);
+						}
+					}
+				},
 				store: function() {
 					var self = this;
 
@@ -619,8 +629,7 @@
 				});
 
 				if(aDependencies.length > 0) {
-					demand
-						.apply(self, aDependencies)
+					demand.apply(self, aDependencies)
 						.then(
 							function() { defered.resolve(aFactory.apply(null, arguments)); },
 							function() { defered.reject(new Error('unable to resolve dependencies for', self.path, arguments)); }
