@@ -6,9 +6,9 @@
 			.configure({
 				pattern: {
 					'/qoopido': 'https://rawgit.com/dlueth/qoopido.js/release/4.0.0/dist/latest/min',
-					'/jquery':  '//cdn.jsdelivr.net/jquery/2.1.4/jquery.min'
+					'/jquery': '//cdn.jsdelivr.net/jquery/2.1.4/jquery.min'
 				},
-				tests: {
+				probes: {
 					'/jquery': function() { return global.jQuery; }
 				}
 			});
