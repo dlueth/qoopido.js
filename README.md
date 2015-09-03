@@ -87,11 +87,11 @@ The demanded ```main``` module might look like the following example:
 					'/jquery':  '//cdn.jsdelivr.net/jquery/2.1.4/jquery.min'
 				},
 				
-				// tests allow you to write fallback tests
+				// probes allow you to write fallback tests
 				// for modules that do not natively support
 				// demand/provide
 				// optional
-				tests: {
+				probes: {
 					'/jquery': function() { return global.jQuery; }
 				}
 			});
