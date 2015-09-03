@@ -1,14 +1,14 @@
 ;(function() {
 	'use strict';
 
-	function definition(qoopidoBase) {
+	function definition() {
 
 		function appTest() {
 
 		}
 
-		return qoopidoBase.extend(appTest);
+		return appTest;
 	}
 
-	provide(definition).when('/qoopido/base');
+	provide(definition);
 }());
