@@ -3,6 +3,19 @@
 <head></head>
 <body>
 <script>
+	(function() {
+		var resolver = document.createElement('a');
+
+		function resolve(url) {
+			resolver.href = url;
+
+			return resolver;
+		}
+
+		console.log(resolve('/qoopido/3.7.4/component/iterator/../../emitter').href, resolve('/qoopido/3.7.4/component/iterator/../../emitter').pathname);
+		console.log(resolve('﻿/qoopido/3.7.4/emitter/.././base').href, resolve('﻿/qoopido/3.7.4/emitter/.././base').pathname);
+	}());
+
 	(function(url, main, settings) {
 		(function(window, document, type, target, script){
 			target = document.getElementsByTagName(type)[0];
