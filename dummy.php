@@ -1,2 +1,0 @@
-<?php header('Content-Type: application/javascript'); ?>
-window['<?php  echo $_GET['callback'] ?>']({"entry" : {"id" : "E1lS4vG0jX7oN9iF6wH3cT0u","created_date" : "1973/04/28","created_time" : "13:50:17","title" : "elit aliquip esse ","description" : "minim reprehenderit id reprehenderit velit in labore nostrud dolor in ut"}});
