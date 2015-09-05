@@ -4,9 +4,8 @@ var gulp     = require('gulp'),
 	plugins  = require('gulp-load-plugins')(),
 	sequence = require('run-sequence'),
 	del      = require('del'),
-	files    = {},
 	config   = {},
-	package, config, patterns = [], key;
+	jshintConfig, package, config, patterns = [], key;
 
 module.exports = gulp;
 
@@ -20,13 +19,14 @@ module.exports = gulp;
 	function loadPackageFile() {
 		delete require.cache[require.resolve('./package.json')];
 
-		package = require('./package.json');
+		package      = require('./package.json');
+		jshintConfig = package.jshintConfig;
 	}
 
 	function loadConfigFile() {
-		delete require.cache[require.resolve('./gulpconfig.json')];
+		delete require.cache[require.resolve('./gulp/config.json')];
 
-		config = replacePatterns(require('./gulpconfig.json'));
+		config = replacePatterns(require('./gulp/config.json'));
 	}
 
 	function preparePatterns(node, prefix) {
@@ -77,7 +77,7 @@ module.exports = gulp;
 
 		gulp.task('package:' + name + ':lint', function() {
 			return gulp.src(pointer.watch)
-				.pipe(plugins.jshint('./.jshintrc'))
+				.pipe(plugins.jshint(jshintConfig))
 				.pipe(plugins.jshint.reporter('jshint-stylish'));
 		});
 
@@ -147,7 +147,7 @@ module.exports = gulp;
 
 	gulp.task('dist:lint', function() {
 		return gulp.src(config.tasks.dist.lint || config.tasks.dist.watch)
-			.pipe(plugins.jshint('./.jshintrc'))
+			.pipe(plugins.jshint(jshintConfig))
 			.pipe(plugins.jshint.reporter('jshint-stylish'));
 	});
 

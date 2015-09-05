@@ -16,27 +16,32 @@
 	'use strict';
 
 	function definition() {
+		function isObject(object) {
+			return object && typeof object === 'object';
+		}
+		
 		return function merge() {
 			var target = arguments[0],
-				i, properties, property, tgt, tgt_io, src;
+				i, properties, property, targetProperty, targetPropertyIsObject, sourceProperty;
 
 			for(i = 1; (properties = arguments[i]) !== undefined; i++) {
 				for(property in properties) {
-					tgt = target[property];
-					src = properties[property];
+					targetProperty = target[property];
+					sourceProperty = properties[property];
 
-					if(src !== undefined) {
-						if(src !== null && typeof src === 'object') {
-							tgt_io = (tgt && typeof tgt === 'object');
-							if(src.length !== undefined) {
-								tgt = (tgt_io && tgt.length !== undefined) ? tgt : [];
+					if(sourceProperty !== undefined) {
+						if(isObject(sourceProperty)) {
+							targetPropertyIsObject = isObject(targetProperty);
+							
+							if(sourceProperty.length !== undefined) {
+								targetProperty = (targetPropertyIsObject && targetProperty.length !== undefined) ? targetProperty : [];
 							} else {
-								tgt = (tgt_io && tgt.length === undefined) ? tgt : {};
+								targetProperty = (targetPropertyIsObject && targetProperty.length === undefined) ? targetProperty : {};
 							}
 
-							target[property] = merge(tgt, src);
+							target[property] = merge(targetProperty, sourceProperty);
 						} else {
-							target[property] = src;
+							target[property] = sourceProperty;
 						}
 					}
 				}

@@ -12,35 +12,33 @@
  * @author Dirk Lueth <info@qoopido.com>
  *
  * @require ./base
+ * @require ./function/unique/uuid
  *
- * @polyfill Object.defineProperty
- * @polyfill Object.getOwnPropertyNames
- * @polyfill Object.getOwnPropertyDescriptor
- * @polyfill Object.getPrototypeOf
+ * @requires Object.defineProperty, Object.getOwnPropertyNames, Object.getOwnPropertyDescriptor, Object.getPrototypeOf
  */
 
 ;(function(undefined) {
 	'use strict';
 
-	var regexExclude = /^(extend$|_|get.+)/,
-		o_dp         = Object.defineProperty,
-		o_gopn       = Object.getOwnPropertyNames,
-		o_gopd       = Object.getOwnPropertyDescriptor,
-		o_gpo        = Object.getPrototypeOf,
-		gcd          = function(value, writable) { return { writable: !!writable, configurable: false, enumerable: false, value: value };},
-		storage      = {};
+	var regexMatchExcludedMethods      = /^(_|get)/,
+		objectDefineProperty           = Object.defineProperty,
+		objectGetOwnPropertyNames      = Object.getOwnPropertyNames,
+		objectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
+		objectGetPrototypeOf           = Object.getPrototypeOf,
+		generateCustomDescriptor       = function(value, writable) { return { writable: !!writable, configurable: false, enumerable: false, value: value };},
+		storage                        = {};
 
 	function conceal() {
 		var self       = this,
 			prototype  = self.constructor.prototype,
-			properties = o_gopn(prototype); // might have to be changed to Object.keys + further checks
+			properties = objectGetOwnPropertyNames(prototype); // might have to be changed to Object.keys + further checks
 
 		properties.forEach(function(property) {
 			var event, descriptor;
 
-			if(typeof self[property] === 'function' && regexExclude.test(property) === false && o_gopd(prototype, property).writable) {
+			if(typeof self[property] === 'function' && regexMatchExcludedMethods.test(property) === false && objectGetOwnPropertyDescriptor(prototype, property).writable) {
 				event      = property.charAt(0).toUpperCase() + property.slice(1);
-				descriptor = o_gopd(prototype, property);
+				descriptor = objectGetOwnPropertyDescriptor(prototype, property);
 
 				descriptor.value = function() {
 					var result;
@@ -64,11 +62,11 @@
 			var self = this,
 				uuid = self.uuid;
 
-			!uuid && (uuid = functionUniqueUuid()) && o_dp(self, 'uuid', gcd(uuid));
+			!uuid && (uuid = functionUniqueUuid()) && objectDefineProperty(self, 'uuid', generateCustomDescriptor(uuid));
 
 			storage[uuid] = {};
 
-			if(o_gpo(self) !== Emitter.prototype) {
+			if(objectGetPrototypeOf(self) !== Emitter.prototype) {
 				conceal.call(self);
 			}
 
@@ -76,6 +74,7 @@
 		}
 
 		Emitter.prototype = {
+			uuid: null,
 			on: function(events, fn) {
 				var self    = this,
 					pointer = storage[self.uuid],

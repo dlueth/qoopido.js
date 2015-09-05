@@ -61,5 +61,28 @@
     "gulp-util": "^3.0.1",
     "jshint-stylish": "^2.0.1",
     "run-sequence": "^1.0.2"
+  },
+  "jshintConfig": {
+    "lookup":false,
+    "curly":true,
+    "eqeqeq":true,
+    "immed":true,
+    "latedef":true,
+    "newcap":true,
+    "noarg":true,
+    "sub":true,
+    "undef":true,
+    "boss":true,
+    "eqnull":true,
+    "browser":true,
+    "proto":true,
+    "expr":true,
+    "validthis":true,
+    "scripturl":true,
+    "-W030":true,
+    "globals":{
+      "demand":true,
+      "provide":true
+    }
   }
 }

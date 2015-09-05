@@ -15,15 +15,15 @@
  * @require ../function/merge
  * @require ../function/unique/uuid
  *
- * @polyfill Object.defineProperty
+ * @requires Object.defineProperty
  */
 
 ;(function(undefined) {
 	'use strict';
 
-	var o_dp    = Object.defineProperty,
-		gcd     = function(value, writable) { return { writable: !!writable, configurable: false, enumerable: false, value: value };},
-		storage = {};
+	var objectDefineProperty     = Object.defineProperty,
+		generateCustomDescriptor = function(value, writable) { return { writable: !!writable, configurable: false, enumerable: false, value: value };},
+		storage                  = {};
 
 	function definition(Emitter, functionMerge, functionUniqueUuid) {
 		var prototype;
@@ -32,7 +32,7 @@
 			var self = this.super.call(this),
 				uuid = self.uuid;
 
-			!uuid && (uuid = functionUniqueUuid()) && o_dp(self, 'uuid', gcd(uuid));
+			!uuid && (uuid = functionUniqueUuid()) && objectDefineProperty(self, 'uuid', generateCustomDescriptor(uuid));
 
 			storage[uuid] = {
 				settings: functionMerge({}, Iterator.settings, settings),
@@ -48,6 +48,7 @@
 		}
 
 		Iterator.prototype = {
+			uuid: null,
 			setData: function(data) {
 				var self = this,
 					uuid, properties, settings;
